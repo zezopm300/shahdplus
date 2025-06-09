@@ -1,0 +1,592 @@
+/* Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* تعريف المتغيرات للألوان والظلال لسهولة التعديل */
+:root {
+    --bg-dark: #0A0A0A; /* خلفية أغمق وأكثر فخامة */
+    --bg-medium: #181818; /* لون أغمق للعناصر زي الكاردز */
+    --text-light: #E0E0E0; /* نص فاتح ليبرز على الخلفية الداكنة */
+    --text-white: #FFFFFF; /* أبيض ناصع للعناوين الرئيسية */
+    --accent-color: #BB86FC; /* بنفسجي ملكي هادئ كلون أساسي مميز */
+    --accent-dark: #A16BFF; /* درجة أغمق من اللون المميز للهوفر */
+    --gradient-start: #2a0052; /* بداية التدرج اللوني للـ accent */
+    --gradient-end: #3b0060; /* نهاية التدرج اللوني للـ accent */
+    --border-color: #2F2F2F; /* لون خطوط فاصلة أو حدود خفيفة */
+    --shadow-color-dark: rgba(0, 0, 0, 0.7); /* ظلال ناعمة وداكنة */
+    --shadow-color-light: rgba(187, 134, 252, 0.3); /* ظلال خفيفة بلون الـ accent */
+    --transition-speed: 0.4s; /* سرعة الانتقال الافتراضية */
+}
+
+body {
+    font-family: "Tajawal", sans-serif; /* الخط الأساسي للنصوص */
+    line-height: 1.6; /* زيادة تباعد السطور لقراءة أفضل */
+    background-color: var(--bg-dark); /* تطبيق الخلفية الداكنة */
+    color: var(--text-light); /* تطبيق لون النص الفاتح */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden; /* لمنع ظهور شريط التمرير الأفقي غير المرغوب فيه */
+}
+
+a {
+    color: var(--accent-color); /* الروابط تأخذ لون الـ accent */
+    text-decoration: none;
+    transition: color var(--transition-speed); /* انتقال سلس للون */
+}
+
+a:hover,
+a:focus {
+    color: var(--accent-dark); /* درجة أغمق عند الهوفر */
+    outline: none;
+}
+
+/* General Headings & Typography */
+h1, h2, .section-title {
+    font-family: 'Amiri', serif; /* خط كلاسيكي للعناوين واللوجو */
+    color: var(--text-white); /* أبيض ناصع للعناوين */
+    font-weight: 700; /* سمك الخط */
+}
+
+/* Container */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px; /* بادينج خفيف على الجوانب للمسافات */
+}
+
+/* Header */
+.main-header {
+    background: rgba(0, 0, 0, 0.7); /* خلفية شبه شفافة وأغمق قليلاً */
+    padding: 1.2rem 0; /* زيادة البادينج */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color); /* خط فاصل خفيف */
+    backdrop-filter: blur(10px); /* تأثير ضبابي أقوى وأكثر فخامة */
+    -webkit-backdrop-filter: blur(10px); /* لدعم Safari */
+    box-shadow: 0 4px 15px var(--shadow-color-dark); /* ظل أكبر وأعمق */
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Logo Styling */
+.logo a {
+    font-size: 2.8rem; /* حجم أكبر للوجو */
+    letter-spacing: 2px; /* مسافة بين الحروف تعطي إحساسًا بالرقي */
+    color: var(--text-white); /* لون نص اللوجو أبيض */
+    text-shadow: 0 0 10px rgba(0,0,0,0.6), 0 0 5px var(--accent-color); /* ظل أكبر ولمسة من لون الـ accent */
+    display: flex; /* لترتيب الأيقونة والنص */
+    align-items: center;
+    gap: 10px; /* مسافة بين الأيقونة والنص */
+}
+
+.logo-icon {
+    font-size: 2.2rem; /* حجم أيقونة اللوجو */
+    color: var(--accent-color); /* لون أيقونة اللوجو بلون الـ accent */
+    animation: pulse 2s infinite ease-in-out; /* انيميشن نبض خفيف */
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Main Navigation */
+.main-nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: flex-end;
+    gap: 2.5rem; /* مسافات أكبر بين عناصر القائمة */
+    margin: 0;
+    padding: 0;
+}
+
+.main-nav ul li a {
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--text-light);
+    position: relative;
+    padding-bottom: 5px;
+    transition: color var(--transition-speed);
+}
+
+.main-nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent-color), var(--accent-dark)); /* تدرج لوني للخط */
+    transition: width var(--transition-speed) ease-out;
+}
+
+.main-nav ul li a.active,
+.main-nav ul li a:hover {
+    color: var(--accent-color);
+}
+
+.main-nav ul li a.active::after,
+.main-nav ul li a:hover::after {
+    width: 100%;
+}
+
+.main-nav ul li a i {
+    margin-right: 8px;
+    color: var(--accent-color);
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    width: 35px; /* حجم أكبر للزر */
+    height: 25px;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1002;
+}
+
+.menu-toggle .bar {
+    height: 4px; /* سمك أكبر للبارات */
+    background: var(--accent-color);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.menu-toggle.active .bar:nth-child(1) {
+    transform: translateY(10px) rotate(45deg);
+}
+
+.menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active .bar:nth-child(3) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    background-image: url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* صورة خلفية سينمائية */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 600px; /* ارتفاع أكبر لمساحة Hero */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-white);
+    text-align: center;
+    padding: 3rem 1rem;
+    transition: background-image 0.6s ease-in-out;
+    box-shadow: inset 0 -60px 100px rgba(0,0,0,0.95); /* ظل داخلي أعمق من الأسفل */
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.95) 100%); /* تدرج لوني أكثر قوة */
+    z-index: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 900px; /* عرض أكبر للمحتوى */
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.4); /* خلفية شفافة للمحتوى */
+    border-radius: 15px;
+    box-shadow: 0 10px 40px var(--shadow-color-dark); /* ظل قوي للمحتوى */
+    animation: fadeInScale 1.2s ease-out forwards; /* انيميشن دخول أطول */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* حدود شفافة رقيقة */
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.hero-content h2 {
+    font-size: 4.5rem; /* حجم أكبر بكثير للعنوان */
+    margin-bottom: 1rem;
+    text-shadow: 0 0 20px var(--shadow-color-dark), 0 0 8px var(--accent-color);
+    line-height: 1.2;
+}
+
+.hero-content p {
+    font-size: 1.5rem; /* حجم أكبر للوصف */
+    margin-bottom: 2.5rem;
+    max-width: 800px;
+    text-shadow: 0 0 12px var(--shadow-color-dark);
+    color: var(--text-light);
+}
+
+.hero-content .btn {
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-dark)); /* تدرج لوني للزر */
+    padding: 1.3rem 3.5rem; /* بادينج أكبر للزر */
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.3rem; /* حجم خط أكبر للزر */
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 8px 25px var(--shadow-color-accent); /* ظل أكبر بلون الـ accent */
+    transition: all var(--transition-speed) ease; /* انتقال لكل الخصائص */
+    position: relative;
+    overflow: hidden; /* لإخفاء تأثير الإضاءة */
+}
+
+.hero-content .btn::before { /* تأثير إضاءة عند الهوفر */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: skewX(-30deg);
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); /* انتقال سلس ومختلف */
+}
+
+.hero-content .btn:hover {
+    transform: translateY(-5px); /* حركة لأعلى أوضح */
+    box-shadow: 0 15px 40px var(--shadow-color-accent);
+}
+
+.hero-content .btn:hover::before {
+    left: 100%;
+}
+
+/* Movies List */
+.section-title {
+    margin: 4.5rem 0 2.5rem; /* مسافات أكبر للعنوان */
+    font-size: 3rem; /* حجم أكبر للعنوان */
+    color: var(--text-white);
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
+    text-shadow: 0 0 15px rgba(0,0,0,0.7);
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    width: 120px; /* طول الخط أكبر */
+    height: 5px; /* سمك الخط أكبر */
+    background: linear-gradient(to right, var(--accent-color), var(--accent-dark)); /* تدرج لوني للخط */
+    border-radius: 3px;
+}
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* حجم أكبر للفيلم في الشبكة */
+    gap: 2.5rem; /* مسافات أكبر بين الأفلام */
+    padding-bottom: 80px;
+}
+
+.movie-card {
+    background: var(--bg-medium);
+    border-radius: 15px; /* حواف أكثر دائرية */
+    overflow: hidden;
+    box-shadow: 0 10px 30px var(--shadow-color-dark); /* ظل أنعم وأعمق */
+    cursor: pointer;
+    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, border var(--transition-speed) ease;
+    border: 1px solid var(--border-color); /* حدود خفيفة */
+    position: relative;
+    perspective: 1000px; /* لتأثير 3D */
+}
+
+.movie-card:hover,
+.movie-card:focus-within {
+    transform: translateY(-12px); /* حركة لأعلى أوضح */
+    box-shadow: 0 20px 50px var(--shadow-color-accent), 0 0 25px var(--accent-color); /* ظل أكبر وأعمق مع توهج */
+    border-color: var(--accent-color); /* إطار بلون الـ accent */
+}
+
+.movie-card img {
+    width: 100%;
+    height: 380px; /* ارتفاع أكبر للصور */
+    object-fit: cover;
+    display: block;
+    border-radius: 15px 15px 0 0;
+    transition: transform var(--transition-speed) ease;
+}
+
+.movie-card:hover img {
+    transform: scale(1.05); /* تكبير أوضح للصورة عند الهوفر */
+}
+
+.movie-card h3 {
+    padding: 1rem 1.2rem; /* بادينج أكبر */
+    font-size: 1.4rem; /* حجم خط أكبر */
+    color: var(--text-white);
+    text-align: center;
+    font-family: 'Amiri', serif;
+    background: linear-gradient(to top, var(--bg-medium), rgba(26, 26, 26, 0.8)); /* تدرج خلفية العنوان */
+    position: relative;
+    z-index: 1;
+}
+
+/* Movie Details */
+.movie-details-section {
+    background: var(--bg-medium);
+    padding: 3.5rem; /* بادينج أكبر */
+    border-radius: 20px; /* حواف أكثر دائرية */
+    box-shadow: 0 15px 50px var(--shadow-color-dark); /* ظل أغمق وأقوى */
+    max-width: 1100px; /* عرض أكبر للقسم */
+    margin: 5rem auto; /* مسافة أكبر من الأعلى */
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+}
+
+.movie-details-section p {
+    font-size: 1.15rem; /* حجم نص أكبر قليلاً */
+    margin-bottom: 1.2rem;
+}
+
+.movie-details-section p strong {
+    color: var(--text-white);
+}
+
+.movie-details-section h2.movie-title {
+    margin-bottom: 1.8rem;
+    font-size: 3.5rem; /* حجم أكبر لعنوان الفيلم */
+    color: var(--accent-color);
+    text-align: center;
+    text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 5px var(--accent-color);
+}
+
+.movie-player-container {
+    position: relative;
+    padding-bottom: 56.25%; /* نسبة أبعاد 16:9 للفيديو */
+    height: 0;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+    border-radius: 18px; /* حواف دائرية أكثر */
+    box-shadow: 0 10px 35px var(--shadow-color-dark); /* ظل أغمق للمشغل */
+    border: 2px solid var(--border-color); /* حدود حول المشغل */
+}
+
+.movie-player-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Back Button */
+.btn-back {
+    background-color: transparent;
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 2.5rem; /* مسافة أكبر */
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.15rem; /* حجم خط أكبر قليلاً */
+    padding: 0.9rem 1.8rem;
+    border-radius: 30px;
+    transition: all var(--transition-speed) ease;
+}
+
+.btn-back:hover,
+.btn-back:focus {
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-dark)); /* تدرج عند الهوفر */
+    color: var(--text-white);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px var(--shadow-color-accent);
+    outline: none;
+}
+
+/* Footer */
+.main-footer {
+    background: var(--bg-medium);
+    color: #999; /* لون نص أهدأ للفوتير */
+    padding: 3rem 0; /* بادينج أكبر */
+    margin-top: auto;
+    text-align: center;
+    font-size: 1rem;
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -4px 15px var(--shadow-color-dark); /* ظل من الأسفل */
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.social-links a {
+    color: #999;
+    font-size: 1.8rem; /* حجم أيقونات أكبر */
+    margin: 0 1rem;
+    transition: color var(--transition-speed), transform var(--transition-speed);
+}
+
+.social-links a:hover,
+.social-links a:focus {
+    color: var(--accent-color);
+    transform: translateY(-3px) scale(1.1); /* حركة بسيطة عند الهوفر */
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 0 10px;
+    }
+
+    .main-header .container {
+        justify-content: space-between;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    .logo a {
+        font-size: 2.2rem; /* حجم أصغر للوجو على الموبايل */
+        gap: 5px;
+    }
+    .logo-icon {
+        font-size: 1.8rem;
+    }
+
+    .main-nav {
+        right: -100%;
+        width: 260px; /* عرض القائمة الجانبية أصغر قليلاً */
+        padding-top: 70px; /* ضبط البادينج العلوي */
+        box-shadow: -5px 0 25px var(--shadow-color-dark);
+    }
+    .main-nav.active {
+        right: 0;
+    }
+
+    .main-nav ul {
+        gap: 0.8rem;
+        margin: 0 1rem;
+    }
+
+    .main-nav ul li a {
+        padding: 8px 0;
+        font-size: 1rem;
+    }
+
+    .menu-toggle {
+        display: flex;
+        margin-right: 10px;
+    }
+
+    /* Hero Section adjustments for mobile */
+    .hero-section {
+        min-height: 380px;
+        padding: 1.5rem 1rem;
+    }
+    .hero-content {
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.6); /* خلفية أغمق للمحتوى على الموبايل */
+    }
+    .hero-content h2 {
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+    .hero-content p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .hero-content .btn {
+        font-size: 1rem;
+        padding: 0.8rem 1.8rem;
+    }
+
+    /* Movies Grid adjustments for mobile */
+    .section-title {
+        font-size: 2rem;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+    }
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* 2 عمود أصغر على الموبايل */
+        gap: 1rem;
+        padding-bottom: 40px;
+    }
+    .movie-card {
+        border-radius: 10px;
+        box-shadow: 0 5px 15px var(--shadow-color-dark);
+    }
+    .movie-card img {
+        height: 200px; /* ارتفاع مناسب لبوسترات الأفلام على الموبايل */
+        border-radius: 10px 10px 0 0;
+    }
+    .movie-card h3 {
+        font-size: 1rem;
+        padding: 0.6rem;
+    }
+
+    /* Movie Details adjustments for mobile */
+    .movie-details-section {
+        padding: 1.5rem;
+        margin: 2.5rem auto;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px var(--shadow-color-dark);
+    }
+    .movie-details-section h2.movie-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    .movie-details-section p {
+        font-size: 0.9rem;
+    }
+    .movie-player-container {
+        padding-bottom: 75%; /* نسبة أبعاد 4:3 للفيديو على الموبايل ممكن تكون أفضل */
+        border-radius: 10px;
+        box-shadow: 0 5px 20px var(--shadow-color-dark);
+    }
+
+    /* Back Button for mobile */
+    .btn-back {
+        font-size: 0.9rem;
+        padding: 0.7rem 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Footer adjustments for mobile */
+    .main-footer {
+        padding: 2rem 0;
+    }
+    .social-links a {
+        font-size: 1.4rem;
+        margin: 0 0.6rem;
+    }
+}
