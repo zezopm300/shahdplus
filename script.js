@@ -22,6 +22,18 @@ document.addEventListener('DOMContentLoaded', () => {
             "stars": ["ممثل 1", "ممثل 2"],
             "embed_url": "https://player.vimeo.com/video/1091276533"
         },
+
+
+                 "id": 4,
+            "title": "اغنيه ابراهيم ",
+            "description": "اغانيه رومانسيه ",
+            "poster": "https://zaaednews.com/wp-content/uploads/2024/09/%D8%AD%D9%81%D9%84-%D8%A3%D9%86%D8%BA%D8%A7%D9%85-%D9%84%D9%8A%D8%A7%D9%84%D9%8A-%D9%85%D8%B5%D8%B1-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D9%81-%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A-%D8%A7%D9%84%D9%83%D8%A8%D9%8A%D8%B1.jpg0_.jpg",
+            "year": "2024",
+            "category": "رومانسي",
+            "director": "انغام",
+            "stars": ["ممثل 1", "ممثل 2"],
+            "embed_url": "https://player.vimeo.com/video/1092496325"
+        },
         {
             id: 2,
             title: "فيلم الرومانسية الجميل",
