@@ -137,23 +137,22 @@
   <a href="privacy.html" style="color: #ccc; text-decoration: underline;">سياسة الخصوصية</a>
 </footer>
 
-    <script>
-  let adInterval = 5 * 60 * 1000; // 5 دقائق
+<script>
+  // إعلان يظهر أول تفاعل داخل مشغل الفيديو ثم كل 5 دقائق
   let lastAdTime = 0;
+  const adInterval = 5 * 60 * 1000; // 5 دقائق
 
   function showAd() {
-    const adScript = document.createElement('script');
-    adScript.src = "//pl26877671.profitableratecpm.com/7f/c2/f9/7fc2f9f201b6ffe0f5e3ed54d7bae23c.js";
-    adScript.async = true;
-    document.body.appendChild(adScript);
+    const script = document.createElement('script');
+    script.src = "//pl26877671.profitableratecpm.com/7f/c2/f9/7fc2f9f201b6ffe0f5e3ed54d7bae23c.js";
+    script.async = true;
+    document.body.appendChild(script);
     lastAdTime = Date.now();
   }
 
   document.addEventListener('click', function (e) {
     const player = document.querySelector('.movie-player-container');
-    if (!player) return;
-
-    if (player.contains(e.target)) {
+    if (player && player.contains(e.target)) {
       const now = Date.now();
       if (now - lastAdTime > adInterval) {
         showAd();
@@ -162,7 +161,3 @@
   });
 </script>
 
-
-    <script src="script.js" defer></script>
-</body>
-</html>
