@@ -137,6 +137,32 @@
   <a href="privacy.html" style="color: #ccc; text-decoration: underline;">سياسة الخصوصية</a>
 </footer>
 
+    <script>
+  let adInterval = 5 * 60 * 1000; // 5 دقائق
+  let lastAdTime = 0;
+
+  function showAd() {
+    const adScript = document.createElement('script');
+    adScript.src = "//pl26877671.profitableratecpm.com/7f/c2/f9/7fc2f9f201b6ffe0f5e3ed54d7bae23c.js";
+    adScript.async = true;
+    document.body.appendChild(adScript);
+    lastAdTime = Date.now();
+  }
+
+  document.addEventListener('click', function (e) {
+    const player = document.querySelector('.movie-player-container');
+    if (!player) return;
+
+    if (player.contains(e.target)) {
+      const now = Date.now();
+      if (now - lastAdTime > adInterval) {
+        showAd();
+      }
+    }
+  });
+</script>
+
+
     <script src="script.js" defer></script>
 </body>
 </html>
