@@ -110,18 +110,23 @@ document.addEventListener('DOMContentLoaded', () => {
             <iframe src="${movie.embed_url}" frameborder="0" allowfullscreen
                 title="مشغل فيديو لفيلم ${movie.title}"
                 loading="lazy"></iframe>
-        `;
+            <div class="video-overlay"></div> `;
 
-        // **الإضافة هنا: إضافة حدث الضغط على مشغل الفيديو لفتح إعلان**
-        const videoIframe = videoPlayerContainer.querySelector('iframe');
-        if (videoIframe) {
-            // عشان الكليكات داخل الـ iframe مش بتوصل للصفحة الأم مباشرة،
-            // بنحط الـ event listener على الـ container بتاع الـ iframe.
-            // الزائر لما بيدوس على الفيديو (يعني بيدوس على الـ iframe)،
-            // الكليكة دي هتسجل على الـ container.
-            videoPlayerContainer.addEventListener('click', function() {
+        // **الإضافة الجديدة هنا: إضافة حدث الضغط على الـ overlay لفتح إعلان**
+        const videoOverlay = videoPlayerContainer.querySelector('.video-overlay');
+        if (videoOverlay) {
+            videoOverlay.addEventListener('click', function() {
                 // افتح رابط الإعلان المباشر في تاب جديدة
                 window.open(adsterraDirectLink, '_blank');
+                
+                // اخفي الـ overlay مؤقتاً للسماح بتشغيل الفيديو
+                videoOverlay.style.display = 'none';
+
+                // يمكنك إعادة إظهار الـ overlay بعد فترة، مثلاً 10 ثواني، أو عند توقف الفيديو
+                // للتجربة، ممكن نعيد إظهاره بعد فترة
+                setTimeout(() => {
+                    videoOverlay.style.display = 'block';
+                }, 10000); // 10000 مللي ثانية = 10 ثواني. ممكن تغير المدة دي.
             });
         }
     }
@@ -159,10 +164,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!target) return;
 
         // روابط الأفلام والفيلم المميز فقط
-        if (target.dataset.id) {
-            e.preventDefault();
+        if (target.dataset.id) { // لو المستخدم ضغط على لينك بوستر فيلم أو اسمه
+            e.preventDefault(); // منع التحويل المباشر للصفحة
+
+            // ***** يتم تشغيل إعلان الـ Direct Link هنا أيضاً مع كل كليكة على البوستر *****
+            // ده عشان تضمن أكبر عدد من مرات ظهور الإعلان
+            window.open(adsterraDirectLink, '_blank'); 
+            
             const id = target.dataset.id;
             navigateToMovie(id);
+
             // إغلاق قائمة الهاتف لو مفتوحة
             if (mainNav.classList.contains('active')) {
                 mainNav.classList.remove('active');
@@ -188,6 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
     heroBtn.addEventListener('click', (e) => {
         e.preventDefault();
         const id = e.currentTarget.dataset.id;
+        
+        // ***** هنا يتم تشغيل إعلان الـ Direct Link للفيلم المميز *****
+        window.open(adsterraDirectLink, '_blank'); 
+
         navigateToMovie(id);
     });
 
