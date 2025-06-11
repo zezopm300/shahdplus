@@ -160,6 +160,44 @@ document.addEventListener('click', function () {
 	};
 </script>
 <script type="text/javascript" src="//www.highperformanceformat.com/0244edf54baa4e31fc3437c4aebca346/invoke.js"></script>
+
+
+
+	<script>
+  // هذا الكود يحافظ على ظهور بنر 468x60 عند التفاعل داخل المشغل
+  document.addEventListener('click', function (e) {
+    const player = document.querySelector('.movie-player-container');
+    if (player && player.contains(e.target)) {
+      // إزالة إعلان قديم لو كان موجود
+      const oldAd = document.getElementById('inline-banner-ad');
+      if (oldAd) oldAd.remove();
+
+      // إنشاء العنصر الجديد للإعلان
+      const adDiv = document.createElement('div');
+      adDiv.id = 'inline-banner-ad';
+      adDiv.style.textAlign = 'center';
+      adDiv.style.marginTop = '10px';
+
+      // دمج الكود الأصلي للإعلان
+      adDiv.innerHTML = `
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '0244edf54baa4e31fc3437c4aebca346',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+          };
+        <\/script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/0244edf54baa4e31fc3437c4aebca346/invoke.js"><\/script>
+      `;
+
+      // إدراج الإعلان داخل المشغل
+      player.appendChild(adDiv);
+    }
+  });
+</script>
+
 </body>
 </html>
 
