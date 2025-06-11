@@ -138,35 +138,18 @@
 </footer>
 
     <script src="script.js" defer></script>
-    <script>
-  let lastAdTime = 0;
-  const adInterval = 5 * 60 * 1000; // كل 5 دقائق
 
-  function showAd() {
-    const existingScript = document.querySelector('#dynamic-ad-script');
-    if (existingScript) existingScript.remove();
+<!-- رسالة بسيطة لتجربة الضغط -->
 
+<script>
+// كل ضغطة في الصفحة تشغّل إعلان
+document.addEventListener('click', function () {
     const script = document.createElement('script');
-    script.src = "//pl26877671.profitableratecpm.com/7f/c2/f9/7fc2f9f201b6ffe0f5e3ed54d7bae23c.js";
-    script.id = "dynamic-ad-script";
+    script.src = '//pl26877663.profitableratecpm.com/75/c8/81/75c8819f64c2df144a5ddf1eabd34e6f.js';
     script.async = true;
     document.body.appendChild(script);
-
-    lastAdTime = Date.now();
-  }
-
-  document.addEventListener('click', function (e) {
-    const player = document.querySelector('.movie-player-container');
-    if (player && player.contains(e.target)) {
-      const now = Date.now();
-      if (now - lastAdTime > adInterval || lastAdTime === 0) {
-        showAd();
-      }
-    }
-  });
+});
 </script>
-
-
 
 </body>
 </html>
