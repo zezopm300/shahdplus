@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومانسي",
             "director": "انغام",
             "stars": ["ممثل 1", "ممثل 2"],
-            "embed_url": "https://player.vimeo.com/video/1091276533"
+            "embed_url": "https://vide0.net/e/na5jfr0q2q7q"
         },
 
          {
