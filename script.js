@@ -25,6 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url":"https://streamtape.com/e/RDmxvQlvZVcxOq/no"
 
         },
+          {
+            "id": 2,
+            "title":"A Nice Girl Like You 2020",
+            "description":"القصّة : لوسي نيل عازفة كمان، تكتشف إدمان صديقها جيف لمشاهدة المواد الإباحية، فتتشاجر معه، وينفصلا، وتصاب بصدمة عصبية، وتقرر على هذا الاساس تعزيز نفسيها، واكتشاف ذاتها خاصة بعد علاقة الصداقة التي تنشأ بينها وبين جرانت، حيث يساعدها على التغلب على مشاكلها السابقة مع صديقها جيف",
+            "poster":"https://i.ibb.co/k2jg6TSd/photo-5852675531542218174-y.jpg",
+            "year": "2020",
+            "category": "النوع: رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ", 
+            "director":"Chris Riedell",
+            "stars": ["Lucy Hale"],
+            "embed_url":"https://streamtape.com/e/gopa76QkOpuqM8P/"
+        },
 
      
         // أضف المزيد من الأفلام هنا...
