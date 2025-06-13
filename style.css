@@ -254,7 +254,7 @@ h1, h2, .section-title {
     display: inline-flex;
     align-items: center;
     gap: 1rem;
-    box-shadow: 0 8px 25px var(--shadow-color-accent); /* ظل أكبر بلون الـ accent */
+    box-shadow: 0 8px 25px var(--shadow-color-light); /* ظل أكبر بلون الـ accent - تم التغيير من shadow-color-accent لكي يعمل */
     transition: all var(--transition-speed) ease; /* انتقال لكل الخصائص */
     position: relative;
     overflow: hidden; /* لإخفاء تأثير الإضاءة */
@@ -274,7 +274,7 @@ h1, h2, .section-title {
 
 .hero-content .btn:hover {
     transform: translateY(-5px); /* حركة لأعلى أوضح */
-    box-shadow: 0 15px 40px var(--shadow-color-accent);
+    box-shadow: 0 15px 40px var(--shadow-color-light); /* ظل أكبر وأعمق - تم التغيير من shadow-color-accent لكي يعمل */
 }
 
 .hero-content .btn:hover::before {
@@ -321,26 +321,35 @@ h1, h2, .section-title {
     border: 1px solid var(--border-color); /* حدود خفيفة */
     position: relative;
     perspective: 1000px; /* لتأثير 3D */
+    display: flex; /* لجعل المحتوى داخل الكارد مرنًا */
+    flex-direction: column; /* لترتيب الصورة والعنوان عموديا */
 }
 
 .movie-card:hover,
 .movie-card:focus-within {
     transform: translateY(-12px); /* حركة لأعلى أوضح */
-    box-shadow: 0 20px 50px var(--shadow-color-accent), 0 0 25px var(--accent-color); /* ظل أكبر وأعمق مع توهج */
+    box-shadow: 0 20px 50px var(--shadow-color-light), 0 0 25px var(--accent-color); /* ظل أكبر وأعمق مع توهج - تم التغيير */
     border-color: var(--accent-color); /* إطار بلون الـ accent */
 }
 
+/* التعديلات هنا للصور داخل movie-card */
 .movie-card img {
     width: 100%;
-    height: 380px; /* ارتفاع أكبر للصور */
-    object-fit: cover;
+    /* تم إزالة height: 380px; لتمكين الارتفاع التلقائي */
+    object-fit: contain; /* سيضمن عرض الصورة بالكامل داخل الحاوية */
     display: block;
+    /* أضف لون خلفية هنا في حالة وجود مسافات فارغة بسبب object-fit: contain */
+    background-color: var(--bg-dark); /* أو لون var(--bg-medium); ليطابق خلفية البطاقة */
     border-radius: 15px 15px 0 0;
     transition: transform var(--transition-speed) ease;
+    /* يمكن تحديد min-height إذا كنت ترغب في أن تكون جميع البطاقات على الأقل بارتفاع معين */
+    min-height: 250px; /* مثال: يضمن أن تكون الصورة بحد أدنى هذا الارتفاع حتى لو كانت أبعادها الأصلية صغيرة */
+    max-height: 400px; /* يمكن تحديد أقصى ارتفاع لمنع الصور الطويلة جدًا من أن تصبح عملاقة */
 }
 
+
 .movie-card:hover img {
-    transform: scale(1.05); /* تكبير أوضح للصورة عند الهوفر */
+    transform: scale(1.02); /* تكبير أخف للصورة عند الهوفر، لأنها الآن "تحتوي" على الارتفاع */
 }
 
 .movie-card h3 {
@@ -352,6 +361,11 @@ h1, h2, .section-title {
     background: linear-gradient(to top, var(--bg-medium), rgba(26, 26, 26, 0.8)); /* تدرج خلفية العنوان */
     position: relative;
     z-index: 1;
+    flex-grow: 1; /* لجعل العنوان يملأ المساحة المتبقية إذا كان هناك نص طويل */
+    display: flex; /* لمركزة النص عمودياً إذا لزم الأمر */
+    align-items: center; /* لمركزة النص عمودياً */
+    justify-content: center; /* لمركزة النص أفقياً */
+    min-height: 70px; /* لمنع العنوان من أن يصبح قصيرًا جدًا إذا كان سطر واحد */
 }
 
 /* Movie Details */
@@ -425,7 +439,7 @@ h1, h2, .section-title {
     background: linear-gradient(45deg, var(--accent-color), var(--accent-dark)); /* تدرج عند الهوفر */
     color: var(--text-white);
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px var(--shadow-color-accent);
+    box-shadow: 0 6px 20px var(--shadow-color-light); /* تم التغيير */
     outline: none;
 }
 
@@ -546,12 +560,17 @@ h1, h2, .section-title {
         box-shadow: 0 5px 15px var(--shadow-color-dark);
     }
     .movie-card img {
-        height: 200px; /* ارتفاع مناسب لبوسترات الأفلام على الموبايل */
+        /* تم إزالة height: 200px; هنا أيضاً */
+        object-fit: contain;
+        /* يمكن ضبط min-height/max-height للموبايل بشكل منفصل إذا لزم الأمر */
+        min-height: 180px;
+        max-height: 250px;
         border-radius: 10px 10px 0 0;
     }
     .movie-card h3 {
         font-size: 1rem;
         padding: 0.6rem;
+        min-height: 60px; /* ضبط min-height للعنوان في الموبايل */
     }
 
     /* Movie Details adjustments for mobile */
@@ -603,5 +622,3 @@ h1, h2, .section-title {
     background-color: rgba(0, 0, 0, 0); /* شفاف تماما */
     cursor: pointer; /* لإظهار مؤشر اليد عند المرور فوقه */
 }
-
-
