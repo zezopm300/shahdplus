@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "id": 1,
             "title": "فيلم  Purity Falls 2019",
             "description":" القصّة : بعد مرور عام على فقدان زوجها، تستقر نيكول مع أبنائها الصغار جاستين وجيسون في بيوريتي فولز. في البداية، يتم الترحيب بالعائلة بحفاوة. وخاصة جارتهم الغنية كورتني التي تبدو لطيفة للغاية، حيث توفر لجيسون بسرعة وظائف غريبة لدعم دخل الأسرة. ومع ذلك، سرعان ما تلاحظ نيكول أن هناك شيئًا ما ليس على ما يرام، حيث يغادر ابنها ويعود في ساعات متأخرة بشكل مريب. عندما تغرق جارتها الشابة في حمام السباحة، تبدأ الأمور في أن تصبح خطيرة. هناك شيء غير صحيح مع كورتني الودودة للغاية، والتي يبدو أنها تسيطر على ابنها.",
-            "poster": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScUJHXoLRwS9ONTQS_Qx5o_py3_UaNh-WAxQ&s",
+            "poster": "https://tinyurl.com/mrynn3au",
             "year": "2019",
             "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
             "director":"Trevor Stines",
@@ -23,18 +23,41 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url":"https://vide0.net/e/smo8970rj5gh"
         },
 
-       
-       {
+
+         {
             "id": 2,
             "title":"Stealing Beauty 1996",
             "description":"القصة:تبدأ (لوسي) رحلة البحث عن الذات بعد رحيل والدتها، وتقرر السفر إلى إيطاليا، مهدَّدة بظلال الماضي، باحثة عن الحب والحقيقة واتصال أعمق مع نفسها لتكتشف عوالم جديدة، وتلتقي بأشخاص مُلهمين، وتخوض تجارب مليئة بالتحديات",
-            "poster":"https://resizing.flixster.com/SaLBiV2BktZkv2MxaXezKuPSe7g=/fit-in/705x460/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p17868_v_h9_aa.jpg",
+            "poster":"https://i.ibb.co/yn2B9PpV/494785189-1283064033189064-7490674901999804399-n.jpg",
             "year": "1996",
             "category": " دراما/ رومنسي/ تشويق",
             "director":"Bernardo Bertolucci",
             "stars": ["Lucy Harmon"],
             "embed_url":"https://streamtape.com/e/RDmxvQlvZVcxOq/no"
 
+        },
+
+         {
+            "id": 4,
+            "title": "اغنيه ابراهيم ",
+            "description": "اغانيه رومانسيه ",
+            "poster": "https://zaaednews.com/wp-content/uploads/2024/09/%D8%AD%D9%81%D9%84-%D8%A3%D9%86%D8%BA%D8%A7%D9%85-%D9%84%D9%8A%D8%A7%D9%84%D9%8A-%D9%85%D8%B5%D8%B1-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D9%81-%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A-%D8%A7%D9%84%D9%83%D8%A8%D9%8A%D8%B1.jpg0_.jpg",
+            "year": "2024",
+            "category": "رومانسي",
+            "director": "انغام",
+            "stars": ["ممثل 1", "ممثل 2"],
+            "embed_url": "https://player.vimeo.com/video/1092496325"
+        },
+        {
+            id: 10,
+            title: "فيلم الرومانسية الجميل",
+            description: "قصة حب تجمع بين قلبين في عالم من الأحلام...",
+            poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpWBUvlAsW3NU71x8E50XXYAVul3xuvPs9CQ&s",
+            director: "ليلى يوسف",
+            stars: ["نور عمرو", "مريم خالد"],
+            category: "رومانسية",
+            year: 2022,
+            embed_url: "https://player.vimeo.com/video/1091294042"
         },
         // أضف المزيد من الأفلام هنا...
     ];
@@ -233,4 +256,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     init();
-});
+});;
