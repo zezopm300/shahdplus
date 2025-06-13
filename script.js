@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": " دراما/ رومنسي/ تشويق",
             "director":"Bernardo Bertolucci",
             "stars": ["Lucy Harmon"],
-            "embed_url":"https://vide0.net/d/uyd5hyezzpdc"
+            "embed_url":"https://vide0.net/e/uyd5hyezzpdc"
+
         },
         // أضف المزيد من الأفلام هنا...
     ];
