@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title":"Stealing Beauty 1996",
             "description":"القصة:تبدأ (لوسي) رحلة البحث عن الذات بعد رحيل والدتها، وتقرر السفر إلى إيطاليا، مهدَّدة بظلال الماضي، باحثة عن الحب والحقيقة واتصال أعمق مع نفسها لتكتشف عوالم جديدة، وتلتقي بأشخاص مُلهمين، وتخوض تجارب مليئة بالتحديات",
             "poster":"https://resizing.flixster.com/SaLBiV2BktZkv2MxaXezKuPSe7g=/fit-in/705x460/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p17868_v_h9_aa.jpg",
-            "year": "1996"
+            "year": "1996",
             "category": " دراما/ رومنسي/ تشويق",
             "director":"Bernardo Bertolucci",
             "stars": ["Lucy Harmon"],
