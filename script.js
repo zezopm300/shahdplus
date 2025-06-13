@@ -48,6 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url":"https://streamtape.com/e/v9KrVBVJVAIYjA/"
         },
 
+   {
+            "id": 4,
+            "title":"Moms Friends  2024",
+            "description":" القصّة : فيلم رومانسي جديد حول الرغبات الجنسية والعلاقات الحميمة الساخنة بين الشباب والعلاقات الجنسية التي يمارسونها",
+            "poster":"https://i.postimg.cc/dtHdLMNL/photo-5838945848241800438-y.jpg",
+            "year": "2024",
+            "category": "النوع: رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ", 
+            "director":"Yoo Je‑won.",
+            "stars": ["Choi Seung‑hyo "],
+            "embed_url":"https://streamtape.com/e/7kbx78RR8VtAXD1/"
+        },
+
 
      
         // أضف المزيد من الأفلام هنا...
