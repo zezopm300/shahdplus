@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
             "director":"Trevor Stines",
             "stars": ["Kristanna Loken"],
-            "embed_url":"https://vide0.net/d/smo8970rj5gh"
+            "embed_url":"https://vide0.net/e/smo8970rj5gh"
         },
 
          {
