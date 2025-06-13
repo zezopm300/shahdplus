@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "id": 1,
             "title":"Stealing Beauty 1996",
             "description":"القصة:تبدأ (لوسي) رحلة البحث عن الذات بعد رحيل والدتها، وتقرر السفر إلى إيطاليا، مهدَّدة بظلال الماضي، باحثة عن الحب والحقيقة واتصال أعمق مع نفسها لتكتشف عوالم جديدة، وتلتقي بأشخاص مُلهمين، وتخوض تجارب مليئة بالتحديات",
-            "poster":"https://i.ibb.co/yn2B9PpV/494785189-1283064033189064-7490674901999804399-n.jpg",
+            "poster":"https://i.ibb.co/HjkzTLp/images.jpg", 
             "year": "1996",
             "category": " دراما/ رومنسي/ تشويق",
             "director":"Bernardo Bertolucci",
