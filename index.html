@@ -2,17 +2,18 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>شاهد بلس - التجربة السينمائية الفاخرة</title>
     <meta name="description" content="استمتع بتجربة مشاهدة أفلام ومسلسلات عربية وعالمية لا مثيل لها. جودة عالية، تصميم فاخر، وتفاعل مبهر." />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css" />
+    
+    <link rel="stylesheet" href="styles.css" /> 
+    <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-   <link rel="stylesheet" href="./style.css">
     <script type="text/javascript">
         var _acic = {"dal": [9494324, 9494325]}; // تأكد إن الأرقام دي هي نفسها اللي Adsterra مديها لك
         (function(){
@@ -21,7 +22,7 @@
             var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(l, s);
         })();
     </script>
-    </head>
+</head>
 <body>
     <header class="main-header">
         <div class="container">
@@ -36,7 +37,7 @@
             <nav class="main-nav" role="navigation" aria-label="القائمة الرئيسية">
                 <ul>
                     <li><a href="#" data-action="home" class="nav-link active">الرئيسية <i class="fas fa-home"></i></a></li>
-                    <li><a href="#" class="nav-link">الأفلام <i class="fas fa-film"></i></a></li>
+                    <li><a href="#movies-list" class="nav-link">الأفلام <i class="fas fa-film"></i></a></li>
                     <li><a href="#" class="nav-link">المسلسلات <i class="fas fa-tv"></i></a></li>
                     <li><a href="#" class="nav-link">تواصل معنا <i class="fas fa-envelope"></i></a></li>
                 </ul>
@@ -52,7 +53,7 @@
         </div>
     </section>
 
-    <main class="container">
+    <main class="container"> 
         <section id="movies-list" aria-label="قائمة الأفلام">
             <h2 class="section-title">أفلام ومسلسلات مختارة</h2>
             <div class="movie-grid" role="list">
@@ -62,7 +63,7 @@
         <section id="movie-details" class="movie-details-section" aria-label="تفاصيل الفيلم" style="display:none;">
             <button id="back-to-home" class="btn btn-back" aria-label="العودة للرئيسية"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
             <h2 class="movie-title"></h2>
-            <div class="movie-player-container" tabindex="0" aria-label="مشغل الفيديو" style="position: relative;">
+            <div class="movie-player-container" tabindex="0" aria-label="مشغل الفيديو">
                 </div>
             <p class="movie-description"></p>
             <div class="movie-info-grid">
@@ -73,8 +74,6 @@
                 <p><strong>التقييم:</strong> <span class="rating"><i class="fas fa-star"></i> 8.5/10</span></p>
                 <p><strong>المدة:</strong> <span class="duration">2 ساعة 15 دقيقة</span></p>
             </div>
-            <button class="btn btn-watch-trailer"><i class="fas fa-film"></i> مشاهدة التريلر</button>
-
             <div style="text-align: center; margin-top: 20px;">
                 <script type="text/javascript">
                     atOptions = {
@@ -87,7 +86,7 @@
                 </script>
                 <script type="text/javascript" src="//www.highperformanceformat.com/0244edf54baa4e31fc3437c4aebca346/invoke.js"></script>
             </div>
-            </section>
+        </section>
     </main>
 
     <footer class="main-footer" role="contentinfo">
@@ -99,11 +98,8 @@
                 <a href="#" aria-label="إنستغرام"><i class="fab fa-instagram"></i></a>
                 <a href="#" aria-label="يوتيوب"><i class="fab fa-youtube"></i></a>
             </div>
+            <p class="privacy-policy-link"><a href="privacy.html" style="color: #ccc; text-decoration: underline;">سياسة الخصوصية</a></p>
         </div>
-    </footer>
-    <footer style="text-align: center; padding: 20px; background-color: #111; color: #ccc;">
-        <p>&copy; 2025 ShahdPlus - جميع الحقوق محفوظة</p>
-        <a href="privacy.html" style="color: #ccc; text-decoration: underline;">سياسة الخصوصية</a>
     </footer>
 
     <script src="script.js" defer></script>
