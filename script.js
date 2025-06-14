@@ -60,6 +60,17 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url":"https://streamtape.com/e/7kbx78RR8VtAXD1/"
         },
 
+ {
+            "id": 5,
+            "title":"Blood Pay 2025",
+            "description":"فيلم إثارة خيال علمي  تدور أحداثه في الجنة، وهي مدينة خيالية يسيطر فيها الذكاء الاصطناعي على القوى العاملة ويقود العزلة الاجتماعية.",
+            "poster":"https://i.ibb.co/v6d90zjN/photo-5789391950099630510-w.jpg",
+            "year": "2025",
+            "category": "رعب / خيال علمي☯️ .. ", 
+            "director":"Brace Beltempo.",
+            "stars": ["Gianluca Busani "],
+            "embed_url":"https://streamtape.com/e/7b7rqXvk7DT8Ap/"
+        },
 
      
         // أضف المزيد من الأفلام هنا...
