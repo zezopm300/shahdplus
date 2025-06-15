@@ -73,6 +73,18 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
      
+ {
+            "id": 6,
+            "title":"Twisters",
+            "description":"القصة: مع اشتداد موسم العواصف، تتصادم مسارات مطارد العواصف السابق كيت كوبر ونجم وسائل التواصل الاجتماعي المتهور تايلر أوينز عندما يتم إطلاق العنان لظواهر مرعبة لم يسبق لها مثيل. يجد الزوجان وفرقهما المتنافسة أنفسهم مباشرة في مسارات أنظمة العواصف المتعددة المتقاربة فوق وسط أوكلاهوما في معركة حياتهم.",
+            "poster":"https://i.ibb.co/Zp7BnYS3/Untitled.jpg",
+            "year": "2024",
+            "category": "اثارة/ اكشن ☯️ .. ", 
+            "director":"Lee Isaac Chung",
+            "stars": ["Daisy Edgar-Jones "],
+            "embed_url":"https://streamtape.com/e/KXbbjrOM6Lc080L/"
+        },
+
         // أضف المزيد من الأفلام هنا...
     ];
 
