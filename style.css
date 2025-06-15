@@ -317,12 +317,15 @@ h1, h2, .section-title {
     overflow: hidden;
     box-shadow: 0 10px 30px var(--shadow-color-dark); /* ظل أنعم وأعمق */
     cursor: pointer;
+    /* تحديد الخصائص للانتقال لزيادة الكفاءة */
     transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, border var(--transition-speed) ease;
     border: 1px solid var(--border-color); /* حدود خفيفة */
     position: relative;
     perspective: 1000px; /* لتأثير 3D */
     display: flex; /* لجعل المحتوى داخل الكارد مرنًا */
     flex-direction: column; /* لترتيب الصورة والعنوان عموديا */
+    /* Add will-change for performance optimization */
+    will-change: transform, box-shadow, border-color; 
 }
 
 .movie-card:hover,
@@ -335,16 +338,13 @@ h1, h2, .section-title {
 /* التعديلات هنا للصور داخل movie-card */
 .movie-card img {
     width: 100%;
-    /* تم إزالة height: 380px; لتمكين الارتفاع التلقائي */
     object-fit: contain; /* سيضمن عرض الصورة بالكامل داخل الحاوية */
     display: block;
-    /* أضف لون خلفية هنا في حالة وجود مسافات فارغة بسبب object-fit: contain */
     background-color: var(--bg-dark); /* أو لون var(--bg-medium); ليطابق خلفية البطاقة */
     border-radius: 15px 15px 0 0;
     transition: transform var(--transition-speed) ease;
-    /* يمكن تحديد min-height إذا كنت ترغب في أن تكون جميع البطاقات على الأقل بارتفاع معين */
-    min-height: 250px; /* مثال: يضمن أن تكون الصورة بحد أدنى هذا الارتفاع حتى لو كانت أبعادها الأصلية صغيرة */
-    max-height: 400px; /* يمكن تحديد أقصى ارتفاع لمنع الصور الطويلة جدًا من أن تصبح عملاقة */
+    min-height: 250px; 
+    max-height: 400px; 
 }
 
 
@@ -378,6 +378,8 @@ h1, h2, .section-title {
     margin: 5rem auto; /* مسافة أكبر من الأعلى */
     color: var(--text-light);
     border: 1px solid var(--border-color);
+    /* Add will-change for performance optimization */
+    will-change: transform, opacity;
 }
 
 .movie-details-section p {
@@ -432,6 +434,8 @@ h1, h2, .section-title {
     padding: 0.9rem 1.8rem;
     border-radius: 30px;
     transition: all var(--transition-speed) ease;
+    /* Add will-change for performance optimization */
+    will-change: transform, background-color, color, box-shadow;
 }
 
 .btn-back:hover,
@@ -508,6 +512,7 @@ h1, h2, .section-title {
     }
 
     .main-nav ul {
+        flex-direction: column; /* جعل القائمة عمودية في الموبايل */
         gap: 0.8rem;
         margin: 0 1rem;
     }
@@ -515,6 +520,7 @@ h1, h2, .section-title {
     .main-nav ul li a {
         padding: 8px 0;
         font-size: 1rem;
+        display: block; /* لجعل الروابط تملأ العرض وتكون أسهل للنقر */
     }
 
     .menu-toggle {
@@ -560,9 +566,7 @@ h1, h2, .section-title {
         box-shadow: 0 5px 15px var(--shadow-color-dark);
     }
     .movie-card img {
-        /* تم إزالة height: 200px; هنا أيضاً */
         object-fit: contain;
-        /* يمكن ضبط min-height/max-height للموبايل بشكل منفصل إذا لزم الأمر */
         min-height: 180px;
         max-height: 250px;
         border-radius: 10px 10px 0 0;
@@ -609,7 +613,6 @@ h1, h2, .section-title {
         margin: 0 0.6rem;
     }
 }
-
 
 /* الأنماط الخاصة بالـ Overlay للفيديو */
 .video-overlay {
