@@ -65,7 +65,7 @@ h1, h2, .section-title {
     padding: 1.2rem 0; /* زيادة البادينج */
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1000; /* قيمة عالية لضمان ظهوره فوق المحتوى */
     border-bottom: 1px solid var(--border-color); /* خط فاصل خفيف */
     backdrop-filter: blur(10px); /* تأثير ضبابي أقوى وأكثر فخامة */
     -webkit-backdrop-filter: blur(10px); /* لدعم Safari */
@@ -155,7 +155,7 @@ h1, h2, .section-title {
     height: 25px;
     justify-content: space-between;
     position: relative;
-    z-index: 1002;
+    z-index: 1002; /* أعلى من الـ header لتلقي النقرات */
 }
 
 .menu-toggle .bar {
@@ -176,7 +176,6 @@ h1, h2, .section-title {
 .menu-toggle.active .bar:nth-child(3) {
     transform: translateY(-10px) rotate(-45deg);
 }
-
 
 /* Hero Section */
 .hero-section {
@@ -335,10 +334,9 @@ h1, h2, .section-title {
 /* التعديلات هنا للصور داخل movie-card */
 .movie-card img {
     width: 100%;
-    /* تم إزالة height: 380px; لتمكين الارتفاع التلقائي */
-    object-fit: contain; /* سيضمن عرض الصورة بالكامل داخل الحاوية */
+    /* تم إزالة height: 380px; لتمكين الارتفاع التلقائي - هذا جيد جداً */
+    object-fit: cover; /* **تغيير من contain إلى cover:** هذا يضمن أن الصورة تملأ المساحة المتاحة للحفاظ على الاتساق في ارتفاع البطاقات. قد يتم قص بعض أجزاء الصورة إذا كانت أبعادها مختلفة جدًا عن الحاوية. */
     display: block;
-    /* أضف لون خلفية هنا في حالة وجود مسافات فارغة بسبب object-fit: contain */
     background-color: var(--bg-dark); /* أو لون var(--bg-medium); ليطابق خلفية البطاقة */
     border-radius: 15px 15px 0 0;
     transition: transform var(--transition-speed) ease;
@@ -378,6 +376,8 @@ h1, h2, .section-title {
     margin: 5rem auto; /* مسافة أكبر من الأعلى */
     color: var(--text-light);
     border: 1px solid var(--border-color);
+    position: relative; /* مهم لضمان أن الأطفال ذوي الموضع المطلق لا يخرجون عن نطاقه */
+    z-index: 5; /* للتأكد من أنها تظهر فوق أي إعلانات قد تكون في الخلفية */
 }
 
 .movie-details-section p {
@@ -397,15 +397,20 @@ h1, h2, .section-title {
     text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 5px var(--accent-color);
 }
 
+/* **MAIN FIX FOR VIDEO OVERLAP ON MOBILE** */
 .movie-player-container {
     position: relative;
-    padding-bottom: 56.25%; /* نسبة أبعاد 16:9 للفيديو */
+    /* padding-bottom: 56.25%; /* نسبة أبعاد 16:9 للفيديو */
+    /* **Adjusted padding-bottom for better mobile responsiveness:** */
+    /* This value gives more vertical space, reducing overlap with bottom elements or ads on some devices. */
+    padding-bottom: min(56.25%, 65vw); /* Use 16:9 aspect ratio or 65% of viewport width, whichever is smaller. */
     height: 0;
     overflow: hidden;
     margin-bottom: 2.5rem;
     border-radius: 18px; /* حواف دائرية أكثر */
     box-shadow: 0 10px 35px var(--shadow-color-dark); /* ظل أغمق للمشغل */
     border: 2px solid var(--border-color); /* حدود حول المشغل */
+    background-color: #000; /* خلفية سوداء للمشغل في حالة تحميل الفيديو */
 }
 
 .movie-player-container iframe {
@@ -415,6 +420,11 @@ h1, h2, .section-title {
     width: 100%;
     height: 100%;
     border: none;
+    /* Ensure iframe is not affected by external margins/padding and renders correctly */
+    display: block; 
+    /* **Ensure iframe fits within its parent without extra spacing** */
+    margin: 0;
+    padding: 0;
 }
 
 /* Back Button */
@@ -498,23 +508,46 @@ h1, h2, .section-title {
     }
 
     .main-nav {
-        right: -100%;
-        width: 260px; /* عرض القائمة الجانبية أصغر قليلاً */
-        padding-top: 70px; /* ضبط البادينج العلوي */
+        /* Add fixed positioning for off-canvas menu */
+        position: fixed; /* Ensures it stays in place when active */
+        top: 0;
+        right: -260px; /* Hidden off-screen */
+        height: 100vh; /* Full viewport height */
+        background: var(--bg-medium); /* Background for the sidebar */
+        padding-top: 80px; /* Space for header above */
         box-shadow: -5px 0 25px var(--shadow-color-dark);
+        transition: right 0.3s ease-in-out; /* Smooth slide transition */
+        z-index: 999; /* Below toggle, above content */
+        display: flex; /* Flex container for vertical list */
+        flex-direction: column;
+        align-items: flex-start; /* Align items to the right in RTL */
     }
+
     .main-nav.active {
-        right: 0;
+        right: 0; /* Slide in */
     }
 
     .main-nav ul {
+        flex-direction: column; /* Stack menu items vertically */
+        width: 100%; /* Make list take full width of nav */
+        align-items: flex-start; /* Align text to the start */
         gap: 0.8rem;
-        margin: 0 1rem;
+        padding: 0 1.5rem; /* Add horizontal padding for list items */
+    }
+
+    .main-nav ul li {
+        width: 100%; /* Make each list item take full width */
     }
 
     .main-nav ul li a {
-        padding: 8px 0;
-        font-size: 1rem;
+        padding: 12px 0; /* Increased padding for tap target */
+        font-size: 1.1rem;
+        display: block; /* Make link fill the whole list item width */
+        border-bottom: 1px solid var(--border-color); /* Visual separator */
+    }
+    
+    .main-nav ul li:last-child a {
+        border-bottom: none; /* No border for the last item */
     }
 
     .menu-toggle {
@@ -560,11 +593,9 @@ h1, h2, .section-title {
         box-shadow: 0 5px 15px var(--shadow-color-dark);
     }
     .movie-card img {
-        /* تم إزالة height: 200px; هنا أيضاً */
-        object-fit: contain;
-        /* يمكن ضبط min-height/max-height للموبايل بشكل منفصل إذا لزم الأمر */
+        object-fit: cover; /* **تغيير من contain إلى cover هنا أيضاً** */
         min-height: 180px;
-        max-height: 250px;
+        max-height: 250px; /* Ensuring consistent height on mobile */
         border-radius: 10px 10px 0 0;
     }
     .movie-card h3 {
@@ -588,7 +619,8 @@ h1, h2, .section-title {
         font-size: 0.9rem;
     }
     .movie-player-container {
-        padding-bottom: 75%; /* نسبة أبعاد 4:3 للفيديو على الموبايل ممكن تكون أفضل */
+        /* Keep the responsive aspect ratio */
+        padding-bottom: min(56.25%, 70vw); /* Adjusted to give a bit more height on smaller screens relative to width */
         border-radius: 10px;
         box-shadow: 0 5px 20px var(--shadow-color-dark);
     }
@@ -607,6 +639,10 @@ h1, h2, .section-title {
     .social-links a {
         font-size: 1.4rem;
         margin: 0 0.6rem;
+    }
+    .footer-content {
+        flex-direction: column; /* Stack footer content vertically */
+        text-align: center;
     }
 }
 
