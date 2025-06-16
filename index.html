@@ -3,128 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>شاهد بلس - أفلام ومسلسلات عربية وعالمية</title>
-    <meta name="description" content="شاهد بلس يقدم لك أحدث الأفلام والمسلسلات العربية والعالمية بجودة عالية. استمتع بمشاهدة ممتعة وتجربة فريدة.">
-    
+    <meta name="description" content="شاهد أحدث الأفلام والمسلسلات العربية والعالمية بجودة عالية. استمتع بتجربة مشاهدة فريدة مع شاهد بلس.">
+    <meta name="keywords" content="أفلام, مسلسلات, شاهد, مشاهدة أفلام, أفلام عربية, أفلام أجنبية, مسلسلات عربية, مسلسلات أجنبية, بث مباشر, جودة عالية">
     <meta property="og:title" content="شاهد بلس - أفلام ومسلسلات عربية وعالمية">
-    <meta property="og:description" content="شاهد بلس يقدم لك أحدث الأفلام والمسلسلات العربية والعالمية بجودة عالية. استمتع بمشاهدة ممتعة وتجربة فريدة.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"> <meta property="og:url" content="https://yourwebsite.com"> <meta property="og:type" content="website">
+    <meta property="og:description" content="شاهد أحدث الأفلام والمسلسلات العربية والعالمية بجودة عالية. استمتع بتجربة مشاهدة فريدة مع شاهد بلس.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGufDB8fHx8fA%3D%3D">
+    <meta property="og:url" content="YOUR_WEBSITE_URL_HERE">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="YOUR_WEBSITE_URL_HERE">
 
-    <link rel="canonical" href="https://yourwebsite.com"> <link rel="icon" href="/favicon.ico" type="image/x-icon"> <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+    <title>شاهد بلس - أفلام ومسلسلات عربية وعالمية</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="main-header">
         <div class="container">
-            <div class="logo">
-                <a href="#" id="home-link" aria-label="الرئيسية - شاهد بلس">
-                    <i class="fas fa-play-circle logo-icon" aria-hidden="true"></i>
-                    شاهد<span class="plus">بلس</span>
-                </a>
-            </div>
-            <nav class="main-nav" aria-label="قائمة التنقل الرئيسية">
-                <ul role="menubar">
-                    <li role="none"><a href="#hero-section" class="nav-link active" role="menuitem"><i class="fas fa-home"></i>الرئيسية</a></li>
-                    <li role="none"><a href="#movies-list" class="nav-link" role="menuitem"><i class="fas fa-film"></i>أفلام</a></li>
-                    <li role="none"><a href="#contact" class="nav-link" role="menuitem"><i class="fas fa-envelope"></i>اتصل بنا</a></li>
+            <a href="#" class="logo" id="home-logo-link" aria-label="شاهد بلس - الصفحة الرئيسية">شاهد بلس</a>
+            <button class="menu-toggle" id="menu-toggle" aria-label="فتح قائمة التنقل">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="main-nav" id="main-nav" aria-label="القائمة الرئيسية">
+                <ul>
+                    <li><a href="#" data-section="home">الرئيسية</a></li>
+                    <li><a href="#movie-grid-section" data-section="movies">الأفلام</a></li>
+                    <li><a href="#contact" data-section="contact">اتصل بنا</a></li>
                 </ul>
             </nav>
-            <button class="menu-toggle" id="mobile-menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="تبديل قائمة الجوال">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
         </div>
     </header>
 
+    <div class="container ad-banner-container" style="margin-top: 20px; text-align: center;">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '0244edf54baa4e31fc3437c4aebca346',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/0244edf54baa4e31fc3437c4aebca346/invoke.js"></script>
+    </div>
     <main>
-        <section id="hero-section" class="hero-section" role="banner">
-            <div class="container hero-content">
-                <h2 id="hero-title">أفلام ومسلسلات عربية وعالمية</h2>
-                <p id="hero-description">شاهد أحدث الإنتاجات السينمائية والتلفزيونية بجودة عالية وتجربة لا مثيل لها.</p>
-                <a href="#" class="btn" id="hero-btn" role="button">
-                    <i class="fas fa-play-circle" aria-hidden="true"></i> شاهد الآن
-                </a>
-            </div>
-            <div class="ad-container ad-banner-hero" id="ad-banner-hero">
-                </div>
-        </section>
-
-        <section id="movies-list" class="movies-list-section container" aria-labelledby="movies-list-title">
-            <h2 class="section-title" id="movies-list-title">أحدث الأفلام المضافة</h2>
-            <div class="movie-grid" role="list">
-                </div>
-            <div class="ad-container ad-banner-below-grid" id="ad-banner-below-grid">
-                </div>
-            <div class="pagination-controls" id="pagination-controls" role="navigation" aria-label="تصفح الصفحات">
-                <button class="pagination-btn prev" id="prev-page-btn" aria-label="الصفحة السابقة"><i class="fas fa-chevron-right"></i> السابق</button>
-                <span class="page-info" id="page-info" aria-live="polite">صفحة 1 من 1</span>
-                <button class="pagination-btn next" id="next-page-btn" aria-label="الصفحة التالية">التالي <i class="fas fa-chevron-left"></i></button>
+        <section class="hero" id="hero-section">
+            <div class="container">
+                <h1>شاهد أحدث الأفلام والمسلسلات</h1>
+                <p>استمتع بتجربة مشاهدة لا مثيل لها مع مكتبة ضخمة من المحتوى المتجدد باستمرار.</p>
+                <a href="#movie-grid-section" class="btn" id="watch-now-btn">شاهد الآن</a>
             </div>
         </section>
 
-        <section id="movie-details" class="movie-details-section container" style="display: none;" aria-labelledby="movie-details-title">
-            <button id="back-to-home-btn" class="btn-back" role="button" aria-label="العودة إلى الصفحة الرئيسية">
-                <i class="fas fa-arrow-right" aria-hidden="true"></i> العودة للأفلام
-            </button>
-            <h2 class="movie-title" id="movie-details-title">عنوان الفيلم</h2>
-            <div class="movie-player-container">
-                <div class="video-overlay" id="video-overlay" style="display: block;"></div>
-            </div>
-            <div class="ad-container ad-banner-below-player" id="ad-banner-below-player">
-                </div>
-
-            <div class="movie-info-grid">
-                <div class="info-box">
-                    <h4>المخرج:</h4>
-                    <p class="director">اسم المخرج</p>
-                </div>
-                <div class="info-box">
-                    <h4>بطولة:</h4>
-                    <p class="stars">أسماء النجوم</p>
-                </div>
-                <div class="info-box">
-                    <h4>النوع:</h4>
-                    <p class="category">النوع</p>
-                </div>
-                <div class="info-box">
-                    <h4>السنة:</h4>
-                    <p class="year">السنة</p>
+        <section class="movie-grid-section" id="movie-grid-section">
+            <div class="container">
+                <h2>أحدث الأفلام</h2>
+                <div class="movie-grid" id="movie-grid" role="list">
+                    </div>
+                <div class="pagination">
+                    <button id="prev-page-btn" class="btn-page" aria-label="الصفحة السابقة">السابق</button>
+                    <button id="next-page-btn" class="btn-page" aria-label="الصفحة التالية">التالي</button>
                 </div>
             </div>
-            <p class="movie-description">وصف الفيلم</p>
+        </section>
 
-            <h3 class="section-title" style="margin-top: 3rem; font-size: 2.2rem;">أفلام قد تعجبك</h3>
-            <div class="movie-grid" id="suggested-movie-grid" role="list">
+        <section class="movie-details-section" id="movie-details-section" style="display: none;">
+            <div class="container">
+                <button class="back-btn" id="back-to-home-btn" aria-label="العودة للصفحة الرئيسية">العودة للرئيسية</button>
+                <h1 id="details-movie-title"></h1>
+                
+                <div class="video-player-container">
+                    <iframe id="movie-player" allowfullscreen frameborder="0" loading="lazy"></iframe>
+                    <div class="video-overlay" id="video-overlay" aria-label="انقر للمشاهدة وفتح إعلان داعم">
+                        <p id="video-overlay-text">اضغط للمشاهدة والإعلانات الداعمة</p>
+                    </div>
                 </div>
-            <div class="ad-container ad-banner-below-suggested" id="ad-banner-below-suggested">
+
+                <div class="movie-info">
+                    <p><strong>الوصف:</strong> <span id="details-movie-description"></span></p>
+                    <p><strong>المخرج:</strong> <span id="details-movie-director"></span></p>
+                    <p><strong>النجوم:</strong> <span id="details-movie-stars"></span></p>
+                    <p><strong>النوع:</strong> <span id="details-movie-genre"></span></p>
+                    <p><strong>سنة الإنتاج:</strong> <span id="details-movie-year"></span></p>
+                    <p><strong>التقييم:</strong> <span id="details-movie-rating"></span></p>
                 </div>
+            </div>
+            <section class="suggested-movies-section" id="suggested-movies-section" style="display: none;">
+                <div class="container">
+                    <h2>أفلام قد تعجبك</h2>
+                    <div class="movie-grid" id="suggested-movie-grid" role="list">
+                        </div>
+                </div>
+            </section>
         </section>
     </main>
 
     <footer class="main-footer">
-        <div class="container footer-content">
-            <p>&copy; <span id="current-year"></span> شاهد بلس. جميع الحقوق محفوظة.</p>
-            <div class="social-links">
-                <a href="https://t.me/yourtelegramchannel" target="_blank" rel="noopener noreferrer" aria-label="قناتنا على تليجرام">
-                    <i class="fab fa-telegram-plane"></i> تيليجرام
-                </a>
-                <a href="https://facebook.com/yourpage" target="_blank" rel="noopener noreferrer" aria-label="صفحتنا على فيسبوك">
-                    <i class="fab fa-facebook"></i> فيسبوك
-                </a>
-            </div>
+        <div class="container">
+            <p>© 2025 شاهد بلس. جميع الحقوق محفوظة.</p>
         </div>
     </footer>
 
+    <script async="async" data-cfasync="false" src="//pl26877662.profitableratecpm.com/e106700efc7a857b58a04a6abb040494/invoke.js"></script>
+    <div id="container-e106700efc7a857b58a04a6abb040494"></div>
     <script src="script.js"></script>
-    <script>
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-    </script>
-    
-    </body>
+</body>
 </html>
