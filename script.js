@@ -46,10 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const originalOgUrl = originalOgUrlMeta ? originalOgUrlMeta.content : window.location.href;
 
     // Global flags/variables - علامات/متغيرات عامة
-    // تم إزالة adsterraOpenedOnFirstClick لأنه لم يعد يستخدم لفتح الرابط
+    let adsterraOpenedOnFirstClick = false; // علامة لتتبع ما إذا كان رابط Adsterra قد فُتح عند النقرة الأولى
     let scrollTimeoutId = null; // لتتبع تأخيرات التمرير ومنع تداخلها
 
-    // بيانات الأفلام (هنا يمكنك إضافة المزيد من الأفلام يدويًا)
+    // بيانات الأفلام (هنا يمكنك إضافة المزيد من الأفلام)
     let moviesData = [
         {
             "id": 1,
@@ -123,13 +123,18 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/",
             "rating": "7.8"
         },
-        // هنا يمكنك إضافة المزيد من الأفلام يدويًا
+        // كرر الأفلام هنا لكي نصل لعدد كافٍ لاختبار التقسيم لصفحات (مثلا 60 فيلم)
+        // للتجربة: نقوم بتكرار الأفلام لزيادة عددها لاختبار Pagination
     ];
-    // تم حذف حلقة تكرار الأفلام هنا بناءً على طلبك
+    // زيادة عدد الأفلام لأغراض الاختبار
+    for (let i = 0; i < 6; i++) { // يكرر 6 مرات، مما يؤدي إلى 42 فيلمًا إجماليًا (6 أصلية + 6*6 مكررة)
+        moviesData = moviesData.concat(moviesData.map(movie => ({ ...movie, id: moviesData.length + movie.id })));
+    }
+
 
     // Pagination state variables - متغيرات حالة تقسيم الصفحات
     let currentPage = 1;
-    const moviesPerPage = 40; // عدد الأفلام المعروضة في كل صفحة (يمكنك تعديله حسب عدد الأفلام لديك الآن)
+    const moviesPerPage = 40; // عدد الأفلام المعروضة في كل صفحة
     let totalPages; // سيتم حسابه ديناميكيًا في init
 
     // Helper Function: Update Meta Tags for SEO and Social Sharing - دالة مساعدة: تحديث علامات الميتا لتحسين محركات البحث والمشاركة الاجتماعية
@@ -285,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // تجنب دفع حالات متطابقة لمنع إدخالات السجل غير الضرورية
         if (window.location.search !== `?${queryString}` || (!queryString && window.location.search !== '')) {
-            history.pushState({ movieId: id, pageNumber: page }, null, newUrl);
+             history.pushState({ movieId: id, pageNumber: page }, null, newUrl);
         }
     }
 
@@ -376,7 +381,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // تعيين معالج النقر مباشرةً لتجنب المستمعين المتعددين
             heroBtn.onclick = (event) => {
                 event.preventDefault();
-                // **تمت إزالة: window.open(adsterraDirectLink, '_blank');**
+                if (!adsterraOpenedOnFirstClick) {
+                    window.open(adsterraDirectLink, '_blank');
+                    adsterraOpenedOnFirstClick = true;
+                }
                 displayMovieDetails(heroBtn.dataset.id);
                 updateUrl(heroBtn.dataset.id);
                 scrollToElement(movieDetailsSection, 750); // تأخير أطول لتحميل iframe
@@ -452,11 +460,14 @@ document.addEventListener('DOMContentLoaded', () => {
             movieDescriptionElem.textContent = movie.description;
 
             // عرض مشغل الفيديو - Display video player
+            // **ملاحظة مهمة لمشكلة "Client blocked!":**
+            // هذه الرسالة تظهر للمستخدم إذا فشل الفيديو في التحميل.
+            // سمات sandbox تم تعديلها لتكون أكثر مرونة مع مشغلات الفيديو.
             moviePlayerContainer.innerHTML = `
                 <p class="video-loading-message">جارٍ تحميل الفيديو... قد تحتاج لتعطيل مانع الإعلانات إذا لم يظهر الفيديو.</p>
                 <iframe src="${movie.embed_url}" frameborder="0" allowfullscreen 
                     allow="autoplay; encrypted-media; fullscreen; picture-in-picture" 
-                    referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
+                    referrerpolicy="origin" sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
                 </iframe>
             `;
 
@@ -505,7 +516,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (movieLink && movieLink.dataset.id) {
             e.preventDefault(); // منع سلوك الرابط الافتراضي
 
-            // **تمت إزالة: الكود الخاص بفتح Adsterra هنا**
+            // فتح رابط Adsterra أولاً إذا لم يتم فتحه من قبل في هذه الجلسة
+            if (!adsterraOpenedOnFirstClick) {
+                window.open(adsterraDirectLink, '_blank');
+                adsterraOpenedOnFirstClick = true; // تعيين العلامة إلى صحيح بعد الفتح
+            }
 
             const movieId = movieLink.dataset.id;
             displayMovieDetails(movieId);
@@ -540,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             displayMovies();
             updateUrl(); // إعادة URL للصفحة الرئيسية
-            // تم إزالة: adsterraOpenedOnFirstClick = false; (لم تعد تستخدم)
+            adsterraOpenedOnFirstClick = false; // إعادة تعيين علامة Adsterra عند العودة للصفحة الرئيسية
             scrollToElement(document.body); // التمرير إلى أعلى الصفحة الرئيسية
         });
     }
@@ -562,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // الافتراضي إلى الصفحة الرئيسية إذا لم يكن هناك معرف أو صفحة محددة في URL
             currentPage = 1; // التأكد من إعادة تعيين الصفحة الحالية إلى 1 للصفحة الرئيسية
             displayMovies();
-            // تم إزالة: adsterraOpenedOnFirstClick = false; (لم تعد تستخدم)
+            adsterraOpenedOnFirstClick = false; // إعادة تعيين علامة Adsterra في الصفحة الرئيسية
             scrollToElement(document.body);
         }
     });
