@@ -28,13 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const movieDescriptionElem = movieDetailsSection ? movieDetailsSection.querySelector('.movie-description') : null;
     const moviePlayerContainer = movieDetailsSection ? movieDetailsSection.querySelector('.movie-player-container') : null;
 
-    // Create video overlay element once globally
-    const videoOverlay = document.createElement('div');
-    videoOverlay.classList.add('video-overlay'); // Add class for styling
-
-    // الرابط المباشر بتاع Adsterra اللي انت بعته
-    const adsterraDirectLink = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
-
     // Store original meta and title for home page (SEO Improvement)
     const originalTitle = document.title;
     const originalDescriptionMeta = document.querySelector('meta[name="description"]');
@@ -48,12 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const originalOgUrlMeta = document.querySelector('meta[property="og:url"]');
     const originalOgUrl = originalOgUrlMeta ? originalOgUrlMeta.content : window.location.href;
 
-    // Global flags/variables
-    let adsterraOpenedThisSession = false; // Flag to track if Adsterra link has been opened in the current session
-
     // Movie Data (IMPORTANT: Update embed_url for reliable playback)
+    // ****** الرجاء التأكد من استبدال روابط embed_url بروابط صالحة تسمح بالتضمين ******
+    // ****** استخدم روابط YouTube Embed أو Vimeo Embed التي تحصل عليها مباشرة من هذه المنصات ******
+    // ****** الروابط مثل streamtape.com أو vide0.net غالبًا ما تكون مشكلة وتسبب الإعلانات المزعجة أو الحظر ******
     let moviesData = [
-        {
+           {
             "id": 1,
             "title": "فيلم Purity Falls 2019",
             "description": " القصّة : بعد مرور عام على فقدان زوجها، تستقر نيكول مع أبنائها الصغار جاستين وجيسون في بيوريتي فولز. في البداية، يتم الترحيب بالعائلة بحفاوة. وخاصة جارتهم الغنية كورتني التي تبدو لطيفة للغاية، حيث توفر لجيسون بسرعة وظائف غريبة لدعم دخل الأسرة. ومع ذلك، سرعان ما تلاحظ نيكول أن هناك شيئًا ما ليس على ما يرام، حيث يغادر ابنها ويعود في ساعات متأخرة بشكل مريب. عندما تغرق جارتها الشابة في حمام السباحة، تبدأ الأمور في أن تصبح خطيرة. هناك شيء غير صحيح مع كورتني الودودة للغاية، والتي يبدو أنها تسيطر على ابنها.",
@@ -383,10 +376,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             heroBtn.onclick = (event) => {
                 event.preventDefault();
-                if (!adsterraOpenedThisSession) {
-                    window.open(adsterraDirectLink, '_blank');
-                    adsterraOpenedThisSession = true;
-                }
                 displayMovieDetails(heroBtn.dataset.id);
                 updateUrl(heroBtn.dataset.id);
                 scrollToElement(movieDetailsSection, 750);
@@ -455,35 +444,13 @@ document.addEventListener('DOMContentLoaded', () => {
             movieDescriptionElem.textContent = movie.description;
 
             // Display video player
+            // تم إزالة الغطاء الشفاف. سيعرض الفيديو مباشرة.
             moviePlayerContainer.innerHTML = `
                 <iframe src="${movie.embed_url}" frameborder="0" allowfullscreen
                     allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
                     referrerpolicy="origin" sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
                 </iframe>
             `;
-            // If you still face issues after changing embed URLs, try removing `sandbox` for testing.
-            // Be aware of the security implications.
-            /*
-            moviePlayerContainer.innerHTML = `
-                <iframe src="${movie.embed_url}" frameborder="0" allowfullscreen
-                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-                    referrerpolicy="origin">
-                </iframe>
-            `;
-            */
-
-            // Add the transparent video overlay for Adsterra
-            // Ensure any previous overlay is removed before appending
-            if (videoOverlay.parentNode === moviePlayerContainer) {
-                moviePlayerContainer.removeChild(videoOverlay);
-            }
-            moviePlayerContainer.appendChild(videoOverlay);
-
-            // Set the onclick handler for the overlay
-            videoOverlay.onclick = (e) => {
-                e.stopPropagation(); // Prevent event bubbling to parent elements
-                window.open(adsterraDirectLink, '_blank');
-            };
 
             displaySuggestedMovies(movie.id);
 
@@ -512,14 +479,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (movieLink && movieLink.dataset.id) {
             e.preventDefault();
-
-            // Open Adsterra link only on the first click in the session
-            // The overlay will handle subsequent clicks on the video player
-            if (!adsterraOpenedThisSession) {
-                window.open(adsterraDirectLink, '_blank');
-                adsterraOpenedThisSession = true;
-            }
-
             const movieId = movieLink.dataset.id;
             displayMovieDetails(movieId);
             updateUrl(movieId);
@@ -556,7 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             displayMovies();
             updateUrl();
-            adsterraOpenedThisSession = false; // Reset flag when returning to home
+            // لا حاجة لإعادة تعيين adsterraOpenedThisSession لأننا لم نعد نستخدمه بنفس الطريقة
             scrollToElement(document.body);
         });
     }
@@ -577,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             currentPage = 1;
             displayMovies();
-            adsterraOpenedThisSession = false; // Reset flag when going back to home via browser history
+            // لا حاجة لإعادة تعيين adsterraOpenedThisSession هنا
             scrollToElement(document.body);
         }
     });
