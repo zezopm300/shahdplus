@@ -46,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const originalOgUrl = originalOgUrlMeta ? originalOgUrlMeta.content : window.location.href;
 
     // Global flags/variables - علامات/متغيرات عامة
-    let adsterraOpenedOnFirstClick = false; // علامة لتتبع ما إذا كان رابط Adsterra قد فُتح عند النقرة الأولى
     let scrollTimeoutId = null; // لتتبع تأخيرات التمرير ومنع تداخلها
 
     // بيانات الأفلام (هنا يمكنك إضافة المزيد من الأفلام يدويًا)
@@ -309,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nextPageBtn.classList.add('pagination-btn', 'next');
         nextPageBtn.disabled = currentPage === totalPages;
         paginationControls.appendChild(nextPageBtn);
-        
+
         // إخفاءPagination إذا كان هناك صفحة واحدة فقط
         if (totalPages <= 1) {
             paginationControls.style.display = 'none';
@@ -340,7 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
         movieDetailsSection.style.display = 'none';
         moviesListSection.style.display = 'block';
         heroSection.style.display = 'block';
-        
+
         movieGrid.innerHTML = ''; // مسح بطاقات الأفلام السابقة
 
         // حساب مؤشر البداية والنهاية للصفحة الحالية
@@ -382,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // تعيين معالج النقر مباشرةً لتجنب المستمعين المتعددين
             heroBtn.onclick = (event) => {
                 event.preventDefault();
-                // هنا لا نفتح Adsterra مباشرة عند النقر على HeroBtn، بل نعتمد على الـ overlay
+                // هنا لا نفتح Adsterra مباشرة عند النقر على HeroBtn، بل نعتمد على الـ overlay في صفحة تفاصيل الفيلم
                 displayMovieDetails(heroBtn.dataset.id);
                 updateUrl(heroBtn.dataset.id);
                 scrollToElement(movieDetailsSection, 750); // تأخير أطول لتحميل iframe
@@ -457,21 +456,12 @@ document.addEventListener('DOMContentLoaded', () => {
             movieYearElem.textContent = `السنة: ${movie.year}`;
             movieDescriptionElem.textContent = movie.description;
 
-            // **تنظيف حاوية الفيديو أولاً**
+            // **1. تنظيف حاوية الفيديو أولاً**
             moviePlayerContainer.innerHTML = '';
 
-            // **إنشاء رسالة التنبيه و إضافتها**
-            const loadingMessage = document.createElement('p');
-            loadingMessage.classList.add('video-loading-message');
-            loadingMessage.innerHTML = 'جارٍ تحميل الفيديو... <br> <b>إذا لم يظهر الفيديو، قد تحتاج لتعطيل مانع الإعلانات أو تجربة متصفح آخر.</b>';
-            moviePlayerContainer.appendChild(loadingMessage);
-
-            // **إنشاء الغطاء الشفاف (Video Overlay) لفتح إعلانات Adsterra**
-            const videoOverlay = document.createElement('div');
-            videoOverlay.classList.add('video-overlay'); // إضافة الكلاس لتطبيق الأنماط
-            moviePlayerContainer.appendChild(videoOverlay);
-
-            // **إنشاء الـ iframe ولكن لا نضيف src الآن**
+            // **2. إنشاء الـ iframe مبدئيًا وإضافته إلى DOM**
+            // يتم إنشاء الـ iframe أولاً وإضافته إلى DOM، لكن بدون src في البداية.
+            // هذا يسمح له بالتواجد في الصفحة قبل النقر على زر التشغيل الوهمي.
             const movieIframe = document.createElement('iframe');
             movieIframe.frameBorder = "0";
             movieIframe.allowFullscreen = true;
@@ -479,23 +469,45 @@ document.addEventListener('DOMContentLoaded', () => {
             movieIframe.referrerPolicy = "origin";
             // سمات sandbox أكثر مرونة لتقليل مشاكل الحظر
             movieIframe.sandbox = "allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-downloads";
+            // لا يتم تعيين movieIframe.src هنا
+            moviePlayerContainer.appendChild(movieIframe); // أضف الـ iframe إلى DOM الآن
 
-            // **إضافة Event Listener للغطاء لفتح الرابط المباشر وتشغيل الفيديو**
-            let overlayClicked = false;
+            // **3. إنشاء رسالة التنبيه (توضع فوق الـ iframe ولكن تحت الغطاء)**
+            const loadingMessage = document.createElement('p');
+            loadingMessage.classList.add('video-loading-message');
+            loadingMessage.innerHTML = 'اضغط للتشغيل وإلغاء حظر الفيديو <br> <b>(قد تحتاج لتعطيل مانع الإعلانات).</b>';
+            moviePlayerContainer.appendChild(loadingMessage);
+
+            // **4. إنشاء الغطاء الشفاف (Video Overlay) مع زر التشغيل الوهمي**
+            const videoOverlay = document.createElement('div');
+            videoOverlay.classList.add('video-overlay');
+            // إضافة أيقونة تشغيل بسيطة (يمكنك استبدالها بـ SVG أو صورة)
+            videoOverlay.innerHTML = '<div class="play-button-icon">▶</div>'; // سنحتاج لـ CSS لهذه الأيقونة
+            moviePlayerContainer.appendChild(videoOverlay);
+
+            // **5. إضافة Event Listener للغطاء لفتح الرابط المباشر وتشغيل الفيديو**
+            let overlayClicked = false; // flag to ensure Adsterra opens only once per video session
             videoOverlay.addEventListener('click', (e) => {
-                e.stopPropagation(); // منع الحدث من الانتقال إلى معالجات النقر الأصلية
-                
+                e.stopPropagation(); // منع الحدث من الانتقال لأي عنصر خلفه
+                e.preventDefault(); // منع سلوك النقرة الافتراضي
+
                 if (!overlayClicked) {
                     window.open(adsterraDirectLink, '_blank'); // فتح الرابط في علامة تبويب جديدة
                     overlayClicked = true;
-                    videoOverlay.style.display = 'none'; // إخفاء الغطاء بعد النقرة الأولى
-                    loadingMessage.style.display = 'none'; // إخفاء رسالة التحميل
 
-                    // **تأخير بسيط قبل تعيين src للـ iframe للسماح بالإعلان بالتحميل**
-                    setTimeout(() => {
-                        movieIframe.src = movie.embed_url; // الآن قم بتحميل الـ iframe
-                        moviePlayerContainer.appendChild(movieIframe); // إضافة الـ iframe بعد تعيين src
-                    }, 300); // تأخير 300 مللي ثانية
+                    // تعيين src للـ iframe الآن للسماح له بالتحميل والتشغيل
+                    // هذه هي الخطوة التي تحفز تحميل الفيديو
+                    movieIframe.src = movie.embed_url;
+
+                    // إخفاء الغطاء ورسالة التحميل بعد التفاعل
+                    // يتم إخفاء الـ overlay بحيث يتمكن المستخدم من التفاعل مباشرة مع الـ iframe الحقيقي بعد ذلك
+                    videoOverlay.style.display = 'none';
+                    loadingMessage.style.display = 'none';
+
+                    // محاولة التركيز على الـ iframe بعد التحميل (قد لا تعمل دائمًا)
+                    // setTimeout(() => {
+                    //     movieIframe.focus();
+                    // }, 500);
                 }
             });
 
@@ -565,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             displayMovies();
             updateUrl(); // إعادة URL للصفحة الرئيسية
-            adsterraOpenedOnFirstClick = false; // إعادة تعيين علامة Adsterra عند العودة للصفحة الرئيسية
+            // لا حاجة لـ adsterraOpenedOnFirstClick هنا، لأننا نتحكم بالفتح عبر overlay
             scrollToElement(document.body); // التمرير إلى أعلى الصفحة الرئيسية
         });
     }
@@ -587,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // الافتراضي إلى الصفحة الرئيسية إذا لم يكن هناك معرف أو صفحة محددة في URL
             currentPage = 1; // التأكد من إعادة تعيين الصفحة الحالية إلى 1 للصفحة الرئيسية
             displayMovies();
-            adsterraOpenedOnFirstClick = false; // إعادة تعيين علامة Adsterra في الصفحة الرئيسية
+            // لا حاجة لـ adsterraOpenedOnFirstClick هنا
             scrollToElement(document.body);
         }
     });
