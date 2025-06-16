@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. DOM Element References
+    // 1. DOM Element References - مراجع عناصر DOM
     const movieGrid = document.querySelector('.movie-grid');
     const movieDetailsSection = document.getElementById('movie-details');
     const heroSection = document.getElementById('hero-section');
@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainNav = document.querySelector('.main-nav');
     const navLinks = document.querySelectorAll('.main-nav .nav-link');
 
-    // Pagination related DOM element
+    // Pagination related DOM element - عنصر DOM الخاص بالتقسيم لصفحات
     const paginationControls = document.getElementById('pagination-controls');
 
-    // NEW: Suggested Movies DOM element
+    // NEW: Suggested Movies DOM element - عنصر DOM للأفلام المقترحة
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
 
-    // Movie Details Specific elements
+    // Movie Details Specific elements - عناصر خاصة بتفاصيل الفيلم
     const movieTitleElem = movieDetailsSection.querySelector('.movie-title');
     const movieDirectorElem = movieDetailsSection.querySelector('.director');
     const movieStarsElem = movieDetailsSection.querySelector('.stars');
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // الرابط المباشر بتاع Adsterra اللي انت بعته
     const adsterraDirectLink = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
-    // Store original meta and title for home page (SEO Improvement)
+    // Store original meta and title for home page (SEO Improvement) - تخزين بيانات الميتا الأصلية للصفحة الرئيسية لتحسين SEO
     const originalTitle = document.title;
     const originalDescriptionMeta = document.querySelector('meta[name="description"]');
     const originalDescription = originalDescriptionMeta ? originalDescriptionMeta.content : '';
@@ -41,9 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const originalOgUrlMeta = document.querySelector('meta[property="og:url"]');
     const originalOgUrl = originalOgUrlMeta ? originalOgUrlMeta.content : window.location.href;
 
-    // **NEW: Flag to track if Adsterra link has been opened on first click**
+    // **NEW: Flag to track if Adsterra link has been opened on first click** - علامة لتتبع ما إذا كان رابط Adsterra قد فُتح عند النقرة الأولى
     let adsterraOpenedOnFirstClick = false;
 
+    // بيانات الأفلام (هنا يمكنك إضافة المزيد من الأفلام)
     let moviesData = [
         {
             "id": 1,
@@ -118,19 +119,15 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.8"
         },
         // كرر الأفلام هنا لكي نصل لعدد كافٍ لاختبار التقسيم لصفحات (مثلا 60 فيلم)
-        // هذا مجرد مثال، يمكنك إضافة أفلام حقيقية أو تكرار الموجودة للاختبار
-        /*   { "id": 7, "title": "فيلم Purity Falls 2019 (مكرر 1)", "description": "وصف مكرر", "poster": "https://tinyurl.com/mrynn3au", "year": "2019", "category": "رومنسي", "director": "مخرج", "stars": ["نجم"], "embed_url": "https://vide0.net/e/smo8970rj5gh", "rating": "6.0" },
-        { "id": 8, "title": "فيلم Purity Falls 2019 (مكرر 2)", "description": "وصف مكرر", "poster": "https://tinyurl.com/mrynn3au", "year": "2019", "category": "رومنسي", "director": "مخرج", "stars": ["نجم"], "embed_url": "https://vide0.net/e/smo8970rj5gh", "rating": "6.0" },
-        { "id": 9, "title": "فيلم Purity Falls 2019 (مكرر 3)", "description": "وصف مكرر", "poster": "https://tinyurl.com/mrynn3au", "year": "2019", "category": "رومنسي", "director": "مخرج", "stars": ["نجم"], "embed_url": "https://vide0.net/e/smo8970rj5gh", "rating": "6.0" },
-        */
+        // ... يمكنك إضافة المزيد من الأفلام هنا لزيادة التنوع في السكشن الرئيسي
     ]; 
 
-    // Pagination state variables
+    // Pagination state variables - متغيرات حالة تقسيم الصفحات
     let currentPage = 1;
-    const moviesPerPage = 40; // عرض 50 فيلم في كل صفحة
+    const moviesPerPage = 40; // عدد الأفلام المعروضة في كل صفحة
     let totalPages; // سيتم حسابه ديناميكيًا في init
 
-    // Helper Function: Update Meta Tags for SEO and Social Sharing
+    // Helper Function: Update Meta Tags for SEO and Social Sharing - دالة مساعدة: تحديث علامات الميتا لتحسين محركات البحث والمشاركة الاجتماعية
     function updateMetaTags(title, description, imageUrl, pageUrl, ogType = 'website') {
         document.title = title;
         document.querySelector('meta[name="description"]').setAttribute('content', description);
@@ -146,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:type"]').setAttribute('content', ogType);
     }
 
-    // Helper Function: Add or Remove JSON-LD Schema Markup
+    // Helper Function: Add or Remove JSON-LD Schema Markup - دالة مساعدة: إضافة أو إزالة ترميز مخطط JSON-LD
     function addJsonLdSchema(movieData = null) {
         let existingSchema = document.getElementById('movie-schema-ld');
         if (existingSchema) {
@@ -192,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Toggle mobile menu
+    // Toggle mobile menu - تبديل قائمة الجوال
     if (mobileMenuToggle && mainNav) {
         mobileMenuToggle.addEventListener('click', () => {
             mainNav.classList.toggle('active');
@@ -208,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // تحديث رابط URL مع تغيير الحالة (pushState)
+    // تحديث رابط URL مع تغيير الحالة (pushState) - Update URL with pushState
     function updateUrl(id = null, page = null) {
         const currentPath = window.location.pathname;
         let newUrl = currentPath;
@@ -229,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         history.pushState({ movieId: id, pageNumber: page }, null, newUrl);
     }
 
-    // Render Pagination Controls
+    // Render Pagination Controls - عرض عناصر التحكم في التقسيم لصفحات
     function renderPaginationControls() {
         if (!paginationControls) return;
 
@@ -249,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         paginationControls.appendChild(prevButton);
 
-        // Page number display
+        // Page number display - عرض رقم الصفحة
         const pageInfo = document.createElement('span');
         pageInfo.classList.add('page-info');
         pageInfo.textContent = `صفحة ${currentPage} من ${totalPages}`;
@@ -271,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         paginationControls.appendChild(nextButton);
     }
 
-    // عرض قائمة الأفلام (Homepage)
+    // عرض قائمة الأفلام (Homepage) - Display movie list (Homepage)
     function displayMovies() {
         movieDetailsSection.style.display = 'none';
         moviesListSection.style.display = 'block';
@@ -280,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         movieGrid.innerHTML = ''; // Clear previous movie cards
 
-        // Calculate start and end index for current page
+        // Calculate start and end index for current page - حساب مؤشر البداية والنهاية للصفحة الحالية
         const startIndex = (currentPage - 1) * moviesPerPage;
         const endIndex = startIndex + moviesPerPage;
         const moviesToDisplay = moviesData.slice(startIndex, endIndex);
@@ -303,44 +300,74 @@ document.addEventListener('DOMContentLoaded', () => {
             movieGrid.appendChild(movieCard);
         });
 
-        // تحديث قسم الفيلم المميز (أول فيلم أو الذي id=1)
-        const featuredMovie = moviesData.find(m => m.id === 1) || moviesData[0];
-        if (featuredMovie) {
-            // heroSection.style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%), url('${featuredMovie.poster}')`;
+        // **تعديل مهم هنا:** تحديث قسم الفيلم المميز: اختيار فيلم عشوائي
+        // تأكد أن moviesData ليست فارغة قبل محاولة اختيار فيلم عشوائي
+        if (moviesData.length > 0) {
+            const randomIndex = Math.floor(Math.random() * moviesData.length);
+            const featuredMovie = moviesData[randomIndex];
+            
             heroSection.querySelector('h2').textContent = featuredMovie.title;
-            heroSection.querySelector('p').textContent = featuredMovie.description.substring(0, 150) + '...'; // Snippet for hero section
-            // **ربط زر البطل (Hero Button) برابط Adsterra المباشر**
-            heroBtn.href = adsterraDirectLink;
-            heroBtn.target = "_blank"; // لفتح الرابط في علامة تبويب جديدة
-            // لا نستخدم heroBtn.dataset.id هنا لأننا نوجه إلى إعلان مباشر وليس صفحة فيلم
+            heroSection.querySelector('p').textContent = featuredMovie.description.substring(0, 150) + '...'; 
+            
+            // **الأهم:** لا نربط heroBtn بـ href مباشر هنا
+            // بل نضيف له dataset لتخزين الـ ID الخاص بالفيلم العشوائي
+            heroBtn.removeAttribute('href'); // إزالة أي href قديم
+            heroBtn.removeAttribute('target'); // إزالة أي target قديم
+            heroBtn.dataset.id = featuredMovie.id; // تخزين معرف الفيلم في dataset
+            heroBtn.style.cursor = 'pointer'; // لجعل المؤشر يظهر كيد
+
+            // **إعادة ربط حدث النقر لزر Hero في كل مرة يتم فيها عرض الصفحة الرئيسية**
+            // نستخدم { once: true } لضمان عدم إضافة مستمعين متعددين لنفس الزر
+            // هذا يعني أن الحدث سينفذ مرة واحدة ثم تتم إزالته، ويعاد إضافته في المرة التالية التي يتم فيها استدعاء displayMovies.
+            const heroClickHandler = (event) => {
+                event.preventDefault(); // منع السلوك الافتراضي
+                if (!adsterraOpenedOnFirstClick) {
+                    window.open(adsterraDirectLink, '_blank');
+                    adsterraOpenedOnFirstClick = true;
+                }
+                // استدعاء displayMovieDetails بعد فتح الإعلان
+                displayMovieDetails(heroBtn.dataset.id);
+                updateUrl(heroBtn.dataset.id);
+                setTimeout(() => {
+                    scrollToMovieDetails(); 
+                }, 750); // تأخير لضمان التمرير بعد تحميل المحتوى
+            };
+
+            // إزالة المستمعات القديمة أولاً لتجنب التكرار
+            heroBtn.removeEventListener('click', heroClickHandler); // قد تحتاج لتتبع هذا المستمع بشكل أفضل
+            // لتبسيط الأمر، يمكن إزالة أي مستمعات سابقة قبل الإضافة
+            // بديل أكثر قوة لتجنب مستمعات الأحداث المتعددة:
+            // يمكنك تعيين heroBtn.onclick = null; قبل إضافة المستمع الجديد
+            heroBtn.onclick = null; // إزالة أي معالج نقرة سابق
+            heroBtn.addEventListener('click', heroClickHandler); // إضافة المعالج الجديد
         }
 
-        // SEO IMPROVEMENT: Revert meta tags to original home page values
+        // SEO IMPROVEMENT: Revert meta tags to original home page values - تحسين SEO: إعادة علامات الميتا إلى قيم الصفحة الرئيسية الأصلية
         updateMetaTags(originalTitle, originalDescription, originalOgImage, originalOgUrl, 'website');
-        // SEO IMPROVEMENT: Remove any specific movie schema
+        // SEO IMPROVEMENT: Remove any specific movie schema - تحسين SEO: إزالة أي مخطط فيلم محدد
         addJsonLdSchema(null);
 
-        // Render pagination controls after movies are displayed
+        // Render pagination controls after movies are displayed - عرض عناصر التحكم في التقسيم بعد عرض الأفلام
         renderPaginationControls();
     }
 
-    // NEW FUNCTION: Display Suggested Movies
+    // NEW FUNCTION: Display Suggested Movies - دالة جديدة: عرض الأفلام المقترحة
     function displaySuggestedMovies(currentMovieId) {
         if (!suggestedMovieGrid) return;
 
         suggestedMovieGrid.innerHTML = ''; // Clear previous suggested movies
 
-        // Filter out the current movie
+        // Filter out the current movie - تصفية الفيلم الحالي
         const availableMovies = moviesData.filter(movie => movie.id !== currentMovieId);
 
-        // Shuffle the available movies (Fisher-Yates shuffle)
+        // Shuffle the available movies (Fisher-Yates shuffle) - خلط الأفلام المتاحة (خلط فيشر-ييتس)
         for (let i = availableMovies.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [availableMovies[i], availableMovies[j]] = [availableMovies[j], availableMovies[i]];
         }
 
-        // Take up to 6 suggested movies
-        const moviesToSuggest = availableMovies.slice(0, 6); // You can change this number
+        // Take up to 6 suggested movies - عرض ما يصل إلى 6 أفلام مقترحة
+        const moviesToSuggest = availableMovies.slice(0, 6); // يمكنك تغيير هذا العدد
 
         moviesToSuggest.forEach(movie => {
             const movieCard = document.createElement('div');
@@ -360,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // عرض تفاصيل الفيلم
+    // عرض تفاصيل الفيلم - Display movie details
     function displayMovieDetails(id) {
         const movie = moviesData.find(m => m.id === parseInt(id));
 
@@ -377,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
             movieYearElem.textContent = `السنة: ${movie.year}`;
             movieDescriptionElem.textContent = movie.description; // تحديث وصف الفيلم
 
-            // عرض مشغل الفيديو
+            // عرض مشغل الفيديو - Display video player
             moviePlayerContainer.innerHTML = `<iframe src="${movie.embed_url}" frameborder="0" allowfullscreen allow="encrypted-media" referrerpolicy="origin" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>`;
 
             // **إضافة الغطاء الشفاف (Video Overlay) لفتح إعلانات Adsterra**
@@ -390,10 +417,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.open(adsterraDirectLink, '_blank'); // فتح الرابط في علامة تبويب جديدة
             });
 
-            // NEW: Display suggested movies
+            // NEW: Display suggested movies - جديد: عرض الأفلام المقترحة
             displaySuggestedMovies(movie.id);
 
-            // SEO Improvement: Update meta tags for specific movie page
+            // SEO Improvement: Update meta tags for specific movie page - تحسين SEO: تحديث علامات الميتا لصفحة فيلم محددة
             const moviePageUrl = `${window.location.origin}${window.location.pathname}?id=${movie.id}`;
             updateMetaTags(
                 `${movie.title} - شاهد بلس`,
@@ -403,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'video.movie' // Specific OG type for movies
             );
 
-            // Add JSON-LD schema for this movie
+            // Add JSON-LD schema for this movie - إضافة مخطط JSON-LD لهذا الفيلم
             addJsonLdSchema(movie);
 
         } else {
@@ -414,17 +441,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Handle clicks on movie cards and hero button
+    // Helper function to scroll to the top of the movie details section - دالة مساعدة للتمرير إلى أعلى قسم تفاصيل الفيلم
+    function scrollToMovieDetails() {
+        // Using requestAnimationFrame for better performance and to allow layout to settle
+        requestAnimationFrame(() => {
+            if (movieDetailsSection && movieDetailsSection.style.display !== 'none') {
+                movieDetailsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                // Fallback to window.scrollTo if movieDetailsSection is not visible
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
+
+    // Handle clicks on movie cards (and no longer hero button directly here)
+    // التعامل مع النقرات على بطاقات الأفلام (ولم يعد زر البطل هنا مباشرة)
     document.addEventListener('click', (e) => {
         const movieLink = e.target.closest('.movie-card a'); // لبطاقات الأفلام
-        const heroButton = e.target.closest('#hero-btn'); // لزر Hero
+        // **تم نقل معالجة زر Hero إلى داخل دالة displayMovies**
+        // const heroButton = e.target.closest('#hero-btn'); 
 
-        if (heroButton) {
-            // إذا كان الضغط على زر Hero، يجب أن يفتح الرابط المباشر فقط
-            // الرابط المباشر لـ Adsterra مضبوط مباشرة في الـ href في دالة displayMovies
-            // والتفاصيل الأخرى مضبوطة في HTML
-            return; 
-        }
+        // لم نعد بحاجة لهذا الشرط هنا
+        // if (heroButton) {
+        //     return; 
+        // }
 
         if (movieLink && movieLink.dataset.id) {
             e.preventDefault(); // منع سلوك الرابط الافتراضي
@@ -438,21 +478,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const movieId = movieLink.dataset.id;
             displayMovieDetails(movieId);
             updateUrl(movieId); // تحديث URL مع معرف الفيلم
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // التمرير لأعلى الصفحة
+            
+            // **تعديل: زيادة التأخير لضمان استقرار المحتوى بعد تحميل الـ iframe والإعلانات**
+            setTimeout(() => {
+                scrollToMovieDetails(); 
+            }, 750); // تأخير 750 مللي ثانية
         }
     });
 
-    // Handle back button click
+    // Handle back button click - التعامل مع النقر على زر الرجوع
     if (backBtn) {
         backBtn.addEventListener('click', (e) => {
             e.preventDefault();
             displayMovies();
             updateUrl(); // Revert URL to home page
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // العودة لأعلى الصفحة الرئيسية
         });
     }
 
-    // Handle browser back/forward buttons
+    // Handle browser back/forward buttons - التعامل مع أزرار الرجوع/التقدم في المتصفح
     window.addEventListener('popstate', (event) => {
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get('id');
@@ -460,16 +504,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (movieId) {
             displayMovieDetails(movieId);
+            // **تعديل: زيادة التأخير لضمان استقرار المحتوى عند الرجوع بالمتصفح**
+            setTimeout(() => {
+                scrollToMovieDetails(); 
+            }, 750); // تأخير 750 مللي ثانية
         } else if (pageNumber) {
             currentPage = parseInt(pageNumber);
             displayMovies();
+            window.scrollTo({ top: moviesListSection.offsetTop, behavior: 'smooth' }); // Scroll to top of list
         }
         else {
             displayMovies();
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // العودة لأعلى الصفحة الرئيسية
         }
     });
 
-    // Initial page load logic
+    // Initial page load logic - منطق تحميل الصفحة الأولي
     function init() {
         totalPages = Math.ceil(moviesData.length / moviesPerPage);
         const urlParams = new URLSearchParams(window.location.search);
@@ -478,6 +528,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (movieId) {
             displayMovieDetails(movieId);
+            // **التعديل الأكثر أهمية هنا لـ init():**
+            // زيادة التأخير عند التحميل الأولي للصفحة برابط مباشر
+            // هذا يعطي وقتاً كافياً لتحميل الـ iframe والإعلانات التي قد تغير تخطيط الصفحة
+            setTimeout(() => {
+                scrollToMovieDetails(); 
+            }, 1000); // تأخير 1000 مللي ثانية (ثانية واحدة)
+            
         } else if (pageNumber) {
             currentPage = parseInt(pageNumber);
             displayMovies();
@@ -486,7 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Call init when DOM is fully loaded
+    // Call init when DOM is fully loaded - استدعاء init عند اكتمال تحميل DOM
     init();
 
 });
