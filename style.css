@@ -31,11 +31,6 @@ body {
     flex-direction: column;
     overflow-x: hidden; /* لمنع ظهور شريط التمرير الأفقي غير المرغوب فيه */
     direction: rtl; /* تعيين اتجاه الصفحة الافتراضي من اليمين لليسار */
-    scroll-behavior: smooth; /* لتحسين التمرير السلس بين الأقسام */
-}
-
-main {
-    flex-grow: 1; /* يجعل المحتوى الرئيسي يتمدد لملء المساحة الرأسية المتاحة */
 }
 
 a {
@@ -278,7 +273,7 @@ h1, h2, .section-title {
     display: inline-flex;
     align-items: center;
     gap: 1rem;
-    box-shadow: 0 8px 25px var(--shadow-color-light); /* ظل أكبر بلون الـ accent */
+    box-shadow: 0 8px 25px var(--shadow-color-light); /* ظل أكبر بلون الـ accent - تم التغيير من shadow-color-accent لكي يعمل */
     transition: all var(--transition-speed) ease; /* انتقال لكل الخصائص */
     position: relative;
     overflow: hidden; /* لإخفاء تأثير الإضاءة */
@@ -300,7 +295,7 @@ h1, h2, .section-title {
 
 .hero-content .btn:hover {
     transform: translateY(-5px); /* حركة لأعلى أوضح */
-    box-shadow: 0 15px 40px var(--shadow-color-light); /* ظل أكبر وأعمق */
+    box-shadow: 0 15px 40px var(--shadow-color-light); /* ظل أكبر وأعمق - تم التغيير من shadow-color-accent لكي يعمل */
 }
 
 .hero-content .btn:hover::before {
@@ -398,7 +393,6 @@ h1, h2, .section-title {
 
 /* Movie Details */
 .movie-details-section {
-    display: none; /* Hidden by default, shown by JS */
     background: var(--bg-medium);
     padding: 3.5rem; /* بادينج أكبر */
     border-radius: 20px; /* حواف أكثر دائرية */
@@ -426,21 +420,15 @@ h1, h2, .section-title {
     text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 5px var(--accent-color);
 }
 
-/* Updated Video Player Container and Overlay Styles for Adblock Bypass */
 .movie-player-container {
     position: relative;
-    width: 100%;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    padding-bottom: 56.25%; /* نسبة أبعاد 16:9 للفيديو */
     height: 0;
     overflow: hidden;
     margin-bottom: 2.5rem;
-    border-radius: 18px;
-    box-shadow: 0 10px 35px var(--shadow-color-dark);
-    border: 2px solid var(--border-color);
-    background-color: #000; /* Ensure black background */
-    display: flex; /* For centering content */
-    justify-content: center;
-    align-items: center;
+    border-radius: 18px; /* حواف دائرية أكثر */
+    box-shadow: 0 10px 35px var(--shadow-color-dark); /* ظل أغمق للمشغل */
+    border: 2px solid var(--border-color); /* حدود حول المشغل */
 }
 
 .movie-player-container iframe {
@@ -450,66 +438,7 @@ h1, h2, .section-title {
     width: 100%;
     height: 100%;
     border: none;
-    display: block;
-    z-index: 1; /* Below overlay */
 }
-
-.video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent overlay to hint interactivity */
-    cursor: pointer;
-    z-index: 10; /* Above iframe */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: background-color 0.3s ease;
-}
-
-.video-overlay:hover {
-    background-color: rgba(0, 0, 0, 0.4);
-}
-
-.play-button-icon {
-    font-size: 5em; /* Large size for the play icon */
-    color: white;
-    background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 50%;
-    width: 1.5em;
-    height: 1.5em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid white;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-    transition: transform 0.2s ease;
-    padding-left: 0.1em; /* Adjust to center the triangle */
-}
-
-.video-overlay:hover .play-button-icon {
-    transform: scale(1.1);
-}
-
-.video-loading-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    text-align: center;
-    font-size: 1.2em;
-    z-index: 5; /* Below overlay, above iframe */
-    padding: 15px 20px;
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 10px;
-    pointer-events: none; /* Crucial: allows clicks to pass through to the overlay */
-    line-height: 1.5;
-    max-width: 90%;
-}
-
 
 /* Movie Info Boxes (للمخرج، النوع، السنة، إلخ) */
 .movie-info-grid {
@@ -546,23 +475,6 @@ h1, h2, .section-title {
     margin-bottom: 0; /* إزالة المارجن السفلي من الفقرة الداخلية */
 }
 
-/* Suggested Movies Section */
-#suggested-movies {
-    margin-top: 50px;
-    padding: 20px;
-    background-color: var(--bg-medium);
-    border-radius: 10px;
-    box-shadow: 0 4px 15px var(--shadow-color-dark);
-}
-
-.no-suggestions {
-    text-align: center;
-    color: var(--text-light);
-    font-size: 1.1em;
-    padding: 20px;
-}
-
-
 /* Back Button */
 .btn-back {
     background-color: transparent;
@@ -590,7 +502,7 @@ h1, h2, .section-title {
     background: linear-gradient(45deg, var(--accent-color), var(--accent-dark)); /* تدرج عند الهوفر */
     color: var(--text-white);
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px var(--shadow-color-light);
+    box-shadow: 0 6px 20px var(--shadow-color-light); /* تم التغيير */
     outline: none;
 }
 
@@ -661,52 +573,17 @@ h1, h2, .section-title {
     gap: 1.5rem;
 }
 
-.social-links {
-    display: flex;
-    flex-wrap: wrap; /* للسماح للروابط بالنزول لسطر جديد إذا كانت الشاشة صغيرة */
-    gap: 15px; /* مسافة بين الروابط الفردية */
-    justify-content: center; /* لوسطنة الروابط في الفوتر */
-}
-
 .social-links a {
-    display: flex; /* لجعل الأيقونة والنص في سطر واحد */
-    align-items: center; /* لمحاذاة رأسية للعناصر */
-    gap: 8px; /* مسافة بين الأيقونة والنص */
-    color: #999; /* لون الروابط في الفوتر */
-    font-size: 20px; /* حجم الأيقونة */
-    text-decoration: none; /* إزالة خط تحت الروابط */
-    transition: color 0.3s ease, transform 0.3s ease;
-    white-space: nowrap; /* لمنع كسر النص إلى سطرين */
+    color: #999;
+    font-size: 1.8rem; /* حجم أيقونات أكبر */
+    margin: 0 1rem;
+    transition: color var(--transition-speed), transform var(--transition-speed);
 }
 
-.social-links a:hover {
-    color: var(--accent-color); /* لون عند مرور الماوس */
+.social-links a:hover,
+.social-links a:focus {
+    color: var(--accent-color);
     transform: translateY(-3px) scale(1.1); /* حركة بسيطة عند الهوفر */
-}
-
-.social-links a .fa-telegram-plane {
-    color: #0088cc; /* لون أيقونة التيليجرام الأزرق المميز */
-    font-size: 24px; /* قد تجعل الأيقونة أكبر قليلاً من النص لإبرازها */
-}
-
-.social-links a span {
-    font-size: 16px; /* حجم نص القناة */
-    font-weight: 500;
-}
-
-/* New CSS for no-trailer message (kept as is, but contextually less likely to be used with the new overlay method) */
-.movie-player-container .no-trailer,
-.movie-player-container .error-loading-video {
-    font-size: 1.5rem;
-    color: #FF6347; /* Tomato color for error */
-    font-weight: bold;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-    padding: 20px;
-    text-align: center;
-}
-
-.movie-player-container .error-loading-video {
-    color: #FFD700; /* Gold color for loading message */
 }
 
 /* Mobile Responsiveness */
@@ -910,4 +787,50 @@ h1, h2, .section-title {
         font-size: 1.4rem;
         margin: 0 0.6rem;
     }
+}
+
+
+/* الأنماط الخاصة بالـ Overlay للفيديو */
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10; /* تأكد إنه أعلى من الـ iframe */
+    background-color: rgba(0, 0, 0, 0); /* شفاف تماما */
+    cursor: pointer; /* لإظهار مؤشر اليد عند المرور فوقه */
+}
+
+
+.social-links {
+    display: flex;
+    flex-wrap: wrap; /* للسماح للروابط بالنزول لسطر جديد إذا كانت الشاشة صغيرة */
+    gap: 15px; /* مسافة بين الروابط الفردية */
+    justify-content: center; /* لوسطنة الروابط في الفوتر */
+}
+
+.social-links a {
+    display: flex; /* لجعل الأيقونة والنص في سطر واحد */
+    align-items: center; /* لمحاذاة رأسية للعناصر */
+    gap: 8px; /* مسافة بين الأيقونة والنص */
+    color: #999; /* لون الروابط في الفوتر */
+    font-size: 20px; /* حجم الأيقونة */
+    text-decoration: none; /* إزالة خط تحت الروابط */
+    transition: color 0.3s ease;
+    white-space: nowrap; /* لمنع كسر النص إلى سطرين */
+}
+
+.social-links a:hover {
+    color: var(--accent-color); /* لون عند مرور الماوس */
+}
+
+.social-links a .fa-telegram-plane {
+    color: #0088cc; /* لون أيقونة التيليجرام الأزرق المميز */
+    font-size: 24px; /* قد تجعل الأيقونة أكبر قليلاً من النص لإبرازها */
+}
+
+.social-links a span {
+    font-size: 16px; /* حجم نص القناة */
+    font-weight: 500;
 }
