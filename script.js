@@ -1,55 +1,73 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. DOM Element References - مراجع عناصر DOM
-    const movieGrid = document.querySelector('.movie-grid');
-    const movieDetailsSection = document.getElementById('movie-details');
+    console.log('🏁 DOM Content Loaded. Script execution started.');
+
+    // --- 1. DOM Element References ---
+    // Make sure these IDs match your HTML exactly.
+    const menuToggle = document.getElementById('menu-toggle');
+    const mainNav = document.getElementById('main-nav');
+    const navLinks = document.querySelectorAll('.main-nav ul li a');
     const heroSection = document.getElementById('hero-section');
-    const moviesListSection = document.getElementById('movies-list');
-    const backBtn = document.getElementById('back-to-home-btn');
-    const heroBtn = document.getElementById('hero-btn');
-    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const mainNav = document.querySelector('.main-nav');
-    const navLinks = document.querySelectorAll('.main-nav .nav-link');
+    const watchNowBtn = document.getElementById('watch-now-btn');
+    const movieGridSection = document.getElementById('movie-grid-section');
+    const movieDetailsSection = document.getElementById('movie-details-section');
+    const movieGrid = document.getElementById('movie-grid');
+    const suggestedMovieGrid = document.getElementById('suggested-movie-grid'); // ✨ هذا هو العنصر المهم للأفلام المقترحة
+    const suggestedMoviesSection = document.getElementById('suggested-movies-section'); // القسم الأب للأفلام المقترحة
+    const backToHomeBtn = document.getElementById('back-to-home-btn');
+    const moviePlayer = document.getElementById('movie-player');
+    const videoOverlay = document.getElementById('video-overlay');
+    const homeLogoLink = document.getElementById('home-logo-link');
+    const videoOverlayText = document.getElementById('video-overlay-text');
 
-    // Pagination related DOM elements - عناصر DOM الخاصة بالتقسيم لصفحات
-    const paginationControls = document.getElementById('pagination-controls');
-    const prevPageBtn = paginationControls ? paginationControls.querySelector('.prev') : null;
-    const nextPageBtn = paginationControls ? paginationControls.querySelector('.next') : null;
-    const pageInfoSpan = paginationControls ? paginationControls.querySelector('.page-info') : null;
+    // --- 1.1. Critical DOM Element Verification ---
+    const requiredElements = {
+        '#movie-grid': movieGrid,
+        '#movie-grid-section': movieGridSection,
+        '#movie-details-section': movieDetailsSection,
+        '#hero-section': heroSection,
+        '#movie-player': moviePlayer,
+        '#video-overlay': videoOverlay,
+        '#suggested-movie-grid': suggestedMovieGrid,
+        '#suggested-movies-section': suggestedMoviesSection, // تأكيد وجود القسم الأب
+        '#video-overlay-text': videoOverlayText
+    };
+    let criticalError = false;
+    for (const [id, element] of Object.entries(requiredElements)) {
+        if (!element) {
+            console.error(`❌ CRITICAL ERROR: Element with ID "${id}" not found. Please check your HTML.`);
+            criticalError = true;
+        }
+    }
+    if (criticalError) {
+        console.error('🛑 Script will not execute fully due to missing critical DOM elements. Fix your HTML!');
+        // We'll still try to proceed, but expect issues.
+    } else {
+        console.log('✅ All critical DOM elements found.');
+    }
 
-    // Suggested Movies DOM element - عنصر DOM للأفلام المقترحة
-    const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
+    // Pagination elements
+    const prevPageBtn = document.getElementById('prev-page-btn');
+    const nextPageBtn = document.getElementById('next-page-btn');
+    const moviesPerPage = 8;
+    let currentPage = 1;
 
-    // Movie Details Specific elements - عناصر خاصة بتفاصيل الفيلم
-    const movieTitleElem = movieDetailsSection ? movieDetailsSection.querySelector('.movie-title') : null;
-    const movieDirectorElem = movieDetailsSection ? movieDetailsSection.querySelector('.director') : null;
-    const movieStarsElem = movieDetailsSection ? movieDetailsSection.querySelector('.stars') : null;
-    const movieCategoryElem = movieDetailsSection ? movieDetailsSection.querySelector('.category') : null;
-    const movieYearElem = movieDetailsSection ? movieDetailsSection.querySelector('.year') : null;
-    const movieDescriptionElem = movieDetailsSection ? movieDetailsSection.querySelector('.movie-description') : null;
-    const moviePlayerContainer = movieDetailsSection ? movieDetailsSection.querySelector('.movie-player-container') : null;
+    // --- 2. Adsterra Configuration ---
+    // هذا هو رابط الـ Direct Link الرئيسي الذي سيتم استخدامه لفتح النوافذ المنبثقة
+    const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
+    
+    // زمن آخر ضغطة على Direct Link لأي عنصر (بوستر أو فيديو)
+    let lastDirectLinkClickTime = 0;
+    // فترة التهدئة للضغط على بوستر الفيلم (3 دقائق)
+    const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; 
+    // فترة التهدئة للضغط على غطاء الفيديو (4 دقائق)
+    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 4 * 60 * 1000; 
 
-    // Element for the transparent overlay above the video player
-    // This element will be created dynamically and re-attached each time a movie detail page is opened
-    let videoOverlay = null;
+    // متغير لتخزين مؤقت إخفاء الفيديو أوفرلاي
+    let videoOverlayHideTimer = null;
 
-    // Store original meta and title for home page (SEO Improvement)
-    const originalTitle = document.title;
-    const originalDescriptionMeta = document.querySelector('meta[name="description"]');
-    const originalDescription = originalDescriptionMeta ? originalDescriptionMeta.content : '';
-    const originalOgTitleMeta = document.querySelector('meta[property="og:title"]');
-    const originalOgTitle = originalOgTitleMeta ? originalOgTitleMeta.content : '';
-    const originalOgDescriptionMeta = document.querySelector('meta[property="og:description"]');
-    const originalOgDescription = originalOgDescriptionMeta ? originalOgDescriptionMeta.content : '';
-    const originalOgImageMeta = document.querySelector('meta[property="og:image"]');
-    const originalOgImage = originalOgImageMeta ? originalOgImageMeta.content : '';
-    const originalOgUrlMeta = document.querySelector('meta[property="og:url"]');
-    const originalOgUrl = originalOgUrlMeta ? originalOgUrlMeta.content : window.location.href;
-
-    // Movie Data (IMPORTANT: Update embed_url for reliable playback)
-    // ****** الرجاء التأكد من استبدال روابط embed_url بروابط صالحة تسمح بالتضمين ******
-    // ****** استخدم روابط YouTube Embed أو Vimeo Embed التي تحصل عليها مباشرة من هذه المنصات ******
-    // ****** الروابط مثل streamtape.com أو vide0.net غالبًا ما تكون مشكلة وتسبب الإعلانات المزعجة أو الحظر ******
-    let moviesData = [
+    // --- 3. Movie Data (IMPORTANT: Replace with your actual movie data!) ---
+    // تأكد من أن الـ embed_url هي روابط صالحة للفيديوهات المضمنة (YouTube embed links are good examples).
+    const moviesData = [
          {
             "id": 1,
             "title": "فيلم Purity Falls 2019",
@@ -133,527 +151,444 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/", // هذا الرابط سيسبب مشاكل - يجب استبداله!
             "rating": "7.8"
         },
-        // هنا يمكنك إضافة المزيد من الأفلام يدويًا
     ];
 
-    // Adsterra Configuration
-    // استبدل هذا الرابط برابط الـ Direct Link الخاص بك من Adsterra
-    const adsterraDirectLink = "https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2";
 
-    // أكواد الـ Pop-under/Direct Link من Adsterra (للتشغيل مرة واحدة عند أول تفاعل)
-    const adsterraPopUnderScripts = [
-        "//pl26877671.profitableratecpm.com/7f/c2/f9/7fc2f9f201b6ffe0f5e3ed54d7bae23c.js",
-        "//pl26877663.profitableratecpm.com/75/c8/81/75c8819f64c2df144a5ddf1eabd34e6f.js"
-    ];
+    // --- 4. Functions ---
 
-    // Flag to track if Pop-under has been opened in the current session
-    let popUnderAlreadyOpenedInSession = false;
-    let userInteracted = false;
-
-    // Pagination state variables
-    let currentPage = 1;
-    const moviesPerPage = 8; // عدد الأفلام في كل صفحة (تم التعديل لـ 8 بدلاً من 40 لتحسين العرض المبدئي)
-    let totalPages; // Will be calculated dynamically in init
-
-    // --- Core Functions ---
-
-    /**
-     * Handles the first user interaction on the page to trigger Adsterra Pop-under.
-     * This ensures ads don't open immediately on page load, improving user experience.
-     */
-    function handleFirstUserInteraction() {
-        if (!userInteracted) {
-            openAdsterraPopUnder();
-            userInteracted = true;
-            // Remove listeners after first interaction to prevent multiple pop-unders
-            document.removeEventListener('click', handleFirstUserInteraction);
-            document.removeEventListener('scroll', handleFirstUserInteraction);
-            document.removeEventListener('keydown', handleFirstUserInteraction);
-        }
-    }
-
-    /**
-     * Dynamically loads Adsterra Pop-under scripts.
-     * This function is designed to be called only once per user session.
-     */
-    function openAdsterraPopUnder() {
-        if (!popUnderAlreadyOpenedInSession) {
-            adsterraPopUnderScripts.forEach(scriptUrl => {
-                const script = document.createElement('script');
-                script.type = 'text/javascript';
-                script.src = scriptUrl;
-                script.async = true;
-                document.body.appendChild(script);
-            });
-            popUnderAlreadyOpenedInSession = true;
-        }
-    }
-
-    // Attach first interaction listeners
-    document.addEventListener('click', handleFirstUserInteraction, { once: true });
-    document.addEventListener('scroll', handleFirstUserInteraction, { once: true });
-    document.addEventListener('keydown', handleFirstUserInteraction, { once: true });
-
-    /**
-     * Helper Function: Update Meta Tags for SEO and Social Sharing
-     * @param {string} title - The page title.
-     * @param {string} description - The page description.
-     * @param {string} imageUrl - URL of the image for social sharing.
-     * @param {string} pageUrl - Canonical URL of the page.
-     * @param {string} [ogType='website'] - Open Graph type (e.g., 'website', 'video.movie').
-     */
-    function updateMetaTags(title, description, imageUrl, pageUrl, ogType = 'website') {
-        document.title = title;
-
-        const setMetaContent = (selector, attribute, content) => {
-            let element = document.querySelector(selector);
-            if (!element) {
-                element = document.createElement('meta');
-                element.setAttribute(attribute.startsWith('og:') ? 'property' : 'name', attribute);
-                document.head.appendChild(element);
+    function openAdLink(cooldownDuration) {
+        const currentTime = Date.now();
+        if (currentTime - lastDirectLinkClickTime > cooldownDuration) {
+            const newWindow = window.open(ADSTERRA_DIRECT_LINK_URL, '_blank');
+            if (newWindow) {
+                newWindow.focus();
+                lastDirectLinkClickTime = currentTime;
+                console.log('💰 [Ad Click] Direct Link opened successfully.');
+            } else {
+                console.warn('⚠️ [Ad Click] Pop-up blocked or failed to open direct link. Ensure pop-ups are allowed.');
             }
-            element.setAttribute('content', content);
-        };
+        } else {
+            console.log('⏳ [Ad Click] Direct Link cooldown active. Not opening new tab.');
+        }
+    }
 
-        setMetaContent('meta[name="description"]', 'description', description);
-        setMetaContent('meta[property="og:title"]', 'og:title', title);
-        setMetaContent('meta[property="og:description"]', 'og:description', description);
-        setMetaContent('meta[property="og:image"]', 'og:image', imageUrl || originalOgImage);
-        setMetaContent('meta[property="og:url"]', 'og:url', pageUrl || originalOgUrl);
-        setMetaContent('meta[property="og:type"]', 'og:type', ogType);
+    function updateMetaTags(title, description, imageUrl, url) {
+        document.title = title;
+        document.querySelector('meta[name="description"]').setAttribute('content', description);
+        document.querySelector('meta[property="og:title"]').setAttribute('content', title);
+        document.querySelector('meta[property="og:description"]').setAttribute('content', description);
+        document.querySelector('meta[property="og:image"]').setAttribute('content', imageUrl);
+        document.querySelector('meta[property="og:url"]').setAttribute('content', url);
 
         let canonicalLink = document.querySelector('link[rel="canonical"]');
         if (!canonicalLink) {
             canonicalLink = document.createElement('link');
-            canonicalLink.rel = 'canonical';
+            canonicalLink.setAttribute('rel', 'canonical');
             document.head.appendChild(canonicalLink);
         }
-        canonicalLink.href = pageUrl || window.location.origin + window.location.pathname;
+        canonicalLink.setAttribute('href', url);
+        console.log(`[SEO] Meta tags updated for: ${title}`);
     }
 
-    /**
-     * Helper Function: Add or Remove JSON-LD Schema Markup for Movies.
-     * @param {object|null} movieData - The movie data object, or null to remove schema.
-     */
-    function addJsonLdSchema(movieData = null) {
-        let existingSchema = document.getElementById('movie-schema-ld');
+    function addJsonLdSchema(movie) {
+        const existingSchema = document.getElementById('movie-schema');
         if (existingSchema) {
             existingSchema.remove();
         }
 
-        if (movieData) {
-            const schema = {
-                "@context": "http://schema.org",
-                "@type": "Movie",
-                "name": movieData.title,
-                "description": movieData.description,
-                "image": movieData.poster,
-                "director": {
-                    "@type": "Person",
-                    "name": movieData.director
-                },
-                "actor": Array.isArray(movieData.stars) ? movieData.stars.map(star => ({ "@type": "Person", "name": star })) : [{ "@type": "Person", "name": movieData.stars }],
-                "datePublished": movieData.year + "-01-01",
-                "trailer": { // Using main embed_url as trailer for simplicity
-                    "@type": "VideoObject",
-                    "name": movieData.title + " Trailer",
-                    "description": movieData.description,
-                    "thumbnailUrl": movieData.poster,
-                    "embedUrl": movieData.embed_url,
-                    "uploadDate": movieData.year + "-01-01"
-                },
-                "aggregateRating": {
-                    "@type": "AggregateRating",
-                    "ratingValue": String(movieData.rating || "7.0"),
-                    "bestRating": "10",
-                    "worstRating": "1",
-                    "ratingCount": "100"
-                },
-                "url": window.location.href // This URL should ideally point to the specific movie's permalink
-            };
-
-            const script = document.createElement('script');
-            script.type = 'application/ld+json';
-            script.id = 'movie-schema-ld';
-            script.textContent = JSON.stringify(schema);
-            document.head.appendChild(script);
-        }
-    }
-
-    /**
-     * Helper function to scroll to an element with a smooth behavior.
-     * @param {HTMLElement} element - The DOM element to scroll to.
-     * @param {number} delay - Delay in milliseconds before scrolling.
-     */
-    let scrollTimeoutId = null;
-    function scrollToElement(element, delay = 300) {
-        if (scrollTimeoutId) {
-            clearTimeout(scrollTimeoutId);
-        }
-        scrollTimeoutId = setTimeout(() => {
-            if (element && element.offsetParent !== null) { // Check if element is in DOM and visible
-                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else {
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top of page if element not found
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.id = 'movie-schema';
+        script.innerHTML = JSON.stringify({
+            "@context": "http://schema.org",
+            "@type": "Movie",
+            "name": movie.title,
+            "description": movie.description,
+            "image": movie.poster,
+            "director": {
+                "@type": "Person",
+                "name": movie.director
+            },
+            "actor": movie.stars.split(', ').map(star => ({
+                "@type": "Person",
+                "name": star
+            })),
+            "datePublished": movie.year + "-01-01",
+            "genre": movie.category.split(', ').map(g => g.trim()),
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": movie.rating,
+                "ratingCount": "1000"
+            },
+            "video": {
+                "@type": "VideoObject",
+                "name": movie.title + " Trailer", // Or actual video title
+                "description": "Official trailer for " + movie.title,
+                "thumbnailUrl": movie.poster,
+                "embedUrl": movie.embed_url,
+                "uploadDate": movie.year + "-01-01"
             }
-            scrollTimeoutId = null;
-        }, delay);
+        });
+        document.head.appendChild(script);
+        console.log(`[SEO] JSON-LD schema added for: ${movie.title}`);
     }
 
-    /**
-     * Updates the browser's URL using pushState for better navigation and SEO.
-     * @param {number|null} id - Movie ID if navigating to a movie details page.
-     * @param {number|null} page - Page number if navigating to a paginated list.
-     */
-    function updateUrl(id = null, page = null) {
-        const currentPath = window.location.pathname;
-        let newUrl = currentPath;
-        const params = new URLSearchParams();
+    function displayMovies(moviesToDisplay, containerElement) {
+        console.log(`🎬 [Display] Attempting to display ${moviesToDisplay.length} movies in #${containerElement ? containerElement.id : 'N/A'}`);
 
-        if (id) {
-            params.set('id', id);
-        }
-        // Only add page param if it's greater than 1 AND not viewing a specific movie
-        if (page && page > 1 && !id) {
-            params.set('page', page);
-        }
-
-        const queryString = params.toString();
-        if (queryString) {
-            newUrl += `?${queryString}`;
-        }
-
-        // Only push state if the URL actually changes
-        if (window.location.search !== `?${queryString}` || (!queryString && window.location.search !== '')) {
-            history.pushState({ movieId: id, pageNumber: page }, null, newUrl);
-        }
-    }
-
-    /**
-     * Renders the pagination controls (Previous, Next buttons and page info).
-     */
-    function renderPaginationControls() {
-        if (!paginationControls || !prevPageBtn || !nextPageBtn || !pageInfoSpan) return;
-
-        prevPageBtn.disabled = currentPage === 1;
-        nextPageBtn.disabled = currentPage === totalPages;
-        pageInfoSpan.textContent = `صفحة ${currentPage} من ${totalPages}`;
-    }
-
-    /**
-     * Displays the main list of movies based on the current page.
-     */
-    function displayMovies() {
-        if (!movieDetailsSection || !moviesListSection || !heroSection || !movieGrid || !paginationControls || !heroBtn) {
-            console.error("Critical DOM elements for homepage are missing. Cannot display movies.");
+        if (!containerElement) {
+            console.error(`❌ [Display] Container element is null or undefined. Cannot display movies.`);
             return;
         }
 
-        movieDetailsSection.style.display = 'none';
-        moviesListSection.style.display = 'block';
-        heroSection.style.display = 'block'; // Ensure hero section is visible on homepage
-        paginationControls.style.display = 'flex';
+        containerElement.style.display = 'grid'; 
+        console.log(`[Display] Container #${containerElement.id} display set to 'grid'.`);
 
-        movieGrid.innerHTML = ''; // Clear existing movie cards
+        containerElement.innerHTML = ''; // Clear existing content
 
-        const startIndex = (currentPage - 1) * moviesPerPage;
-        const endIndex = startIndex + moviesPerPage;
-        const moviesToDisplay = moviesData.slice(startIndex, endIndex);
-
-        if (moviesToDisplay.length === 0) {
-            movieGrid.innerHTML = '<p class="no-movies-found">لا توجد أفلام لعرضها في هذه الصفحة.</p>';
+        if (!moviesToDisplay || moviesToDisplay.length === 0) {
+            containerElement.innerHTML = '<p style="text-align: center; font-size: 1.2rem; color: var(--text-muted);">لا توجد أفلام لعرضها في هذا القسم.</p>';
+            console.warn(`[Display] No movies to display or moviesToDisplay is empty for #${containerElement.id}.`);
+            return;
         }
 
         moviesToDisplay.forEach(movie => {
             const movieCard = document.createElement('div');
             movieCard.classList.add('movie-card');
             movieCard.setAttribute('role', 'listitem');
+            movieCard.tabIndex = 0; // Make it focusable
+            movieCard.setAttribute('aria-label', `فيلم ${movie.title}`);
 
-            const movieLink = document.createElement('a');
-            movieLink.dataset.id = movie.id;
-            movieLink.title = `شاهد فيلم ${movie.title}`;
-            movieLink.setAttribute('aria-label', `شاهد فيلم ${movie.title}`);
-
-            movieLink.innerHTML = `
-                <img loading="lazy" src="${movie.poster}" alt="بوستر فيلم ${movie.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/260x380?text=Image+Not+Found';">
+            movieCard.innerHTML = `
+                <img src="${movie.poster}" alt="بوستر فيلم ${movie.title}" loading="lazy" onerror="this.onerror=null;this.src='https://via.placeholder.com/260x380?text=Image+Not+Found';">
                 <h3>${movie.title}</h3>
             `;
-
-            movieCard.appendChild(movieLink);
-            movieGrid.appendChild(movieCard);
+            movieCard.addEventListener('click', () => {
+                console.log(`👆 [Click] Movie card clicked for ID: ${movie.id}`);
+                openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD); // Open ad when movie card is clicked
+                showMovieDetails(movie.id); // Always show movie details after potential ad click
+            });
+            containerElement.appendChild(movieCard);
         });
-
-        // Update meta tags for homepage
-        updateMetaTags(originalTitle, originalDescription, originalOgImage, originalOgUrl, 'website');
-        addJsonLdSchema(null); // Remove movie specific schema on homepage
-
-        renderPaginationControls();
-        scrollToElement(moviesListSection, 0); // Scroll to movies list when displaying them
+        console.log(`✅ [Display] Successfully displayed ${moviesToDisplay.length} movies in #${containerElement.id}.`);
     }
 
-    /**
-     * Displays the detailed view of a single movie.
-     * @param {number} movieId - The ID of the movie to display.
-     */
-    function displayMovieDetails(movieId) {
-        if (!movieDetailsSection || !moviesListSection || !heroSection || !paginationControls || !movieTitleElem || !movieDirectorElem || !movieStarsElem || !movieCategoryElem || !movieYearElem || !movieDescriptionElem || !moviePlayerContainer) {
-            console.error("Critical DOM elements for movie details are missing. Cannot display movie details.");
-            return;
-        }
+    function paginateMovies() {
+        console.log(`➡️ [Pagination] Paginating movies. Current page: ${currentPage}`);
+        const startIndex = (currentPage - 1) * moviesPerPage;
+        const endIndex = startIndex + moviesPerPage;
+        const moviesOnPage = moviesData.slice(startIndex, endIndex);
 
-        const movie = moviesData.find(m => m.id == movieId);
+        displayMovies(moviesOnPage, movieGrid); // Display movies on the main grid
+
+        // Update pagination button states
+        if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
+        if (nextPageBtn) nextPageBtn.disabled = endIndex >= moviesData.length;
+        console.log(`[Pagination] Prev disabled: ${prevPageBtn ? prevPageBtn.disabled : 'N/A'}, Next disabled: ${nextPageBtn ? nextPageBtn.disabled : 'N/A'}`);
+    }
+
+    function showMovieDetails(movieId) {
+        console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
+        const movie = moviesData.find(m => m.id === movieId);
 
         if (movie) {
-            movieTitleElem.textContent = movie.title;
-            movieDirectorElem.textContent = movie.director;
-            movieStarsElem.textContent = Array.isArray(movie.stars) ? movie.stars.join(', ') : movie.stars;
-            movieCategoryElem.textContent = movie.category;
-            movieYearElem.textContent = movie.year;
-            movieDescriptionElem.textContent = movie.description;
+            // Hide main sections
+            heroSection.style.display = 'none';
+            movieGridSection.style.display = 'none';
+            // Show movie details section
+            movieDetailsSection.style.display = 'block';
 
-            // Clear previous iframe and create a new one
-            moviePlayerContainer.innerHTML = ''; // Clear existing content
-            const iframe = document.createElement('iframe');
-            iframe.src = movie.embed_url;
-            iframe.allowFullscreen = true;
-            // Add important attributes for smooth playback and security
-            iframe.setAttribute('allow', "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture");
-            iframe.setAttribute('referrerpolicy', "no-referrer"); // Improved security and prevents some redirects
+            // Scroll to the top of the page for better UX
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            console.log('[Routing] Page scrolled to top.');
 
-            // Add an error handler for the iframe
-            iframe.onerror = () => {
-                console.error(`خطأ في تحميل الفيديو: ${movie.title}. قد يكون الرابط غير صالح أو محظورًا من قبل المتصفح.`);
-                moviePlayerContainer.innerHTML = '<p style="color: red; text-align: center;">عذرًا، حدث خطأ أثناء تحميل الفيديو. يرجى المحاولة لاحقًا أو التواصل مع الدعم.</p>';
-            };
+            // Populate movie details
+            document.getElementById('details-movie-title').textContent = movie.title;
+            document.getElementById('details-movie-description').textContent = movie.description;
+            document.getElementById('details-movie-director').textContent = movie.director;
+            document.getElementById('details-movie-stars').textContent = movie.stars;
+            document.getElementById('details-movie-genre').textContent = movie.category;
+            document.getElementById('details-movie-year').textContent = movie.year;
+            document.getElementById('details-movie-rating').textContent = movie.rating;
 
-            // Set a timeout to remove focus from the iframe after it loads
-            // This can prevent some immediate pop-ups on certain embed types by not giving them initial focus
-            iframe.onload = () => {
-                setTimeout(() => {
-                    if (document.activeElement === iframe) {
-                        iframe.blur(); // Remove focus
+            // Set the video player source
+            moviePlayer.src = ''; // Reset the iframe src to clear any previous "Video unavailable" message before setting new src
+            setTimeout(() => { // Small delay to ensure the reset takes effect
+                moviePlayer.src = movie.embed_url;
+                console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
+            }, 50);
+
+            // Handle video overlay for ads
+            if (videoOverlay) {
+                videoOverlay.classList.remove('hidden'); // Show overlay initially
+                // Clear any existing timer
+                if (videoOverlayHideTimer) {
+                    clearTimeout(videoOverlayHideTimer);
+                }
+                // Set timer to re-show overlay after 4 minutes if not clicked
+                videoOverlayHideTimer = setTimeout(() => {
+                    if (videoOverlay.classList.contains('hidden')) { // Only re-show if it was hidden
+                        videoOverlay.classList.remove('hidden');
+                        if (videoOverlayText) videoOverlayText.style.display = 'block';
+                        console.log('[Video Overlay] Re-shown automatically after 4 minutes.');
                     }
-                }, 100);
-            };
-
-            moviePlayerContainer.appendChild(iframe);
-
-            // Create and append the transparent video overlay
-            // This is crucial for capturing the first click for Adsterra Direct Link
-            videoOverlay = document.createElement('div');
-            videoOverlay.classList.add('video-overlay');
-            videoOverlay.style.display = 'block'; // Ensure it's visible initially
-            // Reset clicked state if returning to same movie
-            videoOverlay.classList.remove('clicked');
-            // The click listener is added here with `{ once: true }` to ensure it only fires once per video view
-            videoOverlay.addEventListener('click', handleVideoOverlayClick, { once: true });
-            moviePlayerContainer.appendChild(videoOverlay);
-
-            // Generate Suggested Movies
-            const suggestedMovies = moviesData
-                .filter(m => m.id !== movie.id)
-                .sort(() => 0.5 - Math.random()) // Randomize order
-                .slice(0, 4); // Get 4 random suggestions
-
-            if (suggestedMovieGrid) {
-                suggestedMovieGrid.innerHTML = '';
-                suggestedMovies.forEach(suggestedMovie => {
-                    const suggestedCard = document.createElement('div');
-                    suggestedCard.classList.add('movie-card');
-                    suggestedCard.setAttribute('role', 'listitem');
-
-                    const suggestedLink = document.createElement('a');
-                    suggestedLink.dataset.id = suggestedMovie.id;
-                    suggestedLink.title = `شاهد فيلم ${suggestedMovie.title}`;
-                    suggestedLink.setAttribute('aria-label', `شاهد فيلم ${suggestedMovie.title}`);
-
-                    suggestedLink.innerHTML = `
-                        <img loading="lazy" src="${suggestedMovie.poster}" alt="بوستر فيلم ${suggestedMovie.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/260x380?text=Image+Not+Found';">
-                        <h3>${suggestedMovie.title}</h3>
-                    `;
-                    suggestedCard.appendChild(suggestedLink);
-                    suggestedMovieGrid.appendChild(suggestedCard);
-                });
+                }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
+                
+                // Ensure text is visible when overlay is present
+                if (videoOverlayText) {
+                    videoOverlayText.style.display = 'block'; 
+                    console.log('[Video Overlay Text] Shown.');
+                }
+                console.log('[Video Overlay] Overlay shown and timer set.');
             }
 
-            // Show movie details section and hide others
-            movieDetailsSection.style.display = 'block';
-            moviesListSection.style.display = 'none';
-            heroSection.style.display = 'none';
-            paginationControls.style.display = 'none';
+            // Update URL and SEO meta tags
+            const currentUrl = window.location.origin + window.location.pathname + `?movie=${movie.id}`;
+            updateMetaTags(
+                `${movie.title} - شاهد بلس`,
+                movie.description.substring(0, 150) + '...', // Truncate description for meta tag
+                movie.poster,
+                currentUrl
+            );
+            addJsonLdSchema(movie); // Add structured data
 
-            // Update meta tags for movie details page
-            const movieUrl = window.location.origin + window.location.pathname + `?id=${movie.id}`;
-            updateMetaTags(movie.title + " - شاهد بلس", movie.description, movie.poster, movieUrl, 'video.movie');
-            addJsonLdSchema(movie); // Add movie specific schema
+            // --- Suggested Movies Logic ---
+            console.log(`💡 [Suggested Movies Logic] Starting for current movie ID: ${movieId}`);
+            let filteredSuggested = moviesData.filter(m => m.id !== movieId);
+            console.log(`[Suggested Movies Logic] Total movies in data: ${moviesData.length}`);
+            console.log(`[Suggested Movies Logic] Filtered movies (excluding current ID ${movieId}): ${filteredSuggested.length} movies available.`);
 
-            scrollToElement(movieDetailsSection, 0); // Scroll to movie details when displayed
-            updateUrl(movie.id);
+            let suggestedMoviesToDisplay = [];
+
+            if (filteredSuggested.length >= 4) {
+                // Shuffle and slice to get 4 random suggested movies from filtered list
+                suggestedMoviesToDisplay = filteredSuggested.sort(() => 0.5 - Math.random()).slice(0, 4);
+                console.log(`[Suggested Movies Logic] Sufficient unique movies (${suggestedMoviesToDisplay.length}), shuffled and sliced.`);
+            } else if (moviesData.length > 0) {
+                // Fallback: If not enough unique movies after filtering
+                console.warn(`[Suggested Movies Logic] Not enough unique suggested movies (${filteredSuggested.length}). Attempting fallback.`);
+
+                // Try to get unique movies from the beginning of moviesData, excluding current one
+                let tempSuggested = [];
+                for (let i = 0; i < moviesData.length && tempSuggested.length < 4; i++) {
+                    if (moviesData[i].id !== movieId) {
+                        tempSuggested.push(moviesData[i]);
+                    }
+                }
+                suggestedMoviesToDisplay = tempSuggested;
+
+                // If still less than 4, and we have more total movies, just fill up with any other movies
+                if (suggestedMoviesToDisplay.length < 4 && moviesData.length > suggestedMoviesToDisplay.length) {
+                    const remainingNeeded = 4 - suggestedMoviesToDisplay.length;
+                    const existingSuggestedIds = new Set(suggestedMoviesToDisplay.map(m => m.id));
+                    const additionalMovies = moviesData.filter(m => !existingSuggestedIds.has(m.id)).slice(0, remainingNeeded);
+                    suggestedMoviesToDisplay = suggestedMoviesToDisplay.concat(additionalMovies);
+                    console.log(`[Suggested Movies Logic] Filled up with ${additionalMovies.length} additional movies.`);
+                }
+                console.log(`[Suggested Movies Logic] Fallback suggested movies to display: ${suggestedMoviesToDisplay.length}`);
+
+            } else {
+                console.error('❌ [Suggested Movies Logic] No movies available in moviesData for suggestions at all.');
+            }
+
+            if (suggestedMovieGrid) {
+                if (suggestedMoviesToDisplay.length > 0) {
+                    // Make sure the parent section for suggested movies is visible
+                    if (suggestedMoviesSection) {
+                        suggestedMoviesSection.style.display = 'block'; 
+                        console.log('[Suggested Movies Section] Parent section displayed.');
+                    }
+                    displayMovies(suggestedMoviesToDisplay, suggestedMovieGrid);
+                    console.log('✅ [Display] Suggested movies display function called with movies.');
+                } else {
+                    suggestedMovieGrid.innerHTML = '<p style="text-align: center; font-size: 1rem; color: var(--text-muted);">لا توجد اقتراحات حاليًا.</p>';
+                    console.warn('[Display] No suggested movies to display after all attempts. Showing message.');
+                    // Hide the suggested section entirely if there are no suggestions
+                    if (suggestedMoviesSection) {
+                        suggestedMoviesSection.style.display = 'none';
+                        console.log('[Suggested Movies Section] Hidden as no suggestions.');
+                    }
+                }
+            } else {
+                console.error('❌ CRITICAL ERROR: suggestedMovieGrid element not found. Cannot display suggested movies.');
+            }
+            // --- End of Suggested Movies Logic ---
+
+            // Update URL in browser history (without full reload)
+            window.history.pushState({ movieId: movieId }, movie.title, currentUrl);
 
         } else {
-            console.error('Movie not found:', movieId);
-            // Fallback to home if movie not found
-            displayMovies();
-            updateUrl();
+            console.error('❌ [Routing] Movie not found for ID:', movieId, 'Redirecting to home page.');
+            showHomePage(); // Fallback to home if movie ID is invalid
         }
     }
 
-    /**
-     * Handles the click event on the transparent video overlay.
-     * Opens the Adsterra Direct Link and then disables the overlay.
-     */
-    function handleVideoOverlayClick() {
-        // 1. Open Adsterra Direct Link in a new tab
-        window.open(adsterraDirectLink, '_blank');
+    function showHomePage() {
+        console.log('🏠 [Routing] Showing home page.');
+        // Hide movie details section
+        movieDetailsSection.style.display = 'none';
+        // Show main sections
+        heroSection.style.display = 'flex'; // Assuming hero is flex
+        movieGridSection.style.display = 'block';
 
-        // 2. Hide or disable the transparent overlay after the first click
-        // Add 'clicked' class to video-overlay to apply CSS (opacity: 0; pointer-events: none;)
+        paginateMovies(); // Re-display paginated movies on home
+
+        // Clear any active video overlay timer and ensure text is visible
+        if (videoOverlayHideTimer) {
+            clearTimeout(videoOverlayHideTimer);
+            videoOverlayHideTimer = null;
+            console.log('[Video Overlay] Video overlay timer cleared.');
+        }
         if (videoOverlay) {
-            videoOverlay.classList.add('clicked');
+             videoOverlay.classList.remove('hidden'); // Ensure overlay is visible when returning home
         }
+        if (videoOverlayText) {
+            videoOverlayText.style.display = 'block'; // Ensure text is visible
+            console.log('[Video Overlay Text] Display reset to home (block).');
+        }
+
+        // Hide suggested movies section when going back to home
+        if (suggestedMoviesSection) {
+            suggestedMoviesSection.style.display = 'none';
+            console.log('[Suggested Movies Section] Hidden on home page.');
+        }
+
+        // Reset SEO meta tags to home page defaults
+        updateMetaTags(
+            "شاهد بلس - أفلام ومسلسلات عربية وعالمية",
+            "شاهد أحدث الأفلام والمسلسلات العربية والعالمية بجودة عالية. استمتع بتجربة مشاهدة فريدة مع شاهد بلس.",
+            "https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGufDB8fHx8fA%3D%3D",
+            window.location.origin + window.location.pathname
+        );
+        // Remove movie-specific schema
+        const existingSchema = document.getElementById('movie-schema');
+        if (existingSchema) { existingSchema.remove(); }
+
+        // Update URL in browser history (without full reload)
+        window.history.pushState({}, document.title, window.location.origin + window.location.pathname);
+    }
+
+    // New event listener for video overlay to trigger ad and hide itself
+    function handleVideoOverlayClick() {
+        console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
+        openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY); // Use video specific cooldown
+        videoOverlay.classList.add('hidden'); // Hide overlay
+        if (videoOverlayText) videoOverlayText.style.display = 'none'; // Hide text
+        console.log('[Video Overlay] Hidden after click.');
+
+        // Re-set timer to show overlay again after cooldown
+        if (videoOverlayHideTimer) {
+            clearTimeout(videoOverlayHideTimer);
+        }
+        videoOverlayHideTimer = setTimeout(() => {
+            videoOverlay.classList.remove('hidden');
+            if (videoOverlayText) videoOverlayText.style.display = 'block';
+            console.log('[Video Overlay] Re-shown automatically after 4 minutes due to timer.');
+        }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
+    }
+    
+    // Initial attachment of the event listener for video overlay
+    if (videoOverlay) {
+        videoOverlay.addEventListener('click', handleVideoOverlayClick);
+        console.log('[Video Overlay] Initial click listener attached.');
     }
 
 
-    // --- Event Listeners ---
+    // --- 5. Event Listeners ---
 
-    // Toggle mobile menu
-    if (mobileMenuToggle && mainNav) {
-        mobileMenuToggle.addEventListener('click', () => {
-            mainNav.classList.toggle('active');
-            mobileMenuToggle.classList.toggle('active');
-            const isExpanded = mainNav.classList.contains('active');
-            mobileMenuToggle.setAttribute('aria-expanded', isExpanded);
-            mainNav.setAttribute('aria-hidden', !isExpanded);
+    // Toggle mobile navigation
+    if (menuToggle && mainNav) {
+        menuToggle.addEventListener('click', () => {
+            mainNav.classList.toggle('nav-open');
+            console.log(`☰ [Nav] Mobile menu toggled. State: ${mainNav.classList.contains('nav-open') ? 'Open' : 'Closed'}`);
         });
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (mainNav.classList.contains('active')) {
-                    mainNav.classList.remove('active');
-                    mobileMenuToggle.classList.remove('active');
-                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
-                    mainNav.setAttribute('aria-hidden', 'true');
-                }
-            });
-        });
+    } else {
+        console.warn('⚠️ [Init] menuToggle or mainNav not found. Mobile navigation may not function.');
     }
 
-    // Event Delegation for Movie Cards (both main and suggested grids)
-    document.addEventListener('click', (event) => {
-        const movieCardLink = event.target.closest('.movie-card a');
-        if (movieCardLink && movieCardLink.dataset.id) {
-            event.preventDefault();
-            displayMovieDetails(movieCardLink.dataset.id);
-        }
+    // Hide mobile nav when a link is clicked
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (mainNav && mainNav.classList.contains('nav-open')) {
+                mainNav.classList.remove('nav-open');
+                console.log('🔗 [Nav] Nav link clicked, mobile menu closed.');
+            }
+        });
     });
 
-    // Event Listener for "Back to Home" Button
-    if (backBtn) {
-        backBtn.addEventListener('click', (event) => {
+    // Hero section "Watch Now" button
+    if (watchNowBtn) {
+        watchNowBtn.addEventListener('click', (event) => {
             event.preventDefault();
-            displayMovies();
-            updateUrl();
+            console.log('▶️ [Click] Watch Now button clicked.');
+            document.getElementById('movie-grid-section').scrollIntoView({ behavior: 'smooth' });
         });
+    } else {
+        console.warn('⚠️ [Init] watchNowBtn not found.');
     }
 
-    // Event Listener for Hero Section Button (Scroll to movies list)
-    if (heroBtn) {
-        heroBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            scrollToElement(moviesListSection);
-        });
+    // Back to Home button on movie details page
+    if (backToHomeBtn) {
+        backToHomeBtn.addEventListener('click', showHomePage);
+        console.log('↩️ [Init] Back to Home button listener attached.');
+    } else {
+        console.warn('⚠️ [Init] backToHomeBtn not found.');
     }
 
-    // Pagination Event Listeners
-    if (prevPageBtn && nextPageBtn) {
+    // Pagination buttons
+    if (prevPageBtn) {
         prevPageBtn.addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
-                displayMovies();
-                updateUrl(null, currentPage);
+                paginateMovies();
+                window.scrollTo({ top: movieGridSection.offsetTop, behavior: 'smooth' }); // Scroll to movie grid
+                console.log(`◀️ [Pagination] Moved to page: ${currentPage}`);
             }
         });
-
+    }
+    if (nextPageBtn) {
         nextPageBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(moviesData.length / moviesPerPage);
             if (currentPage < totalPages) {
                 currentPage++;
-                displayMovies();
-                updateUrl(null, currentPage);
+                paginateMovies();
+                window.scrollTo({ top: movieGridSection.offsetTop, behavior: 'smooth' }); // Scroll to movie grid
+                console.log(`▶️ [Pagination] Moved to page: ${currentPage}`);
             }
         });
     }
 
-    // Handle Browser Back/Forward Buttons
+    // Home logo click
+    if (homeLogoLink) {
+        homeLogoLink.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior
+            showHomePage(); // Go to home page function
+            console.log('🏠 [Click] Home logo clicked.');
+        });
+    }
+
+    // Handle browser back/forward buttons
     window.addEventListener('popstate', (event) => {
-        const state = event.state;
-        if (state && state.movieId) {
-            displayMovieDetails(state.movieId);
-        } else if (state && state.pageNumber) {
-            currentPage = state.pageNumber;
-            displayMovies();
+        console.log('🔄 [History] Popstate event triggered.', event.state);
+        if (event.state && event.state.movieId) {
+            showMovieDetails(event.state.movieId);
         } else {
-            // Default to homepage if no specific state or if a direct link to root was accessed
-            displayMovies();
-            updateUrl(); // Ensure URL reflects home state without params
+            showHomePage();
         }
     });
 
-    /**
-     * Dynamically loads Adsterra banner ad scripts.
-     * @param {string} containerId - The ID of the HTML element where the ad will be placed.
-     * @param {number} placementId - The Adsterra Placement ID for the banner unit.
-     *
-     * **IMPORTANT:** Replace placeholder `placementId` values with your actual Adsterra IDs.
-     * Ensure these are "Banner" type units from your Adsterra dashboard.
-     */
-    function loadAdsterraBannerAd(containerId, placementId) {
-        const container = document.getElementById(containerId);
-        if (container) {
-            container.innerHTML = ''; // Clear any existing content in the container
+    // --- 6. Initial Page Load ---
+    // Check URL for specific movie ID on initial load
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieIdFromUrl = urlParams.get('movie');
 
-            // Create script for Adsterra Placement ID
-            const script1 = document.createElement('script');
-            script1.type = 'text/javascript';
-            script1.textContent = `var adsterra_placement_id = ${placementId};`;
-
-            // Create script for Adsterra ad loading
-            const script2 = document.createElement('script');
-            script2.type = 'text/javascript';
-            script2.src = '//pl2.adsterra.com/ads.js'; // Adsterra script source
-            script2.async = true; // Load asynchronously
-
-            // Append scripts to the container
-            container.appendChild(script1);
-            container.appendChild(script2);
-        }
+    if (movieIdFromUrl) {
+        console.log(`🚀 [Init] Found movie ID in URL: ${movieIdFromUrl}. Loading details...`);
+        showMovieDetails(parseInt(movieIdFromUrl));
+    } else {
+        console.log('🚀 [Init] No movie ID in URL. Loading home page...');
+        showHomePage(); // Display initial set of movies
     }
 
-    // --- Initialization ---
-
-    function init() {
-        totalPages = Math.ceil(moviesData.length / moviesPerPage);
-
-        // Load Adsterra Banners on page load
-        // Replace these placeholder IDs with your actual Adsterra Placement IDs!
-        loadAdsterraBannerAd('ad-banner-hero', 12345); // Banner for Hero section (e.g., 728x90 or 468x60)
-        loadAdsterraBannerAd('ad-banner-below-grid', 67890); // Banner below movie grid (e.g., 728x90 or 468x60)
-        loadAdsterraBannerAd('ad-banner-below-player', 54321); // Banner below video player (e.g., 728x90 or 468x60)
-        loadAdsterraBannerAd('ad-banner-below-suggested', 98765); // Banner below suggested movies (e.g., 728x90 or 468x60)
-
-        // Parse URL parameters to determine initial view
-        const urlParams = new URLSearchParams(window.location.search);
-        const movieId = urlParams.get('id');
-        const pageNum = parseInt(urlParams.get('page'));
-
-        if (movieId) {
-            displayMovieDetails(movieId);
-        } else if (pageNum && pageNum > 1 && pageNum <= totalPages) {
-            currentPage = pageNum;
-            displayMovies();
-        } else {
-            displayMovies();
-        }
-    }
-
-    // Run the initialization
-    init();
+    console.log('✅ Script execution finished.');
 });
