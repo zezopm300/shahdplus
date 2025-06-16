@@ -1,76 +1,45 @@
-/* Reset & Base */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* General Body and Container Styles */
+:root {
+    --primary-color: #ff0057; /* Netflix-like red */
+    --secondary-color: #1a1a1a;
+    --dark-bg: #000000;
+    --light-bg: #141414;
+    --text-color: #ffffff;
+    --text-muted: #aaaaaa;
+    --font-family-arabic: 'Cairo', sans-serif; /* Example: If you use Google Fonts */
+    --font-family-english: 'Arial', sans-serif;
 }
 
-/* تعريف المتغيرات للألوان والظلال لسهولة التعديل */
-:root {
-    --bg-dark: #0A0A0A; /* خلفية أغمق وأكثر فخامة */
-    --bg-medium: #181818; /* لون أغمق للعناصر زي الكاردز */
-    --text-light: #E0E0E0; /* نص فاتح ليبرز على الخلفية الداكنة */
-    --text-white: #FFFFFF; /* أبيض ناصع للعناوين الرئيسية */
-    --accent-color: #BB86FC; /* بنفسجي ملكي هادئ كلون أساسي مميز */
-    --accent-dark: #A16BFF; /* درجة أغمق من اللون المميز للهوفر */
-    --gradient-start: #2a0052; /* بداية التدرج اللوني للـ accent */
-    --gradient-end: #3b0060; /* نهاية التدرج اللوني للـ accent */
-    --border-color: #2F2F2F; /* لون خطوط فاصلة أو حدود خفيفة */
-    --shadow-color-dark: rgba(0, 0, 0, 0.7); /* ظلال ناعمة وداكنة */
-    --shadow-color-light: rgba(187, 134, 252, 0.3); /* ظلال خفيفة بلون الـ accent */
-    --transition-speed: 0.4s; /* سرعة الانتقال الافتراضية */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    font-family: "Tajawal", sans-serif; /* الخط الأساسي للنصوص */
-    line-height: 1.6; /* زيادة تباعد السطور لقراءة أفضل */
-    background-color: var(--bg-dark); /* تطبيق الخلفية الداكنة */
-    color: var(--text-light); /* تطبيق لون النص الفاتح */
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden; /* لمنع ظهور شريط التمرير الأفقي غير المرغوب فيه */
-    direction: rtl; /* تعيين اتجاه الصفحة الافتراضي من اليمين لليسار */
+    font-family: var(--font-family-arabic), var(--font-family-english);
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+    direction: rtl; /* Right-to-left for Arabic */
+    text-align: right;
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
-a {
-    color: var(--accent-color); /* الروابط تأخذ لون الـ accent */
-    text-decoration: none;
-    transition: color var(--transition-speed); /* انتقال سلس للون */
-}
-
-a:hover,
-a:focus {
-    color: var(--accent-dark); /* درجة أغمق عند الهوفر */
-    outline: none;
-}
-
-/* General Headings & Typography */
-h1, h2, .section-title {
-    font-family: 'Amiri', serif; /* خط كلاسيكي للعناوين واللوجو */
-    color: var(--text-white); /* أبيض ناصع للعناوين */
-    font-weight: 700; /* سمك الخط */
-}
-
-/* Container */
 .container {
-    width: 90%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 15px; /* بادينج خفيف على الجوانب للمسافات */
+    padding: 0 20px;
 }
 
-/* Header */
+/* Header Styles */
 .main-header {
-    background: rgba(0, 0, 0, 0.7); /* خلفية شبه شفافة وأغمق قليلاً */
-    padding: 1.2rem 0; /* زيادة البادينج */
+    background-color: var(--light-bg);
+    padding: 15px 0;
+    border-bottom: 1px solid #333;
     position: sticky;
     top: 0;
     z-index: 1000;
-    border-bottom: 1px solid var(--border-color); /* خط فاصل خفيف */
-    backdrop-filter: blur(10px); /* تأثير ضبابي أقوى وأكثر فخامة */
-    -webkit-backdrop-filter: blur(10px); /* لدعم Safari */
-    box-shadow: 0 4px 15px var(--shadow-color-dark); /* ظل أكبر وأعمق */
 }
 
 .main-header .container {
@@ -79,828 +48,377 @@ h1, h2, .section-title {
     align-items: center;
 }
 
-/* Logo Styling - Streamlined design for "شاهد بلس" */
-.logo a {
-    font-family: 'Tajawal', sans-serif; /* استخدام نفس الخط الأساسي للنص */
-    font-size: 2.8rem; /* حجم أكبر للوجو */
-    letter-spacing: 0.5px; /* تقليل المسافة بين الحروف قليلاً */
-    color: var(--text-white); /* لون نص اللوجو أبيض */
-    text-shadow: 0 0 8px rgba(0,0,0,0.4); /* ظل خفيف للنص */
-    display: flex; /* لترتيب الأيقونة والنص */
-    align-items: center;
-    gap: 8px; /* مسافة بين الأيقونة والنص */
-    font-weight: 700; /* لضمان بروز النص */
+.logo {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-decoration: none;
 }
 
-.logo a span.plus {
-    font-size: 0.7em; /* حجم أصغر لـ "بلس" نسبة إلى "شاهد" */
-    font-weight: 500;
-    color: var(--accent-color); /* لون الـ accent */
-    text-shadow: none; /* إزالة الظل من "بلس" */
-    position: relative;
-    top: -0.2em; /* رفع "بلس" قليلاً */
-    padding-right: 5px; /* مسافة بعد النص "شاهد" وقبل "بلس" */
+.menu-toggle {
+    display: none; /* Hidden on desktop */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 30px;
 }
 
-.logo-icon {
-    font-size: 2.2rem; /* حجم أيقونة اللوجو */
-    color: var(--accent-color); /* لون أيقونة اللوجو بلون الـ accent */
-    animation: pulse 2s infinite ease-in-out; /* انيميشن نبض خفيف */
+.menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: var(--text-color);
+    border-radius: 2px;
+    transition: all 0.3s ease-in-out;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-/* Main Navigation */
 .main-nav ul {
     list-style: none;
     display: flex;
-    justify-content: flex-end; /* لضمان المحاذاة لليمين في القائمة العلوية */
-    gap: 2.5rem; /* مسافات أكبر بين عناصر القائمة */
-    margin: 0;
-    padding: 0;
+}
+
+.main-nav ul li {
+    margin-right: 25px; /* Adjust for RTL */
+    margin-left: 0; /* Reset default LTR */
 }
 
 .main-nav ul li a {
-    font-weight: 500;
-    font-size: 1.05rem;
-    color: var(--text-light);
-    position: relative;
-    padding-bottom: 5px;
-    transition: color var(--transition-speed);
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
 }
 
-.main-nav ul li a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: 0; /* تم تغييرها لتناسب RTL */
-    width: 0;
-    height: 2px;
-    background: linear-gradient(to right, var(--accent-color), var(--accent-dark)); /* تدرج لوني للخط */
-    transition: width var(--transition-speed) ease-out;
-}
-
-.main-nav ul li a.active,
 .main-nav ul li a:hover {
-    color: var(--accent-color);
+    color: var(--primary-color);
 }
 
-.main-nav ul li a.active::after,
-.main-nav ul li a:hover::after {
-    width: 100%;
-}
-
-.main-nav ul li a i {
-    margin-left: 8px; /* تم تغييرها لتناسب الاتجاه من اليمين لليسار */
-    margin-right: 0;
-    color: var(--accent-color);
-}
-
-/* Mobile Menu Toggle */
-.menu-toggle {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-    width: 35px; /* حجم أكبر للزر */
-    height: 25px;
-    justify-content: space-between;
-    position: relative;
-    z-index: 1002;
-}
-
-.menu-toggle .bar {
-    height: 4px; /* سمك أكبر للبارات */
-    background: var(--accent-color);
-    border-radius: 2px;
-    transition: all 0.3s ease;
-}
-
-.menu-toggle.active .bar:nth-child(1) {
-    transform: translateY(10px) rotate(45deg);
-}
-
-.menu-toggle.active .bar:nth-child(2) {
-    opacity: 0;
-}
-
-.menu-toggle.active .bar:nth-child(3) {
-    transform: translateY(-10px) rotate(-45deg);
-}
-
-
-/* Hero Section - تركز مكثف على التوسيط */
-.hero-section {
-    position: relative;
-    background-image: url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* صورة خلفية سينمائية */
-    background-position: center;
-    background-repeat: no-repeat;
+/* Hero Section */
+.hero {
+    background-image: url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGufDB8fHx8fA%3D%3D');
     background-size: cover;
-    min-height: 600px; /* ارتفاع أكبر لمساحة Hero */
+    background-position: center;
+    height: 60vh;
     display: flex;
-    flex-direction: column; /* لترتيب المحتوى والإعلان عموديًا */
-    align-items: center; /* توسيط عمودي */
-    justify-content: center; /* توسيط أفقي */
-    text-align: center; /* توسيط النص داخلياً */
-    color: var(--text-white);
-    padding: 3rem 1rem;
-    transition: background-image 0.6s ease-in-out;
-    box-shadow: inset 0 -60px 100px rgba(0,0,0,0.20); /* ظل داخلي أعمق من الأسفل */
+    align-items: center;
+    justify-content: flex-end; /* Align content to the right */
+    text-align: right;
+    color: var(--text-color);
+    position: relative;
+    padding: 0 20px; /* Add padding for content */
 }
 
-.hero-section::before {
+.hero::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.95) 100%); /* تدرج لوني أكثر قوة */
-    z-index: 0;
-}
-
-.hero-content {
-    position: relative;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to left, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); /* Gradient for text readability */
     z-index: 1;
-    max-width: 900px; /* عرض أكبر للمحتوى */
-    width: 100%; /* تأكد من أن المحتوى يأخذ 100% من المساحة المتاحة له داخل الـ flex container */
-    padding: 30px;
-    background: rgba(0, 0, 0, 0.4); /* خلفية شفافة للمحتوى */
-    border-radius: 15px;
-    box-shadow: 0 10px 40px var(--shadow-color-dark); /* ظل قوي للمحتوى */
-    animation: fadeInScale 1.2s ease-out forwards; /* انيميشن دخول أطول */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* حدود شفافة رقيقة */
-    text-align: center; /* ضمان التوسيط الداخلي للنصوص */
-    direction: rtl; /* لضمان أن النص يبدأ من اليمين داخل هذا العنصر */
-    margin: 0 auto; /* هذا سيعمل مع max-width لضمان التوسيط الفعال */
 }
 
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+.hero .container {
+    position: relative;
+    z-index: 2;
+    max-width: 500px; /* Constrain hero text width */
 }
 
-.hero-content h2 {
-    font-size: 4.5rem; /* حجم أكبر بكثير للعنوان */
-    margin-bottom: 1rem;
-    text-shadow: 0 0 20px var(--shadow-color-dark), 0 0 8px var(--accent-color);
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
     line-height: 1.2;
 }
 
-.hero-content p {
-    font-size: 1.5rem; /* حجم أكبر للوصف */
-    margin-bottom: 2.5rem;
-    max-width: 800px;
-    text-shadow: 0 0 12px var(--shadow-color-dark);
-    color: var(--text-light);
-    margin: 0 auto 2.5rem auto; /* لضمان التوسيط الأفقي للفقرة */
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
 }
 
-.hero-content .btn {
-    background: linear-gradient(45deg, var(--accent-color), var(--accent-dark)); /* تدرج لوني للزر */
-    padding: 1.3rem 3.5rem; /* بادينج أكبر للزر */
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 1.3rem; /* حجم خط أكبر للزر */
-    display: inline-flex;
-    align-items: center;
-    gap: 1rem;
-    box-shadow: 0 8px 25px var(--shadow-color-light); /* ظل أكبر بلون الـ accent */
-    transition: all var(--transition-speed) ease; /* انتقال لكل الخصائص */
+.btn {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    padding: 12px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #e60045; /* Darker shade of primary color */
+}
+
+/* Movie Grid Section */
+.movie-grid-section, .movie-details-section, .suggested-movies-section {
+    padding: 40px 0;
+}
+
+h2 {
+    font-size: 2.2rem;
+    color: var(--text-color);
+    text-align: right;
+    margin-bottom: 30px;
     position: relative;
-    overflow: hidden; /* لإخفاء تأثير الإضاءة */
-    direction: rtl; /* لضمان أن النص يبدأ من اليمين داخل الزر */
+    padding-bottom: 10px;
 }
 
-.hero-content .btn::before { /* تأثير إضاءة عند الهوفر */
+h2::after {
     content: '';
     position: absolute;
-    top: 0;
-    right: -100%; /* تم تغيير الاتجاه ليتناسب مع RTL */
-    left: auto;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: skewX(30deg); /* تم عكس الميلان ليناسب الاتجاه */
-    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); /* انتقال سلس ومختلف */
-}
-
-.hero-content .btn:hover {
-    transform: translateY(-5px); /* حركة لأعلى أوضح */
-    box-shadow: 0 15px 40px var(--shadow-color-light); /* ظل أكبر وأعمق */
-}
-
-.hero-content .btn:hover::before {
-    right: 100%; /* لتأثير الإضاءة عند الهوفر من اليمين إلى اليسار */
-}
-
-/* Movies List */
-.section-title {
-    margin: 4.5rem 0 2.5rem; /* مسافات أكبر للعنوان */
-    font-size: 3rem; /* حجم أكبر للعنوان */
-    color: var(--text-white);
-    text-align: center;
-    position: relative;
-    padding-bottom: 15px;
-    text-shadow: 0 0 15px rgba(0,0,0,0.7);
-}
-
-.section-title::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    right: 0;
     bottom: 0;
-    width: 120px; /* طول الخط أكبر */
-    height: 5px; /* سمك الخط أكبر */
-    background: linear-gradient(to right, var(--accent-color), var(--accent-dark)); /* تدرج لوني للخط */
-    border-radius: 3px;
+    width: 60px;
+    height: 4px;
+    background-color: var(--primary-color);
+    border-radius: 2px;
 }
 
-/* Movie Grid and Card Styles */
-.movie-grid,
-#suggested-movie-grid { /* طبق هذا على كل من الشبكة الرئيسية وشبكة الأفلام المقترحة */
+.movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* أبعاد متجاوبة للبطاقات، تم تقليل الـ minmax قليلاً */
-    gap: 2.5rem; /* مسافات أكبر بين الأفلام */
-    padding-bottom: 80px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
 }
 
 .movie-card {
-    background: linear-gradient(145deg, var(--bg-medium), #101010); /* تدرج بسيط لخلفية الكارت */
-    border-radius: 18px; /* حواف أكثر دائرية قليلاً */
-    overflow: hidden; /* مهم جداً لقص أي محتوى يتجاوز حدود البطاقة */
-    box-shadow: 0 12px 35px var(--shadow-color-dark); /* ظل أعمق وأكثر انتشارًا */
+    background-color: var(--light-bg);
+    border-radius: 8px;
+    overflow: hidden;
     cursor: pointer;
-    transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, border var(--transition-speed) ease;
-    border: 1px solid var(--border-color); /* حدود خفيفة */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
     position: relative;
-    transform-style: preserve-3d; /* مهم لتأثير 3D */
-    display: flex;
-    flex-direction: column;
-    outline: none; /* لإزالة أي إطار حول العنصر عند التركيز */
 }
 
-.movie-card:hover,
-.movie-card:focus-within {
-    transform: translateY(-15px) rotateX(2deg); /* حركة لأعلى وتدوير خفيف لإحساس 3D */
-    box-shadow: 0 25px 60px var(--shadow-color-dark), 0 0 30px var(--accent-color); /* ظل أكبر وأعمق مع توهج قوي */
-    border-color: var(--accent-color); /* إطار بلون الـ accent */
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
 .movie-card img {
-    width: 100%; /* الصورة تأخذ عرض البطاقة بالكامل */
-    height: 300px; /* **تحديد ارتفاع ثابت لضمان توحيد شكل الكروت** */
-    object-fit: cover; /* **مهم جداً: لضمان ملء الصورة للحيز دون تشويه** */
+    width: 100%;
+    height: 330px; /* Fixed height for consistency */
+    object-fit: cover;
     display: block;
-    border-radius: 18px 18px 0 0; /* حواف دائرية للجزء العلوي فقط */
-    transition: transform 0.4s ease, filter 0.4s ease; /* سرعة انتقال أفضل للصورة */
-}
-
-.movie-card:hover img {
-    transform: scale(1.07); /* تكبير ملحوظ للصورة عند الهوفر */
-    filter: brightness(0.8); /* تغميق الصورة قليلاً لإبراز العنوان والحدود */
 }
 
 .movie-card h3 {
-    padding: 1.2rem 1rem; /* بادينج مناسب */
-    font-size: 1.5rem; /* حجم خط أكبر قليلاً */
-    color: var(--text-white);
-    text-align: center;
-    font-family: 'Amiri', serif;
-    /* تدرج من الأسفل للأعلى لإضافة تأثير جمالي للخلفية */
-    background: linear-gradient(to top, var(--bg-medium) 0%, rgba(26, 26, 26, 0.8) 100%);
-    position: relative;
-    z-index: 1;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 80px; /* لضمان وجود مساحة كافية للعنوان */
-    line-height: 1.3; /* تحسين تباعد السطور للنصوص الطويلة */
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); /* ظل خفيف للنص لزيادة الوضوح */
-}
-
-/* Movie Details */
-.movie-details-section {
-    background: var(--bg-medium);
-    padding: 3.5rem; /* بادينج أكبر */
-    border-radius: 20px; /* حواف أكثر دائرية */
-    box-shadow: 0 15px 50px var(--shadow-color-dark); /* ظل أغمق وأقوى */
-    max-width: 1100px; /* عرض أكبر للقسم */
-    margin: 5rem auto; /* مسافة أكبر من الأعلى */
-    color: var(--text-light);
-    border: 1px solid var(--border-color);
-}
-
-.movie-details-section p {
-    font-size: 1.15rem; /* حجم نص أكبر قليلاً */
-    margin-bottom: 1.2rem;
-}
-
-.movie-details-section p strong {
-    color: var(--text-white);
-}
-
-.movie-details-section h2.movie-title {
-    margin-bottom: 1.8rem;
-    font-size: 3.5rem; /* حجم أكبر لعنوان الفيلم */
-    color: var(--accent-color);
-    text-align: center;
-    text-shadow: 0 0 15px rgba(0,0,0,0.6), 0 0 5px var(--accent-color);
-}
-
-.movie-player-container {
-    position: relative;
-    padding-bottom: 56.25%; /* نسبة أبعاد 16:9 للفيديو */
-    height: 0;
+    font-size: 1.1rem;
+    margin: 15px 10px;
+    color: var(--text-color);
+    white-space: nowrap;
     overflow: hidden;
-    margin-bottom: 2.5rem;
-    border-radius: 18px; /* حواف دائرية أكثر */
-    box-shadow: 0 10px 35px var(--shadow-color-dark); /* ظل أغمق للمشغل */
-    border: 2px solid var(--border-color); /* حدود حول المشغل */
+    text-overflow: ellipsis;
 }
 
-.movie-player-container iframe {
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 15px;
+}
+
+.btn-page {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-page:hover:not(:disabled) {
+    background-color: #333;
+    border-color: var(--primary-color);
+}
+
+.btn-page:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Movie Details Section */
+.movie-details-section {
+    padding-top: 20px;
+}
+
+.back-btn {
+    background: none;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+.movie-details-section h1 {
+    font-size: 2.8rem;
+    margin-bottom: 25px;
+    color: var(--primary-color);
+    text-align: right;
+}
+
+.video-player-container {
+    position: relative;
+    width: 100%;
+    /* 9:16 aspect ratio for responsive video */
+    padding-bottom: 56.25%; /* 16:9 aspect ratio (height / width = 9 / 16 = 0.5625) */
+    background-color: #000; /* Black background for player area */
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures video corners are rounded */
+}
+
+.video-player-container iframe {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     border: none;
-    z-index: 1; /* لتكون تحت الطبقة الشفافة */
 }
 
-/* NEW: Video Overlay for Adsterra Direct Link */
 .video-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.0); /* شفافة تمامًا */
-    z-index: 10; /* فوق الـ iframe عشان تستقبل النقرات */
-    cursor: pointer;
-    /* للتبديل بين العرض وعدم العرض */
-    transition: background-color 0.3s ease;
-}
-/* لجعلها تختفي تمامًا بعد الضغطة الأولى */
-.video-overlay.clicked {
-    pointer-events: none; /* تمنع استقبال النقرات */
-    background: rgba(0, 0, 0, 0.0); /* تظل شفافة */
-    opacity: 0; /* ممكن تخليها شفافة بالكامل */
-    transition: opacity 0.5s ease-out; /* انتقال لائق للاختفاء */
-}
-
-
-/* Movie Info Boxes (للمخرج، النوع، السنة، إلخ) */
-.movie-info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* أعمدة مرنة للمعلومات */
-    gap: 1.5rem; /* مسافة بين المربعات */
-    margin-top: 2rem;
-    margin-bottom: 2.5rem; /* مسافة قبل زر العودة */
-}
-
-.info-box {
-    background: var(--bg-dark); /* خلفية داكنة للمربع */
-    padding: 1.5rem;
-    border-radius: 12px; /* حواف دائرية */
-    border: 1px solid var(--border-color); /* حدود خفيفة */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* ظل خفيف */
-    text-align: center;
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-.info-box h4 {
-    color: var(--accent-color); /* لون عنوان المربع (مثل المخرج) */
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    font-family: 'Amiri', serif;
-}
-
-.info-box p {
-    font-size: 1.05rem;
-    color: var(--text-light);
-    margin-bottom: 0; /* إزالة المارجن السفلي من الفقرة الداخلية */
-}
-
-/* Back Button */
-.btn-back {
-    background-color: transparent;
-    border: 2px solid var(--accent-color);
-    color: var(--accent-color);
-    font-weight: 600;
     cursor: pointer;
-    margin-bottom: 2.5rem; /* مسافة أكبر */
-    display: inline-flex;
-    align-items: center;
-    gap: 0.8rem;
-    font-size: 1.15rem; /* حجم خط أكبر قليلاً */
-    padding: 0.9rem 1.8rem;
-    border-radius: 30px;
-    transition: all var(--transition-speed) ease;
+    z-index: 50; /* Ensure it's above the iframe */
+    transition: opacity 0.3s ease;
 }
 
-.btn-back i {
-    margin-left: 8px; /* لتناسب الاتجاه من اليمين لليسار */
-    margin-right: 0;
+.video-overlay.hidden {
+    opacity: 0;
+    pointer-events: none; /* Allow clicks to pass through when hidden */
 }
 
-.btn-back:hover,
-.btn-back:focus {
-    background: linear-gradient(45deg, var(--accent-color), var(--accent-dark)); /* تدرج عند الهوفر */
-    color: var(--text-white);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px var(--shadow-color-light);
-    outline: none;
-}
-
-/* Pagination / Previous-Next Buttons (الزائر السابق والتالي) */
-.pagination-controls {
-    display: flex;
-    justify-content: center; /* توسيط الأزرار */
-    align-items: center;
-    gap: 1.5rem; /* مسافة بين الأزرار */
-    margin-top: 3rem; /* مسافة علوية */
-    margin-bottom: 4rem; /* مسافة سفلية قبل الفوتير */
-}
-
-.pagination-btn {
-    background: var(--bg-medium);
-    color: var(--accent-color);
-    border: 2px solid var(--accent-color);
-    padding: 0.8rem 1.5rem;
-    border-radius: 30px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-speed) ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.pagination-btn:hover,
-.pagination-btn:focus {
-    background: linear-gradient(45deg, var(--accent-color), var(--accent-dark));
-    color: var(--text-white);
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 6px 15px var(--shadow-color-light);
-    outline: none;
-}
-
-.pagination-btn.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: var(--bg-medium);
-    color: var(--accent-color);
-    box-shadow: none;
-    transform: none;
-}
-
-.pagination-btn i {
-    font-size: 1.2rem;
-}
-
-/* Footer */
-.main-footer {
-    background: var(--bg-medium);
-    color: #999; /* لون نص أهدأ للفوتير */
-    padding: 3rem 0; /* بادينج أكبر */
-    margin-top: auto;
+.video-overlay p {
+    font-size: 1.5rem;
+    color: var(--text-color);
     text-align: center;
-    font-size: 1rem;
-    border-top: 1px solid var(--border-color);
-    box-shadow: 0 -4px 15px var(--shadow-color-dark); /* ظل من الأسفل */
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
 }
 
-.footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
+.movie-info p {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: var(--text-color);
+    text-align: right;
 }
 
-.social-links a {
-    color: #999;
-    font-size: 1.8rem; /* حجم أيقونات أكبر */
-    margin: 0 1rem;
-    transition: color var(--transition-speed), transform var(--transition-speed);
+.movie-info strong {
+    color: var(--primary-color);
+    margin-left: 5px;
 }
 
-.social-links a:hover,
-.social-links a:focus {
-    color: var(--accent-color);
-    transform: translateY(-3px) scale(1.1); /* حركة بسيطة عند الهوفر */
+/* Suggested Movies Section */
+/* Added to ensure it starts hidden, and gets display: block from JS when needed */
+.suggested-movies-section {
+    margin-top: 50px;
+    border-top: 1px solid #333;
+    padding-top: 40px;
+    /* Important: This will be changed by JavaScript to 'block' or 'grid' */
+    /* display: none; */ 
 }
 
-/* Mobile Responsiveness */
+
+/* Footer Styles */
+.main-footer {
+    background-color: var(--light-bg);
+    color: var(--text-muted);
+    text-align: center;
+    padding: 25px 0;
+    margin-top: 50px;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .container {
-        width: 95%;
-        padding: 0 10px;
-    }
-
     .main-header .container {
-        justify-content: space-between;
-        padding-top: 15px;
-        padding-bottom: 15px;
-    }
-
-    .logo a {
-        font-size: 2.2rem; /* حجم أصغر للوجو على الموبايل */
-        gap: 5px;
-    }
-    .logo a span.plus {
-        font-size: 0.7em;
-        top: -0.15em;
-        padding-right: 3px;
-    }
-    .logo-icon {
-        font-size: 1.8rem;
+        flex-wrap: wrap;
     }
 
     .main-nav {
-        position: fixed;
-        top: 0;
-        right: -100%; /* تبدأ من خارج الشاشة على اليمين */
-        height: 100%;
-        width: 260px; /* عرض القائمة الجانبية أصغر قليلاً */
-        background: var(--bg-medium); /* خلفية القائمة */
-        padding-top: 70px; /* ضبط البادينج العلوي */
-        box-shadow: -5px 0 25px var(--shadow-color-dark);
-        transition: right 0.3s ease-in-out; /* حركة سلسة للقائمة */
-        z-index: 1001; /* أعلى من المحتوى ولكن أقل من زر الإغلاق */
-        display: flex; /* لتفعيل flexbox داخل القائمة */
-        flex-direction: column; /* لترتيب العناصر عمودياً */
-        align-items: flex-end; /* لمحاذاة العناصر لليمين داخل القائمة الجانبية */
+        order: 3; /* Move nav below logo and toggle */
+        flex-basis: 100%;
+        height: 0;
+        overflow: hidden;
+        transition: height 0.3s ease;
     }
-    .main-nav.active {
-        right: 0; /* عند التفعيل، اجعلها تظهر بالكامل من اليمين */
+
+    .main-nav.nav-open {
+        height: auto; /* Adjust as needed, e.g., 200px */
+        max-height: 300px; /* Max height to prevent overflow issues */
+        padding-bottom: 10px;
     }
 
     .main-nav ul {
-        flex-direction: column; /* لترتيب عناصر القائمة عمودياً في وضع الموبايل */
-        align-items: flex-end; /* لمحاذاة العناصر إلى اليمين */
-        gap: 0.8rem;
-        margin: 0 1rem;
-        width: 100%; /* لجعل القائمة تأخذ كامل العرض المتاح داخل الناف بار */
+        flex-direction: column;
+        align-items: flex-end; /* Align links to the right */
+        padding-top: 15px;
     }
 
     .main-nav ul li {
-        width: 100%; /* لجعل كل عنصر قائمة يأخذ كامل العرض */
-    }
-
-    .main-nav ul li a {
-        padding: 8px 0;
-        font-size: 1rem;
-        width: 100%; /* لجعل الروابط تمتد على كامل العرض */
-        text-align: right; /* لمحاذاة النص داخل الروابط إلى اليمين */
-    }
-    .main-nav ul li a::after {
-        left: auto;
-        right: 0; /* لتغيير اتجاه الخط السفلي للروابط */
-    }
-
-    .main-nav ul li a i {
-        margin-right: 8px; /* لتناسب اتجاه النص العربي */
-        margin-left: 0;
+        margin: 10px 0;
     }
 
     .menu-toggle {
-        display: flex;
-        margin-right: 10px; /* لتحديد مكان الزر على اليمين */
+        display: flex; /* Show on smaller screens */
     }
 
-    /* Hero Section adjustments for mobile */
-    .hero-section {
-        min-height: 380px;
-        padding: 1.5rem 1rem;
-    }
-    .hero-content {
-        padding: 15px;
-        background: rgba(0, 0, 0, 0.6); /* خلفية أغمق للمحتوى على الموبايل */
-    }
-    .hero-content h2 {
-        font-size: 2.2rem;
-        margin-bottom: 0.5rem;
-    }
-    .hero-content p {
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    .hero-content .btn {
-        font-size: 1rem;
-        padding: 0.8rem 1.8rem;
+    .hero h1 {
+        font-size: 2.5rem;
     }
 
-    /* Movies Grid adjustments for mobile */
-    .section-title {
-        font-size: 2rem;
-        margin-top: 3rem;
-        margin-bottom: 1.5rem;
+    .hero p {
+        font-size: 1rem;
     }
+
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* 2 عمود أصغر على الموبايل */
-        gap: 1rem;
-        padding-bottom: 40px;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
     }
-    .movie-card {
-        border-radius: 10px;
-        box-shadow: 0 5px 15px var(--shadow-color-dark);
-    }
+
     .movie-card img {
-        object-fit: cover; /* استخدم cover هنا لضمان ملء الصورة للمساحة */
-        height: 220px; /* **ارتفاع ثابت لصور الكروت على الموبايل** */
-        border-radius: 10px 10px 0 0;
+        height: 225px; /* Adjust height for smaller cards */
     }
+
     .movie-card h3 {
-        font-size: 1rem;
-        padding: 0.6rem;
-        min-height: 60px; /* ضبط min-height للعنوان في الموبايل */
+        font-size: 0.9rem;
     }
 
-    /* Movie Details adjustments for mobile */
-    .movie-details-section {
-        padding: 1.5rem;
-        margin: 2.5rem auto;
-        border-radius: 15px;
-        box-shadow: 0 8px 25px var(--shadow-color-dark);
-    }
-    .movie-details-section h2.movie-title {
+    .movie-details-section h1 {
         font-size: 2rem;
-        margin-bottom: 1rem;
     }
-    .movie-details-section p {
+
+    .movie-info p {
         font-size: 0.9rem;
-    }
-    .movie-player-container {
-        padding-bottom: 75%; /* نسبة أبعاد 4:3 للفيديو على الموبايل ممكن تكون أفضل */
-        border-radius: 10px;
-        box-shadow: 0 5px 20px var(--shadow-color-dark);
-    }
-    /* Movie Info Boxes adjustments for mobile */
-    .movie-info-grid {
-        grid-template-columns: 1fr; /* عمود واحد على الموبايل */
-        gap: 1rem;
-        margin-top: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    .info-box {
-        padding: 1rem;
-        border-radius: 10px;
-    }
-    .info-box h4 {
-        font-size: 1.1rem;
-    }
-    .info-box p {
-        font-size: 0.95rem;
-    }
-
-    /* Back Button for mobile */
-    .btn-back {
-        font-size: 0.9rem;
-        padding: 0.7rem 1.2rem;
-        margin-bottom: 1.5rem;
-    }
-    .btn-back i {
-        margin-right: 5px; /* ضبط للأيقونة في زر الرجوع */
-        margin-left: 0;
-    }
-
-    /* Pagination for mobile */
-    .pagination-controls {
-        flex-direction: column; /* الأزرار فوق بعضها البعض */
-        gap: 1rem;
-        margin-top: 2rem;
-        margin-bottom: 3rem;
-    }
-    .pagination-btn {
-        width: 80%; /* عرض أكبر للأزرار */
-        text-align: center;
-        justify-content: center; /* توسيط النص والأيقونة داخل الزر */
-        font-size: 1rem;
-        padding: 0.7rem 1.2rem;
-    }
-
-    /* Footer adjustments for mobile */
-    .main-footer {
-        padding: 2rem 0;
-    }
-    .footer-content {
-        flex-direction: column; /* لترتيب المحتوى عمودياً في الفوتير */
-        gap: 1rem;
-    }
-    .social-links a {
-        font-size: 1.4rem;
-        margin: 0 0.6rem;
-    }
-}
-
-
-.social-links {
-    display: flex;
-    flex-wrap: wrap; /* للسماح للروابط بالنزول لسطر جديد إذا كانت الشاشة صغيرة */
-    gap: 15px; /* مسافة بين الروابط الفردية */
-    justify-content: center; /* لوسطنة الروابط في الفوتر */
-}
-
-.social-links a {
-    display: flex; /* لجعل الأيقونة والنص في سطر واحد */
-    align-items: center; /* لمحاذاة رأسية للعناصر */
-    gap: 8px; /* مسافة بين الأيقونة والنص */
-    color: #999; /* لون الروابط في الفوتر */
-    font-size: 20px; /* حجم الأيقونة */
-    text-decoration: none; /* إزالة خط تحت الروابط */
-    transition: color 0.3s ease;
-    white-space: nowrap; /* لمنع كسر النص إلى سطرين */
-}
-
-.social-links a:hover {
-    color: var(--accent-color); /* لون عند مرور الماوس */
-}
-
-.social-links a .fa-telegram-plane {
-    color: #0088cc; /* لون أيقونة التيليجرام الأزرق المميز */
-    font-size: 24px; /* قد تجعل الأيقونة أكبر قليلاً من النص لإبرازها */
-}
-
-/* NEW: General Ad Container Styles (for Adsterra banners) */
-.ad-container {
-    background-color: var(--bg-medium); /* خلفية داكنة للإعلان */
-    border: 1px solid var(--border-color); /* حدود خفيفة */
-    border-radius: 12px; /* حواف دائرية */
-    padding: 1rem; /* بادينج داخلي */
-    margin: 3rem auto; /* مسافة علوية وسفلية وتوسيط أفقي */
-    text-align: center; /* توسيط محتوى الإعلان */
-    overflow: hidden; /* لمنع أي محتوى زائد من الظهور خارج الحدود */
-    box-shadow: 0 5px 20px var(--shadow-color-dark); /* ظل خفيف */
-    display: flex; /* لضمان توسيط الإعلان داخلياً */
-    justify-content: center;
-    align-items: center;
-    min-height: 90px; /* لضمان ظهور الإعلان حتى لو لم يتم تحميله بعد (متوسط ارتفاع البانرات) */
-    max-width: 900px; /* تحديد أقصى عرض للحاوية لتبدو متناسبة */
-}
-
-/* Ad specific adjustments */
-.ad-banner-hero {
-    margin-top: 2rem;
-    margin-bottom: 0rem;
-    max-width: 728px; /* غالباً هيكون 728x90 */
-}
-
-.ad-banner-below-grid {
-    margin-top: 3.5rem;
-    margin-bottom: 3rem;
-    max-width: 728px;
-}
-
-.ad-banner-below-player {
-    margin-top: 2.5rem;
-    margin-bottom: 2.5rem;
-    max-width: 728px;
-}
-
-.ad-banner-below-suggested {
-    margin-top: 3rem;
-    margin-bottom: 2rem;
-    max-width: 728px;
-}
-
-
-/* Responsive Adjustments for Ads */
-@media (max-width: 768px) {
-    .ad-container {
-        margin: 1.5rem auto; /* تقليل الهامش على الجوال */
-        padding: 0.5rem;
-        border-radius: 8px;
-        min-height: 60px; /* تقليل الحد الأدنى للارتفاع */
-        max-width: 468px; /* غالباً هيكون 468x60 أو 320x50 */
-    }
-
-    .ad-banner-hero {
-        margin-top: 1rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .ad-banner-below-grid,
-    .ad-banner-below-player,
-    .ad-banner-below-suggested {
-        margin-top: 2rem;
-        margin-bottom: 1.5rem;
     }
 }
