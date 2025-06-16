@@ -12,10 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Pagination related DOM elements - عناصر DOM الخاصة بالتقسيم لصفحات
     const paginationControls = document.getElementById('pagination-controls');
-    // إنشاء أزرار Pagination مرة واحدة فقط
-    const prevPageBtn = document.createElement('button');
-    const nextPageBtn = document.createElement('button');
-    const pageInfoSpan = document.createElement('span');
+    // استخدام الأزرار و الـ span الموجودة في HTML بدلاً من إنشائها هنا
+    const prevPageBtn = paginationControls.querySelector('.prev');
+    const nextPageBtn = paginationControls.querySelector('.next');
+    const pageInfoSpan = paginationControls.querySelector('.page-info');
 
     // NEW: Suggested Movies DOM element - عنصر DOM للأفلام المقترحة
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let scrollTimeoutId = null; // لتتبع تأخيرات التمرير ومنع تداخلها
 
     // بيانات الأفلام (هنا يمكنك إضافة المزيد من الأفلام يدويًا)
+    // **ملاحظة: هذه البيانات لم يتم تغييرها بناءً على طلبك.**
     let moviesData = [
         {
             "id": 1,
@@ -125,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         // هنا يمكنك إضافة المزيد من الأفلام يدويًا
     ];
-    // تم حذف حلقة تكرار الأفلام هنا بناءً على طلبك
 
     // Pagination state variables - متغيرات حالة تقسيم الصفحات
     let currentPage = 1;
@@ -293,22 +293,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPaginationControls() {
         if (!paginationControls) return;
 
-        paginationControls.innerHTML = ''; // مسح عناصر التحكم السابقة
-
-        prevPageBtn.textContent = 'السابق';
-        prevPageBtn.classList.add('pagination-btn', 'prev');
+        // الأزرار و الـ span موجودة بالفعل في HTML، لا نحتاج لإنشائها مرة أخرى
         prevPageBtn.disabled = currentPage === 1;
-        paginationControls.appendChild(prevPageBtn);
-
-        // عرض رقم الصفحة
-        pageInfoSpan.classList.add('page-info');
-        pageInfoSpan.textContent = `صفحة ${currentPage} من ${totalPages}`;
-        paginationControls.appendChild(pageInfoSpan);
-
-        nextPageBtn.textContent = 'التالي';
-        nextPageBtn.classList.add('pagination-btn', 'next');
         nextPageBtn.disabled = currentPage === totalPages;
-        paginationControls.appendChild(nextPageBtn);
+        pageInfoSpan.textContent = `صفحة ${currentPage} من ${totalPages}`;
     }
 
     // Helper function to scroll to the top of a section - دالة مساعدة للتمرير إلى أعلى القسم
