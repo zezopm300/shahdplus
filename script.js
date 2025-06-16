@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
             "director": "Trevor Stines",
             "stars": ["Kristanna Loken"],
-            "embed_url": "https://vide0.net/e/smo8970rj5gh", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
+            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ", // مثال لرابط YouTube صالح
             "rating": "6.2"
         },
         {
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ",
             "director": "Chris Riedell",
             "stars": ["Lucy Hale"],
-            "embed_url": "https://streamtape.com/e/gopa76QkOpuqM8P/", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
+            "embed_url": "https://player.vimeo.com/video/1091276533", // هذا رابط Vimeo جيد ويعمل عادة
             "rating": "5.5"
         },
         {
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ",
             "director": "Joseph Ruben",
             "stars": ["Julia Roberts"],
-            "embed_url": "https://streamtape.com/e/v9KrVBVJVAIYjA/", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
+            "embed_url": "https://vide0.net/e/smo8970rj5gh", // هذا الرابط سيسبب مشاكل - يجب استبداله!
             "rating": "6.3"
         },
         {
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومانسي",
             "director": "انغام",
             "stars": ["ممثل 1", "ممثل 2"],
-            "embed_url": "https://player.vimeo.com/video/1091276533" // هذا رابط Vimeo جيد
+            "embed_url": "https://www.youtube.com/embed/YOUR_YOUTUBE_VIDEO_ID_HERE" // مثال على رابط YouTube
         },
         {
             "id": 4,
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ",
             "director": "Yoo Je‑won.",
             "stars": ["Choi Seung‑hyo"],
-            "embed_url": "https://streamtape.com/e/7kbx78RR8VtAXD1/", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
+            "embed_url": "https://streamtape.com/e/7kbx78RR8VtAXD1/", // هذا الرابط سيسبب مشاكل - يجب استبداله!
             "rating": "7.0"
         },
         {
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رعب / خيال علمي☯️ .. ",
             "director": "Brace Beltempo.",
             "stars": ["Gianluca Busani"],
-            "embed_url": "https://streamtape.com/e/7b7rqXvk7DT8Ap/", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
+            "embed_url": "https://streamtape.com/e/7b7rqXvk7DT8Ap/", // هذا الرابط سيسبب مشاكل - يجب استبداله!
             "rating": "7.5"
         },
         {
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "اثارة/ اكشن ☯️ .. ",
             "director": "Lee Isaac Chung",
             "stars": ["Daisy Edgar-Jones"],
-            "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
+            "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/", // هذا الرابط سيسبب مشاكل - يجب استبداله!
             "rating": "7.8"
         },
         // هنا يمكنك إضافة المزيد من الأفلام يدويًا
@@ -346,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
             movieLink.title = `شاهد فيلم ${movie.title}`;
             movieLink.setAttribute('aria-label', `شاهد فيلم ${movie.title}`);
 
-            // Changed poster load to ensure better mobile display (object-fit cover handled by CSS)
             movieLink.innerHTML = `
                 <img loading="lazy" src="${movie.poster}" alt="بوستر فيلم ${movie.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/260x380?text=Image+Not+Found';">
                 <h3>${movie.title}</h3>
@@ -356,219 +355,183 @@ document.addEventListener('DOMContentLoaded', () => {
             movieGrid.appendChild(movieCard);
         });
 
-        // Set featured movie for hero section
-        if (moviesData.length > 0) {
-            const randomIndex = Math.floor(Math.random() * moviesData.length);
-            const featuredMovie = moviesData[randomIndex];
-
-            const heroTitle = heroSection.querySelector('h2');
-            const heroDescription = heroSection.querySelector('p');
-
-            if (heroTitle) heroTitle.textContent = featuredMovie.title;
-            if (heroDescription) heroDescription.textContent = featuredMovie.description.substring(0, 150) + '...';
-
-            heroBtn.dataset.id = featuredMovie.id;
-            heroBtn.style.cursor = 'pointer';
-
-            heroBtn.onclick = (event) => {
-                event.preventDefault();
-                displayMovieDetails(heroBtn.dataset.id);
-                updateUrl(heroBtn.dataset.id);
-                scrollToElement(movieDetailsSection, 750);
-            };
-        }
-
+        // Update meta tags for homepage
         updateMetaTags(originalTitle, originalDescription, originalOgImage, originalOgUrl, 'website');
-        addJsonLdSchema(null); // Remove movie schema when on homepage
+        addJsonLdSchema(null); // Remove movie specific schema on homepage
+
         renderPaginationControls();
+        scrollToElement(moviesListSection, 0); // Scroll to movies list when displaying them
     }
 
-    // Display Suggested Movies
-    function displaySuggestedMovies(currentMovieId) {
-        if (!suggestedMovieGrid) return;
-
-        suggestedMovieGrid.innerHTML = '';
-
-        const availableMovies = moviesData.filter(movie => movie.id !== parseInt(currentMovieId));
-
-        // Shuffle and take top 6
-        for (let i = availableMovies.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [availableMovies[i], availableMovies[j]] = [availableMovies[j], availableMovies[i]];
-        }
-
-        const moviesToSuggest = availableMovies.slice(0, 6);
-
-        if (moviesToSuggest.length === 0) {
-            suggestedMovieGrid.innerHTML = '<p class="no-suggestions">لا توجد اقتراحات أفلام متاحة حالياً.</p>';
+    // Display single movie details
+    function displayMovieDetails(movieId) {
+        if (!movieDetailsSection || !moviesListSection || !heroSection || !paginationControls || !movieTitleElem || !movieDirectorElem || !movieStarsElem || !movieCategoryElem || !movieYearElem || !movieDescriptionElem || !moviePlayerContainer) {
+            console.error("Critical DOM elements for movie details are missing. Cannot display movie details.");
             return;
         }
 
-        moviesToSuggest.forEach(movie => {
-            const movieCard = document.createElement('div');
-            movieCard.classList.add('movie-card');
-            movieCard.setAttribute('role', 'listitem');
+        const movie = moviesData.find(m => m.id == movieId);
 
-            const movieLink = document.createElement('a');
-            movieLink.dataset.id = movie.id;
-            movieLink.title = `شاهد فيلم ${movie.title}`;
-            movieLink.setAttribute('aria-label', `شاهد فيلم ${movie.title}`);
-
-            movieLink.innerHTML = `
-                <img loading="lazy" src="${movie.poster}" alt="بوستر فيلم ${movie.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/260x380?text=Image+Not+Found';">
-                <h3>${movie.title}</h3>
-            `;
-            movieCard.appendChild(movieLink);
-            suggestedMovieGrid.appendChild(movieCard);
-        });
-    }
-
-    // Display movie details
-    function displayMovieDetails(id) {
-        const movie = moviesData.find(m => m.id === parseInt(id));
-
-        if (movie && movieDetailsSection && heroSection && moviesListSection && paginationControls && movieTitleElem && movieDirectorElem && movieStarsElem && movieCategoryElem && movieYearElem && movieDescriptionElem && moviePlayerContainer) {
-            heroSection.style.display = 'none';
-            moviesListSection.style.display = 'none';
-            paginationControls.style.display = 'none';
-            movieDetailsSection.style.display = 'block';
-
+        if (movie) {
             movieTitleElem.textContent = movie.title;
-            movieDirectorElem.textContent = `${movie.director}`; // Removed "المخرج:" as the label is already in HTML
-            movieStarsElem.textContent = `${Array.isArray(movie.stars) ? movie.stars.join(', ') : movie.stars}`; // Removed "بطولة:"
-            movieCategoryElem.textContent = `${movie.category}`; // Removed "النوع:"
-            movieYearElem.textContent = `${movie.year}`; // Removed "السنة:"
+            movieDirectorElem.textContent = movie.director;
+            movieStarsElem.textContent = Array.isArray(movie.stars) ? movie.stars.join(', ') : movie.stars;
+            movieCategoryElem.textContent = movie.category;
+            movieYearElem.textContent = movie.year;
             movieDescriptionElem.textContent = movie.description;
 
-            // Display video player
-            // Added sandbox attributes for security and referrerpolicy.
-            // Also included modestbranding, rel, and controls for potential YouTube embeds.
-            let embedSrc = movie.embed_url;
-            if (embedSrc.includes('youtube.com/embed/')) {
-                // Add YouTube specific parameters for better embedding and fewer related videos/branding
-                embedSrc += '?modestbranding=1&autoplay=1&rel=0&showinfo=0&fs=0&iv_load_policy=3&disablekb=1&controls=1';
-            } else if (embedSrc.includes('player.vimeo.com/video/')) {
-                // Add Vimeo specific parameters
-                embedSrc += '?autoplay=1&byline=0&portrait=0&title=0';
+            // Clear previous iframe and create a new one
+            moviePlayerContainer.innerHTML = ''; // Clear existing content
+            const iframe = document.createElement('iframe');
+            iframe.src = movie.embed_url;
+            iframe.allowFullscreen = true;
+            iframe.allow = "autoplay; fullscreen; picture-in-picture";
+            iframe.referrerPolicy = "no-referrer"; // هذا هو التعديل الجديد
+
+            // Add an error handler for the iframe (basic)
+            iframe.onerror = () => {
+                console.error(`خطأ في تحميل الفيديو: ${movie.title}. قد يكون الرابط غير صالح أو محظورًا من قبل المتصفح.`);
+                moviePlayerContainer.innerHTML = '<p style="color: red; text-align: center;">عذرًا، حدث خطأ أثناء تحميل الفيديو. يرجى المحاولة لاحقًا أو التواصل مع الدعم.</p>';
+            };
+
+            // Set a timeout to remove focus from the iframe after it loads
+            // This can prevent some immediate pop-ups on certain embed types by not giving them initial focus
+            iframe.onload = () => {
+                setTimeout(() => {
+                    if (document.activeElement === iframe) {
+                        iframe.blur(); // Remove focus
+                    }
+                }, 100);
+            };
+
+            moviePlayerContainer.appendChild(iframe);
+
+            // Generate Suggested Movies
+            const suggestedMovies = moviesData
+                .filter(m => m.id !== movie.id)
+                .sort(() => 0.5 - Math.random()) // Randomize order
+                .slice(0, 4); // Get 4 random suggestions
+
+            if (suggestedMovieGrid) {
+                suggestedMovieGrid.innerHTML = '';
+                suggestedMovies.forEach(suggestedMovie => {
+                    const suggestedCard = document.createElement('div');
+                    suggestedCard.classList.add('movie-card');
+                    suggestedCard.setAttribute('role', 'listitem');
+
+                    const suggestedLink = document.createElement('a');
+                    suggestedLink.dataset.id = suggestedMovie.id;
+                    suggestedLink.title = `شاهد فيلم ${suggestedMovie.title}`;
+                    suggestedLink.setAttribute('aria-label', `شاهد فيلم ${suggestedMovie.title}`);
+
+                    suggestedLink.innerHTML = `
+                        <img loading="lazy" src="${suggestedMovie.poster}" alt="بوستر فيلم ${suggestedMovie.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/260x380?text=Image+Not+Found';">
+                        <h3>${suggestedMovie.title}</h3>
+                    `;
+                    suggestedCard.appendChild(suggestedLink);
+                    suggestedMovieGrid.appendChild(suggestedCard);
+                });
             }
-            // For other providers like streamtape/vide0.net, parameters might vary or not exist,
-            // and they are the primary source of intrusive ads.
 
-            moviePlayerContainer.innerHTML = `
-                <iframe src="${embedSrc}" frameborder="0" allowfullscreen
-                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-                    referrerpolicy="origin" sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
-                </iframe>
-            `;
 
-            displaySuggestedMovies(movie.id);
+            movieDetailsSection.style.display = 'block';
+            moviesListSection.style.display = 'none';
+            heroSection.style.display = 'none';
+            paginationControls.style.display = 'none';
 
-            const moviePageUrl = `${window.location.origin}${window.location.pathname}?id=${movie.id}`;
-            updateMetaTags(
-                `${movie.title} - شاهد بلس`,
-                movie.description,
-                movie.poster,
-                moviePageUrl,
-                'video.movie'
-            );
+            // Update meta tags for movie details page
+            const movieUrl = window.location.origin + window.location.pathname + `?id=${movie.id}`;
+            updateMetaTags(movie.title + " - شاهد بلس", movie.description, movie.poster, movieUrl, 'video.movie');
+            addJsonLdSchema(movie); // Add movie specific schema
 
-            addJsonLdSchema(movie);
+            scrollToElement(movieDetailsSection, 0); // Scroll to movie details when displayed
+            updateUrl(movie.id);
 
         } else {
-            console.warn('Movie not found for ID:', id);
+            console.error('Movie not found:', movieId);
+            // Fallback to home if movie not found
             displayMovies();
             updateUrl();
-            scrollToElement(document.body);
         }
     }
 
-    // Handle clicks on movie cards (event delegation)
-    document.addEventListener('click', (e) => {
-        const movieLink = e.target.closest('.movie-card a');
-
-        if (movieLink && movieLink.dataset.id) {
-            e.preventDefault();
-            const movieId = movieLink.dataset.id;
-            displayMovieDetails(movieId);
-            updateUrl(movieId);
-            scrollToElement(movieDetailsSection, 750);
+    // Event Delegation for Movie Cards (both main and suggested grids)
+    document.addEventListener('click', (event) => {
+        const movieCardLink = event.target.closest('.movie-card a');
+        if (movieCardLink && movieCardLink.dataset.id) {
+            event.preventDefault();
+            displayMovieDetails(movieCardLink.dataset.id);
         }
     });
 
-    // Handle pagination button clicks
-    if (prevPageBtn) {
+    // Event Listener for "Back to Home" Button
+    if (backBtn) {
+        backBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            displayMovies();
+            updateUrl();
+        });
+    }
+
+    // Event Listener for Hero Section Button
+    if (heroBtn) {
+        heroBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            scrollToElement(moviesListSection);
+        });
+    }
+
+    // Pagination Event Listeners
+    if (prevPageBtn && nextPageBtn) {
         prevPageBtn.addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
                 displayMovies();
                 updateUrl(null, currentPage);
-                scrollToElement(moviesListSection);
             }
         });
-    }
 
-    if (nextPageBtn) {
         nextPageBtn.addEventListener('click', () => {
             if (currentPage < totalPages) {
                 currentPage++;
                 displayMovies();
                 updateUrl(null, currentPage);
-                scrollToElement(moviesListSection);
             }
         });
     }
 
-    // Handle back button click
-    if (backBtn) {
-        backBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            displayMovies();
-            updateUrl();
-            scrollToElement(document.body);
-        });
-    }
-
-    // Handle browser back/forward buttons
+    // Handle Browser Back/Forward Buttons
     window.addEventListener('popstate', (event) => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const movieId = urlParams.get('id');
-        const pageNumber = urlParams.get('page');
-
-        if (movieId) {
-            displayMovieDetails(movieId);
-            scrollToElement(movieDetailsSection);
-        } else if (pageNumber && parseInt(pageNumber) >= 1 && parseInt(pageNumber) <= totalPages) { // Added check for minimum page number
-            currentPage = parseInt(pageNumber);
+        const state = event.state;
+        if (state && state.movieId) {
+            displayMovieDetails(state.movieId);
+        } else if (state && state.pageNumber) {
+            currentPage = state.pageNumber;
             displayMovies();
-            scrollToElement(moviesListSection);
         } else {
-            currentPage = 1;
             displayMovies();
-            scrollToElement(document.body);
+            updateUrl(); // Ensure URL reflects home state without params
         }
     });
 
-    // Initial page load logic
+    // Initialization Function
     function init() {
         totalPages = Math.ceil(moviesData.length / moviesPerPage);
+
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get('id');
-        const pageNumber = urlParams.get('page');
+        const pageNum = parseInt(urlParams.get('page'));
 
         if (movieId) {
             displayMovieDetails(movieId);
-            scrollToElement(movieDetailsSection, 1000); // Scroll with a slight delay to ensure content is rendered
-        } else if (pageNumber && parseInt(pageNumber) >= 1 && parseInt(pageNumber) <= totalPages) { // Added check for minimum page number
-            currentPage = parseInt(pageNumber);
+        } else if (pageNum && pageNum > 1 && pageNum <= totalPages) {
+            currentPage = pageNum;
             displayMovies();
-            scrollToElement(moviesListSection);
         } else {
-            currentPage = 1;
             displayMovies();
-            scrollToElement(document.body); // Scroll to top for initial home view
         }
     }
 
-    // Call init when DOM is fully loaded
+    // Run the initialization
     init();
 });
