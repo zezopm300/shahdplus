@@ -273,7 +273,7 @@ h1, h2, .section-title {
     display: inline-flex;
     align-items: center;
     gap: 1rem;
-    box-shadow: 0 8px 25px var(--shadow-color-light); /* ظل أكبر بلون الـ accent - تم التغيير من shadow-color-accent لكي يعمل */
+    box-shadow: 0 8px 25px var(--shadow-color-light); /* ظل أكبر بلون الـ accent */
     transition: all var(--transition-speed) ease; /* انتقال لكل الخصائص */
     position: relative;
     overflow: hidden; /* لإخفاء تأثير الإضاءة */
@@ -295,7 +295,7 @@ h1, h2, .section-title {
 
 .hero-content .btn:hover {
     transform: translateY(-5px); /* حركة لأعلى أوضح */
-    box-shadow: 0 15px 40px var(--shadow-color-light); /* ظل أكبر وأعمق - تم التغيير من shadow-color-accent لكي يعمل */
+    box-shadow: 0 15px 40px var(--shadow-color-light); /* ظل أكبر وأعمق */
 }
 
 .hero-content .btn:hover::before {
@@ -325,7 +325,7 @@ h1, h2, .section-title {
     border-radius: 3px;
 }
 
-/* === MODIFIED: Movie Grid and Card Styles === */
+/* Movie Grid and Card Styles */
 .movie-grid,
 #suggested-movie-grid { /* طبق هذا على كل من الشبكة الرئيسية وشبكة الأفلام المقترحة */
     display: grid;
@@ -388,8 +388,6 @@ h1, h2, .section-title {
     line-height: 1.3; /* تحسين تباعد السطور للنصوص الطويلة */
     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); /* ظل خفيف للنص لزيادة الوضوح */
 }
-/* === END MODIFIED Movie Grid and Card Styles === */
-
 
 /* Movie Details */
 .movie-details-section {
@@ -502,7 +500,7 @@ h1, h2, .section-title {
     background: linear-gradient(45deg, var(--accent-color), var(--accent-dark)); /* تدرج عند الهوفر */
     color: var(--text-white);
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px var(--shadow-color-light); /* تم التغيير */
+    box-shadow: 0 6px 20px var(--shadow-color-light);
     outline: none;
 }
 
@@ -790,17 +788,17 @@ h1, h2, .section-title {
 }
 
 
-/* الأنماط الخاصة بالـ Overlay للفيديو */
-.video-overlay {
+/* الأنماط الخاصة بالـ Overlay للفيديو (تم إزالتها لأنها قد تتعارض مع تجربة المستخدم المباشرة) */
+/* .video-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 10; /* تأكد إنه أعلى من الـ iframe */
-    background-color: rgba(0, 0, 0, 0); /* شفاف تماما */
-    cursor: pointer; /* لإظهار مؤشر اليد عند المرور فوقه */
-}
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+} */
 
 
 .social-links {
@@ -828,9 +826,4 @@ h1, h2, .section-title {
 .social-links a .fa-telegram-plane {
     color: #0088cc; /* لون أيقونة التيليجرام الأزرق المميز */
     font-size: 24px; /* قد تجعل الأيقونة أكبر قليلاً من النص لإبرازها */
-}
-
-.social-links a span {
-    font-size: 16px; /* حجم نص القناة */
-    font-weight: 500;
 }
