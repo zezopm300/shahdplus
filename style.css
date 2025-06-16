@@ -201,6 +201,7 @@ h1, h2, .section-title {
     background-size: cover;
     min-height: 600px; /* ارتفاع أكبر لمساحة Hero */
     display: flex;
+    flex-direction: column; /* لترتيب المحتوى والإعلان عموديًا */
     align-items: center; /* توسيط عمودي */
     justify-content: center; /* توسيط أفقي */
     text-align: center; /* توسيط النص داخلياً */
@@ -436,7 +437,30 @@ h1, h2, .section-title {
     width: 100%;
     height: 100%;
     border: none;
+    z-index: 1; /* لتكون تحت الطبقة الشفافة */
 }
+
+/* NEW: Video Overlay for Adsterra Direct Link */
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.0); /* شفافة تمامًا */
+    z-index: 10; /* فوق الـ iframe عشان تستقبل النقرات */
+    cursor: pointer;
+    /* للتبديل بين العرض وعدم العرض */
+    transition: background-color 0.3s ease;
+}
+/* لجعلها تختفي تمامًا بعد الضغطة الأولى */
+.video-overlay.clicked {
+    pointer-events: none; /* تمنع استقبال النقرات */
+    background: rgba(0, 0, 0, 0.0); /* تظل شفافة */
+    opacity: 0; /* ممكن تخليها شفافة بالكامل */
+    transition: opacity 0.5s ease-out; /* انتقال لائق للاختفاء */
+}
+
 
 /* Movie Info Boxes (للمخرج، النوع، السنة، إلخ) */
 .movie-info-grid {
@@ -788,19 +812,6 @@ h1, h2, .section-title {
 }
 
 
-/* الأنماط الخاصة بالـ Overlay للفيديو (تم إزالتها لأنها قد تتعارض مع تجربة المستخدم المباشرة) */
-/* .video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    background-color: rgba(0, 0, 0, 0);
-    cursor: pointer;
-} */
-
-
 .social-links {
     display: flex;
     flex-wrap: wrap; /* للسماح للروابط بالنزول لسطر جديد إذا كانت الشاشة صغيرة */
@@ -826,4 +837,70 @@ h1, h2, .section-title {
 .social-links a .fa-telegram-plane {
     color: #0088cc; /* لون أيقونة التيليجرام الأزرق المميز */
     font-size: 24px; /* قد تجعل الأيقونة أكبر قليلاً من النص لإبرازها */
+}
+
+/* NEW: General Ad Container Styles (for Adsterra banners) */
+.ad-container {
+    background-color: var(--bg-medium); /* خلفية داكنة للإعلان */
+    border: 1px solid var(--border-color); /* حدود خفيفة */
+    border-radius: 12px; /* حواف دائرية */
+    padding: 1rem; /* بادينج داخلي */
+    margin: 3rem auto; /* مسافة علوية وسفلية وتوسيط أفقي */
+    text-align: center; /* توسيط محتوى الإعلان */
+    overflow: hidden; /* لمنع أي محتوى زائد من الظهور خارج الحدود */
+    box-shadow: 0 5px 20px var(--shadow-color-dark); /* ظل خفيف */
+    display: flex; /* لضمان توسيط الإعلان داخلياً */
+    justify-content: center;
+    align-items: center;
+    min-height: 90px; /* لضمان ظهور الإعلان حتى لو لم يتم تحميله بعد (متوسط ارتفاع البانرات) */
+    max-width: 900px; /* تحديد أقصى عرض للحاوية لتبدو متناسبة */
+}
+
+/* Ad specific adjustments */
+.ad-banner-hero {
+    margin-top: 2rem;
+    margin-bottom: 0rem;
+    max-width: 728px; /* غالباً هيكون 728x90 */
+}
+
+.ad-banner-below-grid {
+    margin-top: 3.5rem;
+    margin-bottom: 3rem;
+    max-width: 728px;
+}
+
+.ad-banner-below-player {
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+    max-width: 728px;
+}
+
+.ad-banner-below-suggested {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+    max-width: 728px;
+}
+
+
+/* Responsive Adjustments for Ads */
+@media (max-width: 768px) {
+    .ad-container {
+        margin: 1.5rem auto; /* تقليل الهامش على الجوال */
+        padding: 0.5rem;
+        border-radius: 8px;
+        min-height: 60px; /* تقليل الحد الأدنى للارتفاع */
+        max-width: 468px; /* غالباً هيكون 468x60 أو 320x50 */
+    }
+
+    .ad-banner-hero {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .ad-banner-below-grid,
+    .ad-banner-below-player,
+    .ad-banner-below-suggested {
+        margin-top: 2rem;
+        margin-bottom: 1.5rem;
+    }
 }
