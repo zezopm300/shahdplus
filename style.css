@@ -30,6 +30,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow-x: hidden; /* لمنع ظهور شريط التمرير الأفقي غير المرغوب فيه */
+    direction: rtl; /* تعيين اتجاه الصفحة الافتراضي من اليمين لليسار */
 }
 
 a {
@@ -78,15 +79,27 @@ h1, h2, .section-title {
     align-items: center;
 }
 
-/* Logo Styling */
+/* Logo Styling - Streamlined design for "شاهد بلس" */
 .logo a {
+    font-family: 'Tajawal', sans-serif; /* استخدام نفس الخط الأساسي للنص */
     font-size: 2.8rem; /* حجم أكبر للوجو */
-    letter-spacing: 2px; /* مسافة بين الحروف تعطي إحساسًا بالرقي */
+    letter-spacing: 0.5px; /* تقليل المسافة بين الحروف قليلاً */
     color: var(--text-white); /* لون نص اللوجو أبيض */
-    text-shadow: 0 0 10px rgba(0,0,0,0.6), 0 0 5px var(--accent-color); /* ظل أكبر ولمسة من لون الـ accent */
+    text-shadow: 0 0 8px rgba(0,0,0,0.4); /* ظل خفيف للنص */
     display: flex; /* لترتيب الأيقونة والنص */
     align-items: center;
-    gap: 10px; /* مسافة بين الأيقونة والنص */
+    gap: 8px; /* مسافة بين الأيقونة والنص */
+    font-weight: 700; /* لضمان بروز النص */
+}
+
+.logo a span.plus {
+    font-size: 0.7em; /* حجم أصغر لـ "بلس" نسبة إلى "شاهد" */
+    font-weight: 500;
+    color: var(--accent-color); /* لون الـ accent */
+    text-shadow: none; /* إزالة الظل من "بلس" */
+    position: relative;
+    top: -0.2em; /* رفع "بلس" قليلاً */
+    padding-right: 5px; /* مسافة بعد النص "شاهد" وقبل "بلس" */
 }
 
 .logo-icon {
@@ -105,7 +118,7 @@ h1, h2, .section-title {
 .main-nav ul {
     list-style: none;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-end; /* لضمان المحاذاة لليمين في القائمة العلوية */
     gap: 2.5rem; /* مسافات أكبر بين عناصر القائمة */
     margin: 0;
     padding: 0;
@@ -124,7 +137,7 @@ h1, h2, .section-title {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 0;
+    right: 0; /* تم تغييرها لتناسب RTL */
     width: 0;
     height: 2px;
     background: linear-gradient(to right, var(--accent-color), var(--accent-dark)); /* تدرج لوني للخط */
@@ -142,7 +155,8 @@ h1, h2, .section-title {
 }
 
 .main-nav ul li a i {
-    margin-right: 8px;
+    margin-left: 8px; /* تم تغييرها لتناسب الاتجاه من اليمين لليسار */
+    margin-right: 0;
     color: var(--accent-color);
 }
 
@@ -178,7 +192,7 @@ h1, h2, .section-title {
 }
 
 
-/* Hero Section */
+/* Hero Section - تركز مكثف على التوسيط */
 .hero-section {
     position: relative;
     background-image: url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); /* صورة خلفية سينمائية */
@@ -187,10 +201,10 @@ h1, h2, .section-title {
     background-size: cover;
     min-height: 600px; /* ارتفاع أكبر لمساحة Hero */
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: center; /* توسيط عمودي */
+    justify-content: center; /* توسيط أفقي */
+    text-align: center; /* توسيط النص داخلياً */
     color: var(--text-white);
-    text-align: center;
     padding: 3rem 1rem;
     transition: background-image 0.6s ease-in-out;
     box-shadow: inset 0 -60px 100px rgba(0,0,0,0.20); /* ظل داخلي أعمق من الأسفل */
@@ -211,12 +225,16 @@ h1, h2, .section-title {
     position: relative;
     z-index: 1;
     max-width: 900px; /* عرض أكبر للمحتوى */
+    width: 100%; /* تأكد من أن المحتوى يأخذ 100% من المساحة المتاحة له داخل الـ flex container */
     padding: 30px;
     background: rgba(0, 0, 0, 0.4); /* خلفية شفافة للمحتوى */
     border-radius: 15px;
     box-shadow: 0 10px 40px var(--shadow-color-dark); /* ظل قوي للمحتوى */
     animation: fadeInScale 1.2s ease-out forwards; /* انيميشن دخول أطول */
     border: 1px solid rgba(255, 255, 255, 0.1); /* حدود شفافة رقيقة */
+    text-align: center; /* ضمان التوسيط الداخلي للنصوص */
+    direction: rtl; /* لضمان أن النص يبدأ من اليمين داخل هذا العنصر */
+    margin: 0 auto; /* هذا سيعمل مع max-width لضمان التوسيط الفعال */
 }
 
 @keyframes fadeInScale {
@@ -243,6 +261,7 @@ h1, h2, .section-title {
     max-width: 800px;
     text-shadow: 0 0 12px var(--shadow-color-dark);
     color: var(--text-light);
+    margin: 0 auto 2.5rem auto; /* لضمان التوسيط الأفقي للفقرة */
 }
 
 .hero-content .btn {
@@ -258,17 +277,19 @@ h1, h2, .section-title {
     transition: all var(--transition-speed) ease; /* انتقال لكل الخصائص */
     position: relative;
     overflow: hidden; /* لإخفاء تأثير الإضاءة */
+    direction: rtl; /* لضمان أن النص يبدأ من اليمين داخل الزر */
 }
 
 .hero-content .btn::before { /* تأثير إضاءة عند الهوفر */
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
+    right: -100%; /* تم تغيير الاتجاه ليتناسب مع RTL */
+    left: auto;
     width: 100%;
     height: 100%;
     background: rgba(255, 255, 255, 0.2);
-    transform: skewX(-30deg);
+    transform: skewX(30deg); /* تم عكس الميلان ليناسب الاتجاه */
     transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); /* انتقال سلس ومختلف */
 }
 
@@ -278,7 +299,7 @@ h1, h2, .section-title {
 }
 
 .hero-content .btn:hover::before {
-    left: 100%;
+    right: 100%; /* لتأثير الإضاءة عند الهوفر من اليمين إلى اليسار */
 }
 
 /* Movies List */
@@ -304,69 +325,71 @@ h1, h2, .section-title {
     border-radius: 3px;
 }
 
-.movie-grid {
+/* === MODIFIED: Movie Grid and Card Styles === */
+.movie-grid,
+#suggested-movie-grid { /* طبق هذا على كل من الشبكة الرئيسية وشبكة الأفلام المقترحة */
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* حجم أكبر للفيلم في الشبكة */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* أبعاد متجاوبة للبطاقات، تم تقليل الـ minmax قليلاً */
     gap: 2.5rem; /* مسافات أكبر بين الأفلام */
     padding-bottom: 80px;
 }
 
 .movie-card {
-    background: var(--bg-medium);
-    border-radius: 15px; /* حواف أكثر دائرية */
-    overflow: hidden;
-    box-shadow: 0 10px 30px var(--shadow-color-dark); /* ظل أنعم وأعمق */
+    background: linear-gradient(145deg, var(--bg-medium), #101010); /* تدرج بسيط لخلفية الكارت */
+    border-radius: 18px; /* حواف أكثر دائرية قليلاً */
+    overflow: hidden; /* مهم جداً لقص أي محتوى يتجاوز حدود البطاقة */
+    box-shadow: 0 12px 35px var(--shadow-color-dark); /* ظل أعمق وأكثر انتشارًا */
     cursor: pointer;
-    /* تحديد الخصائص للانتقال لزيادة الكفاءة */
     transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, border var(--transition-speed) ease;
     border: 1px solid var(--border-color); /* حدود خفيفة */
     position: relative;
-    perspective: 1000px; /* لتأثير 3D */
-    display: flex; /* لجعل المحتوى داخل الكارد مرنًا */
-    flex-direction: column; /* لترتيب الصورة والعنوان عموديا */
-    /* Add will-change for performance optimization */
-    will-change: transform, box-shadow, border-color; 
+    transform-style: preserve-3d; /* مهم لتأثير 3D */
+    display: flex;
+    flex-direction: column;
+    outline: none; /* لإزالة أي إطار حول العنصر عند التركيز */
 }
 
 .movie-card:hover,
 .movie-card:focus-within {
-    transform: translateY(-12px); /* حركة لأعلى أوضح */
-    box-shadow: 0 20px 50px var(--shadow-color-light), 0 0 25px var(--accent-color); /* ظل أكبر وأعمق مع توهج - تم التغيير */
+    transform: translateY(-15px) rotateX(2deg); /* حركة لأعلى وتدوير خفيف لإحساس 3D */
+    box-shadow: 0 25px 60px var(--shadow-color-dark), 0 0 30px var(--accent-color); /* ظل أكبر وأعمق مع توهج قوي */
     border-color: var(--accent-color); /* إطار بلون الـ accent */
 }
 
-/* التعديلات هنا للصور داخل movie-card */
 .movie-card img {
-    width: 100%;
-    object-fit: contain; /* سيضمن عرض الصورة بالكامل داخل الحاوية */
+    width: 100%; /* الصورة تأخذ عرض البطاقة بالكامل */
+    height: 300px; /* **تحديد ارتفاع ثابت لضمان توحيد شكل الكروت** */
+    object-fit: cover; /* **مهم جداً: لضمان ملء الصورة للحيز دون تشويه** */
     display: block;
-    background-color: var(--bg-dark); /* أو لون var(--bg-medium); ليطابق خلفية البطاقة */
-    border-radius: 15px 15px 0 0;
-    transition: transform var(--transition-speed) ease;
-    min-height: 250px; 
-    max-height: 400px; 
+    border-radius: 18px 18px 0 0; /* حواف دائرية للجزء العلوي فقط */
+    transition: transform 0.4s ease, filter 0.4s ease; /* سرعة انتقال أفضل للصورة */
 }
 
-
 .movie-card:hover img {
-    transform: scale(1.02); /* تكبير أخف للصورة عند الهوفر، لأنها الآن "تحتوي" على الارتفاع */
+    transform: scale(1.07); /* تكبير ملحوظ للصورة عند الهوفر */
+    filter: brightness(0.8); /* تغميق الصورة قليلاً لإبراز العنوان والحدود */
 }
 
 .movie-card h3 {
-    padding: 1rem 1.2rem; /* بادينج أكبر */
-    font-size: 1.4rem; /* حجم خط أكبر */
+    padding: 1.2rem 1rem; /* بادينج مناسب */
+    font-size: 1.5rem; /* حجم خط أكبر قليلاً */
     color: var(--text-white);
     text-align: center;
     font-family: 'Amiri', serif;
-    background: linear-gradient(to top, var(--bg-medium), rgba(26, 26, 26, 0.8)); /* تدرج خلفية العنوان */
+    /* تدرج من الأسفل للأعلى لإضافة تأثير جمالي للخلفية */
+    background: linear-gradient(to top, var(--bg-medium) 0%, rgba(26, 26, 26, 0.8) 100%);
     position: relative;
     z-index: 1;
-    flex-grow: 1; /* لجعل العنوان يملأ المساحة المتبقية إذا كان هناك نص طويل */
-    display: flex; /* لمركزة النص عمودياً إذا لزم الأمر */
-    align-items: center; /* لمركزة النص عمودياً */
-    justify-content: center; /* لمركزة النص أفقياً */
-    min-height: 70px; /* لمنع العنوان من أن يصبح قصيرًا جدًا إذا كان سطر واحد */
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px; /* لضمان وجود مساحة كافية للعنوان */
+    line-height: 1.3; /* تحسين تباعد السطور للنصوص الطويلة */
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); /* ظل خفيف للنص لزيادة الوضوح */
 }
+/* === END MODIFIED Movie Grid and Card Styles === */
+
 
 /* Movie Details */
 .movie-details-section {
@@ -378,8 +401,6 @@ h1, h2, .section-title {
     margin: 5rem auto; /* مسافة أكبر من الأعلى */
     color: var(--text-light);
     border: 1px solid var(--border-color);
-    /* Add will-change for performance optimization */
-    will-change: transform, opacity;
 }
 
 .movie-details-section p {
@@ -419,6 +440,41 @@ h1, h2, .section-title {
     border: none;
 }
 
+/* Movie Info Boxes (للمخرج، النوع، السنة، إلخ) */
+.movie-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* أعمدة مرنة للمعلومات */
+    gap: 1.5rem; /* مسافة بين المربعات */
+    margin-top: 2rem;
+    margin-bottom: 2.5rem; /* مسافة قبل زر العودة */
+}
+
+.info-box {
+    background: var(--bg-dark); /* خلفية داكنة للمربع */
+    padding: 1.5rem;
+    border-radius: 12px; /* حواف دائرية */
+    border: 1px solid var(--border-color); /* حدود خفيفة */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* ظل خفيف */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-box h4 {
+    color: var(--accent-color); /* لون عنوان المربع (مثل المخرج) */
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Amiri', serif;
+}
+
+.info-box p {
+    font-size: 1.05rem;
+    color: var(--text-light);
+    margin-bottom: 0; /* إزالة المارجن السفلي من الفقرة الداخلية */
+}
+
 /* Back Button */
 .btn-back {
     background-color: transparent;
@@ -434,8 +490,11 @@ h1, h2, .section-title {
     padding: 0.9rem 1.8rem;
     border-radius: 30px;
     transition: all var(--transition-speed) ease;
-    /* Add will-change for performance optimization */
-    will-change: transform, background-color, color, box-shadow;
+}
+
+.btn-back i {
+    margin-left: 8px; /* لتناسب الاتجاه من اليمين لليسار */
+    margin-right: 0;
 }
 
 .btn-back:hover,
@@ -445,6 +504,53 @@ h1, h2, .section-title {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px var(--shadow-color-light); /* تم التغيير */
     outline: none;
+}
+
+/* Pagination / Previous-Next Buttons (الزائر السابق والتالي) */
+.pagination-controls {
+    display: flex;
+    justify-content: center; /* توسيط الأزرار */
+    align-items: center;
+    gap: 1.5rem; /* مسافة بين الأزرار */
+    margin-top: 3rem; /* مسافة علوية */
+    margin-bottom: 4rem; /* مسافة سفلية قبل الفوتير */
+}
+
+.pagination-btn {
+    background: var(--bg-medium);
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-btn:hover,
+.pagination-btn:focus {
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-dark));
+    color: var(--text-white);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 6px 15px var(--shadow-color-light);
+    outline: none;
+}
+
+.pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--bg-medium);
+    color: var(--accent-color);
+    box-shadow: none;
+    transform: none;
+}
+
+.pagination-btn i {
+    font-size: 1.2rem;
 }
 
 /* Footer */
@@ -497,35 +603,65 @@ h1, h2, .section-title {
         font-size: 2.2rem; /* حجم أصغر للوجو على الموبايل */
         gap: 5px;
     }
+    .logo a span.plus {
+        font-size: 0.7em;
+        top: -0.15em;
+        padding-right: 3px;
+    }
     .logo-icon {
         font-size: 1.8rem;
     }
 
     .main-nav {
-        right: -100%;
+        position: fixed;
+        top: 0;
+        right: -100%; /* تبدأ من خارج الشاشة على اليمين */
+        height: 100%;
         width: 260px; /* عرض القائمة الجانبية أصغر قليلاً */
+        background: var(--bg-medium); /* خلفية القائمة */
         padding-top: 70px; /* ضبط البادينج العلوي */
         box-shadow: -5px 0 25px var(--shadow-color-dark);
+        transition: right 0.3s ease-in-out; /* حركة سلسة للقائمة */
+        z-index: 1001; /* أعلى من المحتوى ولكن أقل من زر الإغلاق */
+        display: flex; /* لتفعيل flexbox داخل القائمة */
+        flex-direction: column; /* لترتيب العناصر عمودياً */
+        align-items: flex-end; /* لمحاذاة العناصر لليمين داخل القائمة الجانبية */
     }
     .main-nav.active {
-        right: 0;
+        right: 0; /* عند التفعيل، اجعلها تظهر بالكامل من اليمين */
     }
 
     .main-nav ul {
-        flex-direction: column; /* جعل القائمة عمودية في الموبايل */
+        flex-direction: column; /* لترتيب عناصر القائمة عمودياً في وضع الموبايل */
+        align-items: flex-end; /* لمحاذاة العناصر إلى اليمين */
         gap: 0.8rem;
         margin: 0 1rem;
+        width: 100%; /* لجعل القائمة تأخذ كامل العرض المتاح داخل الناف بار */
+    }
+
+    .main-nav ul li {
+        width: 100%; /* لجعل كل عنصر قائمة يأخذ كامل العرض */
     }
 
     .main-nav ul li a {
         padding: 8px 0;
         font-size: 1rem;
-        display: block; /* لجعل الروابط تملأ العرض وتكون أسهل للنقر */
+        width: 100%; /* لجعل الروابط تمتد على كامل العرض */
+        text-align: right; /* لمحاذاة النص داخل الروابط إلى اليمين */
+    }
+    .main-nav ul li a::after {
+        left: auto;
+        right: 0; /* لتغيير اتجاه الخط السفلي للروابط */
+    }
+
+    .main-nav ul li a i {
+        margin-right: 8px; /* لتناسب اتجاه النص العربي */
+        margin-left: 0;
     }
 
     .menu-toggle {
         display: flex;
-        margin-right: 10px;
+        margin-right: 10px; /* لتحديد مكان الزر على اليمين */
     }
 
     /* Hero Section adjustments for mobile */
@@ -566,9 +702,8 @@ h1, h2, .section-title {
         box-shadow: 0 5px 15px var(--shadow-color-dark);
     }
     .movie-card img {
-        object-fit: contain;
-        min-height: 180px;
-        max-height: 250px;
+        object-fit: cover; /* استخدم cover هنا لضمان ملء الصورة للمساحة */
+        height: 220px; /* **ارتفاع ثابت لصور الكروت على الموبايل** */
         border-radius: 10px 10px 0 0;
     }
     .movie-card h3 {
@@ -596,6 +731,23 @@ h1, h2, .section-title {
         border-radius: 10px;
         box-shadow: 0 5px 20px var(--shadow-color-dark);
     }
+    /* Movie Info Boxes adjustments for mobile */
+    .movie-info-grid {
+        grid-template-columns: 1fr; /* عمود واحد على الموبايل */
+        gap: 1rem;
+        margin-top: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .info-box {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+    .info-box h4 {
+        font-size: 1.1rem;
+    }
+    .info-box p {
+        font-size: 0.95rem;
+    }
 
     /* Back Button for mobile */
     .btn-back {
@@ -603,16 +755,40 @@ h1, h2, .section-title {
         padding: 0.7rem 1.2rem;
         margin-bottom: 1.5rem;
     }
+    .btn-back i {
+        margin-right: 5px; /* ضبط للأيقونة في زر الرجوع */
+        margin-left: 0;
+    }
+
+    /* Pagination for mobile */
+    .pagination-controls {
+        flex-direction: column; /* الأزرار فوق بعضها البعض */
+        gap: 1rem;
+        margin-top: 2rem;
+        margin-bottom: 3rem;
+    }
+    .pagination-btn {
+        width: 80%; /* عرض أكبر للأزرار */
+        text-align: center;
+        justify-content: center; /* توسيط النص والأيقونة داخل الزر */
+        font-size: 1rem;
+        padding: 0.7rem 1.2rem;
+    }
 
     /* Footer adjustments for mobile */
     .main-footer {
         padding: 2rem 0;
+    }
+    .footer-content {
+        flex-direction: column; /* لترتيب المحتوى عمودياً في الفوتير */
+        gap: 1rem;
     }
     .social-links a {
         font-size: 1.4rem;
         margin: 0 0.6rem;
     }
 }
+
 
 /* الأنماط الخاصة بالـ Overlay للفيديو */
 .video-overlay {
@@ -624,4 +800,37 @@ h1, h2, .section-title {
     z-index: 10; /* تأكد إنه أعلى من الـ iframe */
     background-color: rgba(0, 0, 0, 0); /* شفاف تماما */
     cursor: pointer; /* لإظهار مؤشر اليد عند المرور فوقه */
+}
+
+
+.social-links {
+    display: flex;
+    flex-wrap: wrap; /* للسماح للروابط بالنزول لسطر جديد إذا كانت الشاشة صغيرة */
+    gap: 15px; /* مسافة بين الروابط الفردية */
+    justify-content: center; /* لوسطنة الروابط في الفوتر */
+}
+
+.social-links a {
+    display: flex; /* لجعل الأيقونة والنص في سطر واحد */
+    align-items: center; /* لمحاذاة رأسية للعناصر */
+    gap: 8px; /* مسافة بين الأيقونة والنص */
+    color: #999; /* لون الروابط في الفوتر */
+    font-size: 20px; /* حجم الأيقونة */
+    text-decoration: none; /* إزالة خط تحت الروابط */
+    transition: color 0.3s ease;
+    white-space: nowrap; /* لمنع كسر النص إلى سطرين */
+}
+
+.social-links a:hover {
+    color: var(--accent-color); /* لون عند مرور الماوس */
+}
+
+.social-links a .fa-telegram-plane {
+    color: #0088cc; /* لون أيقونة التيليجرام الأزرق المميز */
+    font-size: 24px; /* قد تجعل الأيقونة أكبر قليلاً من النص لإبرازها */
+}
+
+.social-links a span {
+    font-size: 16px; /* حجم نص القناة */
+    font-weight: 500;
 }
