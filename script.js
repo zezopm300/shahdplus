@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let adsterraOpenedOnFirstClick = false; // علامة لتتبع ما إذا كان رابط Adsterra قد فُتح عند النقرة الأولى
     let scrollTimeoutId = null; // لتتبع تأخيرات التمرير ومنع تداخلها
 
-    // بيانات الأفلام (هنا يمكنك إضافة المزيد من الأفلام يدويًا)
+    // بيانات الأفلام (هنا يمكنك إضافة المزيد من الأفلام)
     let moviesData = [
         {
             "id": 1,
@@ -87,24 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url": "https://streamtape.com/e/v9KrVBVJVAIYjA/",
             "rating": "6.3"
         },
-
-
-
-        {
-  "id": 7,
-  "title": "اغنيه العيد ",
-  "description": "اغانيه رومانسيه ",
-  "poster": "https://zaaednews.com/wp-content/uploads/2024/09/%D8%AD%D9%81%D9%84-%D8%A3%D9%86%D8%BA%D8%A7%D9%85-%D9%84%D9%8A%D8%A7%D9%84%D9%8A-%D9%85%D8%B5%D8%B1-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D9%81-%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A-%D8%A7%D9%84%D9%83%D8%A8%D9%8A%D8%B1.jpg0_.jpg",
-  "year": "2024",
-  "category": "رومانسي",
-  "director": "انغام",
-  "stars": ["ممثل 1", "ممثل 2"],
-  "embed_url": "https://player.vimeo.com/video/1091276533"
-
-},
-
-
-  
         {
             "id": 4,
             "title": "Moms Friends 2024",
@@ -141,13 +123,18 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/",
             "rating": "7.8"
         },
-        // هنا يمكنك إضافة المزيد من الأفلام يدويًا
+        // كرر الأفلام هنا لكي نصل لعدد كافٍ لاختبار التقسيم لصفحات (مثلا 60 فيلم)
+        // للتجربة: نقوم بتكرار الأفلام لزيادة عددها لاختبار Pagination
     ];
-    // تم حذف حلقة تكرار الأفلام هنا بناءً على طلبك
+    // زيادة عدد الأفلام لأغراض الاختبار
+    for (let i = 0; i < 6; i++) { // يكرر 6 مرات، مما يؤدي إلى 42 فيلمًا إجماليًا (6 أصلية + 6*6 مكررة)
+        moviesData = moviesData.concat(moviesData.map(movie => ({ ...movie, id: moviesData.length + movie.id })));
+    }
+
 
     // Pagination state variables - متغيرات حالة تقسيم الصفحات
     let currentPage = 1;
-    const moviesPerPage = 40; // عدد الأفلام المعروضة في كل صفحة (يمكنك تعديله حسب عدد الأفلام لديك الآن)
+    const moviesPerPage = 40; // عدد الأفلام المعروضة في كل صفحة
     let totalPages; // سيتم حسابه ديناميكيًا في init
 
     // Helper Function: Update Meta Tags for SEO and Social Sharing - دالة مساعدة: تحديث علامات الميتا لتحسين محركات البحث والمشاركة الاجتماعية
