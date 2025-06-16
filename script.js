@@ -28,6 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const movieDescriptionElem = movieDetailsSection ? movieDetailsSection.querySelector('.movie-description') : null;
     const moviePlayerContainer = movieDetailsSection ? movieDetailsSection.querySelector('.movie-player-container') : null;
 
+    // Element for the transparent overlay above the video player
+    // This element will be created dynamically and re-attached each time a movie detail page is opened
+    let videoOverlay = null;
+
     // Store original meta and title for home page (SEO Improvement)
     const originalTitle = document.title;
     const originalDescriptionMeta = document.querySelector('meta[name="description"]');
@@ -46,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ****** استخدم روابط YouTube Embed أو Vimeo Embed التي تحصل عليها مباشرة من هذه المنصات ******
     // ****** الروابط مثل streamtape.com أو vide0.net غالبًا ما تكون مشكلة وتسبب الإعلانات المزعجة أو الحظر ******
     let moviesData = [
-        {
+         {
             "id": 1,
             "title": "فيلم Purity Falls 2019",
             "description": " القصّة : بعد مرور عام على فقدان زوجها، تستقر نيكول مع أبنائها الصغار جاستين وجيسون في بيوريتي فولز. في البداية، يتم الترحيب بالعائلة بحفاوة. وخاصة جارتهم الغنية كورتني التي تبدو لطيفة للغاية، حيث توفر لجيسون بسرعة وظائف غريبة لدعم دخل الأسرة. ومع ذلك، سرعان ما تلاحظ نيكول أن هناك شيئًا ما ليس على ما يرام، حيث يغادر ابنها ويعود في ساعات متأخرة بشكل مريب. عندما تغرق جارتها الشابة في حمام السباحة، تبدأ الأمور في أن تصبح خطيرة. هناك شيء غير صحيح مع كورتني الودودة للغاية، والتي يبدو أنها تسيطر على ابنها.",
@@ -132,62 +136,91 @@ document.addEventListener('DOMContentLoaded', () => {
         // هنا يمكنك إضافة المزيد من الأفلام يدويًا
     ];
 
+    // Adsterra Configuration
+    // استبدل هذا الرابط برابط الـ Direct Link الخاص بك من Adsterra
+    const adsterraDirectLink = "https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2";
+
+    // أكواد الـ Pop-under/Direct Link من Adsterra (للتشغيل مرة واحدة عند أول تفاعل)
+    const adsterraPopUnderScripts = [
+        "//pl26877671.profitableratecpm.com/7f/c2/f9/7fc2f9f201b6ffe0f5e3ed54d7bae23c.js",
+        "//pl26877663.profitableratecpm.com/75/c8/81/75c8819f64c2df144a5ddf1eabd34e6f.js"
+    ];
+
+    // Flag to track if Pop-under has been opened in the current session
+    let popUnderAlreadyOpenedInSession = false;
+    let userInteracted = false;
+
     // Pagination state variables
     let currentPage = 1;
-    const moviesPerPage = 40; // Number of movies displayed per page
+    const moviesPerPage = 8; // عدد الأفلام في كل صفحة (تم التعديل لـ 8 بدلاً من 40 لتحسين العرض المبدئي)
     let totalPages; // Will be calculated dynamically in init
 
-    // Helper Function: Update Meta Tags for SEO and Social Sharing
+    // --- Core Functions ---
+
+    /**
+     * Handles the first user interaction on the page to trigger Adsterra Pop-under.
+     * This ensures ads don't open immediately on page load, improving user experience.
+     */
+    function handleFirstUserInteraction() {
+        if (!userInteracted) {
+            openAdsterraPopUnder();
+            userInteracted = true;
+            // Remove listeners after first interaction to prevent multiple pop-unders
+            document.removeEventListener('click', handleFirstUserInteraction);
+            document.removeEventListener('scroll', handleFirstUserInteraction);
+            document.removeEventListener('keydown', handleFirstUserInteraction);
+        }
+    }
+
+    /**
+     * Dynamically loads Adsterra Pop-under scripts.
+     * This function is designed to be called only once per user session.
+     */
+    function openAdsterraPopUnder() {
+        if (!popUnderAlreadyOpenedInSession) {
+            adsterraPopUnderScripts.forEach(scriptUrl => {
+                const script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = scriptUrl;
+                script.async = true;
+                document.body.appendChild(script);
+            });
+            popUnderAlreadyOpenedInSession = true;
+        }
+    }
+
+    // Attach first interaction listeners
+    document.addEventListener('click', handleFirstUserInteraction, { once: true });
+    document.addEventListener('scroll', handleFirstUserInteraction, { once: true });
+    document.addEventListener('keydown', handleFirstUserInteraction, { once: true });
+
+    /**
+     * Helper Function: Update Meta Tags for SEO and Social Sharing
+     * @param {string} title - The page title.
+     * @param {string} description - The page description.
+     * @param {string} imageUrl - URL of the image for social sharing.
+     * @param {string} pageUrl - Canonical URL of the page.
+     * @param {string} [ogType='website'] - Open Graph type (e.g., 'website', 'video.movie').
+     */
     function updateMetaTags(title, description, imageUrl, pageUrl, ogType = 'website') {
         document.title = title;
 
-        let metaDescription = document.querySelector('meta[name="description"]');
-        if (!metaDescription) {
-            metaDescription = document.createElement('meta');
-            metaDescription.name = "description";
-            document.head.appendChild(metaDescription);
-        }
-        metaDescription.setAttribute('content', description);
+        const setMetaContent = (selector, attribute, content) => {
+            let element = document.querySelector(selector);
+            if (!element) {
+                element = document.createElement('meta');
+                element.setAttribute(attribute.startsWith('og:') ? 'property' : 'name', attribute);
+                document.head.appendChild(element);
+            }
+            element.setAttribute('content', content);
+        };
 
-        let ogTitle = document.querySelector('meta[property="og:title"]');
-        if (!ogTitle) {
-            ogTitle = document.createElement('meta');
-            ogTitle.property = "og:title";
-            document.head.appendChild(ogTitle);
-        }
-        ogTitle.setAttribute('content', title);
-
-        let ogDescription = document.querySelector('meta[property="og:description"]');
-        if (!ogDescription) {
-            ogDescription = document.createElement('meta');
-            ogDescription.property = "og:description";
-            document.head.appendChild(ogDescription);
-        }
-        ogDescription.setAttribute('content', description);
-
-        let ogImage = document.querySelector('meta[property="og:image"]');
-        if (!ogImage) {
-            ogImage = document.createElement('meta');
-            ogImage.property = "og:image";
-            document.head.appendChild(ogImage);
-        }
-        ogImage.setAttribute('content', imageUrl || originalOgImage);
-
-        let ogUrl = document.querySelector('meta[property="og:url"]');
-        if (!ogUrl) {
-            ogUrl = document.createElement('meta');
-            ogUrl.property = "og:url";
-            document.head.appendChild(ogUrl);
-        }
-        ogUrl.setAttribute('content', pageUrl || originalOgUrl);
-
-        let ogTypeMeta = document.querySelector('meta[property="og:type"]');
-        if (!ogTypeMeta) {
-            ogTypeMeta = document.createElement('meta');
-            ogTypeMeta.property = "og:type";
-            document.head.appendChild(ogTypeMeta);
-        }
-        ogTypeMeta.setAttribute('content', ogType);
+        setMetaContent('meta[name="description"]', 'description', description);
+        setMetaContent('meta[property="og:title"]', 'og:title', title);
+        setMetaContent('meta[property="og:description"]', 'og:description', description);
+        setMetaContent('meta[property="og:image"]', 'og:image', imageUrl || originalOgImage);
+        setMetaContent('meta[property="og:url"]', 'og:url', pageUrl || originalOgUrl);
+        setMetaContent('meta[property="og:type"]', 'og:type', ogType);
 
         let canonicalLink = document.querySelector('link[rel="canonical"]');
         if (!canonicalLink) {
@@ -198,7 +231,10 @@ document.addEventListener('DOMContentLoaded', () => {
         canonicalLink.href = pageUrl || window.location.origin + window.location.pathname;
     }
 
-    // Helper Function: Add or Remove JSON-LD Schema Markup
+    /**
+     * Helper Function: Add or Remove JSON-LD Schema Markup for Movies.
+     * @param {object|null} movieData - The movie data object, or null to remove schema.
+     */
     function addJsonLdSchema(movieData = null) {
         let existingSchema = document.getElementById('movie-schema-ld');
         if (existingSchema) {
@@ -218,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 "actor": Array.isArray(movieData.stars) ? movieData.stars.map(star => ({ "@type": "Person", "name": star })) : [{ "@type": "Person", "name": movieData.stars }],
                 "datePublished": movieData.year + "-01-01",
-                "trailer": { // Consider if you truly have a trailer or if this is just using the main embed_url
+                "trailer": { // Using main embed_url as trailer for simplicity
                     "@type": "VideoObject",
                     "name": movieData.title + " Trailer",
                     "description": movieData.description,
@@ -244,61 +280,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Toggle mobile menu
-    if (mobileMenuToggle && mainNav) {
-        mobileMenuToggle.addEventListener('click', () => {
-            mainNav.classList.toggle('active');
-            mobileMenuToggle.classList.toggle('active');
-            const isExpanded = mainNav.classList.contains('active');
-            mobileMenuToggle.setAttribute('aria-expanded', isExpanded);
-            mainNav.setAttribute('aria-hidden', !isExpanded);
-        });
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (mainNav.classList.contains('active')) {
-                    mainNav.classList.remove('active');
-                    mobileMenuToggle.classList.remove('active');
-                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
-                    mainNav.setAttribute('aria-hidden', 'true');
-                }
-            });
-        });
-    }
-
-    // Update URL with pushState
-    function updateUrl(id = null, page = null) {
-        const currentPath = window.location.pathname;
-        let newUrl = currentPath;
-        const params = new URLSearchParams();
-
-        if (id) {
-            params.set('id', id);
-        }
-        if (page && page > 1 && !id) {
-            params.set('page', page);
-        }
-
-        const queryString = params.toString();
-        if (queryString) {
-            newUrl += `?${queryString}`;
-        }
-
-        // Only push state if the URL actually changes
-        if (window.location.search !== `?${queryString}` || (!queryString && window.location.search !== '')) {
-            history.pushState({ movieId: id, pageNumber: page }, null, newUrl);
-        }
-    }
-
-    // Render Pagination Controls
-    function renderPaginationControls() {
-        if (!paginationControls || !prevPageBtn || !nextPageBtn || !pageInfoSpan) return;
-
-        prevPageBtn.disabled = currentPage === 1;
-        nextPageBtn.disabled = currentPage === totalPages;
-        pageInfoSpan.textContent = `صفحة ${currentPage} من ${totalPages}`;
-    }
-
-    // Helper function to scroll to the top of a section
+    /**
+     * Helper function to scroll to an element with a smooth behavior.
+     * @param {HTMLElement} element - The DOM element to scroll to.
+     * @param {number} delay - Delay in milliseconds before scrolling.
+     */
     let scrollTimeoutId = null;
     function scrollToElement(element, delay = 300) {
         if (scrollTimeoutId) {
@@ -314,7 +300,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }, delay);
     }
 
-    // Display movie list (Homepage)
+    /**
+     * Updates the browser's URL using pushState for better navigation and SEO.
+     * @param {number|null} id - Movie ID if navigating to a movie details page.
+     * @param {number|null} page - Page number if navigating to a paginated list.
+     */
+    function updateUrl(id = null, page = null) {
+        const currentPath = window.location.pathname;
+        let newUrl = currentPath;
+        const params = new URLSearchParams();
+
+        if (id) {
+            params.set('id', id);
+        }
+        // Only add page param if it's greater than 1 AND not viewing a specific movie
+        if (page && page > 1 && !id) {
+            params.set('page', page);
+        }
+
+        const queryString = params.toString();
+        if (queryString) {
+            newUrl += `?${queryString}`;
+        }
+
+        // Only push state if the URL actually changes
+        if (window.location.search !== `?${queryString}` || (!queryString && window.location.search !== '')) {
+            history.pushState({ movieId: id, pageNumber: page }, null, newUrl);
+        }
+    }
+
+    /**
+     * Renders the pagination controls (Previous, Next buttons and page info).
+     */
+    function renderPaginationControls() {
+        if (!paginationControls || !prevPageBtn || !nextPageBtn || !pageInfoSpan) return;
+
+        prevPageBtn.disabled = currentPage === 1;
+        nextPageBtn.disabled = currentPage === totalPages;
+        pageInfoSpan.textContent = `صفحة ${currentPage} من ${totalPages}`;
+    }
+
+    /**
+     * Displays the main list of movies based on the current page.
+     */
     function displayMovies() {
         if (!movieDetailsSection || !moviesListSection || !heroSection || !movieGrid || !paginationControls || !heroBtn) {
             console.error("Critical DOM elements for homepage are missing. Cannot display movies.");
@@ -323,10 +351,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         movieDetailsSection.style.display = 'none';
         moviesListSection.style.display = 'block';
-        heroSection.style.display = 'block';
+        heroSection.style.display = 'block'; // Ensure hero section is visible on homepage
         paginationControls.style.display = 'flex';
 
-        movieGrid.innerHTML = '';
+        movieGrid.innerHTML = ''; // Clear existing movie cards
 
         const startIndex = (currentPage - 1) * moviesPerPage;
         const endIndex = startIndex + moviesPerPage;
@@ -363,7 +391,10 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToElement(moviesListSection, 0); // Scroll to movies list when displaying them
     }
 
-    // Display single movie details
+    /**
+     * Displays the detailed view of a single movie.
+     * @param {number} movieId - The ID of the movie to display.
+     */
     function displayMovieDetails(movieId) {
         if (!movieDetailsSection || !moviesListSection || !heroSection || !paginationControls || !movieTitleElem || !movieDirectorElem || !movieStarsElem || !movieCategoryElem || !movieYearElem || !movieDescriptionElem || !moviePlayerContainer) {
             console.error("Critical DOM elements for movie details are missing. Cannot display movie details.");
@@ -385,10 +416,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const iframe = document.createElement('iframe');
             iframe.src = movie.embed_url;
             iframe.allowFullscreen = true;
-            iframe.allow = "autoplay; fullscreen; picture-in-picture";
-            iframe.referrerPolicy = "no-referrer"; // هذا هو التعديل الجديد
+            // Add important attributes for smooth playback and security
+            iframe.setAttribute('allow', "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture");
+            iframe.setAttribute('referrerpolicy', "no-referrer"); // Improved security and prevents some redirects
 
-            // Add an error handler for the iframe (basic)
+            // Add an error handler for the iframe
             iframe.onerror = () => {
                 console.error(`خطأ في تحميل الفيديو: ${movie.title}. قد يكون الرابط غير صالح أو محظورًا من قبل المتصفح.`);
                 moviePlayerContainer.innerHTML = '<p style="color: red; text-align: center;">عذرًا، حدث خطأ أثناء تحميل الفيديو. يرجى المحاولة لاحقًا أو التواصل مع الدعم.</p>';
@@ -405,6 +437,17 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             moviePlayerContainer.appendChild(iframe);
+
+            // Create and append the transparent video overlay
+            // This is crucial for capturing the first click for Adsterra Direct Link
+            videoOverlay = document.createElement('div');
+            videoOverlay.classList.add('video-overlay');
+            videoOverlay.style.display = 'block'; // Ensure it's visible initially
+            // Reset clicked state if returning to same movie
+            videoOverlay.classList.remove('clicked');
+            // The click listener is added here with `{ once: true }` to ensure it only fires once per video view
+            videoOverlay.addEventListener('click', handleVideoOverlayClick, { once: true });
+            moviePlayerContainer.appendChild(videoOverlay);
 
             // Generate Suggested Movies
             const suggestedMovies = moviesData
@@ -433,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-
+            // Show movie details section and hide others
             movieDetailsSection.style.display = 'block';
             moviesListSection.style.display = 'none';
             heroSection.style.display = 'none';
@@ -455,6 +498,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /**
+     * Handles the click event on the transparent video overlay.
+     * Opens the Adsterra Direct Link and then disables the overlay.
+     */
+    function handleVideoOverlayClick() {
+        // 1. Open Adsterra Direct Link in a new tab
+        window.open(adsterraDirectLink, '_blank');
+
+        // 2. Hide or disable the transparent overlay after the first click
+        // Add 'clicked' class to video-overlay to apply CSS (opacity: 0; pointer-events: none;)
+        if (videoOverlay) {
+            videoOverlay.classList.add('clicked');
+        }
+    }
+
+
+    // --- Event Listeners ---
+
+    // Toggle mobile menu
+    if (mobileMenuToggle && mainNav) {
+        mobileMenuToggle.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+            const isExpanded = mainNav.classList.contains('active');
+            mobileMenuToggle.setAttribute('aria-expanded', isExpanded);
+            mainNav.setAttribute('aria-hidden', !isExpanded);
+        });
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (mainNav.classList.contains('active')) {
+                    mainNav.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    mainNav.setAttribute('aria-hidden', 'true');
+                }
+            });
+        });
+    }
+
     // Event Delegation for Movie Cards (both main and suggested grids)
     document.addEventListener('click', (event) => {
         const movieCardLink = event.target.closest('.movie-card a');
@@ -473,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Event Listener for Hero Section Button
+    // Event Listener for Hero Section Button (Scroll to movies list)
     if (heroBtn) {
         heroBtn.addEventListener('click', (event) => {
             event.preventDefault();
@@ -509,15 +591,55 @@ document.addEventListener('DOMContentLoaded', () => {
             currentPage = state.pageNumber;
             displayMovies();
         } else {
+            // Default to homepage if no specific state or if a direct link to root was accessed
             displayMovies();
             updateUrl(); // Ensure URL reflects home state without params
         }
     });
 
-    // Initialization Function
+    /**
+     * Dynamically loads Adsterra banner ad scripts.
+     * @param {string} containerId - The ID of the HTML element where the ad will be placed.
+     * @param {number} placementId - The Adsterra Placement ID for the banner unit.
+     *
+     * **IMPORTANT:** Replace placeholder `placementId` values with your actual Adsterra IDs.
+     * Ensure these are "Banner" type units from your Adsterra dashboard.
+     */
+    function loadAdsterraBannerAd(containerId, placementId) {
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.innerHTML = ''; // Clear any existing content in the container
+
+            // Create script for Adsterra Placement ID
+            const script1 = document.createElement('script');
+            script1.type = 'text/javascript';
+            script1.textContent = `var adsterra_placement_id = ${placementId};`;
+
+            // Create script for Adsterra ad loading
+            const script2 = document.createElement('script');
+            script2.type = 'text/javascript';
+            script2.src = '//pl2.adsterra.com/ads.js'; // Adsterra script source
+            script2.async = true; // Load asynchronously
+
+            // Append scripts to the container
+            container.appendChild(script1);
+            container.appendChild(script2);
+        }
+    }
+
+    // --- Initialization ---
+
     function init() {
         totalPages = Math.ceil(moviesData.length / moviesPerPage);
 
+        // Load Adsterra Banners on page load
+        // Replace these placeholder IDs with your actual Adsterra Placement IDs!
+        loadAdsterraBannerAd('ad-banner-hero', 12345); // Banner for Hero section (e.g., 728x90 or 468x60)
+        loadAdsterraBannerAd('ad-banner-below-grid', 67890); // Banner below movie grid (e.g., 728x90 or 468x60)
+        loadAdsterraBannerAd('ad-banner-below-player', 54321); // Banner below video player (e.g., 728x90 or 468x60)
+        loadAdsterraBannerAd('ad-banner-below-suggested', 98765); // Banner below suggested movies (e.g., 728x90 or 468x60)
+
+        // Parse URL parameters to determine initial view
         const urlParams = new URLSearchParams(window.location.search);
         const movieId = urlParams.get('id');
         const pageNum = parseInt(urlParams.get('page'));
