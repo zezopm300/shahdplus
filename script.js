@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let scrollTimeoutId = null; // لتتبع تأخيرات التمرير ومنع تداخلها
 
     // بيانات الأفلام (هنا يمكنك إضافة المزيد من الأفلام يدويًا)
+    // تم إزالة التكرار الكبير لتبسيط البيانات
     let moviesData = [
         {
             "id": 1,
@@ -123,13 +124,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/",
             "rating": "7.8"
         },
-        // هنا يمكنك إضافة المزيد من الأفلام يدويًا
     ];
-    // تم حذف حلقة تكرار الأفلام هنا بناءً على طلبك
 
     // Pagination state variables - متغيرات حالة تقسيم الصفحات
     let currentPage = 1;
-    const moviesPerPage = 40; // عدد الأفلام المعروضة في كل صفحة (يمكنك تعديله حسب عدد الأفلام لديك الآن)
+    // تم تخفيض عدد الأفلام في الصفحة ليناسب العدد الحالي من الأفلام للعرض التجريبي
+    const moviesPerPage = 10;
     let totalPages; // سيتم حسابه ديناميكيًا في init
 
     // Helper Function: Update Meta Tags for SEO and Social Sharing - دالة مساعدة: تحديث علامات الميتا لتحسين محركات البحث والمشاركة الاجتماعية
@@ -309,6 +309,13 @@ document.addEventListener('DOMContentLoaded', () => {
         nextPageBtn.classList.add('pagination-btn', 'next');
         nextPageBtn.disabled = currentPage === totalPages;
         paginationControls.appendChild(nextPageBtn);
+        
+        // إخفاءPagination إذا كان هناك صفحة واحدة فقط
+        if (totalPages <= 1) {
+            paginationControls.style.display = 'none';
+        } else {
+            paginationControls.style.display = 'flex';
+        }
     }
 
     // Helper function to scroll to the top of a section - دالة مساعدة للتمرير إلى أعلى القسم
@@ -317,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
             clearTimeout(scrollTimeoutId); // إلغاء أي تمرير معلق
         }
         scrollTimeoutId = setTimeout(() => {
-            if (element && element.style.display !== 'none') {
+            if (element && element.offsetParent !== null) { // التحقق من أن العنصر مرئي في DOM
                 element.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
                 // إذا لم يكن العنصر مرئيًا، قم بالتمرير إلى أعلى المستند
@@ -333,8 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         movieDetailsSection.style.display = 'none';
         moviesListSection.style.display = 'block';
         heroSection.style.display = 'block';
-        paginationControls.style.display = 'flex'; // إظهار عناصر التحكم في التقسيم لصفحات
-
+        
         movieGrid.innerHTML = ''; // مسح بطاقات الأفلام السابقة
 
         // حساب مؤشر البداية والنهاية للصفحة الحالية
@@ -376,10 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // تعيين معالج النقر مباشرةً لتجنب المستمعين المتعددين
             heroBtn.onclick = (event) => {
                 event.preventDefault();
-                if (!adsterraOpenedOnFirstClick) {
-                    window.open(adsterraDirectLink, '_blank');
-                    adsterraOpenedOnFirstClick = true;
-                }
+                // هنا لا نفتح Adsterra مباشرة عند النقر على HeroBtn، بل نعتمد على الـ overlay
                 displayMovieDetails(heroBtn.dataset.id);
                 updateUrl(heroBtn.dataset.id);
                 scrollToElement(movieDetailsSection, 750); // تأخير أطول لتحميل iframe
@@ -454,29 +457,46 @@ document.addEventListener('DOMContentLoaded', () => {
             movieYearElem.textContent = `السنة: ${movie.year}`;
             movieDescriptionElem.textContent = movie.description;
 
-            // عرض مشغل الفيديو - Display video player
-            // **ملاحظة مهمة لمشكلة "Client blocked!":**
-            // هذه الرسالة تظهر للمستخدم إذا فشل الفيديو في التحميل.
-            // سمات sandbox تم تعديلها لتكون أكثر مرونة مع مشغلات الفيديو.
-            moviePlayerContainer.innerHTML = `
-                <p class="video-loading-message">جارٍ تحميل الفيديو... قد تحتاج لتعطيل مانع الإعلانات إذا لم يظهر الفيديو.</p>
-                <iframe src="${movie.embed_url}" frameborder="0" allowfullscreen 
-                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture" 
-                    referrerpolicy="origin" sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
-                </iframe>
-            `;
+            // **تنظيف حاوية الفيديو أولاً**
+            moviePlayerContainer.innerHTML = '';
 
-            // **إضافة الغطاء الشفاف (Video Overlay) لفتح إعلانات Adsterra**
+            // **إنشاء رسالة التنبيه و إضافتها**
+            const loadingMessage = document.createElement('p');
+            loadingMessage.classList.add('video-loading-message');
+            loadingMessage.innerHTML = 'جارٍ تحميل الفيديو... <br> <b>إذا لم يظهر الفيديو، قد تحتاج لتعطيل مانع الإعلانات أو تجربة متصفح آخر.</b>';
+            moviePlayerContainer.appendChild(loadingMessage);
+
+            // **إنشاء الغطاء الشفاف (Video Overlay) لفتح إعلانات Adsterra**
             const videoOverlay = document.createElement('div');
             videoOverlay.classList.add('video-overlay'); // إضافة الكلاس لتطبيق الأنماط
             moviePlayerContainer.appendChild(videoOverlay);
 
-            // إضافة Event Listener للغطاء لفتح الرابط المباشر
+            // **إنشاء الـ iframe ولكن لا نضيف src الآن**
+            const movieIframe = document.createElement('iframe');
+            movieIframe.frameBorder = "0";
+            movieIframe.allowFullscreen = true;
+            movieIframe.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
+            movieIframe.referrerPolicy = "origin";
+            // سمات sandbox أكثر مرونة لتقليل مشاكل الحظر
+            movieIframe.sandbox = "allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-downloads";
+
+            // **إضافة Event Listener للغطاء لفتح الرابط المباشر وتشغيل الفيديو**
+            let overlayClicked = false;
             videoOverlay.addEventListener('click', (e) => {
                 e.stopPropagation(); // منع الحدث من الانتقال إلى معالجات النقر الأصلية
-                window.open(adsterraDirectLink, '_blank'); // فتح الرابط في علامة تبويب جديدة
-                // يمكنك إزالة الغطاء بعد النقرة الأولى إذا كنت ترغب في ذلك
-                // videoOverlay.remove();
+                
+                if (!overlayClicked) {
+                    window.open(adsterraDirectLink, '_blank'); // فتح الرابط في علامة تبويب جديدة
+                    overlayClicked = true;
+                    videoOverlay.style.display = 'none'; // إخفاء الغطاء بعد النقرة الأولى
+                    loadingMessage.style.display = 'none'; // إخفاء رسالة التحميل
+
+                    // **تأخير بسيط قبل تعيين src للـ iframe للسماح بالإعلان بالتحميل**
+                    setTimeout(() => {
+                        movieIframe.src = movie.embed_url; // الآن قم بتحميل الـ iframe
+                        moviePlayerContainer.appendChild(movieIframe); // إضافة الـ iframe بعد تعيين src
+                    }, 300); // تأخير 300 مللي ثانية
+                }
             });
 
             // جديد: عرض الأفلام المقترحة
@@ -511,12 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (movieLink && movieLink.dataset.id) {
             e.preventDefault(); // منع سلوك الرابط الافتراضي
 
-            // فتح رابط Adsterra أولاً إذا لم يتم فتحه من قبل في هذه الجلسة
-            if (!adsterraOpenedOnFirstClick) {
-                window.open(adsterraDirectLink, '_blank');
-                adsterraOpenedOnFirstClick = true; // تعيين العلامة إلى صحيح بعد الفتح
-            }
-
+            // هنا لا نفتح Adsterra مباشرة عند النقر على بطاقة الفيلم، بل نعتمد على الـ overlay في صفحة التفاصيل
             const movieId = movieLink.dataset.id;
             displayMovieDetails(movieId);
             updateUrl(movieId); // تحديث URL مع معرف الفيلم
