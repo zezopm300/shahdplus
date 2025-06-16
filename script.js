@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ****** استخدم روابط YouTube Embed أو Vimeo Embed التي تحصل عليها مباشرة من هذه المنصات ******
     // ****** الروابط مثل streamtape.com أو vide0.net غالبًا ما تكون مشكلة وتسبب الإعلانات المزعجة أو الحظر ******
     let moviesData = [
-           {
+        {
             "id": 1,
             "title": "فيلم Purity Falls 2019",
             "description": " القصّة : بعد مرور عام على فقدان زوجها، تستقر نيكول مع أبنائها الصغار جاستين وجيسون في بيوريتي فولز. في البداية، يتم الترحيب بالعائلة بحفاوة. وخاصة جارتهم الغنية كورتني التي تبدو لطيفة للغاية، حيث توفر لجيسون بسرعة وظائف غريبة لدعم دخل الأسرة. ومع ذلك، سرعان ما تلاحظ نيكول أن هناك شيئًا ما ليس على ما يرام، حيث يغادر ابنها ويعود في ساعات متأخرة بشكل مريب. عندما تغرق جارتها الشابة في حمام السباحة، تبدأ الأمور في أن تصبح خطيرة. هناك شيء غير صحيح مع كورتني الودودة للغاية، والتي يبدو أنها تسيطر على ابنها.",
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
             "director": "Trevor Stines",
             "stars": ["Kristanna Loken"],
-            "embed_url": "https://vide0.net/e/smo8970rj5gh",
+            "embed_url": "https://vide0.net/e/smo8970rj5gh", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
             "rating": "6.2"
         },
         {
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ",
             "director": "Chris Riedell",
             "stars": ["Lucy Hale"],
-            "embed_url": "https://streamtape.com/e/gopa76QkOpuqM8P/",
+            "embed_url": "https://streamtape.com/e/gopa76QkOpuqM8P/", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
             "rating": "5.5"
         },
         {
@@ -79,27 +79,20 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ",
             "director": "Joseph Ruben",
             "stars": ["Julia Roberts"],
-            "embed_url": "https://streamtape.com/e/v9KrVBVJVAIYjA/",
+            "embed_url": "https://streamtape.com/e/v9KrVBVJVAIYjA/", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
             "rating": "6.3"
         },
-
-
-
         {
-  "id": 7,
-  "title": "اغنيه العيد ",
-  "description": "اغانيه رومانسيه ",
-  "poster": "https://zaaednews.com/wp-content/uploads/2024/09/%D8%AD%D9%81%D9%84-%D8%A3%D9%86%D8%BA%D8%A7%D9%85-%D9%84%D9%8A%D8%A7%D9%84%D9%8A-%D9%85%D8%B5%D8%B1-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D9%81-%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A-%D8%A7%D9%84%D9%83%D8%A8%D9%8A%D8%B1.jpg0_.jpg",
-  "year": "2024",
-  "category": "رومانسي",
-  "director": "انغام",
-  "stars": ["ممثل 1", "ممثل 2"],
-  "embed_url": "https://player.vimeo.com/video/1091276533"
-
-}
-,
-
-  
+            "id": 7,
+            "title": "اغنيه العيد ",
+            "description": "اغانيه رومانسيه ",
+            "poster": "https://zaaednews.com/wp-content/uploads/2024/09/%D8%AD%D9%81%D9%84-%D8%A3%D9%86%D8%BA%D8%A7%D9%85-%D9%84%D9%8A%D8%A7%D9%84%D9%8A-%D9%85%D8%B5%D8%B1-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D9%81-%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A-%D8%A7%D9%84%D9%83%D8%A8%D9%8A%D8%B1.jpg0_.jpg",
+            "year": "2024",
+            "category": "رومانسي",
+            "director": "انغام",
+            "stars": ["ممثل 1", "ممثل 2"],
+            "embed_url": "https://player.vimeo.com/video/1091276533" // هذا رابط Vimeo جيد
+        },
         {
             "id": 4,
             "title": "Moms Friends 2024",
@@ -109,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ",
             "director": "Yoo Je‑won.",
             "stars": ["Choi Seung‑hyo"],
-            "embed_url": "https://streamtape.com/e/7kbx78RR8VtAXD1/",
+            "embed_url": "https://streamtape.com/e/7kbx78RR8VtAXD1/", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
             "rating": "7.0"
         },
         {
@@ -121,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "رعب / خيال علمي☯️ .. ",
             "director": "Brace Beltempo.",
             "stars": ["Gianluca Busani"],
-            "embed_url": "https://streamtape.com/e/7b7rqXvk7DT8Ap/",
+            "embed_url": "https://streamtape.com/e/7b7rqXvk7DT8Ap/", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
             "rating": "7.5"
         },
         {
@@ -133,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "category": "اثارة/ اكشن ☯️ .. ",
             "director": "Lee Isaac Chung",
             "stars": ["Daisy Edgar-Jones"],
-            "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/",
+            "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/", // يفضل استبدال هذا برابط YouTube أو Vimeo Embed
             "rating": "7.8"
         },
         // هنا يمكنك إضافة المزيد من الأفلام يدويًا
@@ -225,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 "actor": Array.isArray(movieData.stars) ? movieData.stars.map(star => ({ "@type": "Person", "name": star })) : [{ "@type": "Person", "name": movieData.stars }],
                 "datePublished": movieData.year + "-01-01",
-                "trailer": {
+                "trailer": { // Consider if you truly have a trailer or if this is just using the main embed_url
                     "@type": "VideoObject",
                     "name": movieData.title + " Trailer",
                     "description": movieData.description,
@@ -240,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     "worstRating": "1",
                     "ratingCount": "100"
                 },
-                "url": window.location.href
+                "url": window.location.href // This URL should ideally point to the specific movie's permalink
             };
 
             const script = document.createElement('script');
@@ -290,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             newUrl += `?${queryString}`;
         }
 
+        // Only push state if the URL actually changes
         if (window.location.search !== `?${queryString}` || (!queryString && window.location.search !== '')) {
             history.pushState({ movieId: id, pageNumber: page }, null, newUrl);
         }
@@ -352,6 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
             movieLink.title = `شاهد فيلم ${movie.title}`;
             movieLink.setAttribute('aria-label', `شاهد فيلم ${movie.title}`);
 
+            // Changed poster load to ensure better mobile display (object-fit cover handled by CSS)
             movieLink.innerHTML = `
                 <img loading="lazy" src="${movie.poster}" alt="بوستر فيلم ${movie.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/260x380?text=Image+Not+Found';">
                 <h3>${movie.title}</h3>
@@ -361,6 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
             movieGrid.appendChild(movieCard);
         });
 
+        // Set featured movie for hero section
         if (moviesData.length > 0) {
             const randomIndex = Math.floor(Math.random() * moviesData.length);
             const featuredMovie = moviesData[randomIndex];
@@ -383,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateMetaTags(originalTitle, originalDescription, originalOgImage, originalOgUrl, 'website');
-        addJsonLdSchema(null);
+        addJsonLdSchema(null); // Remove movie schema when on homepage
         renderPaginationControls();
     }
 
@@ -395,6 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const availableMovies = moviesData.filter(movie => movie.id !== parseInt(currentMovieId));
 
+        // Shuffle and take top 6
         for (let i = availableMovies.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [availableMovies[i], availableMovies[j]] = [availableMovies[j], availableMovies[i]];
@@ -437,16 +434,28 @@ document.addEventListener('DOMContentLoaded', () => {
             movieDetailsSection.style.display = 'block';
 
             movieTitleElem.textContent = movie.title;
-            movieDirectorElem.textContent = `المخرج: ${movie.director}`;
-            movieStarsElem.textContent = `بطولة: ${Array.isArray(movie.stars) ? movie.stars.join(', ') : movie.stars}`;
-            movieCategoryElem.textContent = `النوع: ${movie.category}`;
-            movieYearElem.textContent = `السنة: ${movie.year}`;
+            movieDirectorElem.textContent = `${movie.director}`; // Removed "المخرج:" as the label is already in HTML
+            movieStarsElem.textContent = `${Array.isArray(movie.stars) ? movie.stars.join(', ') : movie.stars}`; // Removed "بطولة:"
+            movieCategoryElem.textContent = `${movie.category}`; // Removed "النوع:"
+            movieYearElem.textContent = `${movie.year}`; // Removed "السنة:"
             movieDescriptionElem.textContent = movie.description;
 
             // Display video player
-            // تم إزالة الغطاء الشفاف. سيعرض الفيديو مباشرة.
+            // Added sandbox attributes for security and referrerpolicy.
+            // Also included modestbranding, rel, and controls for potential YouTube embeds.
+            let embedSrc = movie.embed_url;
+            if (embedSrc.includes('youtube.com/embed/')) {
+                // Add YouTube specific parameters for better embedding and fewer related videos/branding
+                embedSrc += '?modestbranding=1&autoplay=1&rel=0&showinfo=0&fs=0&iv_load_policy=3&disablekb=1&controls=1';
+            } else if (embedSrc.includes('player.vimeo.com/video/')) {
+                // Add Vimeo specific parameters
+                embedSrc += '?autoplay=1&byline=0&portrait=0&title=0';
+            }
+            // For other providers like streamtape/vide0.net, parameters might vary or not exist,
+            // and they are the primary source of intrusive ads.
+
             moviePlayerContainer.innerHTML = `
-                <iframe src="${movie.embed_url}" frameborder="0" allowfullscreen
+                <iframe src="${embedSrc}" frameborder="0" allowfullscreen
                     allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
                     referrerpolicy="origin" sandbox="allow-scripts allow-same-origin allow-popups allow-forms">
                 </iframe>
@@ -515,7 +524,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             displayMovies();
             updateUrl();
-            // لا حاجة لإعادة تعيين adsterraOpenedThisSession لأننا لم نعد نستخدمه بنفس الطريقة
             scrollToElement(document.body);
         });
     }
@@ -529,14 +537,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (movieId) {
             displayMovieDetails(movieId);
             scrollToElement(movieDetailsSection);
-        } else if (pageNumber && parseInt(pageNumber) <= totalPages) {
+        } else if (pageNumber && parseInt(pageNumber) >= 1 && parseInt(pageNumber) <= totalPages) { // Added check for minimum page number
             currentPage = parseInt(pageNumber);
             displayMovies();
             scrollToElement(moviesListSection);
         } else {
             currentPage = 1;
             displayMovies();
-            // لا حاجة لإعادة تعيين adsterraOpenedThisSession هنا
             scrollToElement(document.body);
         }
     });
@@ -551,11 +558,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (movieId) {
             displayMovieDetails(movieId);
             scrollToElement(movieDetailsSection, 1000); // Scroll with a slight delay to ensure content is rendered
-        } else if (pageNumber && parseInt(pageNumber) <= totalPages) {
+        } else if (pageNumber && parseInt(pageNumber) >= 1 && parseInt(pageNumber) <= totalPages) { // Added check for minimum page number
             currentPage = parseInt(pageNumber);
             displayMovies();
             scrollToElement(moviesListSection);
         } else {
+            currentPage = 1;
             displayMovies();
             scrollToElement(document.body); // Scroll to top for initial home view
         }
