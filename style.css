@@ -483,3 +483,84 @@ a:hover {
         padding: 6px 10px;
     }
 }
+
+
+/* تنسيقات الفوتر الرئيسية */
+.main-footer {
+    background-color: #1a1a1a; /* لون خلفية داكن جداً (أسود مائل للرمادي) */
+    color: #f0f0f0; /* لون نص فاتح جداً */
+    padding: 40px 0; /* مساحة داخلية أكبر من أعلى وأسفل */
+    text-align: center; /* محاذاة النص والروابط في المنتصف */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* خط حديث وواضح */
+    border-top: 5px solid #00bcd4; /* شريط علوي مميز بلون الموقع الأساسي */
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3); /* ظل خفيف لأعلى لإبراز الفوتر */
+}
+
+/* تنسيقات حاوية المحتوى داخل الفوتر */
+.main-footer .container {
+    max-width: 1100px; /* تحديد أقصى عرض للمحتوى */
+    margin: 0 auto; /* توسيط المحتوى */
+    padding: 0 20px; /* مسافة داخلية على الجانبين للموبايل */
+}
+
+/* تنسيقات فقرة حقوق النشر */
+.main-footer p {
+    margin-bottom: 25px; /* مسافة أكبر تحت النص قبل الروابط */
+    font-size: 16px; /* حجم خط مناسب */
+    line-height: 1.6; /* تباعد الأسطر لتحسين القراءة */
+    opacity: 0.9; /* شفافية بسيطة لإظهار عمق الخلفية */
+}
+
+/* تنسيقات حاوية الروابط */
+.footer-links {
+    display: flex; /* ترتيب الروابط جنباً إلى جنب */
+    justify-content: center; /* توسيط الروابط أفقياً */
+    flex-wrap: wrap; /* السماح للروابط بالنزول لسطر جديد */
+    gap: 30px; /* مسافة أكبر بين الروابط */
+    margin-top: 20px; /* مسافة علوية من حقوق النشر */
+}
+
+/* تنسيقات الروابط الفردية */
+.footer-links a {
+    color: #00bcd4; /* لون أزرق سماوي جذاب للروابط */
+    text-decoration: none; /* إزالة الخط السفلي من الروابط */
+    font-size: 17px; /* حجم خط أكبر للروابط */
+    font-weight: 500; /* جعل الخط أثقل قليلاً */
+    padding: 8px 15px; /* مساحة داخلية حول النص */
+    border: 1px solid #00bcd4; /* حدود رفيعة بنفس لون الرابط */
+    border-radius: 25px; /* زوايا دائرية جداً (شكل Pills) */
+    transition: all 0.3s ease; /* تأثير انتقال سلس لكل التغييرات */
+    white-space: nowrap; /* منع انقسام النص في الروابط */
+}
+
+/* تأثير التفاعل عند مرور الماوس على الروابط */
+.footer-links a:hover {
+    background-color: #00bcd4; /* تعبئة باللون الأزرق */
+    color: #1a1a1a; /* تغيير لون النص للون الخلفية الأصلي */
+    transform: translateY(-3px) scale(1.05); /* حركة لأعلى وتكبير بسيط */
+    box-shadow: 0 5px 15px rgba(0, 188, 212, 0.4); /* ظل مميز عند التفاعل */
+}
+
+/* تحسينات للشاشات الأصغر (Responsive Design) */
+@media (max-width: 768px) {
+    .main-footer {
+        padding: 30px 0; /* تقليل المسافة الداخلية في الشاشات الصغيرة */
+    }
+
+    .main-footer p {
+        font-size: 14px; /* تصغير حجم خط حقوق النشر */
+        margin-bottom: 20px;
+    }
+
+    .footer-links {
+        flex-direction: column; /* عرض الروابط فوق بعضها البعض */
+        gap: 15px; /* تقليل المسافة الرأسية بين الروابط */
+    }
+
+    .footer-links a {
+        font-size: 15px; /* تصغير حجم خط الروابط */
+        padding: 10px 20px; /* زيادة المساحة الداخلية لجعلها أسهل للضغط */
+        width: 80%; /* جعل عرض الرابط 80% من عرض الحاوية */
+        margin: 0 auto; /* توسيط الروابط في الشاشات الصغيرة */
+    }
+}
