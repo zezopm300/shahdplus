@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🏁 DOM Content Loaded. Script execution started.');
 
     // --- 1. DOM Element References ---
-    // Make sure these IDs match your HTML exactly.
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.getElementById('main-nav');
     const navLinks = document.querySelectorAll('.main-nav ul li a');
@@ -11,15 +10,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const movieGridSection = document.getElementById('movie-grid-section');
     const movieDetailsSection = document.getElementById('movie-details-section');
     const movieGrid = document.getElementById('movie-grid');
-    const suggestedMovieGrid = document.getElementById('suggested-movie-grid'); // ✨ هذا هو العنصر المهم للأفلام المقترحة
-    const suggestedMoviesSection = document.getElementById('suggested-movies-section'); // القسم الأب للأفلام المقترحة
+    const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
+    const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
     const moviePlayer = document.getElementById('movie-player');
     const videoOverlay = document.getElementById('video-overlay');
     const homeLogoLink = document.getElementById('home-logo-link');
-    const videoOverlayText = document.getElementById('video-overlay-text');
+    const videoLoadingSpinner = document.getElementById('video-loading-spinner');
+    const movieDetailsPoster = document.getElementById('movie-details-poster');
 
-    // --- 1.1. Critical DOM Element Verification ---
+    // Pagination elements
+    const prevPageBtn = document.getElementById('prev-page-btn');
+    const nextPageBtn = document.getElementById('next-page-btn');
+    const moviesPerPage = 8;
+    let currentPage = 1;
+
+    // Search DOM Elements
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
+
+    // --- 1.1. Critical DOM Element Verification (تأكيد وجود العناصر الضرورية) ---
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
@@ -28,9 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
         '#movie-player': moviePlayer,
         '#video-overlay': videoOverlay,
         '#suggested-movie-grid': suggestedMovieGrid,
-        '#suggested-movies-section': suggestedMoviesSection, // تأكيد وجود القسم الأب
-        '#video-overlay-text': videoOverlayText
+        '#suggested-movies-section': suggestedMoviesSection,
+        '#video-loading-spinner': videoLoadingSpinner,
+        '#movie-details-poster': movieDetailsPoster
     };
+
     let criticalError = false;
     for (const [id, element] of Object.entries(requiredElements)) {
         if (!element) {
@@ -40,251 +53,230 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (criticalError) {
         console.error('🛑 Script will not execute fully due to missing critical DOM elements. Fix your HTML!');
-        // We'll still try to proceed, but expect issues.
     } else {
         console.log('✅ All critical DOM elements found.');
     }
 
-    // Pagination elements
-    const prevPageBtn = document.getElementById('prev-page-btn');
-    const nextPageBtn = document.getElementById('next-page-btn');
-    const moviesPerPage = 8;
-    let currentPage = 1;
-
-    // --- 2. Adsterra Configuration ---
-    // هذا هو رابط الـ Direct Link الرئيسي الذي سيتم استخدامه لفتح النوافذ المنبثقة
+    // --- 2. Adsterra Configuration (تم الاحتفاظ بها كما هي لعمل إعلانات الفيديو والبوستر) ---
+    // هذا هو الرابط الذي سيفتح عند النقر على بطاقات الأفلام، أو الطبقة الشفافة للفيديو، أو بوستر التفاصيل
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
-    
-    // زمن آخر ضغطة على Direct Link لأي عنصر (بوستر أو فيديو)
-    let lastDirectLinkClickTime = 0;
-    // فترة التهدئة للضغط على بوستر الفيلم (3 دقائق)
-    const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; 
-    // فترة التهدئة للضغط على غطاء الفيديو (4 دقائق)
-    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 4 * 60 * 1000; 
 
-    // متغير لتخزين مؤقت إخفاء الفيديو أوفرلاي
-    let videoOverlayHideTimer = null;
+    const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes for movie cards and details poster
+    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 4 * 1000; // 4 seconds for video overlay
 
-    // --- 3. Movie Data (IMPORTANT: Replace with your actual movie data!) ---
-    // تأكد من أن الـ embed_url هي روابط صالحة للفيديوهات المضمنة (YouTube embed links are good examples).
+    let lastDirectLinkClickTimeMovieCard = 0;
+    let lastDirectLinkClickTimeVideoOverlay = 0;
+
+    // --- 3. Movie Data (Example - Replace with your actual data source) ---
     const moviesData = [
-         {
+        {
             "id": 1,
             "title": "فيلم Purity Falls 2019",
             "description": " القصّة : بعد مرور عام على فقدان زوجها، تستقر نيكول مع أبنائها الصغار جاستين وجيسون في بيوريتي فولز. في البداية، يتم الترحيب بالعائلة بحفاوة. وخاصة جارتهم الغنية كورتني التي تبدو لطيفة للغاية، حيث توفر لجيسون بسرعة وظائف غريبة لدعم دخل الأسرة. ومع ذلك، سرعان ما تلاحظ نيكول أن هناك شيئًا ما ليس على ما يرام، حيث يغادر ابنها ويعود في ساعات متأخرة بشكل مريب. عندما تغرق جارتها الشابة في حمام السباحة، تبدأ الأمور في أن تصبح خطيرة. هناك شيء غير صحيح مع كورتني الودودة للغاية، والتي يبدو أنها تسيطر على ابنها.",
             "poster": "https://tinyurl.com/mrynn3au",
-            "year": "2019",
-            "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
+            "release_date": "2019-07-02",
+            "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط +18",
             "director": "Trevor Stines",
-            "stars": ["Kristanna Loken"],
-            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ", // مثال لرابط YouTube صالح
-            "rating": "6.2"
+            "cast": "Kristanna Loken",
+            "embed_url": "https://player.vimeo.com/video/1091276533",
+            "rating": "6.2/10",
+            "duration": "1h 30m"
         },
         {
             "id": 2,
             "title": "A Nice Girl Like You 2020",
             "description": "القصّة : لوسي نيل عازفة كمان، تكتشف إدمان صديقها جيف لمشاهدة المواد الإباحية، فتتشاجر معه، وينفصلا، وتصاب بصدمة عصبية، وتقرر على هذا الاساس تعزيز نفسيها، واكتشاف ذاتها خاصة بعد علاقة الصداقة التي تنشأ بينها وبين جرانت، حيث يساعدها على التغلب على مشاكلها السابقة مع صديقها جيف",
             "poster": "https://i.ibb.co/k2jg6TSd/photo-5852675531542218174-y.jpg",
-            "year": "2020",
-            "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ",
+            "release_date": "2020-07-17",
+            "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط",
             "director": "Chris Riedell",
-            "stars": ["Lucy Hale"],
-            "embed_url": "https://player.vimeo.com/video/1091276533", // هذا رابط Vimeo جيد ويعمل عادة
-            "rating": "5.5"
+            "cast": "Lucy Hale",
+            "embed_url": "https://player.vimeo.com/video/1091276533",
+            "rating": "5.5/10",
+            "duration": "1h 34m"
         },
         {
             "id": 3,
             "title": "Sleeping with the Enemy 1991",
             "description": " تزوجت (لورا) منذ أربع سنوات بالرجل الوسيم (مارتن). يبدو زواجهما مثاليًا في أعين الجميع، ولكن الحقيقة تختلف تمامًا عن هذه الصورة. يعامل مارتن المتسلط لورا بعنف ووحشية ويعتدي عليها، لتصل الزوجة لنقطة تستعد فيها لفعل أي شيء مقابل التخلص من حياتها البائسة. تضع لورا خطة النجاة، والتي تتلخص في قيامها بادعاء الوفاة، وتلفيق كل شيء؛ بحيث تنطلي الخدعة على مارتن. يسير كل شيء حسب الخطة، وتبدأ لورا في العيش بسعادة بهويتها الجديدة، ولكن السعادة لا تدوم طويلًا بعدما تتطور الأحداث بغتة.",
             "poster": "https://i.ibb.co/d4Jmp73r/photo-5852675531542218154-y.jpg",
-            "year": "1991",
-            "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ",
+            "release_date": "1991-02-08",
+            "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط",
             "director": "Joseph Ruben",
-            "stars": ["Julia Roberts"],
-            "embed_url": "https://vide0.net/e/smo8970rj5gh", // هذا الرابط سيسبب مشاكل - يجب استبداله!
-            "rating": "6.3"
+            "cast": "Julia Roberts",
+            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "rating": "6.3/10",
+            "duration": "1h 39m"
         },
         {
             "id": 7,
-            "title": "اغنيه العيد ",
-            "description": "اغانيه رومانسيه ",
+            "title": "اغنيه العيد",
+            "description": "اغانيه رومانسيه",
             "poster": "https://zaaednews.com/wp-content/uploads/2024/09/%D8%AD%D9%81%D9%84-%D8%A3%D9%86%D8%BA%D8%A7%D9%85-%D9%84%D9%8A%D8%A7%D9%84%D9%8A-%D9%85%D8%B5%D8%B1-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D9%81-%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A-%D8%A7%D9%84%D9%83%D8%A8%D9%8A%D8%B1.jpg0_.jpg",
-            "year": "2024",
-            "category": "رومانسي",
+            "release_date": "2024-06-16",
+            "genre": "رومانسي",
             "director": "انغام",
-            "stars": ["ممثل 1", "ممثل 2"],
-            "embed_url": "https://www.youtube.com/embed/YOUR_YOUTUBE_VIDEO_ID_HERE" // مثال على رابط YouTube
+            "cast": "انغام",
+            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "rating": "8.0/10",
+            "duration": "0h 5m"
         },
         {
             "id": 4,
             "title": "Moms Friends 2024",
             "description": " القصّة : فيلم رومانسي جديد حول الرغبات الجنسية والعلاقات الحميمة الساخنة بين الشباب والعلاقات الجنسية التي يمارسونها",
             "poster": "https://i.postimg.cc/dtHdLMNL/photo-5838945848241800438-y.jpg",
-            "year": "2024",
-            "category": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط ",
+            "release_date": "2024-01-10",
+            "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط",
             "director": "Yoo Je‑won.",
-            "stars": ["Choi Seung‑hyo"],
-            "embed_url": "https://streamtape.com/e/7kbx78RR8VtAXD1/", // هذا الرابط سيسبب مشاكل - يجب استبداله!
-            "rating": "7.0"
+            "cast": "Choi Seung‑hyo",
+            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "rating": "7.0/10",
+            "duration": "1h 45m"
         },
         {
             "id": 5,
             "title": "Blood Pay 2025",
             "description": "فيلم إثارة خيال علمي تدور أحداثه في الجنة، وهي مدينة خيالية يسيطر فيها الذكاء الاصطناعي على القوى العاملة ويقود العزلة الاجتماعية.",
             "poster": "https://i.ibb.co/v6d90zjN/photo-5789391950099630510-w.jpg",
-            "year": "2025",
-            "category": "رعب / خيال علمي☯️ .. ",
+            "release_date": "2025-03-20",
+            "genre": "رعب, خيال علمي",
             "director": "Brace Beltempo.",
-            "stars": ["Gianluca Busani"],
-            "embed_url": "https://streamtape.com/e/7b7rqXvk7DT8Ap/", // هذا الرابط سيسبب مشاكل - يجب استبداله!
-            "rating": "7.5"
+            "cast": "Gianluca Busani",
+            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "rating": "7.5/10",
+            "duration": "2h 10m"
         },
         {
             "id": 6,
             "title": "Twisters",
             "description": "القصة: مع اشتداد موسم العواصف، تتصادم مسارات مطارد العواصف السابق كيت كوبر ونجم وسائل التواصل الاجتماعي المتهور تايلر أوينز عندما يتم إطلاق العنان لظواهر مرعبة لم يسبق لها مثيل. يجد الزوجان وفرقهما المتنافسة أنفسهم مباشرة في مسارات أنظمة العواصف المتعددة المتقاربة فوق وسط أوكلاهوما في معركة حياتهم.",
             "poster": "https://i.ibb.co/Zp7BnYS3/Untitled.jpg",
-            "year": "2024",
-            "category": "اثارة/ اكشن ☯️ .. ",
+            "release_date": "2024-07-19",
+            "genre": "اثارة, اكشن",
             "director": "Lee Isaac Chung",
-            "stars": ["Daisy Edgar-Jones"],
-            "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/", // هذا الرابط سيسبب مشاكل - يجب استبداله!
-            "rating": "7.8"
+            "cast": "Daisy Edgar-Jones",
+            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "rating": "7.8/10",
+            "duration": "1h 50m"
         },
     ];
 
+    let moviesDataForPagination = [...moviesData];
 
     // --- 4. Functions ---
 
-    function openAdLink(cooldownDuration) {
+    function openAdLink(cooldownDuration, type) {
+        let lastClickTime;
+        let setLastClickTime;
+
+        if (type === 'movieCard') {
+            lastClickTime = lastDirectLinkClickTimeMovieCard;
+            setLastClickTime = (time) => lastDirectLinkClickTimeMovieCard = time;
+        } else if (type === 'videoOverlay') {
+            lastClickTime = lastDirectLinkClickTimeVideoOverlay;
+            setLastClickTime = (time) => lastDirectLinkClickTimeVideoOverlay = time;
+        } else if (type === 'movieDetailsPoster') {
+            lastClickTime = lastDirectLinkClickTimeMovieCard; // Use same cooldown as movieCard
+            setLastClickTime = (time) => lastDirectLinkClickTimeMovieCard = time;
+        } else {
+            console.error('Invalid ad type provided for openAdLink:', type);
+            return false;
+        }
+
         const currentTime = Date.now();
-        if (currentTime - lastDirectLinkClickTime > cooldownDuration) {
+        if (currentTime - lastClickTime > cooldownDuration) {
             const newWindow = window.open(ADSTERRA_DIRECT_LINK_URL, '_blank');
             if (newWindow) {
                 newWindow.focus();
-                lastDirectLinkClickTime = currentTime;
-                console.log('💰 [Ad Click] Direct Link opened successfully.');
+                setLastClickTime(currentTime);
+                console.log(`💰 [Ad Click - ${type}] Direct Link opened successfully.`);
+                return true;
             } else {
-                console.warn('⚠️ [Ad Click] Pop-up blocked or failed to open direct link. Ensure pop-ups are allowed.');
+                console.warn(`⚠️ [Ad Click - ${type}] Pop-up blocked or failed to open direct link. Ensure pop-ups are allowed.`);
+                return false;
             }
         } else {
-            console.log('⏳ [Ad Click] Direct Link cooldown active. Not opening new tab.');
+            const timeLeft = (cooldownDuration - (currentTime - lastClickTime)) / 1000;
+            console.log(`⏳ [Ad Click - ${type}] Direct Link cooldown active. Not opening new tab. Time remaining: ${timeLeft.toFixed(1)}s`);
+            return false;
         }
     }
 
-    function updateMetaTags(title, description, imageUrl, url) {
-        document.title = title;
-        document.querySelector('meta[name="description"]').setAttribute('content', description);
-        document.querySelector('meta[property="og:title"]').setAttribute('content', title);
-        document.querySelector('meta[property="og:description"]').setAttribute('content', description);
-        document.querySelector('meta[property="og:image"]').setAttribute('content', imageUrl);
-        document.querySelector('meta[property="og:url"]').setAttribute('content', url);
-
-        let canonicalLink = document.querySelector('link[rel="canonical"]');
-        if (!canonicalLink) {
-            canonicalLink = document.createElement('link');
-            canonicalLink.setAttribute('rel', 'canonical');
-            document.head.appendChild(canonicalLink);
-        }
-        canonicalLink.setAttribute('href', url);
-        console.log(`[SEO] Meta tags updated for: ${title}`);
-    }
-
-    function addJsonLdSchema(movie) {
-        const existingSchema = document.getElementById('movie-schema');
-        if (existingSchema) {
-            existingSchema.remove();
-        }
-
-        const script = document.createElement('script');
-        script.type = 'application/ld+json';
-        script.id = 'movie-schema';
-        script.innerHTML = JSON.stringify({
-            "@context": "http://schema.org",
-            "@type": "Movie",
-            "name": movie.title,
-            "description": movie.description,
-            "image": movie.poster,
-            "director": {
-                "@type": "Person",
-                "name": movie.director
-            },
-            "actor": movie.stars.split(', ').map(star => ({
-                "@type": "Person",
-                "name": star
-            })),
-            "datePublished": movie.year + "-01-01",
-            "genre": movie.category.split(', ').map(g => g.trim()),
-            "aggregateRating": {
-                "@type": "AggregateRating",
-                "ratingValue": movie.rating,
-                "ratingCount": "1000"
-            },
-            "video": {
-                "@type": "VideoObject",
-                "name": movie.title + " Trailer", // Or actual video title
-                "description": "Official trailer for " + movie.title,
-                "thumbnailUrl": movie.poster,
-                "embedUrl": movie.embed_url,
-                "uploadDate": movie.year + "-01-01"
-            }
+    function createMovieCard(movie) {
+        const movieCard = document.createElement('div');
+        movieCard.classList.add('movie-card');
+        movieCard.innerHTML = `
+            <img src="${movie.poster}" alt="${movie.title}">
+            <h3>${movie.title}</h3>
+        `;
+        movieCard.addEventListener('click', () => {
+            console.log(`⚡ [Interaction] Movie card clicked for ID: ${movie.id}`);
+            openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'movieCard'); // يفتح إعلان مباشر هنا
+            showMovieDetails(movie.id);
         });
-        document.head.appendChild(script);
-        console.log(`[SEO] JSON-LD schema added for: ${movie.title}`);
+        return movieCard;
     }
 
-    function displayMovies(moviesToDisplay, containerElement) {
-        console.log(`🎬 [Display] Attempting to display ${moviesToDisplay.length} movies in #${containerElement ? containerElement.id : 'N/A'}`);
-
-        if (!containerElement) {
-            console.error(`❌ [Display] Container element is null or undefined. Cannot display movies.`);
+    function displayMovies(moviesToDisplay, targetGridElement) {
+        if (!targetGridElement) {
+            console.error('❌ displayMovies: Target grid element is null or undefined.');
             return;
         }
+        targetGridElement.innerHTML = '';
 
-        containerElement.style.display = 'grid'; 
-        console.log(`[Display] Container #${containerElement.id} display set to 'grid'.`);
-
-        containerElement.innerHTML = ''; // Clear existing content
-
-        if (!moviesToDisplay || moviesToDisplay.length === 0) {
-            containerElement.innerHTML = '<p style="text-align: center; font-size: 1.2rem; color: var(--text-muted);">لا توجد أفلام لعرضها في هذا القسم.</p>';
-            console.warn(`[Display] No movies to display or moviesToDisplay is empty for #${containerElement.id}.`);
+        if (moviesToDisplay.length === 0) {
+            targetGridElement.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد أفلام مطابقة للبحث أو مقترحة.</p>';
+            console.log(`🎬 [Display] No movies to display in ${targetGridElement.id}.`);
             return;
         }
 
         moviesToDisplay.forEach(movie => {
-            const movieCard = document.createElement('div');
-            movieCard.classList.add('movie-card');
-            movieCard.setAttribute('role', 'listitem');
-            movieCard.tabIndex = 0; // Make it focusable
-            movieCard.setAttribute('aria-label', `فيلم ${movie.title}`);
-
-            movieCard.innerHTML = `
-                <img src="${movie.poster}" alt="بوستر فيلم ${movie.title}" loading="lazy" onerror="this.onerror=null;this.src='https://via.placeholder.com/260x380?text=Image+Not+Found';">
-                <h3>${movie.title}</h3>
-            `;
-            movieCard.addEventListener('click', () => {
-                console.log(`👆 [Click] Movie card clicked for ID: ${movie.id}`);
-                openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD); // Open ad when movie card is clicked
-                showMovieDetails(movie.id); // Always show movie details after potential ad click
-            });
-            containerElement.appendChild(movieCard);
+            targetGridElement.appendChild(createMovieCard(movie));
         });
-        console.log(`✅ [Display] Successfully displayed ${moviesToDisplay.length} movies in #${containerElement.id}.`);
+        console.log(`🎬 [Display] Displayed ${moviesToDisplay.length} movies in ${targetGridElement.id}.`);
     }
 
-    function paginateMovies() {
-        console.log(`➡️ [Pagination] Paginating movies. Current page: ${currentPage}`);
-        const startIndex = (currentPage - 1) * moviesPerPage;
+    function paginateMovies(moviesArray, page) {
+        const startIndex = (page - 1) * moviesPerPage;
         const endIndex = startIndex + moviesPerPage;
-        const moviesOnPage = moviesData.slice(startIndex, endIndex);
+        const paginatedMovies = moviesArray.slice(startIndex, endIndex);
 
-        displayMovies(moviesOnPage, movieGrid); // Display movies on the main grid
+        displayMovies(paginatedMovies, movieGrid);
+        updatePaginationButtons(moviesArray.length);
+        console.log(`➡️ [Pagination] Displaying page ${page}. Movies from index ${startIndex} to ${Math.min(endIndex, moviesArray.length)-1}.`);
+    }
 
-        // Update pagination button states
+    function updatePaginationButtons(totalMovies) {
         if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
-        if (nextPageBtn) nextPageBtn.disabled = endIndex >= moviesData.length;
-        console.log(`[Pagination] Prev disabled: ${prevPageBtn ? prevPageBtn.disabled : 'N/A'}, Next disabled: ${nextPageBtn ? nextPageBtn.disabled : 'N/A'}`);
+        if (nextPageBtn) nextPageBtn.disabled = currentPage * moviesPerPage >= totalMovies;
+        console.log(`🔄 [Pagination] Buttons updated. Current page: ${currentPage}, Total Movies: ${totalMovies}`);
+    }
+
+    function performSearch() {
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        let filteredMovies = [];
+        if (query) {
+            filteredMovies = moviesData.filter(movie =>
+                movie.title.toLowerCase().includes(query) ||
+                movie.director.toLowerCase().includes(query) ||
+                (Array.isArray(movie.cast) ? movie.cast.some(actor => actor.toLowerCase().includes(query)) : movie.cast.toLowerCase().includes(query)) ||
+                movie.genre.toLowerCase().includes(query)
+            );
+            if (sectionTitleElement) {
+                sectionTitleElement.textContent = `نتائج البحث عن "${query}"`;
+            }
+            console.log(`🔍 [Search] Performed search for "${query}". Found ${filteredMovies.length} results.`);
+        } else {
+            filteredMovies = [...moviesData];
+            if (sectionTitleElement) {
+                sectionTitleElement.textContent = 'أحدث الأفلام';
+            }
+            console.log('🔍 [Search] Search query empty, showing all movies.');
+        }
+        currentPage = 1;
+        moviesDataForPagination = filteredMovies;
+        paginateMovies(moviesDataForPagination, currentPage);
     }
 
     function showMovieDetails(movieId) {
@@ -292,303 +284,326 @@ document.addEventListener('DOMContentLoaded', () => {
         const movie = moviesData.find(m => m.id === movieId);
 
         if (movie) {
-            // Hide main sections
-            heroSection.style.display = 'none';
-            movieGridSection.style.display = 'none';
-            // Show movie details section
-            movieDetailsSection.style.display = 'block';
+            if (heroSection) heroSection.style.display = 'none';
+            if (movieGridSection) movieGridSection.style.display = 'none';
 
-            // Scroll to the top of the page for better UX
+            if (movieDetailsSection) movieDetailsSection.style.display = 'block';
+            if (suggestedMoviesSection) suggestedMoviesSection.style.display = 'block';
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            console.log('[Routing] Page scrolled to top.');
+            console.log('[Routing] Scrolled to top.');
 
-            // Populate movie details
-            document.getElementById('details-movie-title').textContent = movie.title;
-            document.getElementById('details-movie-description').textContent = movie.description;
-            document.getElementById('details-movie-director').textContent = movie.director;
-            document.getElementById('details-movie-stars').textContent = movie.stars;
-            document.getElementById('details-movie-genre').textContent = movie.category;
-            document.getElementById('details-movie-year').textContent = movie.year;
-            document.getElementById('details-movie-rating').textContent = movie.rating;
+            document.getElementById('movie-details-title').textContent = movie.title;
+            document.getElementById('movie-details-description').textContent = movie.description;
+            document.getElementById('movie-details-release-date').textContent = movie.release_date || 'غير متوفر';
+            document.getElementById('movie-details-genre').textContent = movie.genre || 'غير محدد';
+            document.getElementById('movie-details-director').textContent = movie.director || 'غير متوفر';
+            document.getElementById('movie-details-cast').textContent = Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast || 'غير متوفر';
+            document.getElementById('movie-details-duration').textContent = movie.duration || 'غير متوفر';
+            document.getElementById('movie-details-rating').textContent = movie.rating || 'N/A';
 
-            // Set the video player source
-            moviePlayer.src = ''; // Reset the iframe src to clear any previous "Video unavailable" message before setting new src
-            setTimeout(() => { // Small delay to ensure the reset takes effect
-                moviePlayer.src = movie.embed_url;
-                console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
-            }, 50);
-
-            // Handle video overlay for ads
-            if (videoOverlay) {
-                videoOverlay.classList.remove('hidden'); // Show overlay initially
-                // Clear any existing timer
-                if (videoOverlayHideTimer) {
-                    clearTimeout(videoOverlayHideTimer);
-                }
-                // Set timer to re-show overlay after 4 minutes if not clicked
-                videoOverlayHideTimer = setTimeout(() => {
-                    if (videoOverlay.classList.contains('hidden')) { // Only re-show if it was hidden
-                        videoOverlay.classList.remove('hidden');
-                        if (videoOverlayText) videoOverlayText.style.display = 'block';
-                        console.log('[Video Overlay] Re-shown automatically after 4 minutes.');
-                    }
-                }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
-                
-                // Ensure text is visible when overlay is present
-                if (videoOverlayText) {
-                    videoOverlayText.style.display = 'block'; 
-                    console.log('[Video Overlay Text] Shown.');
-                }
-                console.log('[Video Overlay] Overlay shown and timer set.');
+            if (movieDetailsPoster) {
+                movieDetailsPoster.src = movie.poster;
+                movieDetailsPoster.alt = movie.title;
+                console.log(`[Details] Poster set for ${movie.title}`);
             }
 
-            // Update URL and SEO meta tags
-            const currentUrl = window.location.origin + window.location.pathname + `?movie=${movie.id}`;
-            updateMetaTags(
-                `${movie.title} - شاهد بلس`,
-                movie.description.substring(0, 150) + '...', // Truncate description for meta tag
-                movie.poster,
-                currentUrl
-            );
-            addJsonLdSchema(movie); // Add structured data
+            if (moviePlayer) {
+                moviePlayer.src = '';
+                if (videoLoadingSpinner) {
+                    videoLoadingSpinner.style.display = 'block';
+                    console.log('[Video Player] Loading spinner shown.');
+                }
 
-            // --- Suggested Movies Logic ---
-            console.log(`💡 [Suggested Movies Logic] Starting for current movie ID: ${movieId}`);
-            let filteredSuggested = moviesData.filter(m => m.id !== movieId);
-            console.log(`[Suggested Movies Logic] Total movies in data: ${moviesData.length}`);
-            console.log(`[Suggested Movies Logic] Filtered movies (excluding current ID ${movieId}): ${filteredSuggested.length} movies available.`);
+                setTimeout(() => {
+                    moviePlayer.src = movie.embed_url;
+                    console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
+                }, 50);
 
-            let suggestedMoviesToDisplay = [];
-
-            if (filteredSuggested.length >= 4) {
-                // Shuffle and slice to get 4 random suggested movies from filtered list
-                suggestedMoviesToDisplay = filteredSuggested.sort(() => 0.5 - Math.random()).slice(0, 4);
-                console.log(`[Suggested Movies Logic] Sufficient unique movies (${suggestedMoviesToDisplay.length}), shuffled and sliced.`);
-            } else if (moviesData.length > 0) {
-                // Fallback: If not enough unique movies after filtering
-                console.warn(`[Suggested Movies Logic] Not enough unique suggested movies (${filteredSuggested.length}). Attempting fallback.`);
-
-                // Try to get unique movies from the beginning of moviesData, excluding current one
-                let tempSuggested = [];
-                for (let i = 0; i < moviesData.length && tempSuggested.length < 4; i++) {
-                    if (moviesData[i].id !== movieId) {
-                        tempSuggested.push(moviesData[i]);
+                moviePlayer.onload = () => {
+                    if (videoLoadingSpinner) {
+                        videoLoadingSpinner.style.display = 'none';
+                        console.log('[Video Player] Loading spinner hidden (iframe loaded).');
                     }
-                }
-                suggestedMoviesToDisplay = tempSuggested;
-
-                // If still less than 4, and we have more total movies, just fill up with any other movies
-                if (suggestedMoviesToDisplay.length < 4 && moviesData.length > suggestedMoviesToDisplay.length) {
-                    const remainingNeeded = 4 - suggestedMoviesToDisplay.length;
-                    const existingSuggestedIds = new Set(suggestedMoviesToDisplay.map(m => m.id));
-                    const additionalMovies = moviesData.filter(m => !existingSuggestedIds.has(m.id)).slice(0, remainingNeeded);
-                    suggestedMoviesToDisplay = suggestedMoviesToDisplay.concat(additionalMovies);
-                    console.log(`[Suggested Movies Logic] Filled up with ${additionalMovies.length} additional movies.`);
-                }
-                console.log(`[Suggested Movies Logic] Fallback suggested movies to display: ${suggestedMoviesToDisplay.length}`);
-
-            } else {
-                console.error('❌ [Suggested Movies Logic] No movies available in moviesData for suggestions at all.');
+                    if (videoOverlay) {
+                        videoOverlay.classList.remove('inactive');
+                        videoOverlay.style.pointerEvents = 'auto';
+                        console.log('[Video Overlay] Active and clickable after video loaded.');
+                    }
+                };
+                moviePlayer.onerror = () => {
+                    if (videoLoadingSpinner) {
+                        videoLoadingSpinner.style.display = 'none';
+                        console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
+                    }
+                    if (videoOverlay) {
+                        videoOverlay.classList.remove('inactive');
+                        videoOverlay.style.pointerEvents = 'auto';
+                        console.warn('[Video Overlay] Active even after iframe load error.');
+                    }
+                };
             }
 
-            if (suggestedMovieGrid) {
-                if (suggestedMoviesToDisplay.length > 0) {
-                    // Make sure the parent section for suggested movies is visible
-                    if (suggestedMoviesSection) {
-                        suggestedMoviesSection.style.display = 'block'; 
-                        console.log('[Suggested Movies Section] Parent section displayed.');
-                    }
-                    displayMovies(suggestedMoviesToDisplay, suggestedMovieGrid);
-                    console.log('✅ [Display] Suggested movies display function called with movies.');
-                } else {
-                    suggestedMovieGrid.innerHTML = '<p style="text-align: center; font-size: 1rem; color: var(--text-muted);">لا توجد اقتراحات حاليًا.</p>';
-                    console.warn('[Display] No suggested movies to display after all attempts. Showing message.');
-                    // Hide the suggested section entirely if there are no suggestions
-                    if (suggestedMoviesSection) {
-                        suggestedMoviesSection.style.display = 'none';
-                        console.log('[Suggested Movies Section] Hidden as no suggestions.');
-                    }
-                }
-            } else {
-                console.error('❌ CRITICAL ERROR: suggestedMovieGrid element not found. Cannot display suggested movies.');
-            }
-            // --- End of Suggested Movies Logic ---
+            const newUrl = new URL(window.location.origin);
+            newUrl.searchParams.set('view', 'details');
+            newUrl.searchParams.set('id', movieId);
+            history.pushState({ view: 'details', id: movieId }, movie.title, newUrl.toString());
+            console.log(`🔗 [URL] URL updated to ${newUrl.toString()}`);
 
-            // Update URL in browser history (without full reload)
-            window.history.pushState({ movieId: movieId }, movie.title, currentUrl);
+            updateMetaTags(movie);
+            addJsonLdSchema(movie);
+            displaySuggestedMovies(movieId);
+            console.log(`✨ [Suggestions] Calling displaySuggestedMovies for ID: ${movieId}`);
 
         } else {
             console.error('❌ [Routing] Movie not found for ID:', movieId, 'Redirecting to home page.');
-            showHomePage(); // Fallback to home if movie ID is invalid
+            showHomePage();
         }
+    }
+
+    function updateMetaTags(movie) {
+        document.title = `${movie.title} - مشاهدة أونلاين`;
+        document.querySelector('meta[name="description"]')?.setAttribute('content', movie.description);
+        document.querySelector('meta[property="og:title"]')?.setAttribute('content', movie.title);
+        document.querySelector('meta[property="og:description"]')?.setAttribute('content', movie.description);
+        document.querySelector('meta[property="og:image"]')?.setAttribute('content', movie.poster);
+        document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.href);
+        document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'video.movie');
+        document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', movie.title);
+        document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', movie.description);
+        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', movie.poster);
+        console.log('📄 [SEO] Meta tags updated.');
+    }
+
+    function addJsonLdSchema(movie) {
+        const schema = {
+            "@context": "http://schema.org",
+            "@type": "Movie",
+            "name": movie.title,
+            "description": movie.description,
+            "image": movie.poster,
+            "datePublished": movie.release_date,
+            "director": {
+                "@type": "Person",
+                "name": movie.director
+            },
+            "actor": (Array.isArray(movie.cast) ? movie.cast : movie.cast.split(', ')).map(actor => ({
+                "@type": "Person",
+                "name": actor.trim()
+            })),
+            "genre": (Array.isArray(movie.genre) ? movie.genre : movie.genre.split(', ')).map(g => g.trim()),
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": movie.rating.split('/')[0],
+                "bestRating": "10",
+                "ratingCount": "10000"
+            },
+            "duration": movie.duration,
+            "trailer": {
+                "@type": "VideoObject",
+                "name": `${movie.title} Trailer`,
+                "description": `Official trailer for ${movie.title}`,
+                "uploadDate": movie.release_date,
+                "embedUrl": movie.embed_url
+            }
+        };
+
+        let script = document.querySelector('script[type="application/ld+json"]');
+        if (!script) {
+            script = document.createElement('script');
+            script.type = 'application/ld+json';
+            document.head.appendChild(script);
+        }
+        script.textContent = JSON.stringify(schema);
+        console.log('📄 [SEO] JSON-LD schema added/updated.');
+    }
+
+    function displaySuggestedMovies(currentMovieId) {
+        if (!suggestedMovieGrid) {
+            console.error('❌ displaySuggestedMovies: suggestedMovieGrid element not found. Cannot display suggested movies.');
+            return;
+        }
+
+        const otherMovies = moviesData.filter(movie => movie.id !== currentMovieId);
+        const shuffled = otherMovies.sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 4);
+
+        if (selected.length === 0) {
+            suggestedMovieGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد أفلام مقترحة حالياً.</p>';
+            console.log('✨ [Suggestions] No suggested movies available after filtering.');
+            return;
+        }
+
+        displayMovies(selected, suggestedMovieGrid);
+        console.log(`✨ [Suggestions] Displayed ${selected.length} suggested movies in ${suggestedMovieGrid.id}.`);
     }
 
     function showHomePage() {
         console.log('🏠 [Routing] Showing home page.');
-        // Hide movie details section
-        movieDetailsSection.style.display = 'none';
-        // Show main sections
-        heroSection.style.display = 'flex'; // Assuming hero is flex
-        movieGridSection.style.display = 'block';
+        if (movieDetailsSection) movieDetailsSection.style.display = 'none';
+        if (suggestedMoviesSection) suggestedMoviesSection.style.display = 'none';
 
-        paginateMovies(); // Re-display paginated movies on home
+        if (heroSection) heroSection.style.display = 'flex';
+        if (movieGridSection) movieGridSection.style.display = 'block';
 
-        // Clear any active video overlay timer and ensure text is visible
-        if (videoOverlayHideTimer) {
-            clearTimeout(videoOverlayHideTimer);
-            videoOverlayHideTimer = null;
-            console.log('[Video Overlay] Video overlay timer cleared.');
-        }
+        if (searchInput) searchInput.value = '';
+        if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
+        moviesDataForPagination = [...moviesData];
+        paginateMovies(moviesDataForPagination, 1);
+
         if (videoOverlay) {
-             videoOverlay.classList.remove('hidden'); // Ensure overlay is visible when returning home
+            videoOverlay.classList.add('inactive');
+            videoOverlay.style.pointerEvents = 'none';
+            console.log('[Video Overlay] Inactive on home page.');
         }
-        if (videoOverlayText) {
-            videoOverlayText.style.display = 'block'; // Ensure text is visible
-            console.log('[Video Overlay Text] Display reset to home (block).');
+        if (videoLoadingSpinner) {
+            videoLoadingSpinner.style.display = 'none';
+        }
+        if (moviePlayer) {
+            moviePlayer.src = '';
+            moviePlayer.onload = null;
+            moviePlayer.onerror = null;
         }
 
-        // Hide suggested movies section when going back to home
-        if (suggestedMoviesSection) {
-            suggestedMoviesSection.style.display = 'none';
-            console.log('[Suggested Movies Section] Hidden on home page.');
+        const newUrl = new URL(window.location.origin);
+        history.pushState({ view: 'home' }, 'أفلام عربية - الصفحة الرئيسية', newUrl.toString());
+        console.log(`🔗 [URL] URL updated to ${newUrl.toString()}`);
+
+        document.title = 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين';
+        document.querySelector('meta[name="description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
+        document.querySelector('meta[property="og:title"]')?.setAttribute('content', 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين');
+        document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
+        document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.href);
+        document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
+        document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين');
+        document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
+
+        let script = document.querySelector('script[type="application/ld+json"]');
+        if (script) {
+            script.remove();
+            console.log('📄 [SEO] JSON-LD schema removed.');
         }
-
-        // Reset SEO meta tags to home page defaults
-        updateMetaTags(
-            "شاهد بلس - أفلام ومسلسلات عربية وعالمية",
-            "شاهد أحدث الأفلام والمسلسلات العربية والعالمية بجودة عالية. استمتع بتجربة مشاهدة فريدة مع شاهد بلس.",
-            "https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGufDB8fHx8fA%3D%3D",
-            window.location.origin + window.location.pathname
-        );
-        // Remove movie-specific schema
-        const existingSchema = document.getElementById('movie-schema');
-        if (existingSchema) { existingSchema.remove(); }
-
-        // Update URL in browser history (without full reload)
-        window.history.pushState({}, document.title, window.location.origin + window.location.pathname);
-    }
-
-    // New event listener for video overlay to trigger ad and hide itself
-    function handleVideoOverlayClick() {
-        console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
-        openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY); // Use video specific cooldown
-        videoOverlay.classList.add('hidden'); // Hide overlay
-        if (videoOverlayText) videoOverlayText.style.display = 'none'; // Hide text
-        console.log('[Video Overlay] Hidden after click.');
-
-        // Re-set timer to show overlay again after cooldown
-        if (videoOverlayHideTimer) {
-            clearTimeout(videoOverlayHideTimer);
-        }
-        videoOverlayHideTimer = setTimeout(() => {
-            videoOverlay.classList.remove('hidden');
-            if (videoOverlayText) videoOverlayText.style.display = 'block';
-            console.log('[Video Overlay] Re-shown automatically after 4 minutes due to timer.');
-        }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
-    }
-    
-    // Initial attachment of the event listener for video overlay
-    if (videoOverlay) {
-        videoOverlay.addEventListener('click', handleVideoOverlayClick);
-        console.log('[Video Overlay] Initial click listener attached.');
     }
 
 
     // --- 5. Event Listeners ---
 
-    // Toggle mobile navigation
     if (menuToggle && mainNav) {
         menuToggle.addEventListener('click', () => {
             mainNav.classList.toggle('nav-open');
-            console.log(`☰ [Nav] Mobile menu toggled. State: ${mainNav.classList.contains('nav-open') ? 'Open' : 'Closed'}`);
+            console.log('📱 [Interaction] Menu toggle clicked.');
         });
-    } else {
-        console.warn('⚠️ [Init] menuToggle or mainNav not found. Mobile navigation may not function.');
     }
 
-    // Hide mobile nav when a link is clicked
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             if (mainNav && mainNav.classList.contains('nav-open')) {
                 mainNav.classList.remove('nav-open');
-                console.log('🔗 [Nav] Nav link clicked, mobile menu closed.');
+                console.log('📱 [Interaction] Nav link clicked, menu closed.');
             }
         });
     });
 
-    // Hero section "Watch Now" button
-    if (watchNowBtn) {
-        watchNowBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            console.log('▶️ [Click] Watch Now button clicked.');
-            document.getElementById('movie-grid-section').scrollIntoView({ behavior: 'smooth' });
+    if (watchNowBtn && movieGridSection) {
+        watchNowBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🎬 [Interaction] Watch Now button clicked.');
+            movieGridSection.scrollIntoView({ behavior: 'smooth' });
         });
-    } else {
-        console.warn('⚠️ [Init] watchNowBtn not found.');
     }
 
-    // Back to Home button on movie details page
     if (backToHomeBtn) {
-        backToHomeBtn.addEventListener('click', showHomePage);
-        console.log('↩️ [Init] Back to Home button listener attached.');
-    } else {
-        console.warn('⚠️ [Init] backToHomeBtn not found.');
+        backToHomeBtn.addEventListener('click', () => {
+            console.log('🔙 [Interaction] Back to home button clicked.');
+            showHomePage();
+        });
     }
 
-    // Pagination buttons
+    if (searchButton) {
+        searchButton.addEventListener('click', performSearch);
+        console.log('🔍 [Event] Search button listener attached.');
+    }
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+                searchInput.blur();
+            }
+        });
+        console.log('🔍 [Event] Search input keypress listener attached.');
+    }
+
     if (prevPageBtn) {
         prevPageBtn.addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
-                paginateMovies();
-                window.scrollTo({ top: movieGridSection.offsetTop, behavior: 'smooth' }); // Scroll to movie grid
-                console.log(`◀️ [Pagination] Moved to page: ${currentPage}`);
+                paginateMovies(moviesDataForPagination, currentPage);
             }
+            console.log(`⬅️ [Pagination] Previous page clicked. Current page: ${currentPage}`);
         });
     }
     if (nextPageBtn) {
         nextPageBtn.addEventListener('click', () => {
-            const totalPages = Math.ceil(moviesData.length / moviesPerPage);
+            const totalPages = Math.ceil(moviesDataForPagination.length / moviesPerPage);
             if (currentPage < totalPages) {
                 currentPage++;
-                paginateMovies();
-                window.scrollTo({ top: movieGridSection.offsetTop, behavior: 'smooth' }); // Scroll to movie grid
-                console.log(`▶️ [Pagination] Moved to page: ${currentPage}`);
+                paginateMovies(moviesDataForPagination, currentPage);
+            }
+            console.log(`➡️ [Pagination] Next page clicked. Current page: ${currentPage}`);
+        });
+    }
+
+    if (homeLogoLink) {
+        homeLogoLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🏠 [Interaction] Home logo clicked.');
+            showHomePage();
+        });
+    }
+
+    // Event listener for movie details poster click (سيظل يفتح إعلان مباشر)
+    if (movieDetailsPoster) {
+        movieDetailsPoster.addEventListener('click', () => {
+            console.log('🖼️ [Ad Click] Movie details poster clicked. Attempting to open Direct Link.');
+            openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'movieDetailsPoster');
+        });
+        console.log('[Event] Movie details poster click listener attached.');
+    }
+
+    // Event listener for video overlay to trigger ad and manage cooldown/visibility (سيظل يفتح إعلان مباشر)
+    if (videoOverlay) {
+        videoOverlay.addEventListener('click', () => {
+            console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
+            const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
+
+            if (adOpened) {
+                videoOverlay.style.pointerEvents = 'none';
+                console.log(`[Video Overlay] Temporarily disabled clicks for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
+                setTimeout(() => {
+                    videoOverlay.style.pointerEvents = 'auto';
+                    console.log('[Video Overlay] Clicks re-enabled.');
+                }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
             }
         });
+        console.log('[Video Overlay] Click listener attached for ad interaction (with cooldown logic).');
     }
 
-    // Home logo click
-    if (homeLogoLink) {
-        homeLogoLink.addEventListener('click', (event) => {
-            event.preventDefault(); // Prevent default link behavior
-            showHomePage(); // Go to home page function
-            console.log('🏠 [Click] Home logo clicked.');
-        });
-    }
+    // --- 6. Initial Page Load Logic (Routing) ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewParam = urlParams.get('view');
+    const idParam = urlParams.get('id');
 
-    // Handle browser back/forward buttons
-    window.addEventListener('popstate', (event) => {
-        console.log('🔄 [History] Popstate event triggered.', event.state);
-        if (event.state && event.state.movieId) {
-            showMovieDetails(event.state.movieId);
+    if (viewParam === 'details' && idParam) {
+        const movieId = parseInt(idParam);
+        if (!isNaN(movieId)) {
+            console.log(`🚀 [Initial Load] Attempting to load movie details from URL: ID ${movieId}`);
+            showMovieDetails(movieId);
         } else {
+            console.warn('⚠️ [Initial Load] Invalid movie ID in URL. Showing home page.');
             showHomePage();
         }
-    });
-
-    // --- 6. Initial Page Load ---
-    // Check URL for specific movie ID on initial load
-    const urlParams = new URLSearchParams(window.location.search);
-    const movieIdFromUrl = urlParams.get('movie');
-
-    if (movieIdFromUrl) {
-        console.log(`🚀 [Init] Found movie ID in URL: ${movieIdFromUrl}. Loading details...`);
-        showMovieDetails(parseInt(movieIdFromUrl));
     } else {
-        console.log('🚀 [Init] No movie ID in URL. Loading home page...');
-        showHomePage(); // Display initial set of movies
+        console.log('🚀 [Initial Load] No specific view in URL. Showing home page.');
+        showHomePage();
     }
-
-    console.log('✅ Script execution finished.');
 });
