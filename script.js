@@ -69,21 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. Movie Data (Example - Replace with your actual data source) ---
     const moviesData = [
-        {
+      {
             "id": 1,
-            "title": "فيلم Purity Falls 2019",
-            "description": " القصّة : بعد مرور عام على فقدان زوجها، تستقر نيكول مع أبنائها الصغار جاستين وجيسون في بيوريتي فولز. في البداية، يتم الترحيب بالعائلة بحفاوة. وخاصة جارتهم الغنية كورتني التي تبدو لطيفة للغاية، حيث توفر لجيسون بسرعة وظائف غريبة لدعم دخل الأسرة. ومع ذلك، سرعان ما تلاحظ نيكول أن هناك شيئًا ما ليس على ما يرام، حيث يغادر ابنها ويعود في ساعات متأخرة بشكل مريب. عندما تغرق جارتها الشابة في حمام السباحة، تبدأ الأمور في أن تصبح خطيرة. هناك شيء غير صحيح مع كورتني الودودة للغاية، والتي يبدو أنها تسيطر على ابنها.",
-            "poster": "https://tinyurl.com/mrynn3au",
-            "release_date": "2019-07-02",
-            "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط +18",
-            "director": "Trevor Stines",
-            "cast": "Kristanna Loken",
-            "embed_url": "https://player.vimeo.com/video/1091276533",
-            "rating": "6.2/10",
-            "duration": "1h 30m"
-        },
-        {
-            "id": 2,
             "title": "A Nice Girl Like You 2020",
             "description": "القصّة : لوسي نيل عازفة كمان، تكتشف إدمان صديقها جيف لمشاهدة المواد الإباحية، فتتشاجر معه، وينفصلا، وتصاب بصدمة عصبية، وتقرر على هذا الاساس تعزيز نفسيها، واكتشاف ذاتها خاصة بعد علاقة الصداقة التي تنشأ بينها وبين جرانت، حيث يساعدها على التغلب على مشاكلها السابقة مع صديقها جيف",
             "poster": "https://i.ibb.co/k2jg6TSd/photo-5852675531542218174-y.jpg",
@@ -91,12 +78,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط",
             "director": "Chris Riedell",
             "cast": "Lucy Hale",
-            "embed_url": "https://player.vimeo.com/video/1091276533",
+            "embed_url": "https://streamtape.com/e/gopa76QkOpuqM8P",
             "rating": "5.5/10",
             "duration": "1h 34m"
         },
         {
-            "id": 3,
+            "id": 2,
             "title": "Sleeping with the Enemy 1991",
             "description": " تزوجت (لورا) منذ أربع سنوات بالرجل الوسيم (مارتن). يبدو زواجهما مثاليًا في أعين الجميع، ولكن الحقيقة تختلف تمامًا عن هذه الصورة. يعامل مارتن المتسلط لورا بعنف ووحشية ويعتدي عليها، لتصل الزوجة لنقطة تستعد فيها لفعل أي شيء مقابل التخلص من حياتها البائسة. تضع لورا خطة النجاة، والتي تتلخص في قيامها بادعاء الوفاة، وتلفيق كل شيء؛ بحيث تنطلي الخدعة على مارتن. يسير كل شيء حسب الخطة، وتبدأ لورا في العيش بسعادة بهويتها الجديدة، ولكن السعادة لا تدوم طويلًا بعدما تتطور الأحداث بغتة.",
             "poster": "https://i.ibb.co/d4Jmp73r/photo-5852675531542218154-y.jpg",
@@ -104,25 +91,13 @@ document.addEventListener('DOMContentLoaded', () => {
             "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط",
             "director": "Joseph Ruben",
             "cast": "Julia Roberts",
-            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "embed_url": "https://streamtape.com/e/v9KrVBVJVAIYjA/",
             "rating": "6.3/10",
             "duration": "1h 39m"
         },
+   
         {
-            "id": 7,
-            "title": "اغنيه العيد",
-            "description": "اغانيه رومانسيه",
-            "poster": "https://zaaednews.com/wp-content/uploads/2024/09/%D8%AD%D9%81%D9%84-%D8%A3%D9%86%D8%BA%D8%A7%D9%85-%D9%84%D9%8A%D8%A7%D9%84%D9%8A-%D9%85%D8%B5%D8%B1-%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D8%AA%D8%AD%D9%81-%D8%A7%D9%84%D9%85%D8%B5%D8%B1%D9%8A-%D8%A7%D9%84%D9%83%D8%A8%D9%8A%D8%B1.jpg0_.jpg",
-            "release_date": "2024-06-16",
-            "genre": "رومانسي",
-            "director": "انغام",
-            "cast": "انغام",
-            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "rating": "8.0/10",
-            "duration": "0h 5m"
-        },
-        {
-            "id": 4,
+            "id": 3,
             "title": "Moms Friends 2024",
             "description": " القصّة : فيلم رومانسي جديد حول الرغبات الجنسية والعلاقات الحميمة الساخنة بين الشباب والعلاقات الجنسية التي يمارسونها",
             "poster": "https://i.postimg.cc/dtHdLMNL/photo-5838945848241800438-y.jpg",
@@ -130,12 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط",
             "director": "Yoo Je‑won.",
             "cast": "Choi Seung‑hyo",
-            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "embed_url": "https://streamtape.com/e/7kbx78RR8VtAXD1/",
             "rating": "7.0/10",
             "duration": "1h 45m"
         },
         {
-            "id": 5,
+            "id": 4,
             "title": "Blood Pay 2025",
             "description": "فيلم إثارة خيال علمي تدور أحداثه في الجنة، وهي مدينة خيالية يسيطر فيها الذكاء الاصطناعي على القوى العاملة ويقود العزلة الاجتماعية.",
             "poster": "https://i.ibb.co/v6d90zjN/photo-5789391950099630510-w.jpg",
@@ -143,12 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "genre": "رعب, خيال علمي",
             "director": "Brace Beltempo.",
             "cast": "Gianluca Busani",
-            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "embed_url": "https://streamtape.com/e/7b7rqXvk7DT8Ap/",
             "rating": "7.5/10",
             "duration": "2h 10m"
         },
         {
-            "id": 6,
+            "id": 5,
             "title": "Twisters",
             "description": "القصة: مع اشتداد موسم العواصف، تتصادم مسارات مطارد العواصف السابق كيت كوبر ونجم وسائل التواصل الاجتماعي المتهور تايلر أوينز عندما يتم إطلاق العنان لظواهر مرعبة لم يسبق لها مثيل. يجد الزوجان وفرقهما المتنافسة أنفسهم مباشرة في مسارات أنظمة العواصف المتعددة المتقاربة فوق وسط أوكلاهوما في معركة حياتهم.",
             "poster": "https://i.ibb.co/Zp7BnYS3/Untitled.jpg",
@@ -156,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "genre": "اثارة, اكشن",
             "director": "Lee Isaac Chung",
             "cast": "Daisy Edgar-Jones",
-            "embed_url":"https://streamtape.com/e/KXbbjrOM6Lc080L/",
+            "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/",
             "rating": "7.8/10",
             "duration": "1h 50m"
         },
