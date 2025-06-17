@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "genre": "اثارة, اكشن",
             "director": "Lee Isaac Chung",
             "cast": "Daisy Edgar-Jones",
-            "embed_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "embed_url":"https://streamtape.com/e/KXbbjrOM6Lc080L/",
             "rating": "7.8/10",
             "duration": "1h 50m"
         },
