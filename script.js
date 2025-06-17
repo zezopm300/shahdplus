@@ -135,6 +135,21 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.8/10",
             "duration": "1h 50m"
         },
+
+
+            {
+            "id": 6,
+            "title":"Katas 2024 ",
+            "description": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
+            "poster": "https://i.ibb.co/nNCN6nf6/photo-5879999323205387355-y.jpg",
+            "release_date": "2025-6-17",
+            "genre": " Drama, Thriller",
+            "director": "Rodante Pajemna Jr",
+            "cast": "Gianluca Busani",
+            "embed_url": "https://player.vimeo.com/video/1094130228?badge",
+            "rating": "7.5/10",
+            "duration": "47m"
+        },
     ];
 
     let moviesDataForPagination = [...moviesData];
