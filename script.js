@@ -150,6 +150,19 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.5/10",
             "duration": "47m"
         },
+                 {
+            "id": 7,
+            "title":"INIT ",
+            "description": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
+            "poster": "https://i.ibb.co/Q7qs5BHK/photo-5854927331355902321-y.jpg",
+            "release_date": "2025-6-17",
+            "genre": "Drama, Erotic",
+            "director": "Paul Michael Acero",
+            "cast":  "Dyessa Garcia as Louisa",
+            "embed_url": "https://player.vimeo.com/video/1094242186?badge",
+            "rating": "7.5/10",
+            "duration": "49m"
+        },
     ];
 
     let moviesDataForPagination = [...moviesData];
