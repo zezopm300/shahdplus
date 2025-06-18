@@ -177,6 +177,19 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.5/10",
             "duration": " 1h 17m"
         }, 
+            {
+            "id": 9,
+            "title":"The Naughty List of Mr. Scrooge",
+            "description": "رعب☯️ ..",
+            "poster": "https://i.ibb.co/WmSvjjv/photo-5773858406304697363-w.jpg",
+            "release_date": "2025-6-18",
+            "genre": "Comedy, Holiday, Fantasy",
+            "director": " Tim Burton for a darker twist, or Rob Marshall for a musical tone",
+            "cast":  "Ebenezer Scrooge",
+            "embed_url": "https://player.vimeo.com/video/1094365176?badge",
+            "rating": "7.5/10",
+            "duration": "27m"
+        },
     ];
 
     let moviesDataForPagination = [...moviesData];
