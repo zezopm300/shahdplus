@@ -163,6 +163,20 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.5/10",
             "duration": "49m"
         },
+
+              {
+            "id": 8,
+            "title":"Sexy Neighbor Sisters 2024 ",
+            "description": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
+            "poster": "https://i.ibb.co/JWvpp3dz/photo-5820968502415182530-w-1.jpg",
+            "release_date": "2025-6-18",
+            "genre": "Erotic Drama",
+            "director": "Lee Dong-joon",
+            "cast":  "Jin Si-ah",
+            "embed_url": "https://player.vimeo.com/video/1094343142?badge",
+            "rating": "7.5/10",
+            "duration": " 1h 17m"
+        }, 
     ];
 
     let moviesDataForPagination = [...moviesData];
