@@ -7,7 +7,7 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- روابط أفلام ديناميكية (مع تصحيح & إلى &amp;) -->
+  <!-- روابط الأفلام -->
   <url>
     <loc>https://shahidplus.online/?view=details&amp;id=1</loc>
     <changefreq>weekly</changefreq>
@@ -48,14 +48,5 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://shahidplus.online/?view=details&amp;id=9</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://shahidplus.online/?view=details&amp;id=10</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
 </urlset>
+
