@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Pagination elements
     const prevPageBtn = document.getElementById('prev-page-btn');
     const nextPageBtn = document.getElementById('next-page-btn');
-    const moviesPerPage = 8;
+    const moviesPerPage = 30;
     let currentPage = 1;
 
     // Search DOM Elements
@@ -187,6 +187,19 @@ document.addEventListener('DOMContentLoaded', () => {
             "director": " Tim Burton for a darker twist, or Rob Marshall for a musical tone",
             "cast":  "Ebenezer Scrooge",
             "embed_url": "https://player.vimeo.com/video/1094365176?badge",
+            "rating": "7.5/10",
+            "duration": "27m"
+        },
+              {
+            "id": 10,
+            "title":"No Time to Die (2021) ",
+            "description": "اكشن/ اثارة / حركة",
+            "poster": "https://i.ibb.co/zHLQWLJg/photo-5783048395072589689-w.jpg",
+            "release_date": "2025-6-18",
+            "genre":"Action, Adventure, Thriller, Spy",
+            "director": " Cary Joji Fukunaga",
+            "cast":  "Daniel Craig",
+            "embed_url": "https://player.vimeo.com/video/1094454739?badge",
             "rating": "7.5/10",
             "duration": "27m"
         },
