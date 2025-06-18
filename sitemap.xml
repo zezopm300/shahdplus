@@ -7,44 +7,44 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- روابط الأفلام -->
+  <!-- روابط الأفلام باستخدام CDATA -->
   <url>
-    <loc>https://shahidplus.online/?view=details&amp;id=1</loc>
+    <loc><![CDATA[https://shahidplus.online/?view=details&id=1]]></loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://shahidplus.online/?view=details&amp;id=2</loc>
+    <loc><![CDATA[https://shahidplus.online/?view=details&id=2]]></loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://shahidplus.online/?view=details&amp;id=3</loc>
+    <loc><![CDATA[https://shahidplus.online/?view=details&id=3]]></loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://shahidplus.online/?view=details&amp;id=4</loc>
+    <loc><![CDATA[https://shahidplus.online/?view=details&id=4]]></loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://shahidplus.online/?view=details&amp;id=5</loc>
+    <loc><![CDATA[https://shahidplus.online/?view=details&id=5]]></loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://shahidplus.online/?view=details&amp;id=6</loc>
+    <loc><![CDATA[https://shahidplus.online/?view=details&id=6]]></loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://shahidplus.online/?view=details&amp;id=7</loc>
+    <loc><![CDATA[https://shahidplus.online/?view=details&id=7]]></loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://shahidplus.online/?view=details&amp;id=8</loc>
+    <loc><![CDATA[https://shahidplus.online/?view=details&id=8]]></loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
