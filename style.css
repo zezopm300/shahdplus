@@ -123,9 +123,11 @@ a:hover {
 
 .main-header .container {
     display: flex;
+    /* !! تحسينات لـ Flexbox في الهيدر !! */
+    flex-wrap: wrap; 
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* للسماح بالعناصر بالانتقال لأسفل في الموبايل */
+    gap: 1rem; /* فجوة بين عناصر الهيدر لمنع التداخل */
 }
 
 .main-header .logo {
@@ -134,14 +136,16 @@ a:hover {
     color: var(--accent-color);
     text-shadow: var(--shadow-neon-prime);
     letter-spacing: 1.5px;
+    flex-shrink: 0; /* منع الشعار من الانكماش */
 }
 
 .main-nav ul {
     list-style: none;
     display: flex;
-    /* مرونة في الترتيب للموبايل */
     flex-direction: row; 
     align-items: center;
+    flex-grow: 1; /* للسماح للناف بالتمدد */
+    justify-content: flex-end; /* للروابط لتبدأ من اليمين */
 }
 
 .main-nav ul li {
@@ -186,12 +190,14 @@ a:hover {
 .search-container {
     display: flex;
     align-items: center;
-    margin-right: 1rem; /* استخدام rem */
+    /* !! ضبط Margin للبحث ليتناسب مع الهيدر !! */
+    margin-right: 0; /* لا يوجد هامش يمين هنا، سيعتمد على gap في الـ container */
     background: var(--light-dark-color);
     border-radius: var(--border-radius-prime);
     padding: 0.5rem 1rem; /* استخدام rem */
     box-shadow: var(--shadow-inset-sleek);
     border: 1px solid var(--primary-color);
+    flex-shrink: 0; /* منع البحث من الانكماش */
 }
 
 .search-container input {
@@ -231,9 +237,9 @@ a:hover {
     box-shadow: var(--shadow-neon-prime);
 }
 
-/* Mobile Menu Toggle (سنقوم بإعادة ترتيبه لاحقاً في الميديا كويري) */
+/* Mobile Menu Toggle */
 .menu-toggle {
-    display: none; /* مخفي بشكل افتراضي */
+    display: none;
     flex-direction: column;
     justify-content: space-around;
     width: 30px;
@@ -242,10 +248,9 @@ a:hover {
     border: none;
     cursor: pointer;
     padding: 0;
-    position: absolute; /* سيكون مطلقاً في وضع الموبايل */
-    left: 2vw; /* هامش بسيط من اليسار */
-    top: 50%;
-    transform: translateY(-50%);
+    position: relative; /* ليتناسب مع flexbox في الهيدر */
+    order: -1; /* لجعل الزر يظهر أولاً على اليسار في RTL */
+    margin-right: auto; /* يدفع الزر لأقصى اليسار */
     z-index: 101;
 }
 
@@ -261,8 +266,8 @@ a:hover {
 /* Hero Section */
 .hero {
     background: linear-gradient(to bottom, rgba(0, 0, 5, 0.85) 0%, rgba(0, 0, 5, 0.65) 50%, transparent 100%), 
-                url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop') no-repeat center center/cover;
-    height: 60vh; /* ارتفاع معتدل للهيرو */
+                url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=cover') no-repeat center center/cover;
+    height: 60vh;
     min-height: 400px;
     display: flex;
     align-items: center;
@@ -271,13 +276,13 @@ a:hover {
     color: var(--text-color);
     position: relative;
     z-index: 1;
-    padding: 0 4vw; /* padding معتدل */
+    padding: 0 4vw;
     box-shadow: var(--shadow-galactic);
     border-bottom: 2px solid var(--primary-color);
 }
 
 .hero h1 {
-    font-size: clamp(2.5rem, 4.5vw, 4rem); /* حجم خط الهيرو معتدل */
+    font-size: clamp(2.5rem, 4.5vw, 4rem);
     margin-bottom: 2vh;
     text-shadow: var(--shadow-neon-prime);
     line-height: 1.15;
@@ -285,7 +290,7 @@ a:hover {
 }
 
 .hero p {
-    font-size: clamp(1rem, 1.8vw, 1.4rem); /* حجم خط الوصف معتدل */
+    font-size: clamp(1rem, 1.8vw, 1.4rem);
     margin-bottom: 3.5vh;
     max-width: 700px;
     opacity: 0.95;
@@ -297,7 +302,7 @@ a:hover {
 
 /* Movie Grid Section */
 .movie-grid-section, .movie-details-section, .suggested-movies-section {
-    padding: 4vw 0; /* padding معتدل للأقسام */
+    padding: 4vw 0;
     background: radial-gradient(circle at center, var(--dark-color) 0%, var(--gradient-end) 100%);
     border-bottom: 1px solid var(--light-dark-color);
 }
@@ -318,15 +323,11 @@ a:hover {
 
 .movie-grid {
     display: grid;
-    /* !! الأساس هو 6 بوسترات لجميع الشاشات الكبيرة !! */
+    /* !! ضبط الـ Grid لـ 6 بوسترات على الكمبيوتر و 3 على الموبايل !! */
     grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 13vw, 160px), 1fr)); 
-    /* clamp(min-width, preferred-width, max-width)
-       minmax(110px, 1fr) يضمن أن البوستر لا يصغر عن 110px
-       13vw قيمة `preferred-width` أصغر لضمان أن 6 بوسترات ستناسب الصف على معظم شاشات الكمبيوتر.
-       160px كحد أقصى يمنعها من أن تصبح عملاقة على الشاشات الكبيرة جداً.
-    */
-    gap: 1.2vw; /* فجوات معتدلة */
-    padding: 0 1vw; /* padding يتناسب مع عرض الحاوية */
+    /* هذه القيم مثالية لـ 6 بوسترات على شاشات الكمبيوتر الكبيرة */
+    gap: 1vw; /* فجوة أقل لزيادة المساحة المتاحة للبوسترات */
+    padding: 0 1vw;
 }
 
 .movie-card {
@@ -344,7 +345,7 @@ a:hover {
 }
 
 .movie-card:hover {
-    transform: translateY(-7px) scale(1.03); /* حركة وتكبير معتدل */
+    transform: translateY(-7px) scale(1.03);
     box-shadow: var(--shadow-neon-prime);
     border-color: var(--accent-color);
     z-index: 10;
@@ -352,13 +353,18 @@ a:hover {
 
 .movie-card img {
     width: 100%;
-    /* !! هنا الحل لمشكلة صور الموبايل: ارتفاع مرن ودقيق للغاية !! */
-    height: clamp(160px, 22vw, 240px); /* ارتفاع مرن ومعقول للصورة، متناسب مع نسبة 6 بوسترات في الصف */
-    object-fit: cover; /* لضمان تغطية الصورة للمساحة دون تشوه */
+    /* !! ارتفاع الصورة المحسّن لجميع الأجهزة، مع التركيز على الموبايل !! */
+    height: clamp(150px, 20vw, 220px); 
+    /* هذه القيمة يجب أن تعطي نسبة أبعاد جيدة لـ 3 بوسترات في الصف على الموبايل.
+       150px كحد أدنى لمنع الصور من أن تصبح صغيرة جداً.
+       20vw قيمة مرنة تتناسب مع عرض الشاشة.
+       220px كحد أقصى لمنع الصور من أن تصبح عملاقة.
+    */
+    object-fit: cover; 
     display: block;
     border-bottom: 2px solid var(--primary-color);
     transition: transform var(--transition-speed) ease;
-    flex-shrink: 0; /* لمنع الصورة من الانكماش */
+    flex-shrink: 0;
 }
 
 .movie-card:hover img {
@@ -366,20 +372,20 @@ a:hover {
 }
 
 .movie-card h3 {
-    font-size: clamp(0.85rem, 1.1vw, 1rem); /* حجم خط معقول للعناوين */
+    font-size: clamp(0.85rem, 1.1vw, 1rem);
     padding: 0.8rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--text-color);
     background-color: rgba(0, 0, 5, 0.5);
-    margin-top: -2px; /* لدمجها تماماً مع الصورة */
+    margin-top: -2px;
     border-radius: 0 0 var(--border-radius-prime) var(--border-radius-prime);
     font-weight: 600;
-    flex-grow: 1; /* للسماح للنص بالنمو لملء المساحة المتاحة */
+    flex-grow: 1;
     display: flex;
-    align-items: center; /* لتوسيط النص عمودياً إذا كان هناك مساحة إضافية */
-    justify-content: center; /* لتوسيط النص أفقياً */
+    align-items: center;
+    justify-content: center;
 }
 
 /* Pagination */
@@ -528,7 +534,7 @@ a:hover {
 
 /* Poster in movie details */
 #movie-details-poster {
-    max-width: clamp(180px, 20vw, 300px); /* عرض بوستر التفاصيل معتدل */
+    max-width: clamp(180px, 20vw, 300px);
     height: auto;
     border-radius: var(--border-radius-prime);
     box-shadow: var(--shadow-galactic);
@@ -554,7 +560,7 @@ a:hover {
 .main-footer {
     background-color: var(--light-dark-color);
     color: var(--text-muted);
-    padding: 3vw 0; /* padding معتدل للفوتر */
+    padding: 3vw 0;
     text-align: center;
     font-family: var(--font-family-arabic);
     border-top: 4px solid var(--primary-color);
@@ -626,33 +632,33 @@ a:hover {
 @media (max-width: 992px) { /* للتابلت والموبايل الكبير */
     .main-header .container {
         flex-direction: column;
-        align-items: flex-end;
-        padding: 0 3vw; /* padding معتدل للموبايل */
+        align-items: flex-start; /* لتوسيط العناصر في الموبايل من اليمين في RTL */
+        padding: 0 3vw;
     }
-
+    
     .main-header .logo {
         margin-bottom: 2vw;
-        align-self: flex-end;
+        align-self: flex-start; /* الشعار يبدأ من اليمين */
     }
 
-    /* إظهار قائمة الموبايل وإخفاء قائمة الكمبيوتر */
     .main-nav {
+        order: 1; /* لجعل الناف تظهر بعد الشعار والبحث */
         width: 100%;
         text-align: center;
-        max-height: 0; /* لتبدأ مطوية */
+        max-height: 0;
         overflow: hidden;
         transition: max-height var(--transition-speed) ease-in-out;
         flex-basis: 100%;
     }
 
     .main-nav.nav-open {
-        max-height: 40vh; /* ارتفاع معتدل عند الفتح */
+        max-height: 40vh;
         margin-top: 2vw;
     }
 
     .main-nav ul {
         flex-direction: column;
-        align-items: flex-end;
+        align-items: flex-start; /* لجعل الروابط تبدأ من اليمين في القائمة المفتوحة */
     }
 
     .main-nav ul li {
@@ -661,43 +667,48 @@ a:hover {
     }
     
     .main-nav ul li a {
-        padding: 1.2rem 2rem; /* padding مناسب لروابط الموبايل */
+        padding: 1.2rem 2rem;
         text-align: right;
-        background: var(--light-dark-color); /* خلفية لروابط القائمة المفتوحة */
+        background: var(--light-dark-color);
     }
 
     .search-container {
-        width: 100%;
-        margin-top: 2vw;
+        order: 0; /* لجعل البحث يظهر قبل الناف بعد الشعار */
+        width: calc(100% - 30px - 2vw); /* عرض البحث بعد أخذ مساحة زر القائمة */
+        margin-top: 0; /* تم إزالة الهامش العلوي */
         justify-content: flex-end;
         margin-right: 0;
         padding: 0.8rem 1.5rem;
     }
 
     .search-container input {
-        width: calc(100% - clamp(60px, 15vw, 80px)); /* عرض مرن للبحث */
+        width: calc(100% - 50px); /* عرض مناسب لصندوق الإدخال مع زر البحث */
         margin-right: 1.5vw;
     }
 
     .menu-toggle {
-        display: flex; /* إظهار زر القائمة في الموبايل */
+        display: flex;
+        position: relative; /* للتأكد من أنها جزء من flow الـ flexbox */
+        margin-right: 1vw; /* هامش بسيط بين الزر والبحث */
+        order: -2; /* لجعل الزر أول عنصر على اليسار في RTL */
     }
 
     .hero {
-        height: 70vh; /* ارتفاع معتدل للهيرو في الموبايل */
+        height: 70vh;
         padding: 0 5vw;
     }
 
     .movie-grid {
-        /* للحفاظ على 6 بوسترات أو أقل بقليل وتوزيع متساوي */
-        grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 20vw, 150px), 1fr)); 
-        /* هذا سيسمح بـ 3 أو 4 بوسترات في الصف على التابلت، و 2-3 على الموبايل، حسب العرض. */
-        gap: 1.8vw;
+        /* !! ضمان 3 بوسترات في الصف على الموبايل !! */
+        grid-template-columns: repeat(auto-fill, minmax(clamp(100px, 30vw, 150px), 1fr)); 
+        /* هذا سيضمن 3 بوسترات في الصف على معظم شاشات الموبايل (عرض 320px فما فوق).
+           30vw كقيمة مفضلة تجعلها مناسبة لـ 3 بوسترات. */
+        gap: 1.5vw; /* زيادة الفجوة قليلاً */
     }
 
     .movie-card img {
-        /* !! ارتفاع الصورة محسّن للموبايل !! */
-        height: clamp(160px, 25vw, 220px); /* ارتفاع مرن للصورة في الموبايل، يضمن ظهورها بشكل جيد */
+        /* !! ارتفاع الصورة محسّن أكثر للموبايل !! */
+        height: clamp(140px, 25vw, 200px); /* ارتفاع مرن للصورة، متناسب مع 3 بوسترات في الصف */
     }
 
     .main-footer p {
@@ -706,11 +717,11 @@ a:hover {
     .footer-links a {
         font-size: clamp(1rem, 1.3vw, 1.2rem);
         padding: 1.2rem 2.5rem;
-        width: 95%; /* عرض أكبر للروابط في الفوتر في الموبايل */
+        width: 95%;
     }
 }
 
-@media (max-width: 600px) { /* للهواتف الصغيرة جداً */
+@media (max-width: 600px) { /* للهواتف الصغيرة جداً (قد يظهر بوستران في الصف هنا) */
     .hero {
         height: 60vh;
         padding: 0 4vw;
@@ -722,9 +733,9 @@ a:hover {
         font-size: clamp(0.9rem, 2vw, 1.2rem);
     }
     .movie-grid {
-        /* تأكيد على أن يكون هناك صفوف متعددة في الهواتف الصغيرة جداً (بوسترين في الصف) */
-        grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 45vw, 180px), 1fr)); 
-        gap: 2.5vw;
+        /* !! قد يظهر بوستران في الصف هنا لضمان عدم التداخل وحجم جيد !! */
+        grid-template-columns: repeat(auto-fill, minmax(clamp(150px, 45vw, 200px), 1fr)); 
+        gap: 2vw; /* زيادة الفجوة قليلاً */
     }
     .movie-card img {
         height: clamp(180px, 30vw, 250px); 
