@@ -258,7 +258,7 @@ a:hover {
     cursor: pointer;
     padding: 0;
     z-index: 101;
-    margin-right: 1.5rem; /* مسافة من اللوجو */
+    margin-left: 1.5rem; /* مسافة من اللوجو في RTL */
 }
 
 .menu-toggle span {
@@ -333,7 +333,7 @@ a:hover {
 
 .movie-grid {
     display: grid;
-    /* ضبط الـ Grid: 5-6 بوسترات على الديسكتوب، 3-4 على التابلت، 2-3 على الموبايل */
+    /* ضبط الـ Grid: 5-6 بوسترات على الديسكتوب، 3-4 على التابلت، 2 على الموبايل */
     grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 14vw, 180px), 1fr)); 
     gap: 1.5vw; /* فجوة متناسقة */
     padding: 0 2vw; /* بادينج جانبي للحاوية */
@@ -635,24 +635,48 @@ a:hover {
 
 @media (max-width: 992px) { /* للتابلت والموبايل الكبير */
     .main-header .container {
-        flex-wrap: wrap; /* السماح للعناصر بالنزول لسطر جديد */
+        flex-wrap: wrap;
         justify-content: space-between;
-        padding: 0 4vw; /* بادينج أكبر قليلاً على الموبايل */
+        padding: 0 4vw;
     }
 
     .main-header .logo {
-        flex-basis: 100%; /* اللوجو يأخذ سطر كامل */
-        text-align: center;
-        margin-bottom: 1rem; /* مسافة تحت اللوجو */
+        flex-basis: auto; /* اللوجو يأخذ المساحة التي يحتاجها */
+        order: 2; /* يظهر في المنتصف تقريباً */
+        margin: 0 auto; /* توسيط اللوجو */
         font-size: clamp(1.8rem, 5vw, 2.5rem);
     }
 
+    .menu-toggle {
+        display: flex; /* إظهار زر التبديل */
+        order: 1; /* يظهر أولاً على اليمين في RTL */
+        margin-left: 0; /* إزالة الهامش الزائد */
+        margin-right: auto; /* يدفع الزر لأقصى اليمين */
+    }
+
+    .search-container {
+        flex-grow: 1; 
+        order: 3; /* يظهر بعد اللوجو وزر التبديل */
+        padding: 0.5rem 0.8rem;
+        width: auto;
+        margin-right: auto; /* يدفع البحث لأقصى اليسار */
+    }
+    
+    .search-container input {
+        width: clamp(100px, 40vw, 200px); 
+        font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+    }
+    .search-container button {
+        padding: 0.5rem 1rem;
+        font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+    }
+
     .main-nav {
-        flex-basis: 100%; /* الناف بار تأخذ سطر كامل */
-        order: 3; /* تظهر في الأسفل عند فتح القائمة */
-        flex-direction: column; /* الروابط عمودية */
-        align-items: flex-end; /* الروابط لليمين */
-        gap: 0; /* إزالة الفجوة */
+        flex-basis: 100%; 
+        order: 4; /* تظهر في الأسفل */
+        flex-direction: column;
+        align-items: flex-end; 
+        gap: 0; 
         max-height: 0;
         overflow: hidden;
         transition: max-height var(--transition-speed) ease-in-out;
@@ -664,20 +688,20 @@ a:hover {
     }
 
     .main-nav.nav-open {
-        max-height: 50vh; /* ارتفاع القائمة المفتوحة */
+        max-height: 50vh; 
         border: 1px solid var(--primary-color);
     }
 
     .main-nav ul {
         flex-direction: column;
         width: 100%;
-        padding: 0 1rem; /* بادينج داخلي للقائمة */
+        padding: 0 1rem; 
     }
 
     .main-nav ul li {
-        margin: 0.6rem 0; /* مسافة بين عناصر القائمة العمودية */
+        margin: 0.6rem 0; 
         width: 100%;
-        border-bottom: 1px solid rgba(178, 0, 237, 0.1); /* فاصل خفيف */
+        border-bottom: 1px solid rgba(178, 0, 237, 0.1); 
     }
 
     .main-nav ul li:last-child {
@@ -689,27 +713,6 @@ a:hover {
         padding: 0.8rem 1rem;
         display: block;
         text-align: right;
-    }
-
-    .search-container {
-        flex-grow: 1; /* للسماح بالبحث بالتوسع */
-        order: 2; /* يظهر بعد زر التبديل */
-        padding: 0.5rem 0.8rem;
-        width: auto;
-    }
-    .search-container input {
-        width: clamp(120px, 40vw, 200px); /* عرض مناسب للبحث */
-        font-size: clamp(0.8rem, 1.8vw, 0.95rem);
-    }
-    .search-container button {
-        padding: 0.5rem 1rem;
-        font-size: clamp(0.8rem, 1.8vw, 0.95rem);
-    }
-
-    .menu-toggle {
-        display: flex; /* إظهار زر التبديل */
-        order: 1; /* يظهر أولاً على اليمين في RTL */
-        margin-right: 0; /* إزالة الهامش */
     }
 
     .hero {
@@ -728,20 +731,21 @@ a:hover {
         max-width: 95%;
     }
 
+    /* ضبط البوسترات: 2 بوستر جنب بعض على الموبايل */
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 30vw, 160px), 1fr)); /* 3 بوسترات في الصف */
-        gap: 2.5vw;
-        padding: 0 3vw;
+        grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 45vw, 200px), 1fr)); 
+        gap: 3.5vw;
+        padding: 0 4vw;
     }
 
     .movie-card img {
-        height: clamp(190px, 45vw, 240px); /* ارتفاع يتناسب مع 3 بوسترات */
+        height: clamp(210px, 68vw, 300px); /* ارتفاع يتناسب مع بوسترين */
     }
 
     .movie-card h3 {
-        font-size: clamp(0.85rem, 2vw, 1rem);
-        padding: 0.8rem;
-        min-height: 55px;
+        font-size: clamp(0.75rem, 2.5vw, 0.95rem);
+        padding: 0.7rem;
+        min-height: 50px;
     }
 
     .footer-links {
@@ -754,16 +758,12 @@ a:hover {
     }
 }
 
-@media (max-width: 600px) { /* للهواتف الصغيرة جداً */
+@media (max-width: 600px) { /* للهواتف الصغيرة جداً (بوستران في الصف) */
     .main-header .container {
         padding: 0 5vw;
     }
     .main-header .logo {
         font-size: clamp(1.6rem, 6vw, 2.2rem);
-        margin-bottom: 0.8rem;
-    }
-    .search-container {
-        padding: 0.4rem 0.6rem;
     }
     .search-container input {
         width: clamp(100px, 35vw, 150px);
@@ -784,28 +784,27 @@ a:hover {
     .hero p {
         font-size: clamp(0.9rem, 3.5vw, 1.2rem);
     }
-
+    
+    /* البوسترات تظل 2 جنب بعض في أصغر الشاشات */
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 45vw, 200px), 1fr)); /* بوستران في الصف */
+        grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 45vw, 200px), 1fr)); 
         gap: 3.5vw;
         padding: 0 4vw;
     }
     .movie-card img {
-        height: clamp(210px, 68vw, 300px); /* ارتفاع يتناسب مع بوسترين */
+        height: clamp(210px, 68vw, 300px); 
     }
     .movie-card h3 {
         font-size: clamp(0.75rem, 2.5vw, 0.95rem);
-        padding: 0.7rem;
-        min-height: 50px;
     }
     .footer-links a {
-        max-width: 90%; /* رابط واحد في السطر تقريباً */
+        max-width: 90%; 
         font-size: clamp(0.85rem, 2.5vw, 1rem);
         padding: 0.7rem 1.2rem;
     }
 }
 
-@media (max-width: 400px) { /* لأصغر الهواتف */
+@media (max-width: 400px) { /* لأصغر الهواتف، مع الحفاظ على بوسترين */
     .main-header .logo {
         font-size: clamp(1.4rem, 7vw, 1.8rem);
     }
@@ -822,8 +821,9 @@ a:hover {
     .hero {
         height: 50vh;
     }
+    /* هنا نضمن بوسترين حتى على الشاشات الضيقة جداً */
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 48vw, 180px), 1fr)); /* للحفاظ على بوسترين حتى في أصغر الشاشات */
+        grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 48vw, 180px), 1fr)); 
         gap: 3vw;
         padding: 0 3vw;
     }
