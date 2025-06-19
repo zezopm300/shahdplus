@@ -203,6 +203,22 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.5/10",
             "duration": "27m"
         },
+
+        
+             {
+            "id": 11,
+            "title":"(Wolfman) 2025",
+            "description": "When Blake Lovell (Christopher Abbott), a family man from San Francisco, inherits his childhood farmhouse in rural Oregon after his father’s disappearance, he convinces his wife Charlotte (Julia Garner) and young daughter Ginger (Matilda Firth) to join him. Soon after arrival, the family is attacked by a mysterious beast and barricades themselves inside the home. As night falls, Blake begins a slow, harrowing transformation into a monstrous creature—forcing Charlotte to decide whether the threat within is more dangerous than the one outside.",
+
+            "poster": "https://i.ibb.co/Pz6k0QF6/photo-5803123626264872294-w.jpg",
+            "release_date": "2025-6-19",
+            "genre":"Horror, Mystery & Thriller",
+            "director": "Leigh Whannell",
+            "cast":  "Christopher Abbott",
+            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239017&hd=2&autoplay=1",
+            "rating": "7.5/10",
+            "duration": "1h 30m"
+        },
     ];
 
     let moviesDataForPagination = [...moviesData];
