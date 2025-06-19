@@ -1,135 +1,239 @@
 /* الأكواد الأساسية للصفحة (الهيدر، الهيرو، الفوتر، الأزرار، التنسيقات العامة) */
 :root {
-    --primary-color: #e50914; /* Netflix red */
-    --secondary-color: #f4f4f4;
-    --dark-color: #141414;
-    --light-dark-color: #1f1f1f;
-    --text-color: #fff;
-    --text-muted: #aaa;
+    /* لوحة ألوان أكثر تطوراً وعمقاً */
+    --primary-color: #C000FF; /* Electric Violet - بنفسجي كهربائي مشع */
+    --secondary-color: #8A00CC; /* Deep Indigo - أزرق بنفسجي عميق */
+    --dark-color: #000005; /* Absolute Black - أسود كوني مطلق */
+    --light-dark-color: #050515; /* Nebula Grey - رمادي داكن مزرق للعناصر */
+    --text-color: #F8F8FF; /* Plasma White - أبيض متوهج */
+    --text-muted: #A0A0C0; /* Asteroid Grey - رمادي معتدل للنصوص الثانوية */
+    --accent-color: #00DFFF; /* Hyper Blue - أزرق سماوي فائق للتوهج والنيون */
+    --gradient-start: #00000A; /* بداية تدرج خلفي خفيف */
+    --gradient-end: #000005; /* نهاية تدرج خلفي عميق */
+
     --font-family-arabic: 'Cairo', sans-serif;
-    --transition-speed: 0.3s;
+    --transition-speed: 0.4s; /* سرعة انتقال سلسة ومُحكمة */
+    --border-radius-prime: 18px; /* زوايا مستديرة فاخرة */
+    
+    /* ظلال وتوهجات متطورة */
+    --shadow-galactic: 0 12px 30px rgba(0, 0, 0, 0.7); /* ظل عميق جداً */
+    --shadow-neon-prime: 0 0 20px var(--accent-color), 0 0 40px rgba(0, 223, 255, 0.25); /* توهج نيون محكم */
+    --shadow-inset-sleek: inset 0 0 8px rgba(0, 0, 0, 0.8); /* ظل داخلي أنيق */
 }
 
+/* إعادة ضبط أساسي ومُحسّن */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    /* تحسينات على الأداء للحركات */
+    will-change: transform, opacity, box-shadow, background, color;
+}
+
+html {
+    font-size: 16px; /* حجم خط أساسي للـ rem */
 }
 
 body {
     font-family: var(--font-family-arabic);
-    background-color: var(--dark-color);
+    background: radial-gradient(circle at top left, var(--gradient-start) 0%, var(--gradient-end) 100%);
     color: var(--text-color);
-    line-height: 1.6;
-    direction: rtl; /* RTL for Arabic */
-    text-align: right; /* Align text to the right for RTL */
+    line-height: 1.6; /* تباعد أسطر أكثر إحكاماً */
+    direction: rtl;
+    text-align: right;
+    overflow-x: hidden;
+    min-height: 100vh;
+    font-size: 1rem; /* حجم خط أساسي متناسق */
 }
 
 .container {
-    width: 90%;
-    max-width: 1200px;
+    width: 96vw; /* عرض أكبر للحاوية */
+    max-width: 1920px;
     margin: auto;
     overflow: hidden;
-    padding: 0 20px;
+    padding: 0 1vw; /* padding أقل بكثير لزيادة المساحة المتاحة للمحتوى */
 }
 
 a {
     color: var(--text-color);
     text-decoration: none;
-    transition: color var(--transition-speed);
+    transition: all var(--transition-speed) ease-out; /* انتقال سلس ومباشر */
 }
 
 a:hover {
-    color: var(--primary-color);
+    color: var(--accent-color);
+    transform: translateY(-1px) scale(1.02); /* حركة دقيقة وتكبير طفيف */
+    text-shadow: var(--shadow-neon-prime);
 }
 
 .btn {
     display: inline-block;
-    background: var(--primary-color);
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: var(--text-color);
-    padding: 10px 20px;
+    padding: 0.8rem 1.8rem; /* استخدام rem لثبات الحجم */
     border: none;
     cursor: pointer;
-    font-size: 1rem;
-    border-radius: 5px;
-    transition: background var(--transition-speed);
+    font-size: clamp(0.9rem, 1.05vw, 1rem); /* حجم خط محكم ودقيق */
+    border-radius: var(--border-radius-prime);
+    transition: all var(--transition-speed) ease-in-out;
+    box-shadow: var(--shadow-galactic);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    position: relative;
+    overflow: hidden;
+    font-weight: bold;
+    will-change: transform, box-shadow, background;
 }
 
 .btn:hover {
-    background: #c10811; /* Darker red on hover */
+    background: linear-gradient(90deg, var(--accent-color) 0%, var(--primary-color) 100%);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: var(--shadow-neon-prime);
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transform: skewX(-25deg);
+    transition: left var(--transition-speed) * 0.6 ease-out;
+}
+
+.btn:hover::before {
+    left: 120%;
 }
 
 /* Header */
 .main-header {
-    background: var(--dark-color);
+    background: rgba(0, 0, 5, 0.75); /* خلفية شبه شفافة داكنة جداً */
+    backdrop-filter: blur(8px) saturate(1.1); /* ضبابية أقل وتشبع لوني دقيق */
     color: var(--text-color);
-    padding: 20px 0;
-    border-bottom: 1px solid var(--light-dark-color);
+    padding: 1rem 0; /* استخدام rem */
+    border-bottom: 1px solid var(--primary-color);
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: var(--shadow-galactic);
 }
 
 .main-header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Allow wrapping on small screens */
+    flex-wrap: wrap; /* للسماح بالعناصر بالانتقال لأسفل في الموبايل */
 }
 
 .main-header .logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: var(--primary-color);
+    font-size: clamp(1.8rem, 3vw, 2.5rem); /* حجم شعار أصغر وأكثر تناسقاً */
+    font-weight: 900;
+    color: var(--accent-color);
+    text-shadow: var(--shadow-neon-prime);
+    letter-spacing: 1.5px;
 }
 
 .main-nav ul {
     list-style: none;
     display: flex;
+    /* مرونة في الترتيب للموبايل */
+    flex-direction: row; 
+    align-items: center;
 }
 
 .main-nav ul li {
-    margin-right: 20px; /* Use margin-right for RTL */
+    margin-right: 1.5rem; /* استخدام rem للمسافات */
 }
 
 .main-nav ul li a {
-    font-size: 1.1rem;
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem); /* حجم خط Nav أصغر وأكثر دقة */
+    padding: 0.6rem 1.2rem; /* استخدام rem */
+    border-radius: var(--border-radius-prime);
+    transition: all var(--transition-speed) ease-in-out;
+    position: relative;
+    overflow: hidden;
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5); /* ظل خفيف للنص */
+}
+
+.main-nav ul li a::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 2px; /* خط أرق */
+    background: var(--accent-color);
+    box-shadow: 0 0 6px var(--accent-color);
+    transition: width var(--transition-speed) ease-out;
+}
+
+.main-nav ul li a:hover::before {
+    width: 100%;
+    right: 0;
+}
+
+.main-nav ul li a:hover {
+    background-color: var(--light-dark-color);
+    color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(192, 0, 255, 0.4);
+    transform: translateY(-1px);
 }
 
 .search-container {
     display: flex;
     align-items: center;
-    margin-right: 20px; /* Adjust margin for RTL */
+    margin-right: 1rem; /* استخدام rem */
+    background: var(--light-dark-color);
+    border-radius: var(--border-radius-prime);
+    padding: 0.5rem 1rem; /* استخدام rem */
+    box-shadow: var(--shadow-inset-sleek);
+    border: 1px solid var(--primary-color);
 }
 
 .search-container input {
-    padding: 8px;
-    border: 1px solid var(--primary-color);
-    border-radius: 5px;
-    background: var(--light-dark-color);
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: var(--border-radius-prime);
+    background: transparent;
     color: var(--text-color);
-    margin-right: 10px; /* Adjust margin for RTL */
+    margin-right: 0.8rem;
     outline: none;
-    width: 200px;
+    width: clamp(150px, 15vw, 250px); /* عرض معقول للبحث */
+    font-size: clamp(0.85rem, 1vw, 0.95rem);
+    transition: all var(--transition-speed);
+}
+
+.search-container input:focus {
+    color: var(--accent-color);
+    transform: scale(1.01);
+    box-shadow: var(--shadow-neon-prime);
 }
 
 .search-container button {
-    padding: 8px 15px;
-    background: var(--primary-color);
-    color: var(--text-color);
+    padding: 0.6rem 1.5rem;
+    background: var(--accent-color);
+    color: var(--dark-color);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--border-radius-prime);
     cursor: pointer;
-    transition: background var(--transition-speed);
+    transition: all var(--transition-speed) ease-in-out;
+    font-size: clamp(0.85rem, 1vw, 0.95rem);
+    font-weight: bold;
 }
 
 .search-container button:hover {
-    background: #c10811;
+    background: var(--primary-color);
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: var(--shadow-neon-prime);
 }
 
-/* Mobile Menu Toggle */
+/* Mobile Menu Toggle (سنقوم بإعادة ترتيبه لاحقاً في الميديا كويري) */
 .menu-toggle {
-    display: none; /* Hidden on desktop */
+    display: none; /* مخفي بشكل افتراضي */
     flex-direction: column;
     justify-content: space-around;
     width: 30px;
@@ -138,148 +242,209 @@ a:hover {
     border: none;
     cursor: pointer;
     padding: 0;
+    position: absolute; /* سيكون مطلقاً في وضع الموبايل */
+    left: 2vw; /* هامش بسيط من اليسار */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 101;
 }
 
 .menu-toggle span {
     display: block;
     width: 100%;
     height: 3px;
-    background: var(--text-color);
-    border-radius: 5px;
+    background: var(--accent-color);
+    border-radius: 3px;
     transition: all var(--transition-speed) ease-in-out;
 }
 
 /* Hero Section */
 .hero {
-    background: url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop') no-repeat center center/cover;
-    height: 500px;
+    background: linear-gradient(to bottom, rgba(0, 0, 5, 0.85) 0%, rgba(0, 0, 5, 0.65) 50%, transparent 100%), 
+                url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop') no-repeat center center/cover;
+    height: 60vh; /* ارتفاع معتدل للهيرو */
+    min-height: 400px;
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* Align content to the right for RTL */
-    text-align: right; /* Align text to the right for RTL */
+    justify-content: flex-end;
+    text-align: right;
     color: var(--text-color);
     position: relative;
     z-index: 1;
-}
-
-.hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: -1;
+    padding: 0 4vw; /* padding معتدل */
+    box-shadow: var(--shadow-galactic);
+    border-bottom: 2px solid var(--primary-color);
 }
 
 .hero h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
+    font-size: clamp(2.5rem, 4.5vw, 4rem); /* حجم خط الهيرو معتدل */
+    margin-bottom: 2vh;
+    text-shadow: var(--shadow-neon-prime);
+    line-height: 1.15;
+    font-weight: 900;
 }
 
 .hero p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    max-width: 600px; /* Adjust as needed */
+    font-size: clamp(1rem, 1.8vw, 1.4rem); /* حجم خط الوصف معتدل */
+    margin-bottom: 3.5vh;
+    max-width: 700px;
+    opacity: 0.95;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 0.8rem;
+    border-radius: var(--border-radius-prime);
+    backdrop-filter: blur(3px);
 }
 
 /* Movie Grid Section */
 .movie-grid-section, .movie-details-section, .suggested-movies-section {
-    padding: 40px 0;
+    padding: 4vw 0; /* padding معتدل للأقسام */
+    background: radial-gradient(circle at center, var(--dark-color) 0%, var(--gradient-end) 100%);
+    border-bottom: 1px solid var(--light-dark-color);
 }
 
 .movie-grid-section h2, .movie-details-section h1, .suggested-movies-section h2 {
     text-align: center;
-    margin-bottom: 30px;
-    color: var(--primary-color);
-    font-size: 2rem;
+    margin-bottom: 3vw;
+    color: var(--accent-color);
+    font-size: clamp(2.2rem, 3.5vw, 3rem);
+    text-shadow: var(--shadow-neon-prime);
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+    margin: 0 auto 3vw auto;
+    width: fit-content;
+    letter-spacing: 1px;
 }
 
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 25px;
+    /* !! الأساس هو 6 بوسترات لجميع الشاشات الكبيرة !! */
+    grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 13vw, 160px), 1fr)); 
+    /* clamp(min-width, preferred-width, max-width)
+       minmax(110px, 1fr) يضمن أن البوستر لا يصغر عن 110px
+       13vw قيمة `preferred-width` أصغر لضمان أن 6 بوسترات ستناسب الصف على معظم شاشات الكمبيوتر.
+       160px كحد أقصى يمنعها من أن تصبح عملاقة على الشاشات الكبيرة جداً.
+    */
+    gap: 1.2vw; /* فجوات معتدلة */
+    padding: 0 1vw; /* padding يتناسب مع عرض الحاوية */
 }
 
 .movie-card {
     background: var(--light-dark-color);
-    border-radius: 8px;
+    border-radius: var(--border-radius-prime);
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    transition: transform var(--transition-speed);
+    box-shadow: var(--shadow-galactic);
+    transition: all var(--transition-speed) ease-in-out;
     cursor: pointer;
     text-align: center;
+    position: relative;
+    border: 1px solid transparent;
+    display: flex; /* تحويل البوستر لـ flexbox للتحكم بالصورة والنص بشكل أفضل */
+    flex-direction: column;
 }
 
 .movie-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-7px) scale(1.03); /* حركة وتكبير معتدل */
+    box-shadow: var(--shadow-neon-prime);
+    border-color: var(--accent-color);
+    z-index: 10;
 }
 
 .movie-card img {
     width: 100%;
-    height: 300px;
-    object-fit: cover;
+    /* !! هنا الحل لمشكلة صور الموبايل: ارتفاع مرن ودقيق للغاية !! */
+    height: clamp(160px, 22vw, 240px); /* ارتفاع مرن ومعقول للصورة، متناسب مع نسبة 6 بوسترات في الصف */
+    object-fit: cover; /* لضمان تغطية الصورة للمساحة دون تشوه */
     display: block;
+    border-bottom: 2px solid var(--primary-color);
+    transition: transform var(--transition-speed) ease;
+    flex-shrink: 0; /* لمنع الصورة من الانكماش */
+}
+
+.movie-card:hover img {
+    transform: scale(1.02);
 }
 
 .movie-card h3 {
-    font-size: 1.1rem;
-    padding: 15px 10px;
+    font-size: clamp(0.85rem, 1.1vw, 1rem); /* حجم خط معقول للعناوين */
+    padding: 0.8rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--text-color);
+    background-color: rgba(0, 0, 5, 0.5);
+    margin-top: -2px; /* لدمجها تماماً مع الصورة */
+    border-radius: 0 0 var(--border-radius-prime) var(--border-radius-prime);
+    font-weight: 600;
+    flex-grow: 1; /* للسماح للنص بالنمو لملء المساحة المتاحة */
+    display: flex;
+    align-items: center; /* لتوسيط النص عمودياً إذا كان هناك مساحة إضافية */
+    justify-content: center; /* لتوسيط النص أفقياً */
 }
 
 /* Pagination */
 .pagination {
     display: flex;
     justify-content: center;
-    margin-top: 30px;
-    gap: 15px;
+    margin-top: 3vw;
+    gap: 1.5vw;
 }
 
 .pagination .btn-page {
     background: var(--light-dark-color);
     color: var(--text-color);
     border: 1px solid var(--primary-color);
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 0.8rem 1.8rem;
+    border-radius: var(--border-radius-prime);
     cursor: pointer;
-    transition: background var(--transition-speed);
+    transition: all var(--transition-speed) ease-in-out;
     font-family: var(--font-family-arabic);
+    font-size: clamp(0.8rem, 1vw, 0.9rem);
+    box-shadow: var(--shadow-galactic);
+    font-weight: 600;
 }
 
 .pagination .btn-page:hover:not(:disabled) {
     background: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-neon-prime);
+    color: var(--accent-color);
 }
 
 .pagination .btn-page:disabled {
-    opacity: 0.5;
+    opacity: 0.3;
     cursor: not-allowed;
+    background: var(--dark-color);
+    box-shadow: none;
 }
 
 /* Movie Details Section */
 .movie-details-section {
     display: none;
+    padding: 4vw 1vw;
+    background: linear-gradient(to top, var(--dark-color), var(--gradient-end));
+    border-top: 2px solid var(--primary-color);
 }
 
 .movie-details-section .back-btn {
     background: var(--light-dark-color);
     color: var(--text-color);
     border: 1px solid var(--primary-color);
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 0.8rem 1.8rem;
+    border-radius: var(--border-radius-prime);
     cursor: pointer;
-    transition: background var(--transition-speed);
-    margin-bottom: 30px;
+    transition: all var(--transition-speed) ease-in-out;
+    margin-bottom: 3vw;
     font-family: var(--font-family-arabic);
     display: inline-block;
+    font-size: clamp(0.8rem, 1vw, 0.9rem);
+    box-shadow: var(--shadow-galactic);
 }
 
 .movie-details-section .back-btn:hover {
     background: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-neon-prime);
 }
 
 .video-player-container {
@@ -287,9 +452,11 @@ a:hover {
     width: 100%;
     padding-bottom: 56.25%;
     background-color: #000;
-    margin-bottom: 30px;
-    border-radius: 8px;
+    margin-bottom: 3vw;
+    border-radius: var(--border-radius-prime);
     overflow: hidden;
+    box-shadow: var(--shadow-galactic);
+    border: 2px solid var(--primary-color);
 }
 
 .video-player-container iframe {
@@ -303,13 +470,14 @@ a:hover {
 }
 
 /* الطبقة الشفافة التي ستستخدم للإعلانات */
+/* !!! هام جداً: هذه الأكواد لن يتم لمسها أو تغييرها إطلاقاً بناءً على طلبك. !!! */
 .video-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0); 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -330,13 +498,15 @@ a:hover {
 }
 
 .video-loading-spinner {
-    border: 4px solid rgba(255, 255, 255, 0.3);
+    border: 5px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
-    border-top: 4px solid var(--primary-color);
+    border-top: 5px solid var(--accent-color);
     width: 40px;
     height: 40px;
-    animation: spin 1s linear infinite;
+    animation: spin 0.7s linear infinite;
     display: none;
+    z-index: 60;
+    filter: drop-shadow(0 0 8px var(--accent-color));
 }
 
 @keyframes spin {
@@ -345,68 +515,139 @@ a:hover {
 }
 
 .movie-info p {
-    margin-bottom: 10px;
-    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    line-height: 1.7;
+    font-weight: 500;
 }
 
 .movie-info p strong {
     color: var(--primary-color);
+    font-weight: bold;
 }
 
 /* Poster in movie details */
 #movie-details-poster {
-    max-width: 200px;
+    max-width: clamp(180px, 20vw, 300px); /* عرض بوستر التفاصيل معتدل */
     height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    border-radius: var(--border-radius-prime);
+    box-shadow: var(--shadow-galactic);
     display: block;
-    margin: 0 auto;
+    margin: 0 auto 3vw auto;
+    border: 2px solid var(--primary-color);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
-
+#movie-details-poster:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-neon-prime);
+}
 
 /* Suggested Movies Section */
 .suggested-movies-section {
-    display: none;
-    margin-top: 40px;
-    padding-top: 40px;
+    display: none; /* يتم التحكم بها بـ JS */
+    margin-top: 4vw;
+    padding-top: 4vw;
     border-top: 1px solid var(--light-dark-color);
 }
 
 /* Footer */
 .main-footer {
-    background: var(--light-dark-color);
+    background-color: var(--light-dark-color);
     color: var(--text-muted);
+    padding: 3vw 0; /* padding معتدل للفوتر */
     text-align: center;
-    padding: 20px 0;
-    margin-top: 40px;
-    font-size: 0.9rem;
+    font-family: var(--font-family-arabic);
+    border-top: 4px solid var(--primary-color);
+    box-shadow: 0 -6px 15px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+.main-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(192, 0, 255, 0.08), rgba(0, 223, 255, 0.04));
+    z-index: 0;
+    pointer-events: none;
+}
+
+.main-footer .container {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 0 1vw;
+    position: relative;
+    z-index: 1;
+}
+
+.main-footer p {
+    margin-bottom: 2vw;
+    font-size: clamp(0.85rem, 1vw, 0.95rem);
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.8vw;
+    margin-top: 1.8vw;
+}
+
+.footer-links a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: clamp(0.9rem, 1.1vw, 1rem);
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border: 1px solid var(--accent-color);
+    border-radius: var(--border-radius-prime);
+    transition: all var(--transition-speed) ease-in-out;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0, 223, 255, 0.2);
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.footer-links a:hover {
+    background-color: var(--accent-color);
+    color: var(--dark-color);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: var(--shadow-neon-prime);
+    border-color: var(--primary-color);
+}
+
+/* !!! التوحيد المطلق للعرض - Mobile-First Approach !!! */
+/* لا توجد Media Queries لتغيير حجم الخطوط أو العناصر، فقط للتخطيط الهيكلي */
+
+@media (max-width: 992px) { /* للتابلت والموبايل الكبير */
     .main-header .container {
         flex-direction: column;
         align-items: flex-end;
-        padding: 0 15px;
+        padding: 0 3vw; /* padding معتدل للموبايل */
     }
 
     .main-header .logo {
-        margin-bottom: 15px;
-        align-self: flex-start;
+        margin-bottom: 2vw;
+        align-self: flex-end;
     }
 
+    /* إظهار قائمة الموبايل وإخفاء قائمة الكمبيوتر */
     .main-nav {
         width: 100%;
         text-align: center;
-        max-height: 0;
+        max-height: 0; /* لتبدأ مطوية */
         overflow: hidden;
         transition: max-height var(--transition-speed) ease-in-out;
         flex-basis: 100%;
     }
 
     .main-nav.nav-open {
-        max-height: 200px;
-        margin-top: 15px;
+        max-height: 40vh; /* ارتفاع معتدل عند الفتح */
+        margin-top: 2vw;
     }
 
     .main-nav ul {
@@ -415,152 +656,84 @@ a:hover {
     }
 
     .main-nav ul li {
-        margin: 0 0 10px 0;
+        margin: 0 0 2vw 0;
         width: 100%;
     }
     
     .main-nav ul li a {
-        display: block;
-        padding: 10px;
-        background: var(--light-dark-color);
-        border-radius: 5px;
+        padding: 1.2rem 2rem; /* padding مناسب لروابط الموبايل */
+        text-align: right;
+        background: var(--light-dark-color); /* خلفية لروابط القائمة المفتوحة */
     }
 
     .search-container {
         width: 100%;
-        margin-top: 15px;
+        margin-top: 2vw;
         justify-content: flex-end;
         margin-right: 0;
+        padding: 0.8rem 1.5rem;
     }
 
     .search-container input {
-        width: calc(100% - 70px);
-        margin-right: 10px;
+        width: calc(100% - clamp(60px, 15vw, 80px)); /* عرض مرن للبحث */
+        margin-right: 1.5vw;
     }
 
     .menu-toggle {
-        display: flex;
-        position: absolute;
-        top: 25px;
-        left: 20px;
+        display: flex; /* إظهار زر القائمة في الموبايل */
     }
 
-    .hero h1 {
-        font-size: 2rem;
-    }
-
-    .hero p {
-        font-size: 1rem;
+    .hero {
+        height: 70vh; /* ارتفاع معتدل للهيرو في الموبايل */
+        padding: 0 5vw;
     }
 
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        /* للحفاظ على 6 بوسترات أو أقل بقليل وتوزيع متساوي */
+        grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 20vw, 150px), 1fr)); 
+        /* هذا سيسمح بـ 3 أو 4 بوسترات في الصف على التابلت، و 2-3 على الموبايل، حسب العرض. */
+        gap: 1.8vw;
     }
 
     .movie-card img {
-        height: 220px;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero {
-        height: 400px;
-    }
-    .hero h1 {
-        font-size: 1.8rem;
-    }
-    .hero p {
-        font-size: 0.9rem;
-    }
-    .main-header .logo {
-        font-size: 1.5rem;
-    }
-    .search-container input {
-        width: calc(100% - 60px);
-        padding: 6px;
-    }
-    .search-container button {
-        padding: 6px 10px;
-    }
-}
-
-
-/* تنسيقات الفوتر الرئيسية */
-.main-footer {
-    background-color: #1a1a1a; /* لون خلفية داكن جداً (أسود مائل للرمادي) */
-    color: #f0f0f0; /* لون نص فاتح جداً */
-    padding: 40px 0; /* مساحة داخلية أكبر من أعلى وأسفل */
-    text-align: center; /* محاذاة النص والروابط في المنتصف */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* خط حديث وواضح */
-    border-top: 5px solid #00bcd4; /* شريط علوي مميز بلون الموقع الأساسي */
-    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3); /* ظل خفيف لأعلى لإبراز الفوتر */
-}
-
-/* تنسيقات حاوية المحتوى داخل الفوتر */
-.main-footer .container {
-    max-width: 1100px; /* تحديد أقصى عرض للمحتوى */
-    margin: 0 auto; /* توسيط المحتوى */
-    padding: 0 20px; /* مسافة داخلية على الجانبين للموبايل */
-}
-
-/* تنسيقات فقرة حقوق النشر */
-.main-footer p {
-    margin-bottom: 25px; /* مسافة أكبر تحت النص قبل الروابط */
-    font-size: 16px; /* حجم خط مناسب */
-    line-height: 1.6; /* تباعد الأسطر لتحسين القراءة */
-    opacity: 0.9; /* شفافية بسيطة لإظهار عمق الخلفية */
-}
-
-/* تنسيقات حاوية الروابط */
-.footer-links {
-    display: flex; /* ترتيب الروابط جنباً إلى جنب */
-    justify-content: center; /* توسيط الروابط أفقياً */
-    flex-wrap: wrap; /* السماح للروابط بالنزول لسطر جديد */
-    gap: 30px; /* مسافة أكبر بين الروابط */
-    margin-top: 20px; /* مسافة علوية من حقوق النشر */
-}
-
-/* تنسيقات الروابط الفردية */
-.footer-links a {
-    color: #00bcd4; /* لون أزرق سماوي جذاب للروابط */
-    text-decoration: none; /* إزالة الخط السفلي من الروابط */
-    font-size: 17px; /* حجم خط أكبر للروابط */
-    font-weight: 500; /* جعل الخط أثقل قليلاً */
-    padding: 8px 15px; /* مساحة داخلية حول النص */
-    border: 1px solid #00bcd4; /* حدود رفيعة بنفس لون الرابط */
-    border-radius: 25px; /* زوايا دائرية جداً (شكل Pills) */
-    transition: all 0.3s ease; /* تأثير انتقال سلس لكل التغييرات */
-    white-space: nowrap; /* منع انقسام النص في الروابط */
-}
-
-/* تأثير التفاعل عند مرور الماوس على الروابط */
-.footer-links a:hover {
-    background-color: #00bcd4; /* تعبئة باللون الأزرق */
-    color: #1a1a1a; /* تغيير لون النص للون الخلفية الأصلي */
-    transform: translateY(-3px) scale(1.05); /* حركة لأعلى وتكبير بسيط */
-    box-shadow: 0 5px 15px rgba(0, 188, 212, 0.4); /* ظل مميز عند التفاعل */
-}
-
-/* تحسينات للشاشات الأصغر (Responsive Design) */
-@media (max-width: 768px) {
-    .main-footer {
-        padding: 30px 0; /* تقليل المسافة الداخلية في الشاشات الصغيرة */
+        /* !! ارتفاع الصورة محسّن للموبايل !! */
+        height: clamp(160px, 25vw, 220px); /* ارتفاع مرن للصورة في الموبايل، يضمن ظهورها بشكل جيد */
     }
 
     .main-footer p {
-        font-size: 14px; /* تصغير حجم خط حقوق النشر */
-        margin-bottom: 20px;
+        font-size: clamp(0.9rem, 1.1vw, 1rem);
     }
-
-    .footer-links {
-        flex-direction: column; /* عرض الروابط فوق بعضها البعض */
-        gap: 15px; /* تقليل المسافة الرأسية بين الروابط */
-    }
-
     .footer-links a {
-        font-size: 15px; /* تصغير حجم خط الروابط */
-        padding: 10px 20px; /* زيادة المساحة الداخلية لجعلها أسهل للضغط */
-        width: 80%; /* جعل عرض الرابط 80% من عرض الحاوية */
-        margin: 0 auto; /* توسيط الروابط في الشاشات الصغيرة */
+        font-size: clamp(1rem, 1.3vw, 1.2rem);
+        padding: 1.2rem 2.5rem;
+        width: 95%; /* عرض أكبر للروابط في الفوتر في الموبايل */
+    }
+}
+
+@media (max-width: 600px) { /* للهواتف الصغيرة جداً */
+    .hero {
+        height: 60vh;
+        padding: 0 4vw;
+    }
+    .hero h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+    }
+    .hero p {
+        font-size: clamp(0.9rem, 2vw, 1.2rem);
+    }
+    .movie-grid {
+        /* تأكيد على أن يكون هناك صفوف متعددة في الهواتف الصغيرة جداً (بوسترين في الصف) */
+        grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 45vw, 180px), 1fr)); 
+        gap: 2.5vw;
+    }
+    .movie-card img {
+        height: clamp(180px, 30vw, 250px); 
+    }
+    .main-footer p {
+        font-size: clamp(0.9rem, 1.1vw, 1rem);
+    }
+    .footer-links a {
+        font-size: clamp(1rem, 1.2vw, 1.1rem);
+        padding: 1rem 2rem;
     }
 }
