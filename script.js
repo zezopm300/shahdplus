@@ -232,19 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.9/10",
             "duration": "1h 48m"
         },
-           {
-            "id": 13,
-            "title":"Old (2021) BluRay Full Movie HD | Cimawbas.Tv",
-            "description": " يحكي فيلم الرعب الأخير هذا قصة رحلة امرأة تدعى عينون تريد إنقاذ نفسها من الضلال والسحر واللعنة كما وجدت عينون نفسها متورطة في تعاليم ضالة. فكيف سيتمكن باغاس وريني من إنقاذها وإعادتها إلى الطريق الصحيح؟",
-            "poster": "https://i.ibb.co/8nWbnkyf/photo-5825733540996827420-y.jpg",
-            "release_date": "2025-6-20",
-            "genre":"Mystery, Thriller, Drama, Psychological Horror",
-            "director": "M. Night Shyamalan",
-            "cast":     "Gael García Bernal as Guy",
-            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239019&hd=2&autoplay=1",
-            "rating": "7.9/10",
-            "duration": "1h 48m"
-        },
+
     ];
 
     let moviesDataForPagination = [...moviesData];
