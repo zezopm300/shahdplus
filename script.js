@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "genre":"Horror, Mystery & Thriller",
             "director": "Leigh Whannell",
             "cast":  "Christopher Abbott",
-            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239017&hd=2&autoplay=1",
+            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239017&hd=2&",
             "rating": "7.5/10",
             "duration": "1h 30m"
         },
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "genre":"Mystery, Thriller, Drama, Psychological Horror",
             "director": "M. Night Shyamalan",
             "cast":   "Gael García Bernal as Guy",
-            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239018&hd=2&autoplay=1",
+            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239018&hd=2&",
             "rating": "7.9/10",
             "duration": "1h 48m"
         },
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "genre":"Mystery, Thriller, Drama, Psychological Horror",
             "director": "M. Night Shyamalan",
             "cast":     "Yasmin Napier as Ainun",
-            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239019&hd=2&autoplay=1",
+            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239019&hd=2&",
             "rating": "7.9/10",
             "duration": "1h 42m"
         },
@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
   "genre": "Action, Thriller",
   "director": "Mel Gibson",
   "cast": "Mark Wahlberg, Michelle Dockery, Topher Grace, Leah Remini, Paul Ben-Victor",
-  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239023&hd=2&autoplay=1",
+  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239023&hd=2&",
   "rating": "7.9/10",
   "duration": "PT1H42M"
 }
