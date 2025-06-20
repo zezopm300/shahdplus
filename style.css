@@ -1,65 +1,72 @@
-/* الأكواد الأساسية للصفحة (الهيدر، الهيرو، الفوتر، الأزرار، التنسيقات العامة) - بدون تغيير في هذا الجزء */
+/* الأكواد الأساسية للصفحة (الهيدر، الهيرو، الفوتر، الأزرار، التنسيقات العامة) */
 :root {
-    --primary-color: #C000FF;
-    --secondary-color: #8A00CC;
-    --dark-color: #000005;
-    --light-dark-color: #050515;
-    --text-color: #F8F8FF;
-    --text-muted: #A0A0C0;
-    --accent-color: #00DFFF;
-    --gradient-start: #00000A;
-    --gradient-end: #000005;
+    /* لوحة ألوان أكثر تطوراً وعمقاً */
+    --primary-color: #C000FF; /* Electric Violet - بنفسجي كهربائي مشع */
+    --secondary-color: #8A00CC; /* Deep Indigo - أزرق بنفسجي عميق */
+    --dark-color: #000005; /* Absolute Black - أسود كوني مطلق */
+    --light-dark-color: #050515; /* Nebula Grey - رمادي داكن مزرق للعناصر */
+    --text-color: #F8F8FF; /* Plasma White - أبيض متوهج */
+    --text-muted: #A0A0C0; /* Asteroid Grey - رمادي معتدل للنصوص الثانوية */
+    --accent-color: #00DFFF; /* Hyper Blue - أزرق سماوي فائق للتوهج والنيون */
+    --gradient-start: #00000A; /* بداية تدرج خلفي خفيف */
+    --gradient-end: #000005; /* نهاية تدرج خلفي عميق */
+
     --font-family-arabic: 'Cairo', sans-serif;
-    --transition-speed: 0.4s;
-    --border-radius-prime: 18px;
-    --shadow-galactic: 0 12px 30px rgba(0, 0, 0, 0.7);
-    --shadow-neon-prime: 0 0 20px var(--accent-color), 0 0 40px rgba(0, 223, 255, 0.25);
-    --shadow-inset-sleek: inset 0 0 8px rgba(0, 0, 0, 0.8);
-    --shadow-subtle-glow: 0 0 8px rgba(0, 223, 255, 0.15);
+    --transition-speed: 0.4s; /* سرعة انتقال سلسة ومُحكمة */
+    --border-radius-prime: 18px; /* زوايا مستديرة فاخرة */
+    
+    /* ظلال وتوهجات متطورة */
+    --shadow-galactic: 0 12px 30px rgba(0, 0, 0, 0.7); /* ظل عميق جداً */
+    --shadow-neon-prime: 0 0 20px var(--accent-color), 0 0 40px rgba(0, 223, 255, 0.25); /* توهج نيون محكم */
+    --shadow-inset-sleek: inset 0 0 8px rgba(0, 0, 0, 0.8); /* ظل داخلي أنيق */
+    --shadow-subtle-glow: 0 0 8px rgba(0, 223, 255, 0.15); /* توهج خفيف لعناصر الواجهة */
 }
 
+/* إعادة ضبط أساسي ومُحسّن */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
+    /* تحسينات على الأداء للحركات */
     will-change: transform, opacity, box-shadow, background, color;
 }
 
 html {
-    font-size: 16px;
-    scroll-behavior: smooth;
+    font-size: 16px; /* حجم خط أساسي للـ rem */
+    scroll-behavior: smooth; /* إضافة سلوك التمرير السلس */
 }
 
 body {
     font-family: var(--font-family-arabic);
     background: radial-gradient(circle at top left, var(--gradient-start) 0%, var(--gradient-end) 100%);
     color: var(--text-color);
-    line-height: 1.7;
+    line-height: 1.7; /* تباعد أسطر أكثر راحة للقراءة */
     direction: rtl;
     text-align: right;
     overflow-x: hidden;
     min-height: 100vh;
-    font-size: 1rem;
+    font-size: 1rem; /* حجم خط أساسي متناسق */
 }
 
 .container {
-    width: 90vw;
-    max-width: 1200px;
+    /* **تعديل: إرجاع العرض ليكون أصغر** */
+    width: 90vw; /* عرض أقل للحاوية */
+    max-width: 1200px; /* أقصى عرض أقل */
     margin: auto;
     overflow: hidden;
-    padding: 0 0.5vw;
+    padding: 0 0.5vw; /* padding أقل لزيادة المساحة المتاحة للمحتوى */
 }
 
 a {
     color: var(--text-color);
     text-decoration: none;
-    transition: all var(--transition-speed) ease-out;
+    transition: all var(--transition-speed) ease-out; /* انتقال سلس ومباشر */
 }
 
 a:hover {
     color: var(--accent-color);
-    transform: translateY(-2px) scale(1.02);
+    transform: translateY(-2px) scale(1.02); /* حركة دقيقة وتكبير طفيف مع رفع بسيط */
     text-shadow: var(--shadow-neon-prime);
 }
 
@@ -67,10 +74,11 @@ a:hover {
     display: inline-block;
     background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: var(--text-color);
-    padding: 0.8rem 1.8rem;
+    /* **تعديل: بادينج أقل للزر** */
+    padding: 0.8rem 1.8rem; 
     border: none;
     cursor: pointer;
-    font-size: clamp(0.9rem, 1vw, 1rem);
+    font-size: clamp(0.9rem, 1vw, 1rem); /* حجم خط أصغر قليلاً */
     border-radius: var(--border-radius-prime);
     transition: all var(--transition-speed) ease-in-out;
     box-shadow: var(--shadow-galactic);
@@ -112,7 +120,8 @@ a:hover {
     background: rgba(0, 0, 5, 0.85);
     backdrop-filter: blur(12px) saturate(1.2);
     color: var(--text-color);
-    padding: 0.8rem 0;
+    /* **تعديل: بادينج أقل للهيدر** */
+    padding: 0.8rem 0; 
     border-bottom: 2px solid var(--primary-color);
     position: sticky;
     top: 0;
@@ -123,14 +132,16 @@ a:hover {
 
 .main-header .container {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; 
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    /* **تعديل: فجوة أقل** */
+    gap: 1rem; 
 }
 
 .main-header .logo {
-    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    /* **تعديل: حجم شعار أصغر قليلاً** */
+    font-size: clamp(1.8rem, 3vw, 2.5rem); 
     font-weight: 900;
     color: var(--accent-color);
     text-shadow: var(--shadow-neon-prime);
@@ -142,14 +153,15 @@ a:hover {
 .main-nav ul {
     list-style: none;
     display: flex;
-    flex-direction: row;
+    flex-direction: row; 
     align-items: center;
     flex-grow: 1;
     justify-content: flex-end;
 }
 
 .main-nav ul li {
-    margin-right: 1.5rem;
+    /* **تعديل: هامش أقل** */
+    margin-right: 1.5rem; 
 }
 
 .main-nav ul li:last-child {
@@ -157,8 +169,10 @@ a:hover {
 }
 
 .main-nav ul li a {
-    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
-    padding: 0.6rem 1.2rem;
+    /* **تعديل: حجم خط Nav أصغر قليلاً** */
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem); 
+    /* **تعديل: بادينج أقل للروابط** */
+    padding: 0.6rem 1.2rem; 
     border-radius: var(--border-radius-prime);
     transition: all var(--transition-speed) ease-in-out;
     position: relative;
@@ -197,7 +211,8 @@ a:hover {
     align-items: center;
     background: var(--light-dark-color);
     border-radius: var(--border-radius-prime);
-    padding: 0.5rem 1rem;
+    /* **تعديل: بادينج أقل للبحث** */
+    padding: 0.5rem 1rem; 
     box-shadow: var(--shadow-inset-sleek);
     border: 2px solid var(--primary-color);
     flex-shrink: 0;
@@ -205,14 +220,17 @@ a:hover {
 }
 
 .search-container input {
-    padding: 0.6rem 1rem;
+    /* **تعديل: بادينج أقل لمدخل البحث** */
+    padding: 0.6rem 1rem; 
     border: none;
     border-radius: var(--border-radius-prime);
     background: transparent;
     color: var(--text-color);
-    margin-right: 0.8rem;
+    /* **تعديل: هامش أقل** */
+    margin-right: 0.8rem; 
     outline: none;
-    width: clamp(150px, 15vw, 250px);
+    /* **تعديل: عرض أصغر لمدخل البحث** */
+    width: clamp(150px, 15vw, 250px); 
     font-size: clamp(0.85rem, 1vw, 0.95rem);
     transition: all var(--transition-speed);
 }
@@ -230,7 +248,8 @@ a:hover {
 }
 
 .search-container button {
-    padding: 0.6rem 1.5rem;
+    /* **تعديل: بادينج أقل لزر البحث** */
+    padding: 0.6rem 1.5rem; 
     background: var(--accent-color);
     color: var(--dark-color);
     border: none;
@@ -251,51 +270,40 @@ a:hover {
     color: var(--text-color);
 }
 
-/* Mobile Menu Toggle (Hamburger Icon) */
+/* Mobile Menu Toggle */
 .menu-toggle {
-    display: none; /* Default to hidden on desktop */
+    display: none;
     flex-direction: column;
     justify-content: space-around;
-    width: 30px; /* Smaller for better mobile fit */
-    height: 20px; /* Smaller for better mobile fit */
+    width: 35px;
+    height: 25px;
     background: transparent;
     border: none;
     cursor: pointer;
     padding: 0;
-    position: relative;
-    order: -1; /* Make it appear first on mobile */
-    margin-right: auto; /* Push to left side */
+    position: relative; 
+    order: -1; 
+    margin-right: auto; 
     z-index: 101;
 }
 
 .menu-toggle span {
     display: block;
     width: 100%;
-    height: 3px; /* Thinner lines */
+    height: 4px;
     background: var(--accent-color);
-    border-radius: 3px;
+    border-radius: 4px;
     transition: all var(--transition-speed) ease-in-out;
     box-shadow: var(--shadow-subtle-glow);
 }
 
-/* Toggle active state (for JS, if used for opening/closing menu) */
-.menu-toggle.active span:nth-child(1) {
-    transform: translateY(8px) rotate(45deg);
-}
-.menu-toggle.active span:nth-child(2) {
-    opacity: 0;
-}
-.menu-toggle.active span:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg);
-}
-
-
 /* Hero Section */
 .hero {
-    background: linear-gradient(to bottom, rgba(0, 0, 5, 0.9) 0%, rgba(0, 0, 5, 0.7) 50%, transparent 100%),
+    background: linear-gradient(to bottom, rgba(0, 0, 5, 0.9) 0%, rgba(0, 0, 5, 0.7) 50%, transparent 100%), 
                 url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=cover') no-repeat center center/cover;
-    height: 55vh;
-    min-height: 380px;
+    /* **تعديل: ارتفاع أصغر للهيرو** */
+    height: 55vh; 
+    min-height: 380px; 
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -303,14 +311,17 @@ a:hover {
     color: var(--text-color);
     position: relative;
     z-index: 1;
-    padding: 0 4vw;
+    /* **تعديل: بادينج أقل** */
+    padding: 0 4vw; 
     box-shadow: var(--shadow-galactic);
     border-bottom: 4px solid var(--primary-color);
 }
 
 .hero h1 {
-    font-size: clamp(2.5rem, 4.5vw, 3.8rem);
-    margin-bottom: 2vh;
+    /* **تعديل: حجم خط أصغر** */
+    font-size: clamp(2.5rem, 4.5vw, 3.8rem); 
+    /* **تعديل: هامش أقل** */
+    margin-bottom: 2vh; 
     text-shadow: var(--shadow-neon-prime), 0 0 30px rgba(192, 0, 255, 0.3);
     line-height: 1.2;
     font-weight: 900;
@@ -318,12 +329,15 @@ a:hover {
 }
 
 .hero p {
-    font-size: clamp(1rem, 1.8vw, 1.3rem);
-    margin-bottom: 3.5vh;
-    max-width: 700px;
+    /* **تعديل: حجم خط أصغر** */
+    font-size: clamp(1rem, 1.8vw, 1.3rem); 
+    /* **تعديل: هامش أقل** */
+    margin-bottom: 3.5vh; 
+    max-width: 700px; /* عرض أقل للنص */
     opacity: 0.98;
     background: rgba(0, 0, 0, 0.35);
-    padding: 0.8rem 1.2rem;
+    /* **تعديل: بادينج أقل** */
+    padding: 0.8rem 1.2rem; 
     border-radius: var(--border-radius-prime);
     backdrop-filter: blur(5px);
     box-shadow: var(--shadow-inset-sleek);
@@ -331,21 +345,26 @@ a:hover {
 
 /* Movie Grid Section */
 .movie-grid-section, .movie-details-section, .suggested-movies-section {
-    padding: 4vw 0;
+    /* **تعديل: بادينج أقل** */
+    padding: 4vw 0; 
     background: radial-gradient(circle at center, var(--dark-color) 0%, var(--gradient-end) 100%);
     border-bottom: 1px solid var(--light-dark-color);
 }
 
 .movie-grid-section h2, .movie-details-section h1, .suggested-movies-section h2 {
     text-align: center;
-    margin-bottom: 3vw;
+    /* **تعديل: هامش سفلي أقل** */
+    margin-bottom: 3vw; 
     color: var(--accent-color);
-    font-size: clamp(2.2rem, 3.5vw, 3rem);
+    /* **تعديل: حجم خط أصغر** */
+    font-size: clamp(2.2rem, 3.5vw, 3rem); 
     text-shadow: var(--shadow-neon-prime);
-    padding-bottom: 0.8rem;
+    /* **تعديل: بادينج سفلي أقل** */
+    padding-bottom: 0.8rem; 
     border-bottom: 3px solid var(--primary-color);
     display: inline-block;
-    margin: 0 auto 3vw auto;
+    /* **تعديل: هامش أقل** */
+    margin: 0 auto 3vw auto; 
     width: fit-content;
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -353,9 +372,12 @@ a:hover {
 
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 12vw, 160px), 1fr));
-    gap: 1.2vw;
-    padding: 0 1vw;
+    /* **تعديل: تقليل حجم البوسترات ليتناسب مع العرض الجديد للحاوية** */
+    grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 12vw, 160px), 1fr)); 
+    /* **تعديل: فجوة أقل** */
+    gap: 1.2vw; 
+    /* **تعديل: بادينج أقل** */
+    padding: 0 1vw; 
 }
 
 .movie-card {
@@ -368,12 +390,12 @@ a:hover {
     text-align: center;
     position: relative;
     border: 2px solid transparent;
-    display: flex;
+    display: flex; 
     flex-direction: column;
 }
 
 .movie-card:hover {
-    transform: translateY(-8px) scale(1.04);
+    transform: translateY(-8px) scale(1.04); /* حركة وتكبير أقل بروزًا */
     box-shadow: var(--shadow-neon-prime);
     border-color: var(--accent-color);
     z-index: 10;
@@ -381,8 +403,9 @@ a:hover {
 
 .movie-card img {
     width: 100%;
-    height: clamp(160px, 25vw, 250px);
-    object-fit: cover;
+    /* **تعديل: ارتفاع الصورة أصغر ليتناسب مع حجم البطاقة** */
+    height: clamp(160px, 25vw, 250px); 
+    object-fit: cover; 
     display: block;
     border-bottom: 3px solid var(--primary-color);
     transition: transform var(--transition-speed) ease;
@@ -390,12 +413,14 @@ a:hover {
 }
 
 .movie-card:hover img {
-    transform: scale(1.03);
+    transform: scale(1.03); /* تكبير أقل للصورة */
 }
 
 .movie-card h3 {
-    font-size: clamp(0.85rem, 1.1vw, 1rem);
-    padding: 0.8rem;
+    /* **تعديل: حجم خط أصغر** */
+    font-size: clamp(0.85rem, 1.1vw, 1rem); 
+    /* **تعديل: بادينج أقل** */
+    padding: 0.8rem; 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -408,7 +433,7 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 50px;
+    min-height: 50px; /* لضمان مساحة كافية للعنوان حتى لو كان قصيراً */
     text-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
@@ -416,20 +441,24 @@ a:hover {
 .pagination {
     display: flex;
     justify-content: center;
-    margin-top: 3vw;
-    gap: 1.5vw;
+    /* **تعديل: هامش علوي أقل** */
+    margin-top: 3vw; 
+    /* **تعديل: فجوة أقل** */
+    gap: 1.5vw; 
 }
 
 .pagination .btn-page {
     background: var(--light-dark-color);
     color: var(--text-color);
     border: 2px solid var(--primary-color);
-    padding: 0.8rem 1.5rem;
+    /* **تعديل: بادينج أقل** */
+    padding: 0.8rem 1.5rem; 
     border-radius: var(--border-radius-prime);
     cursor: pointer;
     transition: all var(--transition-speed) ease-in-out;
     font-family: var(--font-family-arabic);
-    font-size: clamp(0.85rem, 1vw, 0.95rem);
+    /* **تعديل: حجم خط أصغر** */
+    font-size: clamp(0.85rem, 1vw, 0.95rem); 
     box-shadow: var(--shadow-galactic);
     font-weight: 700;
     text-transform: uppercase;
@@ -438,42 +467,36 @@ a:hover {
 
 .pagination .btn-page:hover:not(:disabled) {
     background: var(--primary-color);
-    transform: translateY(-2px);
+    transform: translateY(-2px); /* حركة أقل بروزًا */
     box-shadow: var(--shadow-neon-prime);
     color: var(--accent-color);
 }
 
-.pagination .btn-page:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    background: var(--dark-color);
-    box-shadow: none;
-}
-
 /* Movie Details Section */
 .movie-details-section {
-    display: none; /* هذا الكلاس يتم التحكم فيه بالـ JS لإظهاره */
-    padding: 4vw 0.5vw;
+    display: none;
+    /* **تعديل: بادينج أقل** */
+    padding: 4vw 0.5vw; 
     background: linear-gradient(to top, var(--dark-color), var(--gradient-end));
     border-top: 4px solid var(--primary-color);
     box-shadow: 0 0 25px rgba(0,0,0,0.7) inset;
 }
 
-/* هنا، زر العودة إلى الرئيسية (الذي يظهر في الصور المرفقة) */
-/* يجب أن يكون له كلاس مميز، مثلاً .back-to-home-btn */
-/* سأفترض أنه داخل .movie-details-section كما كان موجودًا */
 .movie-details-section .back-btn {
     background: var(--light-dark-color);
     color: var(--text-color);
     border: 2px solid var(--primary-color);
-    padding: 0.8rem 1.5rem;
+    /* **تعديل: بادينج أقل** */
+    padding: 0.8rem 1.5rem; 
     border-radius: var(--border-radius-prime);
     cursor: pointer;
     transition: all var(--transition-speed) ease-in-out;
-    margin-bottom: 3vw;
+    /* **تعديل: هامش سفلي أقل** */
+    margin-bottom: 3vw; 
     font-family: var(--font-family-arabic);
     display: inline-block;
-    font-size: clamp(0.85rem, 1vw, 0.95rem);
+    /* **تعديل: حجم خط أصغر** */
+    font-size: clamp(0.85rem, 1vw, 0.95rem); 
     box-shadow: var(--shadow-galactic);
     font-weight: 700;
 }
@@ -485,12 +508,13 @@ a:hover {
     color: var(--accent-color);
 }
 
-/* مشغل الفيديو: حل شامل للكمبيوتر والموبايل */
+/* **تعديل حجم مشغل الفيديو (تم الحفاظ عليه من الكود السابق)** */
 .video-player-container {
     position: relative;
     width: 100%;
     background-color: #000;
-    margin-bottom: 3vw;
+    /* **تعديل: هامش سفلي أقل** */
+    margin-bottom: 3vw; 
     border-radius: var(--border-radius-prime);
     overflow: hidden;
     box-shadow: var(--shadow-galactic);
@@ -498,7 +522,8 @@ a:hover {
 
     height: 0;
     padding-bottom: 56.25%; /* نسبة أبعاد 16:9 قياسية (9 / 16 = 0.5625) */
-    max-height: 450px;
+    /* **تعديل: أقصى ارتفاع أقل لمشغل الفيديو** */
+    max-height: 450px; 
 }
 
 .video-player-container iframe {
@@ -511,14 +536,15 @@ a:hover {
     z-index: 10;
 }
 
-/* الطبقة الشفافة التي ستستخدم للإعلانات - لا تغيير */
+/* الطبقة الشفافة التي ستستخدم للإعلانات */
+/* !!! هام جداً: هذه الأكواد لن يتم لمسها أو تغييرها إطلاقاً بناءً على طلبك. !!! */
 .video-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0);  
     display: flex;
     justify-content: center;
     align-items: center;
@@ -556,41 +582,40 @@ a:hover {
 }
 
 .movie-info p {
-    margin-bottom: 1.2rem;
-    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    /* **تعديل: هامش سفلي أقل** */
+    margin-bottom: 1.2rem; 
+    /* **تعديل: حجم خط أصغر** */
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem); 
     line-height: 1.8;
     font-weight: 500;
     opacity: 0.95;
     text-shadow: 0 0 3px rgba(0,0,0,0.5);
 }
 
-.movie-info p strong {
-    color: var(--primary-color);
-    font-weight: bold;
-    text-shadow: 0 0 5px rgba(192, 0, 255, 0.3);
-}
-
 /* Poster in movie details */
 #movie-details-poster {
-    max-width: clamp(180px, 20vw, 300px);
+    /* **تعديل: حجم بوستر أصغر** */
+    max-width: clamp(180px, 20vw, 300px); 
     height: auto;
     border-radius: var(--border-radius-prime);
     box-shadow: var(--shadow-galactic), 0 0 25px rgba(0, 0, 0, 0.5);
     display: block;
-    margin: 0 auto 3vw auto;
+    /* **تعديل: هامش سفلي أقل** */
+    margin: 0 auto 3vw auto; 
     border: 3px solid var(--primary-color);
     transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
 #movie-details-poster:hover {
-    transform: scale(1.02);
+    transform: scale(1.02); /* تكبير أقل */
     box-shadow: var(--shadow-neon-prime), 0 0 30px rgba(192, 0, 255, 0.4);
 }
 
 /* Suggested Movies Section */
 .suggested-movies-section {
-    display: none; /* هذا الكلاس يتم التحكم فيه بالـ JS لإظهاره */
-    margin-top: 4vw;
-    padding-top: 4vw;
+    display: none;
+    /* **تعديل: هامش علوي وبادينج علوي أقل** */
+    margin-top: 4vw; 
+    padding-top: 4vw; 
     border-top: 2px solid var(--light-dark-color);
 }
 
@@ -598,7 +623,8 @@ a:hover {
 .main-footer {
     background-color: var(--light-dark-color);
     color: var(--text-muted);
-    padding: 3vw 0;
+    /* **تعديل: بادينج أقل للفوتر** */
+    padding: 3vw 0; 
     text-align: center;
     font-family: var(--font-family-arabic);
     border-top: 6px solid var(--primary-color);
@@ -607,29 +633,21 @@ a:hover {
     overflow: hidden;
 }
 
-.main-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(192, 0, 255, 0.12), rgba(0, 223, 255, 0.06));
-    z-index: 0;
-    pointer-events: none;
-}
-
 .main-footer .container {
-    max-width: 1100px;
+    /* **تعديل: أقصى عرض أقل** */
+    max-width: 1100px; 
     margin: 0 auto;
-    padding: 0 1vw;
+    /* **تعديل: بادينج أقل** */
+    padding: 0 1vw; 
     position: relative;
     z-index: 1;
 }
 
 .main-footer p {
-    margin-bottom: 2vw;
-    font-size: clamp(0.85rem, 1vw, 0.95rem);
+    /* **تعديل: هامش سفلي أقل** */
+    margin-bottom: 2vw; 
+    /* **تعديل: حجم خط أصغر** */
+    font-size: clamp(0.85rem, 1vw, 0.95rem); 
     line-height: 1.7;
     opacity: 0.95;
     text-shadow: 0 0 2px rgba(0,0,0,0.5);
@@ -639,16 +657,20 @@ a:hover {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 1.5vw;
-    margin-top: 1.5vw;
+    /* **تعديل: فجوة أقل** */
+    gap: 1.5vw; 
+    /* **تعديل: هامش علوي أقل** */
+    margin-top: 1.5vw; 
 }
 
 .footer-links a {
     color: var(--accent-color);
     text-decoration: none;
-    font-size: clamp(0.9rem, 1.1vw, 1rem);
+    /* **تعديل: حجم خط أصغر** */
+    font-size: clamp(0.9rem, 1.1vw, 1rem); 
     font-weight: 700;
-    padding: 1rem 2rem;
+    /* **تعديل: بادينج أقل** */
+    padding: 1rem 2rem; 
     border: 2px solid var(--accent-color);
     border-radius: var(--border-radius-prime);
     transition: all var(--transition-speed) ease-in-out;
@@ -662,7 +684,7 @@ a:hover {
 .footer-links a:hover {
     background-color: var(--accent-color);
     color: var(--dark-color);
-    transform: translateY(-4px) scale(1.05);
+    transform: translateY(-4px) scale(1.05); /* حركة وتكبير أقل بروزًا */
     box-shadow: var(--shadow-neon-prime);
     border-color: var(--primary-color);
 }
@@ -670,8 +692,10 @@ a:hover {
 /* Media Queries - للتحكم في التصميم المتجاوب */
 @media (min-width: 993px) { /* يستهدف الشاشات الأكبر من التابلت */
     .video-player-container {
-        max-width: 800px;
-        height: calc(800px * 9 / 16);
+        /* **تعديل: أقصى عرض أقل لمشغل الفيديو على الكمبيوتر** */
+        max-width: 800px; 
+        /* حساب الارتفاع بناءً على max-width 800px ونسبة 16:9 */
+        height: calc(800px * 9 / 16); 
         padding-bottom: 0;
         margin-left: auto;
         margin-right: auto;
@@ -680,320 +704,176 @@ a:hover {
 
 @media (max-width: 992px) { /* للتابلت والموبايل الكبير */
     .main-header .container {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start; 
         padding: 0 4vw;
         gap: 1rem;
     }
-
+    
     .main-header .logo {
-        margin-bottom: 0;
-        align-self: auto;
+        margin-bottom: 0.8rem; 
+        align-self: flex-start; 
     }
 
     .main-nav {
-        order: auto;
-        width: auto;
-        max-height: none;
-        overflow: visible;
-        margin-top: 0;
-        flex-basis: auto;
-        display: block;
+        order: 1; 
+        width: 100%;
+        text-align: center;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height var(--transition-speed) ease-in-out;
+        flex-basis: 100%;
+    }
+
+    .main-nav.nav-open {
+        max-height: 60vh;
+        margin-top: 1.5rem;
     }
 
     .main-nav ul {
-        flex-direction: row;
-        align-items: center;
-        width: auto;
+        flex-direction: column;
+        align-items: flex-start; 
+        width: 100%; 
     }
 
     .main-nav ul li {
-        margin: 0 1.5rem;
+        margin: 0.8rem 0;
+        width: 100%;
     }
-
-    .main-nav ul li:last-child {
-        margin-right: 0;
-    }
-
+    
     .main-nav ul li a {
-        padding: 0.6rem 1.2rem;
-        text-align: center;
-        display: inline-block;
+        padding: 1rem 2rem;
+        text-align: right;
+        background: var(--light-dark-color);
+        display: block; 
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
 
     .search-container {
-        order: auto;
-        width: auto;
+        order: 0; 
+        width: calc(100% - 40px - 4vw);
         margin-top: 0;
         justify-content: flex-end;
         margin-right: 0;
-        padding: 0.5rem 1rem;
-    }
-
-    .search-container input {
-        width: clamp(120px, 18vw, 200px);
-        margin-right: 0.8rem;
-        font-size: clamp(0.85rem, 1.2vw, 0.95rem);
-        padding: 0.6rem 1rem;
-    }
-
-    .search-container button {
-        padding: 0.6rem 1.5rem;
-        font-size: clamp(0.85rem, 1.2vw, 0.95rem);
-    }
-
-    .menu-toggle {
-        display: none;
-    }
-
-    .hero {
-        height: 55vh;
-        padding: 0 4vw;
-        justify-content: flex-end;
-        text-align: right;
-    }
-    .hero .container {
-        align-items: flex-start;
-    }
-    .hero h1 {
-        font-size: clamp(2.5rem, 4.5vw, 3.8rem);
-        margin-bottom: 2vh;
-    }
-    .hero p {
-        font-size: clamp(1rem, 1.8vw, 1.3rem);
-        margin-bottom: 3.5vh;
-        max-width: 700px;
         padding: 0.8rem 1.2rem;
     }
 
+    .search-container input {
+        width: calc(100% - 60px); 
+        margin-right: 1.5vw; 
+        font-size: clamp(0.9rem, 1.5vw, 1rem); 
+        padding: 0.6rem 1rem; 
+    }
+
+    .search-container button {
+        padding: 0.6rem 1.2rem; 
+        font-size: clamp(0.9rem, 1.5vw, 1rem); 
+    }
+
+    .menu-toggle {
+        display: flex;
+        position: relative;
+        margin-right: 2vw; 
+        order: -2; 
+    }
+
+    .hero {
+        height: 70vh; /* ارتفاع أقل للهيرو على الموبايل */
+        padding: 0 5vw;
+        justify-content: center; 
+        text-align: center;
+    }
+    .hero .container {
+        align-items: center; 
+    }
+    .hero h1 {
+        font-size: clamp(2.2rem, 7vw, 3.5rem); /* حجم خط أقل للهيرو على الموبايل */
+        margin-bottom: 2vh;
+    }
+    .hero p {
+        font-size: clamp(0.9rem, 2.5vw, 1.3rem); /* حجم خط أقل للهيرو على الموبايل */
+        margin-bottom: 3vh;
+        max-width: 90%; 
+        padding: 0.8rem;
+    }
+
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 12vw, 160px), 1fr));
-        gap: 1.2vw;
-        padding: 0 1vw;
+        /* ضمان 2 بوستر في الصف على الموبايل الكبير والتابلت */
+        grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 38vw, 160px), 1fr)); 
+        gap: 2.5vw; 
+        padding: 0 2.5vw; 
     }
 
     .movie-card img {
-        height: clamp(160px, 25vw, 250px);
+        height: clamp(170px, 50vw, 240px); /* ارتفاع الصورة محسّن أكثر للموبايل */
     }
 
     .movie-card h3 {
-        font-size: clamp(0.85rem, 1.1vw, 1rem);
+        font-size: clamp(0.75rem, 1.8vw, 0.95rem); 
         padding: 0.7rem;
     }
 
     .main-footer p {
-        font-size: clamp(0.85rem, 1vw, 0.95rem);
+        font-size: clamp(0.8rem, 1.3vw, 0.95rem);
     }
     .footer-links {
-        gap: 1.5vw;
+        gap: 1rem; 
     }
     .footer-links a {
-        font-size: clamp(0.9rem, 1.1vw, 1rem);
-        padding: 1rem 2rem;
-        max-width: none;
-    }
-
-    .movie-details-section .video-player-container {
-        max-width: 600px;
-        height: 0;
-        padding-bottom: 56.25%;
-        margin-left: auto;
-        margin-right: auto;
+        font-size: clamp(0.85rem, 1.6vw, 1.1rem);
+        padding: 0.9rem 1.8rem;
+        max-width: 48%; 
     }
 }
 
-@media (max-width: 600px) { /* للهواتف الأصغر - هنا يكمن التركيز */
-    /* Header Re-design for smaller screens */
+@media (max-width: 600px) { /* للهواتف الصغيرة جداً */
     .main-header .container {
-        flex-direction: column; /* جعل العناصر تتكدس رأسياً */
-        align-items: center; /* محاذاة العناصر في المنتصف */
-        padding: 0.5rem 2vw; /* تقليل البادينج العلوي والسفلي */
-        gap: 0.5rem; /* تقليل المسافة بين العناصر */
-    }
-
-    .main-header .logo {
-        font-size: clamp(1.5rem, 5vw, 2rem); /* تصغير حجم اللوجو */
-        margin-bottom: 0.5rem; /* تقليل المارجن السفلي */
-        flex-grow: 0; /* لا يأخذ مساحة إضافية */
-        order: 1; /* ترتيبه أولاً */
-    }
-
-    .main-nav {
-        width: 100%; /* جعل القائمة تأخذ عرض كامل */
-        order: 3; /* دفع القائمة لأسفل بعد البحث */
-        display: block; /* التأكد من أنها مرئية */
-    }
-
-    .main-nav ul {
-        flex-direction: row; /* إبقاء الروابط أفقية */
-        justify-content: center; /* محاذاة الروابط في المنتصف */
-        flex-wrap: wrap; /* السماح بتجاوز السطر لأسفل */
-        margin-top: 0.5rem; /* مسافة بسيطة من البحث */
-        padding: 0; /* إزالة البادينج لتقليل المساحة */
-    }
-
-    .main-nav ul li {
-        margin: 0.3rem 0.6rem; /* تقليل المارجن بين الروابط */
-    }
-
-    .main-nav ul li a {
-        font-size: clamp(0.75rem, 2.5vw, 0.9rem); /* تصغير حجم خط الروابط */
-        padding: 0.4rem 0.8rem; /* تقليل البادينج للروابط */
+        padding: 0 5vw; 
     }
 
     .search-container {
-        width: 90%; /* عرض أقل لشريط البحث */
-        order: 2; /* ترتيبه بعد اللوجو */
-        margin-top: 0.8rem; /* مسافة من اللوجو */
-        padding: 0.4rem 0.8rem; /* تقليل البادينج لشريط البحث */
-        box-shadow: none; /* إزالة الظل الكبير لتقليل الحجم البصري */
-        border: 1px solid var(--primary-color); /* border أرق */
+        width: calc(100% - 40px - 5vw); 
     }
 
-    .search-container input {
-        width: 75%; /* عرض أكبر لمدخل البحث داخل الشريط */
-        font-size: clamp(0.75rem, 3vw, 0.85rem); /* تصغير حجم خط البحث */
-        padding: 0.4rem 0.6rem; /* تقليل البادينج لمدخل البحث */
-        margin-right: 0.5rem;
-    }
-
-    .search-container button {
-        padding: 0.4rem 1rem; /* تقليل حجم زر البحث */
-        font-size: clamp(0.75rem, 2.5vw, 0.85rem);
-    }
-
-    .menu-toggle {
-        display: none; /* لا يزال غير مستخدم هنا لأننا نظهر كل شيء */
-    }
-
-    /* زر العودة إلى الرئيسية في صفحة الفيلم */
-    /* يجب أن يكون له تنسيق خاص به لتقليل حجمه */
-    .movie-details-section .back-btn {
-        padding: 0.6rem 1.2rem; /* تقليل البادينج */
-        font-size: clamp(0.8rem, 3vw, 0.9rem); /* تصغير حجم الخط */
-        margin-bottom: 2vw; /* تقليل المارجن السفلي */
-    }
-
-    /* Video player adjustments */
-    .movie-details-section .video-player-container {
-        max-width: 100%;
-        height: 0;
-        padding-bottom: 56.25%; /* يحافظ على نسبة 16:9 */
-        margin-left: auto;
-        margin-right: auto;
-        max-height: 250px; /* **أقصى ارتفاع محدد للفيديو لمنعه من أن يصبح كبيرًا جدًا** */
-        border-width: 2px; /* تصغير سمك البوردر */
-    }
-
-
-    /* Hero section for small mobiles */
     .hero {
-        height: 40vh; /* تقليل ارتفاع الهيرو لتوفير مساحة */
-        min-height: 250px;
-        padding: 0 4vw;
+        height: 65vh; 
+        padding: 0 5vw;
     }
     .hero h1 {
-        font-size: clamp(1.8rem, 7vw, 2.5rem); /* تصغير حجم خط الهيدر في الهيرو */
+        font-size: clamp(1.8rem, 8vw, 3rem); 
     }
     .hero p {
-        font-size: clamp(0.75rem, 3.2vw, 1.1rem); /* تصغير حجم خط الفقرة في الهيرو */
-        padding: 0.6rem 1rem;
-        margin-bottom: 2vh;
+        font-size: clamp(0.8rem, 3vw, 1.1rem); 
     }
 
-    /* Movie Grid for small mobiles */
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* تصغير حجم البوسترات لتناسب الشاشة */
-        gap: 3vw;
-        padding: 0 3vw;
+        /* ضمان 2 بوستر في الصف على الموبايل الصغير جداً */
+        grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 45vw, 180px), 1fr)); 
+        gap: 3.5vw; 
+        padding: 0 3.5vw; 
     }
     .movie-card img {
-        height: 180px; /* ارتفاع ثابت لصور البوسترات */
+        height: clamp(180px, 60vw, 260px); 
     }
     .movie-card h3 {
-        font-size: 0.8rem;
-        padding: 0.6rem;
-    }
-
-    /* Footer for small mobiles */
-    .main-footer p {
-        font-size: clamp(0.75rem, 2.5vw, 0.85rem);
-    }
-    .footer-links {
-        flex-direction: column; /* جعل الروابط عمودية لتوفير مساحة */
-        gap: 1rem;
+        font-size: clamp(0.7rem, 2.5vw, 1rem); 
     }
     .footer-links a {
-        font-size: clamp(0.8rem, 3vw, 0.9rem);
-        padding: 0.8rem 1.5rem;
-        width: 80%; /* تحديد عرض ثابت لروابط الفوتر */
-        margin: 0 auto; /* توسيط الروابط */
+        max-width: 90%; 
     }
 }
 
-/* تحسينات إضافية لأصغر الهواتف جداً (مثل iPhone SE) */
-@media (max-width: 400px) {
-    .main-header .container {
-        padding: 0.4rem 1.5vw;
-        gap: 0.4rem;
-    }
-    .main-header .logo {
-        font-size: clamp(1.4rem, 4.5vw, 1.8rem);
-        margin-bottom: 0.4rem;
-    }
-    .main-nav ul li {
-        margin: 0.2rem 0.5rem;
-    }
-    .main-nav ul li a {
-        font-size: clamp(0.7rem, 2.8vw, 0.8rem);
-        padding: 0.3rem 0.7rem;
-    }
-    .search-container {
-        width: 95%; /* زيادة عرض البحث قليلا */
-        padding: 0.3rem 0.7rem;
-    }
-    .search-container input {
-        width: 70%;
-        font-size: clamp(0.7rem, 3.2vw, 0.8rem);
-        padding: 0.3rem 0.5rem;
-    }
-    .search-container button {
-        padding: 0.3rem 0.8rem;
-        font-size: clamp(0.7rem, 2.8vw, 0.8rem);
-    }
-
-    .movie-details-section .back-btn {
-        padding: 0.5rem 1rem;
-        font-size: clamp(0.75rem, 3.2vw, 0.85rem);
-    }
-    .movie-details-section .video-player-container {
-        max-height: 200px; /* تقليل أقصى ارتفاع للفيديو أكثر على أصغر الشاشات */
-    }
-    .hero {
-        height: 35vh;
-        min-height: 200px;
-    }
-    .hero h1 {
-        font-size: clamp(1.5rem, 6.5vw, 2.2rem);
-    }
-    .hero p {
-        font-size: clamp(0.7rem, 3vw, 1rem);
-        padding: 0.5rem 0.8rem;
-    }
+/* تحسينات إضافية */
+@media (max-width: 400px) { /* لأصغر الهواتف */
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 2vw;
-        padding: 0 2vw;
+        grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 45vw, 150px), 1fr));
+        gap: 2.5vw;
+        padding: 0 2.5vw;
     }
     .movie-card img {
-        height: 150px;
+        height: clamp(160px, 65vw, 220px);
     }
     .movie-card h3 {
-        font-size: 0.75rem;
-    }
-    .footer-links a {
-        width: 90%;
-        padding: 0.7rem 1.2rem;
+        font-size: clamp(0.65rem, 2.8vw, 0.9rem);
     }
 }
