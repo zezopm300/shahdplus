@@ -49,7 +49,7 @@ body {
     line-height: 1.7; /* تباعد أسطر مريح للقراءة */
     direction: rtl;
     text-align: right;
-    overflow-x: hidden;
+    overflow-x: hidden; /* **تعديل جديد**: لمنع شريط التمرير الأفقي */
     min-height: 100vh;
     font-size: 1rem;
 }
@@ -658,6 +658,10 @@ a:hover {
         height: 506.25px; /* ارتفاع ثابت لنسبة 16:9 مع 900px عرض (900 * 9 / 16) */
         padding-bottom: 0; /* نلغي الـ padding-bottom هنا لأننا نحدد ارتفاع ثابت */
     }
+    /* **تعديل جديد**: لضمان أن العناصر تظل ضمن العرض على الديسكتوب */
+    body {
+        overflow-x: hidden; 
+    }
 }
 
 
@@ -688,6 +692,8 @@ a:hover {
         padding: 0.5rem 0.8rem;
         width: auto;
         margin-right: auto; /* يدفع البحث لأقصى اليسار */
+        /* **تعديل جديد**: لزر البحث */
+        min-width: 150px; /* ضمان حد أدنى لعرض Search Container */
     }
     
     .search-container input {
@@ -695,8 +701,10 @@ a:hover {
         font-size: clamp(0.8rem, 1.8vw, 0.95rem);
     }
     .search-container button {
-        padding: 0.5rem 1rem;
+        /* **تعديل جديد**: لزر البحث */
+        padding: 0.5rem 0.8rem; /* تقليل البادينج ليتناسب النص */
         font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+        white-space: nowrap; /* منع انقسام كلمة "بحث" */
     }
 
     .main-nav {
@@ -744,17 +752,19 @@ a:hover {
     }
 
     .hero {
-        height: 60vh;
+        /* **تعديل جديد**: لتقليل حجم الهيرو على الموبايل */
+        height: 45vh; /* تقليل الارتفاع */
+        min-height: 300px; /* ضمان حد أدنى مقبول */
         padding: 0 5vw;
         justify-content: center;
         text-align: center;
     }
     .hero h1 {
-        font-size: clamp(2.5rem, 7vw, 4rem);
+        font-size: clamp(2.2rem, 7vw, 3.5rem); /* تقليل حجم الخط قليلاً */
         margin-bottom: 2vh;
     }
     .hero p {
-        font-size: clamp(1rem, 2.8vw, 1.4rem);
+        font-size: clamp(0.9rem, 2.8vw, 1.3rem); /* تقليل حجم الخط قليلاً */
         margin-bottom: 3vh;
         max-width: 95%;
     }
@@ -807,19 +817,20 @@ a:hover {
         font-size: clamp(0.75rem, 2vw, 0.9rem);
     }
     .search-container button {
-        padding: 0.4rem 0.8rem;
+        padding: 0.4rem 0.8rem; /* **تعديل جديد**: لزر البحث في الشاشات الأصغر */
         font-size: clamp(0.75rem, 2vw, 0.9rem);
     }
 
     .hero {
-        height: 55vh;
+        height: 40vh; /* تقليل الارتفاع أكثر */
+        min-height: 250px;
         padding: 0 6vw;
     }
     .hero h1 {
-        font-size: clamp(2rem, 8vw, 3.5rem);
+        font-size: clamp(1.8rem, 8vw, 3rem);
     }
     .hero p {
-        font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+        font-size: clamp(0.8rem, 3.5vw, 1.1rem);
     }
     
     /* ********* تصحيح: البوسترات تظل 2 جنب بعض في أصغر الشاشات ********* */
@@ -868,8 +879,15 @@ a:hover {
     .search-container input {
         width: clamp(80px, 40vw, 120px);
     }
+    /* **تعديل جديد**: لزر البحث في الشاشات الأصغر جداً */
+    .search-container button {
+        padding: 0.3rem 0.7rem; 
+        font-size: clamp(0.7rem, 2vw, 0.85rem);
+    }
+
     .hero {
-        height: 50vh;
+        height: 35vh; /* تقليل الارتفاع أكثر */
+        min-height: 200px;
     }
     /* ********* تصحيح: هنا نضمن بوسترين حتى على الشاشات الضيقة جداً ********* */
     .movie-grid {
