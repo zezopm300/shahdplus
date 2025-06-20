@@ -251,32 +251,44 @@ a:hover {
     color: var(--text-color);
 }
 
-/* Mobile Menu Toggle */
+/* Mobile Menu Toggle (Hamburger Icon) */
 .menu-toggle {
-    display: none; /* سيتم عرضه في الميديا كويري الخاص بالموبايل */
+    display: none; /* Default to hidden on desktop */
     flex-direction: column;
     justify-content: space-around;
-    width: 35px;
-    height: 25px;
+    width: 30px; /* Smaller for better mobile fit */
+    height: 20px; /* Smaller for better mobile fit */
     background: transparent;
     border: none;
     cursor: pointer;
     padding: 0;
     position: relative;
-    order: -1;
-    margin-right: auto;
+    order: -1; /* Make it appear first on mobile */
+    margin-right: auto; /* Push to left side */
     z-index: 101;
 }
 
 .menu-toggle span {
     display: block;
     width: 100%;
-    height: 4px;
+    height: 3px; /* Thinner lines */
     background: var(--accent-color);
-    border-radius: 4px;
+    border-radius: 3px;
     transition: all var(--transition-speed) ease-in-out;
     box-shadow: var(--shadow-subtle-glow);
 }
+
+/* Toggle active state (for JS, if used for opening/closing menu) */
+.menu-toggle.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+.menu-toggle.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
 
 /* Hero Section */
 .hero {
@@ -447,6 +459,9 @@ a:hover {
     box-shadow: 0 0 25px rgba(0,0,0,0.7) inset;
 }
 
+/* هنا، زر العودة إلى الرئيسية (الذي يظهر في الصور المرفقة) */
+/* يجب أن يكون له كلاس مميز، مثلاً .back-to-home-btn */
+/* سأفترض أنه داخل .movie-details-section كما كان موجودًا */
 .movie-details-section .back-btn {
     background: var(--light-dark-color);
     color: var(--text-color);
@@ -665,36 +680,36 @@ a:hover {
 
 @media (max-width: 992px) { /* للتابلت والموبايل الكبير */
     .main-header .container {
-        flex-direction: row; /* إرجاع الترتيب ليكون أفقيًا كما في الكمبيوتر */
-        justify-content: space-between; /* توزيع العناصر على السطر */
-        align-items: center; /* محاذاة في المنتصف عمودياً */
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
         padding: 0 4vw;
         gap: 1rem;
     }
 
     .main-header .logo {
-        margin-bottom: 0; /* إلغاء المارجن السفلي */
-        align-self: auto; /* إلغاء المحاذاة الذاتية */
+        margin-bottom: 0;
+        align-self: auto;
     }
 
     .main-nav {
-        order: auto; /* إرجاع الترتيب الطبيعي */
-        width: auto; /* السماح للعرض بالتكيف تلقائيًا */
-        max-height: none; /* إلغاء التحكم في الارتفاع لإظهار القائمة دائمًا */
-        overflow: visible; /* إظهار المحتوى الزائد */
-        margin-top: 0; /* إلغاء المارجن العلوي */
-        flex-basis: auto; /* إلغاء أساس المرونة */
-        display: block; /* التأكد من أن القائمة تظهر */
+        order: auto;
+        width: auto;
+        max-height: none;
+        overflow: visible;
+        margin-top: 0;
+        flex-basis: auto;
+        display: block;
     }
 
     .main-nav ul {
-        flex-direction: row; /* إرجاع القائمة لتكون أفقية */
+        flex-direction: row;
         align-items: center;
         width: auto;
     }
 
     .main-nav ul li {
-        margin: 0 1.5rem; /* تعديل المارجن ليناسب العرض الأفقي */
+        margin: 0 1.5rem;
     }
 
     .main-nav ul li:last-child {
@@ -703,13 +718,13 @@ a:hover {
 
     .main-nav ul li a {
         padding: 0.6rem 1.2rem;
-        text-align: center; /* محاذاة النص في المنتصف داخل الروابط */
-        display: inline-block; /* لكي يعمل البادينج والمارجن بشكل صحيح */
+        text-align: center;
+        display: inline-block;
     }
 
     .search-container {
-        order: auto; /* إرجاع الترتيب الطبيعي */
-        width: auto; /* السماح للعرض بالتكيف تلقائيًا */
+        order: auto;
+        width: auto;
         margin-top: 0;
         justify-content: flex-end;
         margin-right: 0;
@@ -717,7 +732,7 @@ a:hover {
     }
 
     .search-container input {
-        width: clamp(120px, 18vw, 200px); /* تقليل عرض البحث ليناسب شاشات التابلت */
+        width: clamp(120px, 18vw, 200px);
         margin-right: 0.8rem;
         font-size: clamp(0.85rem, 1.2vw, 0.95rem);
         padding: 0.6rem 1rem;
@@ -729,42 +744,42 @@ a:hover {
     }
 
     .menu-toggle {
-        display: none; /* إخفاء زر القائمة المنسدلة في الموبايل مادام الناف بار ظاهر */
+        display: none;
     }
 
     .hero {
-        height: 55vh; /* إرجاع ارتفاع الهيرو كما في الكمبيوتر */
+        height: 55vh;
         padding: 0 4vw;
-        justify-content: flex-end; /* إرجاع محاذاة المحتوى لليمين */
-        text-align: right; /* إرجاع محاذاة النص لليمين */
+        justify-content: flex-end;
+        text-align: right;
     }
     .hero .container {
-        align-items: flex-start; /* إرجاع محاذاة المحتوى للأعلى */
+        align-items: flex-start;
     }
     .hero h1 {
-        font-size: clamp(2.5rem, 4.5vw, 3.8rem); /* إرجاع حجم خط الهيرو كما في الكمبيوتر */
+        font-size: clamp(2.5rem, 4.5vw, 3.8rem);
         margin-bottom: 2vh;
     }
     .hero p {
-        font-size: clamp(1rem, 1.8vw, 1.3rem); /* إرجاع حجم خط الهيرو كما في الكمبيوتر */
+        font-size: clamp(1rem, 1.8vw, 1.3rem);
         margin-bottom: 3.5vh;
         max-width: 700px;
         padding: 0.8rem 1.2rem;
     }
 
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 12vw, 160px), 1fr)); /* إرجاع حجم البوسترات كما في الكمبيوتر */
+        grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 12vw, 160px), 1fr));
         gap: 1.2vw;
         padding: 0 1vw;
     }
 
     .movie-card img {
-        height: clamp(160px, 25vw, 250px); /* إرجاع ارتفاع الصورة كما في الكمبيوتر */
+        height: clamp(160px, 25vw, 250px);
     }
 
     .movie-card h3 {
         font-size: clamp(0.85rem, 1.1vw, 1rem);
-        padding: 0.8rem;
+        padding: 0.7rem;
     }
 
     .main-footer p {
@@ -776,150 +791,209 @@ a:hover {
     .footer-links a {
         font-size: clamp(0.9rem, 1.1vw, 1rem);
         padding: 1rem 2rem;
-        max-width: none; /* إلغاء تحديد أقصى عرض للروابط */
+        max-width: none;
     }
 
-    /* **تعديلات صفحة الفيلم على الموبايل لتشبه الكمبيوتر** */
     .movie-details-section .video-player-container {
-        max-width: 800px; /* تحديد أقصى عرض للفيديو كما في الكمبيوتر */
-        height: calc(800px * 9 / 16); /* حساب الارتفاع ليتناسب مع العرض 16:9 */
-        padding-bottom: 0; /* إلغاء البادينج السفلي لأنه تم تحديد الارتفاع */
+        max-width: 600px;
+        height: 0;
+        padding-bottom: 56.25%;
         margin-left: auto;
         margin-right: auto;
     }
-
-    /* هنا نضمن أن الناف بار يظل ظاهرًا في صفحة الفيلم على الموبايل */
-    /* الكلاس body.movie-details-page تم إزالته من الـ CSS لعدم الحاجة إليه */
-    /* إذا كنت تستخدمه لأغراض أخرى، فستحتاج لإعادة تقييم ذلك */
 }
 
-@media (max-width: 600px) { /* للهواتف الأصغر */
+@media (max-width: 600px) { /* للهواتف الأصغر - هنا يكمن التركيز */
+    /* Header Re-design for smaller screens */
     .main-header .container {
-        flex-direction: row; /* إبقاء الترتيب أفقيًا */
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 5vw;
+        flex-direction: column; /* جعل العناصر تتكدس رأسياً */
+        align-items: center; /* محاذاة العناصر في المنتصف */
+        padding: 0.5rem 2vw; /* تقليل البادينج العلوي والسفلي */
+        gap: 0.5rem; /* تقليل المسافة بين العناصر */
+    }
+
+    .main-header .logo {
+        font-size: clamp(1.5rem, 5vw, 2rem); /* تصغير حجم اللوجو */
+        margin-bottom: 0.5rem; /* تقليل المارجن السفلي */
+        flex-grow: 0; /* لا يأخذ مساحة إضافية */
+        order: 1; /* ترتيبه أولاً */
     }
 
     .main-nav {
-        display: block; /* التأكد من أن القائمة تظل ظاهرة */
+        width: 100%; /* جعل القائمة تأخذ عرض كامل */
+        order: 3; /* دفع القائمة لأسفل بعد البحث */
+        display: block; /* التأكد من أنها مرئية */
     }
 
     .main-nav ul {
-        flex-direction: row; /* إبقاء القائمة أفقية */
-        justify-content: center; /* محاذاة عناصر القائمة في المنتصف */
-        flex-wrap: wrap; /* السماح للعناصر بالنزول لسطر جديد إذا لم يكن هناك مساحة */
-        margin-top: 0.5rem; /* إضافة مسافة بسيطة من الهيدر */
+        flex-direction: row; /* إبقاء الروابط أفقية */
+        justify-content: center; /* محاذاة الروابط في المنتصف */
+        flex-wrap: wrap; /* السماح بتجاوز السطر لأسفل */
+        margin-top: 0.5rem; /* مسافة بسيطة من البحث */
+        padding: 0; /* إزالة البادينج لتقليل المساحة */
     }
 
     .main-nav ul li {
-        margin: 0.5rem 0.8rem; /* هامش أقل بين عناصر القائمة */
+        margin: 0.3rem 0.6rem; /* تقليل المارجن بين الروابط */
     }
 
     .main-nav ul li a {
-        font-size: clamp(0.8rem, 2vw, 0.95rem); /* حجم خط أصغر لروابط الناف */
-        padding: 0.5rem 1rem; /* بادينج أقل */
+        font-size: clamp(0.75rem, 2.5vw, 0.9rem); /* تصغير حجم خط الروابط */
+        padding: 0.4rem 0.8rem; /* تقليل البادينج للروابط */
     }
 
     .search-container {
-        width: 100%; /* جعل شريط البحث يأخذ عرض كامل */
-        order: 2; /* دفعه لأسفل في ترتيب العناصر */
-        margin-top: 1rem; /* مسافة من العناصر اللي فوقه */
-        justify-content: center; /* محاذاة البحث في المنتصف */
+        width: 90%; /* عرض أقل لشريط البحث */
+        order: 2; /* ترتيبه بعد اللوجو */
+        margin-top: 0.8rem; /* مسافة من اللوجو */
+        padding: 0.4rem 0.8rem; /* تقليل البادينج لشريط البحث */
+        box-shadow: none; /* إزالة الظل الكبير لتقليل الحجم البصري */
+        border: 1px solid var(--primary-color); /* border أرق */
     }
 
     .search-container input {
-        width: 70%; /* إعطاء عرض أكبر لمدخل البحث */
-        font-size: clamp(0.8rem, 3vw, 0.9rem);
+        width: 75%; /* عرض أكبر لمدخل البحث داخل الشريط */
+        font-size: clamp(0.75rem, 3vw, 0.85rem); /* تصغير حجم خط البحث */
+        padding: 0.4rem 0.6rem; /* تقليل البادينج لمدخل البحث */
+        margin-right: 0.5rem;
     }
 
     .search-container button {
-        padding: 0.5rem 1rem;
-        font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+        padding: 0.4rem 1rem; /* تقليل حجم زر البحث */
+        font-size: clamp(0.75rem, 2.5vw, 0.85rem);
     }
 
     .menu-toggle {
-        display: none; /* إخفاء زر القائمة المنسدلة */
+        display: none; /* لا يزال غير مستخدم هنا لأننا نظهر كل شيء */
     }
 
-    .hero {
-        height: 50vh; /* قد تحتاج لتعديل ارتفاع الهيرو حسب المحتوى */
-        padding: 0 5vw;
-        justify-content: center;
-        text-align: center;
-    }
-    .hero .container {
-        align-items: center;
-    }
-    .hero h1 {
-        font-size: clamp(2rem, 8vw, 3rem);
-    }
-    .hero p {
-        font-size: clamp(0.8rem, 3.5vw, 1.2rem);
-        max-width: 90%;
-        margin: 0 auto 2.5vh auto;
+    /* زر العودة إلى الرئيسية في صفحة الفيلم */
+    /* يجب أن يكون له تنسيق خاص به لتقليل حجمه */
+    .movie-details-section .back-btn {
+        padding: 0.6rem 1.2rem; /* تقليل البادينج */
+        font-size: clamp(0.8rem, 3vw, 0.9rem); /* تصغير حجم الخط */
+        margin-bottom: 2vw; /* تقليل المارجن السفلي */
     }
 
-    .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 45vw, 180px), 1fr));
-        gap: 3.5vw;
-        padding: 0 3.5vw;
-    }
-    .movie-card img {
-        height: clamp(180px, 60vw, 260px);
-    }
-    .movie-card h3 {
-        font-size: clamp(0.7rem, 2.5vw, 1rem);
-    }
-    .footer-links a {
-        max-width: 90%;
-    }
-
-    /* **تعديلات صفحة الفيلم على الموبايل الأصغر لتشبه الكمبيوتر** */
+    /* Video player adjustments */
     .movie-details-section .video-player-container {
-        max-width: 100%; /* السماح للفيديو بأخذ عرض 100% ولكن مع الحفاظ على نسبة الطول والعرض */
+        max-width: 100%;
         height: 0;
         padding-bottom: 56.25%; /* يحافظ على نسبة 16:9 */
         margin-left: auto;
         margin-right: auto;
-        max-height: 300px; /* تحديد أقصى ارتفاع لضمان عدم كبره بشكل مزعج */
+        max-height: 250px; /* **أقصى ارتفاع محدد للفيديو لمنعه من أن يصبح كبيرًا جدًا** */
+        border-width: 2px; /* تصغير سمك البوردر */
     }
 
-    /* لضمان أن اللوجو والبحث يظهران بشكل جيد في الهيدر */
-    .main-header .logo {
-        flex-grow: 1; /* السماح للوجو بأخذ مساحة أكبر */
-        text-align: right;
+
+    /* Hero section for small mobiles */
+    .hero {
+        height: 40vh; /* تقليل ارتفاع الهيرو لتوفير مساحة */
+        min-height: 250px;
+        padding: 0 4vw;
     }
-    .search-container {
-        flex-basis: 100%; /* جعل البحث يأخذ سطرًا خاصًا به */
-        order: 3;
+    .hero h1 {
+        font-size: clamp(1.8rem, 7vw, 2.5rem); /* تصغير حجم خط الهيدر في الهيرو */
+    }
+    .hero p {
+        font-size: clamp(0.75rem, 3.2vw, 1.1rem); /* تصغير حجم خط الفقرة في الهيرو */
+        padding: 0.6rem 1rem;
+        margin-bottom: 2vh;
+    }
+
+    /* Movie Grid for small mobiles */
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* تصغير حجم البوسترات لتناسب الشاشة */
+        gap: 3vw;
+        padding: 0 3vw;
+    }
+    .movie-card img {
+        height: 180px; /* ارتفاع ثابت لصور البوسترات */
+    }
+    .movie-card h3 {
+        font-size: 0.8rem;
+        padding: 0.6rem;
+    }
+
+    /* Footer for small mobiles */
+    .main-footer p {
+        font-size: clamp(0.75rem, 2.5vw, 0.85rem);
+    }
+    .footer-links {
+        flex-direction: column; /* جعل الروابط عمودية لتوفير مساحة */
+        gap: 1rem;
+    }
+    .footer-links a {
+        font-size: clamp(0.8rem, 3vw, 0.9rem);
+        padding: 0.8rem 1.5rem;
+        width: 80%; /* تحديد عرض ثابت لروابط الفوتر */
+        margin: 0 auto; /* توسيط الروابط */
     }
 }
 
-/* تحسينات إضافية لأصغر الهواتف */
+/* تحسينات إضافية لأصغر الهواتف جداً (مثل iPhone SE) */
 @media (max-width: 400px) {
+    .main-header .container {
+        padding: 0.4rem 1.5vw;
+        gap: 0.4rem;
+    }
+    .main-header .logo {
+        font-size: clamp(1.4rem, 4.5vw, 1.8rem);
+        margin-bottom: 0.4rem;
+    }
     .main-nav ul li {
-        margin: 0.4rem 0.6rem;
+        margin: 0.2rem 0.5rem;
     }
     .main-nav ul li a {
-        font-size: clamp(0.75rem, 2.5vw, 0.85rem);
-        padding: 0.4rem 0.8rem;
+        font-size: clamp(0.7rem, 2.8vw, 0.8rem);
+        padding: 0.3rem 0.7rem;
+    }
+    .search-container {
+        width: 95%; /* زيادة عرض البحث قليلا */
+        padding: 0.3rem 0.7rem;
     }
     .search-container input {
-        width: 65%;
+        width: 70%;
+        font-size: clamp(0.7rem, 3.2vw, 0.8rem);
+        padding: 0.3rem 0.5rem;
     }
-    .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 45vw, 150px), 1fr));
-        gap: 2.5vw;
-        padding: 0 2.5vw;
+    .search-container button {
+        padding: 0.3rem 0.8rem;
+        font-size: clamp(0.7rem, 2.8vw, 0.8rem);
     }
-    .movie-card img {
-        height: clamp(160px, 65vw, 220px);
-    }
-    .movie-card h3 {
-        font-size: clamp(0.65rem, 2.8vw, 0.9rem);
+
+    .movie-details-section .back-btn {
+        padding: 0.5rem 1rem;
+        font-size: clamp(0.75rem, 3.2vw, 0.85rem);
     }
     .movie-details-section .video-player-container {
-        max-height: 250px; /* تقليل أقصى ارتفاع للفيديو أكثر */
+        max-height: 200px; /* تقليل أقصى ارتفاع للفيديو أكثر على أصغر الشاشات */
+    }
+    .hero {
+        height: 35vh;
+        min-height: 200px;
+    }
+    .hero h1 {
+        font-size: clamp(1.5rem, 6.5vw, 2.2rem);
+    }
+    .hero p {
+        font-size: clamp(0.7rem, 3vw, 1rem);
+        padding: 0.5rem 0.8rem;
+    }
+    .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 2vw;
+        padding: 0 2vw;
+    }
+    .movie-card img {
+        height: 150px;
+    }
+    .movie-card h3 {
+        font-size: 0.75rem;
+    }
+    .footer-links a {
+        width: 90%;
+        padding: 0.7rem 1.2rem;
     }
 }
