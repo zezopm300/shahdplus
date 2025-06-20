@@ -22,10 +22,6 @@
     --shadow-strong: 0 10px 25px rgba(0, 0, 0, 0.5); /* ظل عميق وواضح */
     --shadow-neon: 0 0 15px var(--accent-color), 0 0 30px rgba(0, 239, 255, 0.15); /* توهج نيون محكم */
     --shadow-inset: inset 0 0 6px rgba(0, 0, 0, 0.6); /* ظل داخلي */
-
-    /* ظلال وتوهجات محسنة لـ "الأفخم" */
-    --shadow-elevate: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 10px rgba(178, 0, 237, 0.3); /* ظل أعمق مع توهج بسيط */
-    --shadow-btn-glow: 0 0 18px var(--accent-color), 0 0 35px rgba(0, 239, 255, 0.2); /* توهج أقوى للأزرار */
 }
 
 /* إعادة ضبط أساسي ومُحسّن */
@@ -49,7 +45,7 @@ body {
     line-height: 1.7; /* تباعد أسطر مريح للقراءة */
     direction: rtl;
     text-align: right;
-    overflow-x: hidden; /* **تعديل جديد**: لمنع شريط التمرير الأفقي */
+    overflow-x: hidden;
     min-height: 100vh;
     font-size: 1rem;
 }
@@ -95,7 +91,7 @@ a:hover {
 .btn:hover {
     background: linear-gradient(90deg, var(--accent-color) 0%, var(--primary-color) 100%);
     transform: translateY(-4px) scale(1.02);
-    box-shadow: var(--shadow-btn-glow); /* توهج أقوى */
+    box-shadow: var(--shadow-neon);
     border-color: var(--primary-color);
 }
 
@@ -173,7 +169,6 @@ a:hover {
     position: relative;
     overflow: hidden;
     text-shadow: 0 0 3px rgba(0,0,0,0.5);
-    transition: all var(--transition-speed) ease; /* تأكيد الانتقال */
 }
 
 .main-nav ul li a::before {
@@ -278,7 +273,7 @@ a:hover {
 /* Hero Section */
 .hero {
     background: var(--hero-overlay), 
-            url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=cover') no-repeat center center/cover;
+                url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=cover') no-repeat center center/cover;
     height: 70vh; /* ارتفاع أكبر للهيرو */
     min-height: 450px;
     display: flex;
@@ -312,7 +307,6 @@ a:hover {
     border-radius: var(--border-radius-primary);
     backdrop-filter: blur(8px); /* ضبابية أكثر */
     border: 1px solid rgba(178, 0, 237, 0.2);
-    box-shadow: var(--shadow-strong); /* إضافة ظل للنص لجعله أفخم */
 }
 
 /* Movie Grid Section */
@@ -361,7 +355,7 @@ a:hover {
 
 .movie-card:hover {
     transform: translateY(-8px) scale(1.04); /* تأثير أكبر عند التمرير */
-    box-shadow: var(--shadow-btn-glow); /* توهج أقوى عند التمرير */
+    box-shadow: var(--shadow-neon);
     border-color: var(--accent-color);
     z-index: 10;
 }
@@ -437,14 +431,10 @@ a:hover {
 
 /* Movie Details Section */
 .movie-details-section {
-    display: none; /* يتم التحكم بها بـ JS */
+    display: none;
     padding: 4vw 1vw;
     background: var(--dark-background);
     border-top: 2px solid var(--primary-color);
-    /* توسيط المحتوى داخل قسم التفاصيل */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* لتوسيط العناصر داخله */
 }
 
 .movie-details-section .back-btn {
@@ -468,25 +458,17 @@ a:hover {
     box-shadow: var(--shadow-neon);
 }
 
-/* تحسين حجم الفيديو للكمبيوتر والموبايل */
 .video-player-container {
     position: relative;
-    width: 100%; 
+    width: 100%;
+    padding-bottom: 56.25%;
     background-color: #000;
     margin-bottom: 3vw;
     border-radius: var(--border-radius-primary);
     overflow: hidden;
-    box-shadow: var(--shadow-elevate); /* ظل أكثر فخامة */
+    box-shadow: var(--shadow-strong);
     border: 2px solid var(--primary-color);
-    margin-left: auto; /* لتوسيط العنصر */
-    margin-right: auto; /* لتوسيط العنصر */
-    transition: box-shadow var(--transition-speed) ease; /* انتقال للظل */
 }
-
-.video-player-container:hover {
-    box-shadow: var(--shadow-btn-glow); /* توهج أقوى عند التمرير على الفيديو */
-}
-
 
 .video-player-container iframe {
     position: absolute;
@@ -645,25 +627,11 @@ a:hover {
     background-color: var(--accent-color);
     color: var(--dark-background);
     transform: translateY(-4px) scale(1.05);
-    box-shadow: var(--shadow-btn-glow); /* توهج أقوى */
+    box-shadow: var(--shadow-neon);
     border-color: var(--primary-color);
 }
 
 /* !!! Responsive Design - Mobile First !!! */
-
-/* Desktop & larger tablets (min-width: 993px and up) */
-@media (min-width: 993px) { /* هذا الجزء سيطبق على الشاشات الكبيرة فقط (الكمبيوتر) */
-    .video-player-container {
-        max-width: 900px; /* العرض الأقصى للفيديو على الكمبيوتر */
-        height: 506.25px; /* ارتفاع ثابت لنسبة 16:9 مع 900px عرض (900 * 9 / 16) */
-        padding-bottom: 0; /* نلغي الـ padding-bottom هنا لأننا نحدد ارتفاع ثابت */
-    }
-    /* **تعديل جديد**: لضمان أن العناصر تظل ضمن العرض على الديسكتوب */
-    body {
-        overflow-x: hidden; 
-    }
-}
-
 
 @media (max-width: 992px) { /* للتابلت والموبايل الكبير */
     .main-header .container {
@@ -692,8 +660,6 @@ a:hover {
         padding: 0.5rem 0.8rem;
         width: auto;
         margin-right: auto; /* يدفع البحث لأقصى اليسار */
-        /* **تعديل جديد**: لزر البحث */
-        min-width: 150px; /* ضمان حد أدنى لعرض Search Container */
     }
     
     .search-container input {
@@ -701,10 +667,8 @@ a:hover {
         font-size: clamp(0.8rem, 1.8vw, 0.95rem);
     }
     .search-container button {
-        /* **تعديل جديد**: لزر البحث */
-        padding: 0.5rem 0.8rem; /* تقليل البادينج ليتناسب النص */
+        padding: 0.5rem 1rem;
         font-size: clamp(0.8rem, 1.8vw, 0.95rem);
-        white-space: nowrap; /* منع انقسام كلمة "بحث" */
     }
 
     .main-nav {
@@ -752,28 +716,25 @@ a:hover {
     }
 
     .hero {
-        /* **تعديل جديد**: لتقليل حجم الهيرو على الموبايل */
-        height: 45vh; /* تقليل الارتفاع */
-        min-height: 300px; /* ضمان حد أدنى مقبول */
+        height: 60vh;
         padding: 0 5vw;
         justify-content: center;
         text-align: center;
     }
     .hero h1 {
-        font-size: clamp(2.2rem, 7vw, 3.5rem); /* تقليل حجم الخط قليلاً */
+        font-size: clamp(2.5rem, 7vw, 4rem);
         margin-bottom: 2vh;
     }
     .hero p {
-        font-size: clamp(0.9rem, 2.8vw, 1.3rem); /* تقليل حجم الخط قليلاً */
+        font-size: clamp(1rem, 2.8vw, 1.4rem);
         margin-bottom: 3vh;
         max-width: 95%;
     }
 
-    /* ********* تصحيح: ضبط البوسترات: 2 بوستر جنب بعض على الموبايل ********* */
+    /* ضبط البوسترات: 2 بوستر جنب بعض على الموبايل */
     .movie-grid {
-        /* تم تغيير minmax ليكون ثابتًا أكثر ومناسبًا لبوسترين */
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
-        gap: 3.5vw; /* حافظ على فجوة مناسبة */
+        grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 45vw, 200px), 1fr)); 
+        gap: 3.5vw;
         padding: 0 4vw;
     }
 
@@ -786,14 +747,6 @@ a:hover {
         padding: 0.7rem;
         min-height: 50px;
     }
-
-    /* ********* تعديل حجم الفيديو على التابلت والموبايل الكبير (أقل من 993px) ********* */
-    .video-player-container {
-        max-width: 95vw; /* اجعله أوسع قليلاً ليملأ الشاشة بشكل أفضل */
-        padding-bottom: 56.25%; /* نستخدم padding-bottom لضمان استجابة الطول */
-        height: auto; /* نلغي الارتفاع الثابت */
-    }
-    /* *************************************************************** */
 
     .footer-links {
         gap: 1.2rem;
@@ -817,26 +770,24 @@ a:hover {
         font-size: clamp(0.75rem, 2vw, 0.9rem);
     }
     .search-container button {
-        padding: 0.4rem 0.8rem; /* **تعديل جديد**: لزر البحث في الشاشات الأصغر */
+        padding: 0.4rem 0.8rem;
         font-size: clamp(0.75rem, 2vw, 0.9rem);
     }
 
     .hero {
-        height: 40vh; /* تقليل الارتفاع أكثر */
-        min-height: 250px;
+        height: 55vh;
         padding: 0 6vw;
     }
     .hero h1 {
-        font-size: clamp(1.8rem, 8vw, 3rem);
+        font-size: clamp(2rem, 8vw, 3.5rem);
     }
     .hero p {
-        font-size: clamp(0.8rem, 3.5vw, 1.1rem);
+        font-size: clamp(0.9rem, 3.5vw, 1.2rem);
     }
     
-    /* ********* تصحيح: البوسترات تظل 2 جنب بعض في أصغر الشاشات ********* */
+    /* البوسترات تظل 2 جنب بعض في أصغر الشاشات */
     .movie-grid {
-        /* تم تغيير minmax ليكون ثابتًا أكثر ومناسبًا لبوسترين */
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+        grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 45vw, 200px), 1fr)); 
         gap: 3.5vw;
         padding: 0 4vw;
     }
@@ -845,18 +796,6 @@ a:hover {
     }
     .movie-card h3 {
         font-size: clamp(0.75rem, 2.5vw, 0.95rem);
-    }
-
-    /* ********* تعديل حجم الفيديو على الموبايل الصغير ********* */
-    .video-player-container {
-        max-width: 98vw; /* قريب من العرض الكامل للشاشة */
-        padding-bottom: 56.25%; /* نستخدم padding-bottom لضمان استجابة الطول */
-        height: auto; /* نلغي الارتفاع الثابت */
-    }
-    /* ********************************************************* */
-
-    .footer-links {
-        gap: 1rem; /* تقليل المسافة بين الروابط */
     }
     .footer-links a {
         max-width: 90%; 
@@ -879,20 +818,12 @@ a:hover {
     .search-container input {
         width: clamp(80px, 40vw, 120px);
     }
-    /* **تعديل جديد**: لزر البحث في الشاشات الأصغر جداً */
-    .search-container button {
-        padding: 0.3rem 0.7rem; 
-        font-size: clamp(0.7rem, 2vw, 0.85rem);
-    }
-
     .hero {
-        height: 35vh; /* تقليل الارتفاع أكثر */
-        min-height: 200px;
+        height: 50vh;
     }
-    /* ********* تصحيح: هنا نضمن بوسترين حتى على الشاشات الضيقة جداً ********* */
+    /* هنا نضمن بوسترين حتى على الشاشات الضيقة جداً */
     .movie-grid {
-        /* تم تغيير minmax ليكون ثابتًا أكثر ومناسبًا لبوسترين */
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+        grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 48vw, 180px), 1fr)); 
         gap: 3vw;
         padding: 0 3vw;
     }
@@ -902,11 +833,4 @@ a:hover {
     .movie-card h3 {
         font-size: clamp(0.7rem, 3vw, 0.85rem);
     }
-    /* ********* تعديل حجم الفيديو على أصغر الموبايلات ********* */
-    .video-player-container {
-        max-width: 98vw; /* التأكد من أنه يملأ معظم الشاشة */
-        padding-bottom: 56.25%; /* نستخدم padding-bottom لضمان استجابة الطول */
-        height: auto; /* نلغي الارتفاع الثابت */
-    }
-    /* ******************************************************* */
 }
