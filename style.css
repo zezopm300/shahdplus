@@ -992,10 +992,12 @@ a:hover {
         font-size: clamp(0.7rem, 1.4vw, 0.85rem);
     }
 
+    /* Video Player Container for Tablets */
     .video-player-container {
         /* ضبط حجم الفيديو على التابلت - سيظل ممتلئ العرض لكن بارتفاع متناسب */
-        max-width: 100%;
-        max-height: 300px;
+        max-width: 100%; /* العرض الكامل المسموح به في هذا الميديا كويري */
+        padding-bottom: 56.25% !important; /* إعادة نسبة 16:9 للتابلت */
+        max-height: 300px; /* يمكن تعديل هذا إذا كان هناك حاجة للتحكم الصارم */
         margin-bottom: 3vw;
     }
 
@@ -1122,8 +1124,10 @@ a:hover {
         padding: 0.5rem 1rem;
         font-size: clamp(0.65rem, 1.8vw, 0.8rem);
     }
+    /* Video Player Container for Small Mobiles */
     .video-player-container {
-        max-height: 180px;
+        padding-bottom: 56.25% !important; /* إعادة نسبة 16:9 للهواتف الصغيرة */
+        max-height: 180px; /* يمكن تعديل هذا إذا كان هناك حاجة للتحكم الصارم */
         margin-bottom: 2.5vw;
     }
     .movie-info p {
