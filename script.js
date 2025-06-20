@@ -245,19 +245,20 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.9/10",
             "duration": "1h 42m"
         },
-     {
-            "id": 14,
-            "title":"Snowpiercer (2013)",
-            "description": ": بعد إجراء تجربة فاشلة من أجل التصدي للاحتباس الحراري يحدث عصر جليدي يقضي على الحياة في كوكب الأرض إلا بعض الناجين، ولكنهم يتخذون من قطار ضخم (ثاقب للثلوج) مكانًا للحياة والنجاة. تعيش الصفوة في مقدمة القطار، أما الفقراء فيعيشون في ذيل القطار. لكن بعد مرور 17 عامًا يقوم سكان الذيل بسلسلة جديدة من التمرد بقيادة كيرتس (كريس أيفانز). يُحرر المتمردون سجينًا يُدعى نامجونج (كانج هو سونج)؛ حيث إنه خبير ببوابات القطار، ولذلك يتحد معهم لتبدأ ثورة جديدة",
-            "poster": "https://i.ibb.co/wFWWWYTD/photo-5834902488719935587-w.jpg",
-            "release_date": "2025-6-20",
-            "genre":"Science Fiction",
-            "director": "Bong Joon-ho",
-            "cast":     "Chris Evans as Curtis Everett",
-            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239022&hd=2&",
-            "rating": "7.9/10",
-            "duration": "2h 2m"
-        },
+{
+  "id": 14,
+  "title": "Snowpiercer (2013)",
+  "description": "بعد تجربة فاشلة للتصدي للاحتباس الحراري، يحدث عصر جليدي يقضي على الحياة في الأرض، ولا ينجو سوى من يعيشون في قطار ضخم. يتزعم كيرتس ثورة من سكان ذيل القطار ضد الصفوة في المقدمة.",
+  "poster": "https://i.ibb.co/wFWWWYTD/photo-5834902488719935587-w.jpg",
+  "release_date": "2025-06-20",
+  "genre": "Science Fiction",
+  "director": "Bong Joon-ho",
+  "cast": "Chris Evans as Curtis Everett",
+  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239022&hd=2", 
+  "rating": "7.9/10",
+  "duration": "PT2H2M"
+}
+
         {
   "@context": "https://schema.org",
   "@type": "Movie",
