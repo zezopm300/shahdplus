@@ -472,7 +472,6 @@ a:hover {
 .video-player-container {
     position: relative;
     width: 100%; 
-    /* padding-bottom سيتم تحديده داخل الميديا كويري لتجنب تضارب الارتفاع */
     background-color: #000;
     margin-bottom: 3vw;
     border-radius: var(--border-radius-primary);
@@ -652,7 +651,7 @@ a:hover {
 
 /* !!! Responsive Design - Mobile First !!! */
 
-/* Desktop & larger tablets (max-width: 992px and up) */
+/* Desktop & larger tablets (min-width: 993px and up) */
 @media (min-width: 993px) { /* هذا الجزء سيطبق على الشاشات الكبيرة فقط (الكمبيوتر) */
     .video-player-container {
         max-width: 900px; /* العرض الأقصى للفيديو على الكمبيوتر */
@@ -760,7 +759,7 @@ a:hover {
         max-width: 95%;
     }
 
-    /* ضبط البوسترات: 2 بوستر جنب بعض على الموبايل */
+    /* ********* تصحيح: ضبط البوسترات: 2 بوستر جنب بعض على الموبايل ********* */
     .movie-grid {
         grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 45vw, 200px), 1fr)); 
         gap: 3.5vw;
@@ -822,7 +821,7 @@ a:hover {
         font-size: clamp(0.9rem, 3.5vw, 1.2rem);
     }
     
-    /* البوسترات تظل 2 جنب بعض في أصغر الشاشات */
+    /* ********* تصحيح: البوسترات تظل 2 جنب بعض في أصغر الشاشات ********* */
     .movie-grid {
         grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 45vw, 200px), 1fr)); 
         gap: 3.5vw;
@@ -870,7 +869,7 @@ a:hover {
     .hero {
         height: 50vh;
     }
-    /* هنا نضمن بوسترين حتى على الشاشات الضيقة جداً */
+    /* ********* تصحيح: هنا نضمن بوسترين حتى على الشاشات الضيقة جداً ********* */
     .movie-grid {
         grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 48vw, 180px), 1fr)); 
         gap: 3vw;
