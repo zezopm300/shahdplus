@@ -1,17 +1,17 @@
 /* الأكواد الأساسية للصفحة (الهيدر، الهيرو، الفوتر، الأزرار، التنسيقات العامة) */
 :root {
     /* لوحة ألوان "Luminous Cosmic Oasis" - من الخيال فعلاً */
-    --dark-color: #080010; /* Abyss Black - أسود عميق مع لمسة بنفسجية */
-    --light-dark-color: #1A032F; /* Galactic Veil - بنفسجي داكن للعناصر */
+    --dark-color: #05000A; /* Deeper Abyss Black - أسود عميق جداً مع لمسة بنفسجية */
+    --light-dark-color: #120220; /* Nebula Veil - بنفسجي داكن غامض للعناصر */
     --primary-color: #8A2BE2; /* Amethyst Purple - بنفسجي أرجواني نابض بالحياة */
-    --secondary-color: #FF007F; /* Magenta Nova - ماجنتي كهربائي للأكشن */
-    --accent-color: #00FFFF; /* Electric Cyan - أزرق سماوي نيون للتوهج */
-    --text-color: #E6F7FF; /* Starlight White - أبيض مضيء جداً */
-    --text-muted: #8090A0; /* Astral Grey - رمادي مائل للأزرق للنصوص الثانوية */
+    --secondary-color: #FF007F; /* Magenta Nova - ماجنتي كهربائي للأكشن والتأكيد */
+    --accent-color: #00FFFF; /* Electric Cyan - أزرق سماوي نيون للتوهج والإبراز */
+    --text-color: #E6F7FF; /* Starlight White - أبيض مضيء جداً ومتلألئ */
+    --text-muted: #8090A0; /* Astral Grey - رمادي مائل للأزرق للنصوص الثانوية والحدود */
 
-    --gradient-start-bg: #000000; /* بداية تدرج خلفي أسود */
-    --gradient-end-bg: #100020; /* نهاية تدرج بنفسجي أعمق */
-    --gradient-hero-overlay: linear-gradient(to bottom, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.7) 50%, transparent 100%);
+    --gradient-start-bg: #000000; /* بداية تدرج خلفي أسود عميق */
+    --gradient-end-bg: #0A0015; /* نهاية تدرج بنفسجي أعمق وأغمق */
+    --gradient-hero-overlay: linear-gradient(to bottom, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.75) 50%, transparent 100%);
 
     --font-family-arabic: 'Cairo', sans-serif;
     --font-family-headings: 'Orbitron', sans-serif; 
@@ -24,6 +24,7 @@
     --shadow-neon-glow: 0 0 30px var(--accent-color), 0 0 60px rgba(0, 255, 255, 0.4); /* توهج نيون قوي ومشرق */
     --shadow-inset-cosmos: inset 0 0 15px rgba(0, 0, 0, 0.9); /* ظل داخلي عميق جداً */
     --shadow-button-glow: 0 0 25px var(--secondary-color), 0 0 50px rgba(255, 0, 127, 0.3); /* توهج خاص للأزرار */
+    --shadow-pulse-focus: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color); /* توهج نبضي للعناصر النشطة */
 }
 
 /* استيراد خطوط جوجل الجديدة */
@@ -34,7 +35,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent; /* إزالة الهايلايت الأزرق عند اللمس على الموبايل */
     will-change: transform, opacity, box-shadow, background, color; 
     outline: none; 
 }
@@ -42,6 +43,8 @@
 html {
     font-size: 16px; 
     scroll-behavior: smooth; 
+    -webkit-font-smoothing: antialiased; /* تحسين نعومة الخطوط على الويب كيت */
+    -moz-osx-font-smoothing: grayscale; /* تحسين نعومة الخطوط على فايرفوكس */
 }
 
 body {
@@ -54,11 +57,32 @@ body {
     line-height: 1.7; 
     direction: rtl; 
     text-align: right; 
-    overflow-x: hidden; 
+    overflow-x: hidden; /* منع التمرير الأفقي */
     min-height: 100vh;
     font-size: 1rem;
     position: relative;
 }
+
+/* شريط التمرير المخصص - Scrollbar Styling */
+body::-webkit-scrollbar {
+    width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+    background: var(--light-dark-color);
+    border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+    border: 3px solid var(--light-dark-color);
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
 
 /* تأثير نجوم خلفي متحرك ولامع */
 body::before {
@@ -86,7 +110,7 @@ body::before {
     width: 90vw; 
     max-width: 1200px; 
     margin: auto;
-    overflow: hidden;
+    overflow: hidden; /* للحفاظ على العناصر داخل الحدود */
     padding: 0 1vw; 
 }
 
@@ -162,7 +186,7 @@ a:hover {
     top: 0;
     z-index: 100;
     box-shadow: var(--shadow-deep-space);
-    transition: background var(--transition-speed) ease, padding var(--transition-speed) ease;
+    transition: background var(--transition-speed) ease, padding var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
 }
 
 .main-header .container {
@@ -173,27 +197,38 @@ a:hover {
     gap: 1rem; /* فجوة أصغر وأكثر إحكاماً */
 }
 
+/* اللوجو الجديد - تصميم "Stellar Glyph Logo" */
 .main-header .logo {
     font-family: var(--font-family-headings); 
-    font-size: clamp(2rem, 3vw, 2.8rem); 
+    font-size: clamp(2.2rem, 3.5vw, 3rem); /* حجم أكبر للوجو */
     font-weight: 900;
     color: var(--accent-color);
-    text-shadow: var(--shadow-neon-glow);
-    letter-spacing: 2px;
+    text-shadow: 0 0 15px var(--accent-color), 0 0 30px rgba(0, 255, 255, 0.5), 0 0 45px rgba(0, 255, 255, 0.3); /* توهج أقوى */
+    letter-spacing: 3px; /* تباعد أحرف أكبر */
     flex-shrink: 0;
     text-transform: uppercase;
     transition: all var(--transition-speed) ease-in-out;
+    background: linear-gradient(45deg, var(--accent-color), var(--secondary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: neon-pulse 3s infinite alternate; /* تأثير نبض للوجو */
 }
+@keyframes neon-pulse {
+    0% { text-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color), 0 0 30px rgba(0, 255, 255, 0.3); }
+    100% { text-shadow: 0 0 15px var(--accent-color), 0 0 30px rgba(0, 255, 255, 0.5), 0 0 45px rgba(0, 255, 255, 0.3); }
+}
+
 .main-header .logo:hover {
-    transform: scale(1.05);
-    color: var(--secondary-color);
-    text-shadow: 0 0 20px var(--secondary-color);
+    transform: scale(1.08); /* تكبير أكبر عند التمرير */
+    text-shadow: var(--shadow-neon-glow);
+    animation: none; /* إيقاف النبض عند التمرير */
 }
 
 .main-nav {
     flex-grow: 1;
-    display: flex; /* لضمان أن القائمة تأخذ المساحة المتاحة */
-    justify-content: flex-end; /* لدفع العناصر لليمين */
+    display: flex; 
+    justify-content: flex-end; 
+    align-items: center; /* لضمان محاذاة عناصر الناف مع البحث */
 }
 
 .main-nav ul {
@@ -201,10 +236,13 @@ a:hover {
     display: flex;
     flex-direction: row; 
     align-items: center;
+    padding: 0; /* إزالة البادينج الزائد */
+    margin: 0; /* إزالة المارجن الزائد */
 }
 
 .main-nav ul li {
-    margin-right: 1.5rem; /* هامش أقل بين عناصر القائمة لتقليل الحجم */
+    margin-right: 2rem; /* هامش أكبر بين عناصر القائمة */
+    position: relative; /* لإبراز تأثير الخط السفلي */
 }
 
 .main-nav ul li:last-child {
@@ -212,15 +250,18 @@ a:hover {
 }
 
 .main-nav ul li a {
-    font-size: clamp(0.9rem, 1.1vw, 1.05rem); /* حجم خط أصغر قليلاً */
-    padding: 0.6rem 1.2rem; /* بادينج أقل للروابط */
+    font-size: clamp(1rem, 1.2vw, 1.15rem); /* حجم خط أكبر قليلاً للروابط */
+    padding: 0.8rem 1.5rem; /* بادينج أكثر للروابط لسهولة النقر */
     border-radius: var(--border-radius-prime);
     transition: all var(--transition-speed) ease-in-out;
     position: relative;
     overflow: hidden;
     font-weight: 600;
     text-shadow: 0 0 8px rgba(0,0,0,0.7);
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
+    background: rgba(255, 255, 255, 0.05); /* خلفية خفيفة للروابط */
+    border: 1px solid rgba(138, 43, 226, 0.3);
+    backdrop-filter: blur(5px); /* ضبابية خفيفة */
 }
 
 .main-nav ul li a::before {
@@ -229,9 +270,9 @@ a:hover {
     bottom: 0;
     right: 0;
     width: 0;
-    height: 3px; /* سمك الخط السفلي */
+    height: 4px; /* سمك الخط السفلي أكبر */
     background: var(--secondary-color);
-    box-shadow: 0 0 10px var(--secondary-color);
+    box-shadow: 0 0 15px var(--secondary-color), 0 0 25px rgba(255, 0, 127, 0.5); /* توهج أقوى */
     transition: width var(--transition-speed) ease-out;
 }
 
@@ -243,8 +284,8 @@ a:hover {
 .main-nav ul li a:hover {
     background-color: var(--light-dark-color);
     color: var(--accent-color);
-    box-shadow: 0 0 18px rgba(138, 43, 226, 0.6); /* توهج بنفسجي خفيف */
-    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.7), var(--shadow-pulse-focus); /* توهج بنفسجي أقوى */
+    transform: translateY(-3px) scale(1.02); /* تأثير أكبر عند التمرير */
 }
 
 /* Search Container - تصميم "Void Seeker" */
@@ -258,6 +299,8 @@ a:hover {
     border: 2px solid var(--primary-color);
     flex-shrink: 0;
     transition: all var(--transition-speed) ease-in-out;
+    margin-right: 1.5rem; /* هامش بين الناف والبحث */
+    position: relative;
 }
 .search-container:focus-within {
     border-color: var(--accent-color);
@@ -313,40 +356,18 @@ a:hover {
     color: var(--text-color);
 }
 
-/* Mobile Menu Toggle - تصميم "Cosmic Glyph" */
+/* Mobile Menu Toggle - تم إخفاؤه تمامًا لأنه لن يتم استخدامه */
 .menu-toggle {
-    display: none;
-    flex-direction: column;
-    justify-content: space-around;
-    width: 35px; /* حجم أصغر وأكثر إحكاماً */
-    height: 25px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    position: relative; 
-    order: -1; 
-    margin-right: auto; 
-    z-index: 101;
-    transition: all var(--transition-speed) ease-in-out;
+    display: none !important; 
 }
 
-.menu-toggle span {
-    display: block;
-    width: 100%;
-    height: 4px; /* سمك الخطوط */
-    background: var(--secondary-color);
-    border-radius: 4px;
-    transition: all var(--transition-speed) ease-in-out;
-    box-shadow: 0 0 10px var(--secondary-color);
-}
 
 /* Hero Section - تصميم "Nebula Genesis" */
 .hero {
     background: var(--gradient-hero-overlay), 
                 url('https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=cover') no-repeat center center/cover;
-    height: 65vh; /* ارتفاع مدروس ومثير للإعجاب */
-    min-height: 450px; 
+    height: 70vh; /* ارتفاع مدروس ومثير للإعجاب */
+    min-height: 500px; 
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -383,27 +404,28 @@ a:hover {
 
 .hero h1 {
     font-family: var(--font-family-headings); 
-    font-size: clamp(3rem, 5vw, 4rem); 
-    margin-bottom: 2vh; 
-    text-shadow: var(--shadow-neon-glow), 0 0 35px rgba(138, 43, 226, 0.5);
+    font-size: clamp(3.2rem, 5.5vw, 4.5rem); /* حجم أكبر للعنوان */
+    margin-bottom: 2.5vh; 
+    text-shadow: var(--shadow-neon-glow), 0 0 40px rgba(138, 43, 226, 0.6); /* توهج أقوى */
     line-height: 1.1;
     font-weight: 900;
-    letter-spacing: 1.5px;
-    max-width: 700px; 
+    letter-spacing: 2px;
+    max-width: 750px; 
     animation: fadeInScale 1.5s ease-out forwards;
 }
 
 .hero p {
-    font-size: clamp(1rem, 1.8vw, 1.4rem); 
-    margin-bottom: 3vh; 
-    max-width: 700px; 
-    opacity: 0.95;
-    background: rgba(0, 0, 0, 0.6); 
-    padding: 0.8rem 1.5rem; 
+    font-family: var(--font-family-arabic);
+    font-size: clamp(1.1rem, 1.9vw, 1.5rem); /* حجم أكبر للوصف */
+    margin-bottom: 4vh; 
+    max-width: 750px; 
+    opacity: 0.98;
+    background: rgba(0, 0, 0, 0.7); /* خلفية أغمق للوصف */
+    padding: 1rem 2rem; 
     border-radius: var(--border-radius-prime);
-    backdrop-filter: blur(10px); 
-    box-shadow: var(--shadow-inset-cosmos);
-    border: 1px solid var(--light-dark-color);
+    backdrop-filter: blur(12px); /* ضبابية أقوى */
+    box-shadow: var(--shadow-inset-cosmos), 0 0 10px rgba(138, 43, 226, 0.3); /* ظل إضافي */
+    border: 1px solid var(--primary-color); /* حدود بنفسجية */
     animation: fadeInSlideUp 1.5s ease-out forwards 0.3s;
 }
 
@@ -429,21 +451,21 @@ a:hover {
     text-align: center;
     margin-bottom: 3.5vw; 
     color: var(--accent-color);
-    font-size: clamp(2.5rem, 3.5vw, 3.2rem); 
-    text-shadow: var(--shadow-neon-glow), 0 0 25px var(--secondary-color);
+    font-size: clamp(2.8rem, 4vw, 3.5rem); /* حجم أكبر للعناوين */
+    text-shadow: var(--shadow-neon-glow), 0 0 30px var(--secondary-color); /* توهج أقوى */
     padding-bottom: 0.8rem; 
-    border-bottom: 3px solid var(--primary-color);
+    border-bottom: 4px solid var(--primary-color); /* خط سفلي أسمك */
     display: inline-block;
     margin: 0 auto 3.5vw auto; 
     width: fit-content;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px; /* تباعد أحرف أكبر */
     text-transform: uppercase;
 }
 
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 13vw, 180px), 1fr)); 
-    gap: 1.8vw; 
+    grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 14vw, 190px), 1fr)); /* حجم أكبر للبطاقات */
+    gap: 2vw; /* مسافة أكبر بين البطاقات */
     padding: 0 1.5vw; 
 }
 
@@ -452,7 +474,7 @@ a:hover {
     background: var(--light-dark-color);
     border-radius: var(--border-radius-card); 
     overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); /* ظل أعمق */
     transition: all var(--transition-speed) ease-in-out;
     cursor: pointer;
     text-align: center;
@@ -463,67 +485,67 @@ a:hover {
 }
 
 .movie-card:hover {
-    transform: translateY(-8px) scale(1.04); 
-    box-shadow: var(--shadow-neon-glow), 0 0 35px var(--primary-color);
+    transform: translateY(-10px) scale(1.06); /* تأثير أكبر عند التمرير */
+    box-shadow: var(--shadow-neon-glow), 0 0 40px var(--primary-color); /* توهج أقوى */
     border-color: var(--accent-color);
     z-index: 10;
 }
 
 .movie-card img {
     width: 100%;
-    height: clamp(180px, 26vw, 280px); 
+    height: clamp(200px, 28vw, 300px); /* ارتفاع أكبر للبوستر */
     object-fit: cover; 
     display: block;
-    border-bottom: 3px solid var(--primary-color);
+    border-bottom: 4px solid var(--primary-color); /* خط سفلي أسمك */
     transition: transform var(--transition-speed) ease;
     flex-shrink: 0;
 }
 
 .movie-card:hover img {
-    transform: scale(1.03); 
+    transform: scale(1.05); /* تكبير أكبر للصورة */
 }
 
 .movie-card h3 {
-    font-size: clamp(0.85rem, 1.1vw, 1rem); 
-    padding: 0.9rem; 
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem); /* حجم أكبر للعنوان */
+    padding: 1rem; 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--text-color);
-    background-color: rgba(0, 0, 5, 0.9); 
-    margin-top: -3px; 
+    background-color: rgba(0, 0, 5, 0.95); /* خلفية أغمق للعنوان */
+    margin-top: -4px; 
     border-radius: 0 0 var(--border-radius-card) var(--border-radius-card);
     font-weight: 700;
     flex-grow: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 50px; 
-    text-shadow: 0 0 6px rgba(0,0,0,0.6);
+    min-height: 60px; /* ارتفاع أدنى أكبر للعنوان */
+    text-shadow: 0 0 8px rgba(0,0,0,0.8);
 }
 
 /* Pagination - تصميم "Quantum Pager" */
 .pagination {
     display: flex;
     justify-content: center;
-    margin-top: 3.5vw; 
-    gap: 1.8vw; 
+    margin-top: 4vw; /* هامش علوي أكبر */
+    gap: 2vw; /* مسافة أكبر بين الأزرار */
 }
 
 .pagination .btn-page {
     background: var(--light-dark-color);
     color: var(--text-color);
     border: 2px solid var(--primary-color);
-    padding: 0.8rem 1.8rem; 
+    padding: 0.9rem 2rem; /* بادينج أكبر للأزرار */
     border-radius: var(--border-radius-prime);
     cursor: pointer;
     transition: all var(--transition-speed) ease-in-out;
     font-family: var(--font-family-arabic);
-    font-size: clamp(0.85rem, 1vw, 1rem); 
+    font-size: clamp(0.9rem, 1.1vw, 1.05rem); /* حجم خط أكبر قليلاً */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.7px;
+    letter-spacing: 0.8px;
     display: inline-flex; 
     align-items: center;
     justify-content: center;
@@ -531,7 +553,7 @@ a:hover {
 
 .pagination .btn-page:hover:not(:disabled) {
     background: var(--primary-color);
-    transform: translateY(-2px); 
+    transform: translateY(-3px); /* تأثير أكبر */
     box-shadow: var(--shadow-button-glow);
     color: var(--accent-color);
 }
@@ -550,7 +572,7 @@ a:hover {
     padding: 5vw 1.5vw; 
     background: linear-gradient(to top, var(--dark-color) 0%, var(--gradient-end-bg) 100%);
     border-top: 4px solid var(--primary-color);
-    box-shadow: 0 0 25px rgba(0,0,0,0.8) inset;
+    box-shadow: 0 0 30px rgba(0,0,0,0.9) inset; /* ظل داخلي أعمق */
     animation: fadeIn 0.8s ease-out; /* إضافة أنيميشن للظهور */
 }
 @keyframes fadeIn {
@@ -563,14 +585,14 @@ a:hover {
     background: var(--light-dark-color);
     color: var(--text-color);
     border: 2px solid var(--primary-color);
-    padding: 0.9rem 2rem; 
+    padding: 1rem 2.5rem; /* بادينج أكبر للزر */
     border-radius: var(--border-radius-prime);
     cursor: pointer;
     transition: all var(--transition-speed) ease-in-out;
-    margin-bottom: 3.5vw; 
+    margin-bottom: 4vw; /* هامش سفلي أكبر */
     font-family: var(--font-family-arabic);
     display: inline-block;
-    font-size: clamp(0.85rem, 1vw, 1rem); 
+    font-size: clamp(0.9rem, 1.1vw, 1.05rem); /* حجم خط أكبر قليلاً */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     font-weight: 700;
     text-transform: uppercase;
@@ -578,7 +600,7 @@ a:hover {
 
 .movie-details-section .back-btn:hover {
     background: var(--primary-color);
-    transform: translateY(-2px);
+    transform: translateY(-3px); /* تأثير أكبر */
     box-shadow: var(--shadow-button-glow);
     color: var(--accent-color);
 }
@@ -588,15 +610,15 @@ a:hover {
     position: relative;
     width: 100%;
     background-color: #000;
-    margin-bottom: 3.5vw; 
+    margin-bottom: 4vw; /* هامش سفلي أكبر */
     border-radius: var(--border-radius-card);
     overflow: hidden;
     box-shadow: var(--shadow-deep-space);
-    border: 3px solid var(--secondary-color); 
+    border: 4px solid var(--secondary-color); /* حدود أسمك */
 
     height: 0;
     padding-bottom: 56.25%; 
-    max-height: 550px; 
+    max-height: 600px; /* زيادة أقصى ارتفاع */
     margin-left: auto;
     margin-right: auto;
 }
@@ -656,17 +678,17 @@ a:hover {
 }
 
 .movie-info p {
-    margin-bottom: 1.2rem; 
-    font-size: clamp(0.95rem, 1.2vw, 1.15rem); 
+    margin-bottom: 1.5rem; /* مسافة أكبر بين الفقرات */
+    font-size: clamp(1rem, 1.3vw, 1.25rem); /* حجم أكبر للنص */
     line-height: 1.8;
     font-weight: 500;
-    opacity: 0.95;
-    text-shadow: 0 0 4px rgba(0,0,0,0.6);
-    background: rgba(10, 0, 20, 0.7); /* خلفية خفيفة للمعلومات */
-    padding: 0.7rem 1.2rem;
+    opacity: 0.98;
+    text-shadow: 0 0 5px rgba(0,0,0,0.7);
+    background: rgba(10, 0, 20, 0.75); /* خلفية أغمق للمعلومات */
+    padding: 1rem 1.8rem; /* بادينج أكبر */
     border-radius: var(--border-radius-card);
-    border: 1px solid var(--light-dark-color);
-    margin-top: 0.8rem; /* مسافة بين الفقرات */
+    border: 1px solid var(--primary-color); /* حدود بنفسجية */
+    margin-top: 1rem; 
 }
 .movie-info p:first-of-type {
     margin-top: 0;
@@ -675,18 +697,18 @@ a:hover {
 
 /* Poster in movie details - تصميم "Cosmic Data Node" */
 #movie-details-poster {
-    max-width: clamp(200px, 22vw, 300px); 
+    max-width: clamp(220px, 25vw, 350px); /* حجم أكبر للبوستر */
     height: auto;
     border-radius: var(--border-radius-card);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); /* ظل أعمق */
     display: block;
-    margin: 0 auto 3.5vw auto; 
-    border: 3px solid var(--primary-color);
+    margin: 0 auto 4vw auto; /* هامش سفلي أكبر */
+    border: 4px solid var(--primary-color); /* حدود أسمك */
     transition: transform var(--transition-speed), box-shadow var(--transition-speed);
 }
 #movie-details-poster:hover {
-    transform: scale(1.02); 
-    box-shadow: var(--shadow-neon-glow), 0 0 30px var(--secondary-color);
+    transform: scale(1.03); /* تكبير أكبر */
+    box-shadow: var(--shadow-neon-glow), 0 0 40px var(--secondary-color); /* توهج أقوى */
 }
 
 /* Suggested Movies Section - تصميم "Galactic Projections" */
@@ -701,11 +723,11 @@ a:hover {
 .main-footer {
     background-color: var(--light-dark-color);
     color: var(--text-muted);
-    padding: 3.5vw 0; 
+    padding: 4vw 0; /* بادينج أكبر */
     text-align: center;
     font-family: var(--font-family-arabic);
-    border-top: 6px solid var(--primary-color); 
-    box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.6);
+    border-top: 8px solid var(--primary-color); /* حدود أسمك */
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.7); /* ظل أعمق */
     position: relative;
     overflow: hidden;
 }
@@ -721,7 +743,7 @@ a:hover {
     background-image: radial-gradient(var(--accent-color) 0.3px, transparent 0.3px);
     background-size: 100px 100px;
     background-position: 0 0;
-    opacity: 0.03; 
+    opacity: 0.05; /* توهج أكثر وضوحًا قليلاً */
     animation: particle-move 40s linear infinite;
     z-index: 0;
 }
@@ -740,54 +762,46 @@ a:hover {
 }
 
 .main-footer p {
-    margin-bottom: 2.5vw; 
-    font-size: clamp(0.85rem, 1vw, 1rem); 
-    line-height: 1.7;
-    opacity: 0.9;
-    text-shadow: 0 0 2px rgba(0,0,0,0.5);
+    margin-bottom: 3vw; /* هامش سفلي أكبر */
+    font-size: clamp(0.9rem, 1.1vw, 1.05rem); /* حجم خط أكبر */
+    line-height: 1.8;
+    opacity: 0.95;
+    text-shadow: 0 0 3px rgba(0,0,0,0.6);
 }
 
 .footer-links {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 1.5vw; 
-    margin-top: 1.5vw; 
+    gap: 1.8vw; /* مسافة أكبر بين الروابط */
+    margin-top: 2vw; /* هامش علوي أكبر */
 }
 
 .footer-links a {
     color: var(--accent-color);
     text-decoration: none;
-    font-size: clamp(0.9rem, 1.1vw, 1.05rem); 
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem); /* حجم خط أكبر للروابط */
     font-weight: 700;
-    padding: 1rem 2.2rem; 
+    padding: 1.1rem 2.4rem; /* بادينج أكبر */
     border: 2px solid var(--accent-color);
     border-radius: var(--border-radius-prime);
     transition: all var(--transition-speed) ease-in-out;
     white-space: nowrap;
-    box-shadow: 0 6px 18px rgba(0, 255, 255, 0.3);
-    background: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 255, 255, 0.4); /* ظل أقوى */
+    background: rgba(0, 0, 0, 0.4); /* خلفية أغمق */
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
 }
 
 .footer-links a:hover {
     background-color: var(--accent-color);
     color: var(--dark-color);
-    transform: translateY(-4px) scale(1.05); 
+    transform: translateY(-5px) scale(1.06); /* تأثير أكبر */
     box-shadow: var(--shadow-neon-glow);
     border-color: var(--primary-color);
 }
 
-/* Media Queries - للتحكم في التصميم المتجاوب باحترافية */
-@media (min-width: 993px) { 
-    .video-player-container {
-        max-width: 850px; 
-        height: calc(850px * 9 / 16); 
-        padding-bottom: 0;
-    }
-}
-
+/* Media Queries - للتحكم في التصميم المتجاوب باحترافية (بدون قائمة هامبرغر) */
 @media (max-width: 992px) { /* للتابلت والموبايل الكبير */
     .main-header {
         padding: 0.5rem 0; 
@@ -796,72 +810,66 @@ a:hover {
 
     .main-header .container {
         padding: 0 3vw;
-        gap: 0.6rem; 
+        flex-direction: row; /* الحفاظ على العناصر في صف واحد */
+        flex-wrap: wrap; /* السماح للعناصر بالنزول لصف جديد إذا لزم الأمر */
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.8rem; /* فجوة أصغر بين العناصر */
     }
     
     .main-header .logo {
-        font-size: clamp(1.6rem, 3.5vw, 2rem); 
+        font-size: clamp(1.8rem, 4.5vw, 2.2rem); 
+        letter-spacing: 1.5px;
+        order: 1; /* تأكد من ترتيب اللوجو أولاً */
+        margin-right: auto; /* يدفع اللوجو لليمين */
     }
 
+    /* الـ Navigation على الموبايل - تظهر دائمًا */
     .main-nav {
-        max-height: 0; 
-        flex-basis: 100%;
-        position: absolute;
-        top: 100%; 
-        left: 0;
-        background: rgba(0, 0, 10, 0.98); 
-        box-shadow: 0 10px 20px rgba(0,0,0,0.7);
-        border-bottom-left-radius: var(--border-radius-prime);
-        border-bottom-right-radius: var(--border-radius-prime);
-        z-index: 99; 
-        overflow: hidden; 
-        transition: max-height 0.6s ease-in-out; 
+        flex-basis: 100%; /* تأخذ سطرًا كاملاً */
+        justify-content: center; /* توسيط الروابط */
+        order: 3; /* تظهر في الأسفل بعد البحث */
+        margin-top: 0.5rem; /* مسافة من الأعلى */
+        background: rgba(0, 0, 10, 0.8); /* خلفية شفافة للناف */
+        border-radius: var(--border-radius-prime);
+        padding: 0.4rem 0;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
     }
-
-    .main-nav.nav-open {
-        max-height: 50vh; /* ارتفاع مدروس للقائمة المفتوحة على الموبايل */
-        margin-top: 0;
-        border-top: 1px solid var(--primary-color); /* خط فاصل عند الفتح */
-    }
-
     .main-nav ul {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        padding: 0.8rem 0;
+        flex-wrap: wrap; /* السماح للروابط بالنزول لسطر جديد */
+        justify-content: center;
+        gap: 0.8rem; /* مسافة بين الروابط */
     }
-
     .main-nav ul li {
-        margin: 0.4rem 0; /* هامش أقل بين عناصر القائمة */
-        width: 100%;
+        margin: 0; /* إزالة المارجن الجانبي */
     }
-
     .main-nav ul li a {
-        font-size: clamp(0.85rem, 1.8vw, 0.95rem); /* حجم خط أصغر للموبايل */
-        padding: 0.7rem 1.2rem; /* بادينج أقل للموبايل */
-        text-align: right;
-        background: var(--light-dark-color);
-        display: block;
-        box-shadow: 0 0 6px rgba(0,0,0,0.3);
-        border-right: 3px solid var(--secondary-color); /* تغيير لليمين */
-        border-left: none; /* إزالة اليسار */
+        font-size: clamp(0.85rem, 1.8vw, 0.95rem); 
+        padding: 0.6rem 1rem; 
+        background: rgba(255, 255, 255, 0.08); /* خلفية أوضح قليلاً */
+        border: 1px solid var(--primary-color);
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
     .main-nav ul li a:hover {
-        transform: none; 
+        transform: none; /* إزالة الترانسفورم الزائد */
         background-color: var(--primary-color);
         box-shadow: 0 0 10px var(--primary-color);
         color: var(--text-color);
     }
-
+    .main-nav ul li a::before {
+        display: none; /* إزالة الخط السفلي */
+    }
 
     .search-container {
-        order: 1; 
-        width: auto;
-        flex-grow: 1;
-        margin-right: 0;
+        order: 2; /* تأتي بعد اللوجو */
+        flex-grow: 1; /* تأخذ المساحة المتاحة */
+        margin-right: 0; /* إزالة الهامش الزائد */
+        max-width: 50%; /* تحديد أقصى عرض */
+        margin-left: auto; /* يدفع البحث لليسار */
         padding: 0.3rem 0.8rem;
-        max-width: 60%; 
-        margin-left: auto; 
+        background: var(--dark-color); /* خلفية أغمق للبحث */
+        border: 1px solid var(--secondary-color);
     }
 
     .search-container input {
@@ -876,31 +884,6 @@ a:hover {
         font-size: clamp(0.75rem, 1.2vw, 0.85rem);
         padding: 0.4rem 1.2rem;
     }
-
-    .menu-toggle {
-        display: flex;
-        position: static;
-        margin-right: 0;
-        order: 0; 
-        margin-left: auto; 
-        width: 32px;
-        height: 22px;
-    }
-    .menu-toggle span {
-        height: 3px;
-    }
-    
-    /* عند فتح القائمة، تتغير أيقونة الهامبرغر */
-    .menu-toggle.active span:nth-child(1) {
-        transform: translateY(9px) rotate(45deg);
-    }
-    .menu-toggle.active span:nth-child(2) {
-        opacity: 0;
-    }
-    .menu-toggle.active span:nth-child(3) {
-        transform: translateY(-9px) rotate(-45deg);
-    }
-
 
     .hero {
         height: 75vh; 
@@ -917,199 +900,210 @@ a:hover {
         height: 100%;
     }
     .hero h1 {
-        font-size: clamp(2.2rem, 7vw, 3.5rem);
-        margin-bottom: 2vh;
+        font-size: clamp(2.5rem, 7vw, 4rem);
+        margin-bottom: 2.5vh;
         max-width: 95%;
     }
     .hero p {
-        font-size: clamp(0.9rem, 2.5vw, 1.3rem);
-        margin-bottom: 3vh;
+        font-size: clamp(1rem, 2.5vw, 1.4rem);
+        margin-bottom: 3.5vh;
         max-width: 95%;
-        padding: 0.8rem 1.2rem;
+        padding: 0.9rem 1.5rem;
     }
     .hero .btn {
-        font-size: clamp(0.95rem, 2vw, 1.1rem);
-        padding: 0.9rem 1.8rem;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        padding: 1rem 2rem;
     }
 
     .movie-grid-section, .movie-details-section, .suggested-movies-section {
-        padding: 5vw 0;
+        padding: 6vw 0; /* بادينج أكبر */
     }
     .movie-grid-section h2, .movie-details-section h1, .suggested-movies-section h2 {
-        font-size: clamp(2rem, 5vw, 2.8rem);
-        margin-bottom: 3.5vw;
-        padding-bottom: 0.6rem;
+        font-size: clamp(2.2rem, 5.5vw, 3.2rem);
+        margin-bottom: 4vw;
+        padding-bottom: 0.8rem;
     }
 
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(clamp(120px, 46vw, 180px), 1fr)); /* 2 بوستر في الصف على الأغلب */
-        gap: 3.5vw;
-        padding: 0 3vw;
+        grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 46vw, 200px), 1fr)); /* 2 بوستر في الصف على الأغلب */
+        gap: 4vw; /* مسافة أكبر */
+        padding: 0 4vw;
     }
 
     .movie-card img {
-        height: clamp(170px, 65vw, 250px);
+        height: clamp(180px, 65vw, 280px);
     }
 
     .movie-card h3 {
-        font-size: clamp(0.8rem, 2vw, 0.95rem);
-        padding: 0.7rem;
-        min-height: 45px;
+        font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+        padding: 0.8rem;
+        min-height: 55px;
     }
 
     .pagination {
-        margin-top: 4.5vw;
-        gap: 2.5vw;
+        margin-top: 5vw;
+        gap: 3vw;
     }
     .pagination .btn-page {
-        padding: 0.8rem 1.6rem;
-        font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+        padding: 0.9rem 1.8rem;
+        font-size: clamp(0.85rem, 1.5vw, 1rem);
     }
 
     .movie-details-section .back-btn {
-        margin-bottom: 4.5vw;
-        padding: 0.8rem 1.6rem;
-        font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+        margin-bottom: 5vw;
+        padding: 0.9rem 1.8rem;
+        font-size: clamp(0.85rem, 1.5vw, 1rem);
     }
 
     .video-player-container {
-        max-height: 350px;
-        margin-bottom: 4.5vw;
+        max-height: 400px; /* زيادة ارتفاع الفيديو قليلاً */
+        margin-bottom: 5vw;
     }
 
     .movie-info p {
-        margin-bottom: 1rem;
-        font-size: clamp(0.85rem, 1.5vw, 1.05rem);
-        line-height: 1.6;
+        margin-bottom: 1.2rem;
+        font-size: clamp(0.9rem, 1.8vw, 1.15rem);
+        line-height: 1.7;
     }
 
     #movie-details-poster {
-        max-width: clamp(180px, 35vw, 280px);
-        margin: 0 auto 4.5vw auto;
+        max-width: clamp(200px, 40vw, 300px);
+        margin: 0 auto 5vw auto;
     }
 
     .suggested-movies-section {
-        margin-top: 5.5vw;
-        padding-top: 5.5vw;
+        margin-top: 6vw;
+        padding-top: 6vw;
     }
 
     .main-footer {
-        padding: 4.5vw 0;
+        padding: 5vw 0;
     }
     .main-footer p {
-        font-size: clamp(0.8rem, 1.2vw, 0.95rem);
-        margin-bottom: 3vw;
+        font-size: clamp(0.85rem, 1.5vw, 1rem);
+        margin-bottom: 3.5vw;
     }
     .footer-links {
-        gap: 1.2rem;
+        gap: 1.5rem;
         flex-direction: column; /* الروابط تأتي تحت بعضها */
         align-items: center;
     }
     .footer-links a {
-        font-size: clamp(0.85rem, 1.5vw, 1rem);
-        padding: 0.9rem 1.8rem;
+        font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+        padding: 1rem 2rem;
         max-width: 90%; /* رابط واحد في الصف على الموبايل */
     }
 }
 
 @media (max-width: 480px) { /* لأصغر الهواتف */
     .main-header .container {
-        padding: 0 2.5vw;
+        padding: 0 2vw;
+        gap: 0.6rem;
     }
     .main-header .logo {
-        font-size: clamp(1.4rem, 4.5vw, 1.8rem);
+        font-size: clamp(1.6rem, 5vw, 2rem);
+        letter-spacing: 1px;
     }
     .search-container {
-        max-width: 50%;
-        padding: 0.25rem 0.6rem;
+        max-width: 60%; /* إعطاء مساحة أكبر للبحث */
+        padding: 0.2rem 0.5rem;
     }
     .search-container input {
-        font-size: clamp(0.7rem, 1.5vw, 0.8rem);
-        padding: 0.3rem 0.5rem;
+        font-size: clamp(0.7rem, 2vw, 0.8rem);
+        padding: 0.25rem 0.6rem;
     }
     .search-container button {
-        font-size: clamp(0.7rem, 1.5vw, 0.8rem);
-        padding: 0.3rem 1rem;
+        font-size: clamp(0.7rem, 2vw, 0.8rem);
+        padding: 0.25rem 1rem;
     }
-    .menu-toggle {
-        width: 28px;
-        height: 20px;
+
+    .main-nav {
+        margin-top: 0.4rem;
+        padding: 0.3rem 0;
     }
-    .menu-toggle span {
-        height: 2.5px;
+    .main-nav ul {
+        gap: 0.6rem;
+    }
+    .main-nav ul li a {
+        font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+        padding: 0.5rem 0.8rem;
     }
 
     .hero {
-        height: 70vh;
-        padding: 0 4vw;
+        height: 65vh;
+        min-height: 400px;
+        padding: 0 3vw;
     }
     .hero h1 {
-        font-size: clamp(1.8rem, 8vw, 2.8rem);
+        font-size: clamp(2rem, 9vw, 3.2rem);
+        margin-bottom: 2vh;
     }
     .hero p {
-        font-size: clamp(0.8rem, 3vw, 1.1rem);
-        padding: 0.7rem 1rem;
+        font-size: clamp(0.85rem, 3.2vw, 1.2rem);
+        padding: 0.8rem 1.2rem;
+        margin-bottom: 3vh;
     }
     .hero .btn {
-        font-size: clamp(0.85rem, 2.5vw, 1rem);
-        padding: 0.8rem 1.5rem;
+        font-size: clamp(0.9rem, 3vw, 1.1rem);
+        padding: 0.9rem 1.6rem;
     }
 
     .movie-grid-section h2, .movie-details-section h1, .suggested-movies-section h2 {
-        font-size: clamp(1.6rem, 6vw, 2.2rem);
-        margin-bottom: 3vw;
+        font-size: clamp(1.8rem, 7vw, 2.5rem);
+        margin-bottom: 3.5vw;
     }
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(clamp(100px, 48vw, 150px), 1fr)); 
-        gap: 3vw;
-        padding: 0 2.5vw;
+        grid-template-columns: repeat(auto-fill, minmax(clamp(110px, 47vw, 160px), 1fr)); 
+        gap: 3.5vw;
+        padding: 0 3vw;
     }
     .movie-card img {
-        height: clamp(140px, 65vw, 200px);
+        height: clamp(160px, 68vw, 220px);
     }
     .movie-card h3 {
-        font-size: clamp(0.7rem, 2.5vw, 0.85rem);
-        min-height: 40px;
-        padding: 0.6rem;
+        font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+        min-height: 48px;
+        padding: 0.7rem;
     }
     .pagination {
-        margin-top: 4vw;
-        gap: 2vw;
+        margin-top: 4.5vw;
+        gap: 2.5vw;
     }
     .pagination .btn-page {
-        padding: 0.7rem 1.4rem;
-        font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+        padding: 0.8rem 1.6rem;
+        font-size: clamp(0.8rem, 1.8vw, 0.9rem);
     }
     .movie-details-section .back-btn {
-        margin-bottom: 4vw;
-        padding: 0.7rem 1.4rem;
-        font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+        margin-bottom: 4.5vw;
+        padding: 0.8rem 1.6rem;
+        font-size: clamp(0.8rem, 1.8vw, 0.9rem);
     }
     .video-player-container {
-        max-height: 250px;
-        margin-bottom: 4vw;
+        max-height: 300px;
+        margin-bottom: 4.5vw;
     }
     .movie-info p {
-        font-size: clamp(0.75rem, 2vw, 0.95rem);
-        margin-bottom: 0.8rem;
+        font-size: clamp(0.8rem, 2.2vw, 1rem);
+        margin-bottom: 1rem;
+        padding: 0.9rem 1.5rem;
     }
     #movie-details-poster {
-        max-width: clamp(150px, 40vw, 200px);
-        margin: 0 auto 4vw auto;
+        max-width: clamp(180px, 45vw, 250px);
+        margin: 0 auto 4.5vw auto;
     }
     .suggested-movies-section {
-        margin-top: 5vw;
-        padding-top: 5vw;
+        margin-top: 5.5vw;
+        padding-top: 5.5vw;
     }
     .main-footer {
-        padding: 4vw 0;
+        padding: 4.5vw 0;
     }
     .main-footer p {
-        font-size: clamp(0.75rem, 1.5vw, 0.9rem);
-        margin-bottom: 2.5vw;
+        font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+        margin-bottom: 3vw;
     }
     .footer-links a {
-        padding: 0.8rem 1.6rem;
-        font-size: clamp(0.8rem, 1.8vw, 0.95rem);
+        padding: 0.9rem 1.8rem;
+        font-size: clamp(0.85rem, 2vw, 1rem);
     }
 }
