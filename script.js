@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. Movie Data (Example - Replace with your actual data source) ---
     const moviesData = [
-       {
+        {
             "id": 1,
             "title": "A Nice Girl Like You 2020",
             "description": "القصّة : لوسي نيل عازفة كمان، تكتشف إدمان صديقها جيف لمشاهدة المواد الإباحية، فتتشاجر معه، وينفصلا، وتصاب بصدمة عصبية، وتقرر على هذا الاساس تعزيز نفسيها، واكتشاف ذاتها خاصة بعد علاقة الصداقة التي تنشأ بينها وبين جرانت، حيث يساعدها على التغلب على مشاكلها السابقة مع صديقها جيف",
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "6.3/10",
             "duration": "1h 39m"
         },
-   
+    
         {
             "id": 3,
             "title": "Moms Friends 2024",
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
 
 
-            {
+        {
             "id": 6,
             "title":"Katas 2024 ",
             "description": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.5/10",
             "duration": "47m"
         },
-                 {
+                {
             "id": 7,
             "title":"INIT ",
             "description": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
@@ -158,13 +158,13 @@ document.addEventListener('DOMContentLoaded', () => {
             "release_date": "2025-6-17",
             "genre": "Drama, Erotic",
             "director": "Paul Michael Acero",
-            "cast":  "Dyessa Garcia as Louisa",
+            "cast": "Dyessa Garcia as Louisa",
             "embed_url": "https://player.vimeo.com/video/1094242186?badge",
             "rating": "7.5/10",
             "duration": "49m"
         },
 
-              {
+            {
             "id": 8,
             "title":"Sexy Neighbor Sisters 2024 ",
             "description": "رومنسي , إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
@@ -172,11 +172,11 @@ document.addEventListener('DOMContentLoaded', () => {
             "release_date": "2025-6-18",
             "genre": "Erotic Drama",
             "director": "Lee Dong-joon",
-            "cast":  "Jin Si-ah",
+            "cast": "Jin Si-ah",
             "embed_url": "https://player.vimeo.com/video/1094343142?badge",
             "rating": "7.5/10",
             "duration": " 1h 17m"
-        }, 
+        },
             {
             "id": 9,
             "title":"The Naughty List of Mr. Scrooge",
@@ -185,12 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "release_date": "2025-6-18",
             "genre": "Comedy, Holiday, Fantasy",
             "director": " Tim Burton for a darker twist, or Rob Marshall for a musical tone",
-            "cast":  "Ebenezer Scrooge",
+            "cast": "Ebenezer Scrooge",
             "embed_url": "https://player.vimeo.com/video/1094365176?badge",
             "rating": "7.5/10",
             "duration": "27m"
         },
-              {
+            {
             "id": 10,
             "title":"No Time to Die (2021) ",
             "description": "اكشن/ اثارة / حركة",
@@ -198,14 +198,14 @@ document.addEventListener('DOMContentLoaded', () => {
             "release_date": "2025-6-18",
             "genre":"Action, Adventure, Thriller, Spy",
             "director": " Cary Joji Fukunaga",
-            "cast":  "Daniel Craig",
+            "cast": "Daniel Craig",
             "embed_url": "https://player.vimeo.com/video/1094454739?badge",
             "rating": "7.5/10",
             "duration": "27m"
         },
 
         
-             {
+            {
             "id": 11,
             "title":"(Wolfman) 2025",
             "description": "When Blake Lovell (Christopher Abbott), a family man from San Francisco, inherits his childhood farmhouse in rural Oregon after his father’s disappearance, he convinces his wife Charlotte (Julia Garner) and young daughter Ginger (Matilda Firth) to join him. Soon after arrival, the family is attacked by a mysterious beast and barricades themselves inside the home. As night falls, Blake begins a slow, harrowing transformation into a monstrous creature—forcing Charlotte to decide whether the threat within is more dangerous than the one outside.",
@@ -214,12 +214,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "release_date": "2025-6-19",
             "genre":"Horror, Mystery & Thriller",
             "director": "Leigh Whannell",
-            "cast":  "Christopher Abbott",
+            "cast": "Christopher Abbott",
             "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239017&hd=2&",
             "rating": "7.5/10",
             "duration": "1h 30m"
         },
-   {
+        {
             "id": 12,
             "title":"Old (2021) BluRay Full Movie HD | Cimawbas.Tv",
             "description": "Old (2021) is a psychological thriller directed by M. Night Shyamalan, centered on a family who visits a mysterious, secluded beach while on vacation—only to discover that something about the place is causing them to age rapidly. As hours pass, their lives compress into a single day, forcing them to confront mortality, buried secrets, and emotional truths in a race against time",
@@ -227,12 +227,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "release_date": "2025-6-20",
             "genre":"Mystery, Thriller, Drama, Psychological Horror",
             "director": "M. Night Shyamalan",
-            "cast":   "Gael García Bernal as Guy",
+            "cast": "Gael García Bernal as Guy",
             "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239018&hd=2&",
             "rating": "7.9/10",
             "duration": "1h 48m"
         },
-             {
+            {
             "id": 13,
             "title":" Thaghut",
             "description": " يحكي فيلم الرعب الأخير هذا قصة رحلة امرأة تدعى عينون تريد إنقاذ نفسها من الضلال والسحر واللعنة كما وجدت عينون نفسها متورطة في تعاليم ضالة. فكيف سيتمكن باغاس وريني من إنقاذها وإعادتها إلى الطريق الصحيح؟",
@@ -240,44 +240,45 @@ document.addEventListener('DOMContentLoaded', () => {
             "release_date": "2025-6-20",
             "genre":"Mystery, Thriller, Drama, Psychological Horror",
             "director": "M. Night Shyamalan",
-            "cast":     "Yasmin Napier as Ainun",
+            "cast": "Yasmin Napier as Ainun",
             "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239019&hd=2&",
             "rating": "7.9/10",
             "duration": "1h 42m"
         },
-{
-  "id": 14,
-  "title": "Snowpiercer (2013)",
-  "description": "بعد تجربة فاشلة للتصدي للاحتباس الحراري، يحدث عصر جليدي يقضي على الحياة في الأرض، ولا ينجو سوى من يعيشون في قطار ضخم. يتزعم كيرتس ثورة من سكان ذيل القطار ضد الصفوة في المقدمة.",
-  "poster": "https://i.ibb.co/wFWWWYTD/photo-5834902488719935587-w.jpg",
-  "release_date": "2025-06-20",
-  "genre": "Science Fiction",
-  "director": "Bong Joon-ho",
-  "cast": "Chris Evans as Curtis Everett",
-  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239022&hd=2", 
-  "rating": "7.9/10",
-  "duration": "PT2H2M"
-},
+        {
+            "id": 14,
+            "title": "Snowpiercer (2013)",
+            "description": "بعد تجربة فاشلة للتصدي للاحتباس الحراري، يحدث عصر جليدي يقضي على الحياة في الأرض، ولا ينجو سوى من يعيشون في قطار ضخم. يتزعم كيرتس ثورة من سكان ذيل القطار ضد الصفوة في المقدمة.",
+            "poster": "https://i.ibb.co/wFWWWYTD/photo-5834902488719935587-w.jpg",
+            "release_date": "2025-06-20",
+            "genre": "Science Fiction",
+            "director": "Bong Joon-ho",
+            "cast": "Chris Evans as Curtis Everett",
+            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239022&hd=2",
+            "rating": "7.9/10",
+            "duration": "PT2H2M"
+        },
 
         {
-  "@context": "https://schema.org",
-  "@type": "Movie",
-  "id": 15,
-  "title": "Flight Risk",
-  "description": "طيار غامض يُكلف بنقل شاهد فيدرالي من ألاسكا، لكن الرحلة تتحول إلى صراع مميت حين يُكشف أن الطيار قاتل مأجور.",
-  "poster": "https://i.ibb.co/zVN8s7qX/images.jpg",
-  "release_date": "2025-01-24",
-  "genre": "Action, Thriller",
-  "director": "Mel Gibson",
-  "cast": "Mark Wahlberg, Michelle Dockery, Topher Grace, Leah Remini, Paul Ben-Victor",
-  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239023&hd=2&",
-  "rating": "7.9/10",
-  "duration": "PT1H42M"
-}
+            "@context": "https://schema.org",
+            "@type": "Movie",
+            "id": 15,
+            "title": "Flight Risk",
+            "description": "طيار غامض يُكلف بنقل شاهد فيدرالي من ألاسكا، لكن الرحلة تتحول إلى صراع مميت حين يُكشف أن الطيار قاتل مأجور.",
+            "poster": "https://i.ibb.co/zVN8s7qX/images.jpg",
+            "release_date": "2025-01-24",
+            "genre": "Action, Thriller",
+            "director": "Mel Gibson",
+            "cast": "Mark Wahlberg, Michelle Dockery, Topher Grace, Leah Remini, Paul Ben-Victor",
+            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239023&hd=2&",
+            "rating": "7.9/10",
+            "duration": "PT1H42M"
+        }
 
     ];
 
-    let moviesDataForPagination = [...moviesData];
+    // سيتم ترتيب هذه المصفوفة عشوائيًا عند تحميل الصفحة وفي كل مرة نعود فيها للصفحة الرئيسية
+    let moviesDataForPagination = [];
 
     // --- 4. Functions ---
 
@@ -318,11 +319,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // تم تعديل وظيفة إنشاء بطاقة الفيلم لدعم التحميل الكسول للصور
     function createMovieCard(movie) {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
         movieCard.innerHTML = `
-            <img src="${movie.poster}" alt="${movie.title}">
+            <img data-src="${movie.poster}" alt="${movie.title}" class="lazyload">
             <h3>${movie.title}</h3>
         `;
         movieCard.addEventListener('click', () => {
@@ -332,6 +334,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return movieCard;
     }
+
+    // وظيفة لتطبيق التحميل الكسول على الصور بعد إضافتها لـ DOM
+    function initializeLazyLoad() {
+        if ('IntersectionObserver' in window) {
+            let lazyLoadImages = document.querySelectorAll('.lazyload');
+            let imageObserver = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        let image = entry.target;
+                        image.src = image.dataset.src;
+                        image.classList.remove('lazyload');
+                        observer.unobserve(image);
+                    }
+                });
+            });
+
+            lazyLoadImages.forEach(function(image) {
+                imageObserver.observe(image);
+            });
+        } else {
+            // Fallback for browsers that do not support IntersectionObserver
+            let lazyLoadImages = document.querySelectorAll('.lazyload');
+            lazyLoadImages.forEach(function(image) {
+                image.src = image.dataset.src;
+            });
+        }
+        console.log('🖼️ [Lazy Load] Initialized IntersectionObserver for images.');
+    }
+
 
     function displayMovies(moviesToDisplay, targetGridElement) {
         if (!targetGridElement) {
@@ -350,6 +381,9 @@ document.addEventListener('DOMContentLoaded', () => {
             targetGridElement.appendChild(createMovieCard(movie));
         });
         console.log(`🎬 [Display] Displayed ${moviesToDisplay.length} movies in ${targetGridElement.id}.`);
+
+        // استدعاء التحميل الكسول بعد إضافة الأفلام
+        initializeLazyLoad();
     }
 
     function paginateMovies(moviesArray, page) {
@@ -383,11 +417,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             console.log(`🔍 [Search] Performed search for "${query}". Found ${filteredMovies.length} results.`);
         } else {
-            filteredMovies = [...moviesData];
+            // عند إفراغ البحث، نعرض الأفلام الأصلية مرتبة عشوائيًا
+            filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
             }
-            console.log('🔍 [Search] Search query empty, showing all movies.');
+            console.log('🔍 [Search] Search query empty, showing all movies (randomized).');
         }
         currentPage = 1;
         moviesDataForPagination = filteredMovies;
@@ -430,6 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[Video Player] Loading spinner shown.');
                 }
 
+                // تأخير بسيط قبل تعيين src لضمان ظهور الـ spinner
                 setTimeout(() => {
                     moviePlayer.src = movie.embed_url;
                     console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
@@ -540,6 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const otherMovies = moviesData.filter(movie => movie.id !== currentMovieId);
+        // الترتيب العشوائي يحدث هنا في كل مرة يتم استدعاء الوظيفة
         const shuffled = otherMovies.sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, 15);
 
@@ -563,7 +600,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (searchInput) searchInput.value = '';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
-        moviesDataForPagination = [...moviesData];
+
+        // إعادة ترتيب الأفلام عشوائيًا لكل مرة يتم فيها عرض الصفحة الرئيسية
+        moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
         if (videoOverlay) {
