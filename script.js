@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
   "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239022&hd=2", 
   "rating": "7.9/10",
   "duration": "PT2H2M"
-}
+},
 
         {
   "@context": "https://schema.org",
