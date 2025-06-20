@@ -258,6 +258,21 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.9/10",
             "duration": "2h 2m"
         },
+        {
+  "@context": "https://schema.org",
+  "@type": "Movie",
+  "id": 15,
+  "title": "Flight Risk",
+  "description": "طيار غامض يُكلف بنقل شاهد فيدرالي من ألاسكا، لكن الرحلة تتحول إلى صراع مميت حين يُكشف أن الطيار قاتل مأجور.",
+  "poster": "https://i.ibb.co/zVN8s7qX/images.jpg",
+  "release_date": "2025-01-24",
+  "genre": "Action, Thriller",
+  "director": "Mel Gibson",
+  "cast": "Mark Wahlberg, Michelle Dockery, Topher Grace, Leah Remini, Paul Ben-Victor",
+  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239023&hd=2&autoplay=1",
+  "rating": "7.9/10",
+  "duration": "PT1H42M"
+}
 
     ];
 
@@ -525,7 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const otherMovies = moviesData.filter(movie => movie.id !== currentMovieId);
         const shuffled = otherMovies.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 11);
+        const selected = shuffled.slice(0, 15);
 
         if (selected.length === 0) {
             suggestedMovieGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد أفلام مقترحة حالياً.</p>';
