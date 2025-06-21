@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
   "embedUrl": "https://streamtape.com/e/gopa76QkOpuqM8P",
   "contentUrl": "https://streamtape.com/e/gopa76QkOpuqM8P",
   "duration": "PT1H34M"
-}
+},
 
 
     
