@@ -69,19 +69,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. Movie Data (Example - Replace with your actual data source) ---
     const moviesData = [
-        {
-            "id": 1,
-            "title": "A Nice Girl Like You 2020",
-            "description": "القصّة : لوسي نيل عازفة كمان، تكتشف إدمان صديقها جيف لمشاهدة المواد الإباحية، فتتشاجر معه، وينفصلا، وتصاب بصدمة عصبية، وتقرر على هذا الاساس تعزيز نفسيها، واكتشاف ذاتها خاصة بعد علاقة الصداقة التي تنشأ بينها وبين جرانت، حيث يساعدها على التغلب على مشاكلها السابقة مع صديقها جيف",
-            "poster": "https://i.ibb.co/k2jg6TSd/photo-5852675531542218174-y.jpg",
-            "release_date": "2020-07-17",
-            "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط",
-            "director": "Chris Riedell",
-            "cast": "Lucy Hale",
-            "embed_url": "https://streamtape.com/e/gopa76QkOpuqM8P",
-            "rating": "5.5/10",
-            "duration": "1h 34m"
-        },
+    {
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "A Nice Girl Like You 2020 Trailer",
+  "description": "القصّة : لوسي نيل عازفة كمان، تكتشف إدمان صديقها جيف لمشاهدة المواد الإباحية، فتتشاجر معه، وينفصلا، وتصاب بصدمة عصبية، وتقرر على هذا الاساس تعزيز نفسيها، واكتشاف ذاتها خاصة بعد علاقة الصداقة التي تنشأ بينها وبين جرانت، حيث يساعدها على التغلب على مشاكلها السابقة مع صديقها جيف",
+  "uploadDate": "2020-07-17T00:00:00Z",
+  "thumbnailUrl": "https://i.ibb.co/k2jg6TSd/photo-5852675531542218174-y.jpg",
+  "embedUrl": "https://streamtape.com/e/gopa76QkOpuqM8P",
+  "duration": "PT1H34M"
+},
         {
             "id": 2,
             "title": "Sleeping with the Enemy 1991",
