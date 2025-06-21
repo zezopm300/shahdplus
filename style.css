@@ -266,7 +266,7 @@ a:hover {
 }
 
 
-/* تحديثات الـ Nav - أنيقة ومضغوطة */
+/* تحديثات الـ Nav - أنيقة ومضغوطة - (تم تعديل الألوان والأنيميشن هنا فقط) */
 .main-nav {
     flex-grow: 1;
     display: flex;
@@ -302,9 +302,13 @@ a:hover {
     font-weight: 600;
     text-shadow: 0 0 3px rgba(0,0,0,0.4);
     letter-spacing: 0.3px;
-    background: rgba(255, 255, 255, 0.015); /* خلفية شفافة جداً */
-    border: 1px solid rgba(138, 43, 226, 0.15); /* حدود رقيقة */
-    backdrop-filter: blur(2px);
+
+    /* >>>>>> تعديلات الألوان والأنيميشن للـ NAV هنا <<<<<< */
+    background: rgba(123, 31, 162, 0.1); /* خلفية بنفسجية شفافة قليلاً (Primary color with low opacity) */
+    border: 1px solid var(--primary-color); /* حدود بلون الـ Primary */
+    color: var(--text-color); /* لون النص الأساسي */
+    backdrop-filter: blur(5px); /* تأثير بلور أقوى قليلاً */
+    box-shadow: 0 0 8px rgba(123, 31, 162, 0.2); /* ظل خفيف للبروز */
 }
 
 .main-nav ul li a::before {
@@ -313,10 +317,11 @@ a:hover {
     bottom: 0;
     right: 0;
     width: 0;
-    height: 1.5px;
-    background: var(--secondary-color);
-    box-shadow: 0 0 6px var(--secondary-color);
-    transition: width var(--transition-speed) ease-out;
+    height: 3px; /* سمك خط التحت زاد قليلاً */
+    background: linear-gradient(to right, var(--accent-color), var(--secondary-color)); /* تدرج لوني للخط */
+    box-shadow: 0 0 10px var(--accent-color), 0 0 20px rgba(0, 229, 255, 0.4); /* توهج أكبر للخط */
+    transition: width calc(var(--transition-speed) * 1.5) cubic-bezier(0.25, 0.46, 0.45, 0.94); /* انتقال أبطأ وأكثر سلاسة */
+    transform-origin: left; /* بدء التوسع من اليسار */
 }
 
 .main-nav ul li a:hover::before {
@@ -325,10 +330,11 @@ a:hover {
 }
 
 .main-nav ul li a:hover {
-    background-color: var(--light-dark-color);
-    color: var(--accent-color);
-    box-shadow: var(--shadow-focus-pulse);
-    transform: translateY(-1px);
+    background-color: var(--light-dark-color); /* خلفية داكنة عند التحويم */
+    color: var(--accent-color); /* لون أزرق نيون عند التحويم */
+    box-shadow: 0 0 15px var(--accent-color), 0 0 25px rgba(0, 229, 255, 0.3); /* توهج أكبر عند التحويم */
+    transform: translateY(-2px); /* ارتفاع بسيط لأعلى */
+    border-color: var(--accent-color); /* تغيير لون الحدود عند التحويم */
 }
 
 /* Search Container - تصميم "Stealth Search" */
@@ -886,13 +892,13 @@ a:hover {
         padding: 0.2rem 0.7rem;
     }
 
-    /* الـ Navigation على الموبايل - تظهر تحت البحث */
+    /* الـ Navigation على الموبايل - تظهر تحت البحث - (تم تعديل الألوان والأنيميشن هنا) */
     .main-nav {
         flex-basis: 100%;
         justify-content: center;
         order: 3;
         margin-top: 0.3rem;
-        background: rgba(3, 6, 11, 0.7);
+        background: rgba(3, 6, 11, 0.7); /* خلفية ثابتة وشفافة للـ NAV */
         border-radius: var(--border-radius-base);
         padding: 0.3rem 0;
         backdrop-filter: blur(5px);
@@ -912,18 +918,20 @@ a:hover {
     .main-nav ul li a {
         font-size: clamp(0.7rem, 1.3vw, 0.85rem);
         padding: 0.5rem 1rem;
-        background: rgba(255, 255, 255, 0.04);
+        background: rgba(123, 31, 162, 0.08); /* خلفية شفافة للروابط */
         border: 1px solid rgba(123, 31, 162, 0.1);
         box-shadow: 0 0 3px rgba(0,0,0,0.15);
+        color: var(--text-color); /* التأكيد على لون النص */
     }
     .main-nav ul li a:hover {
-        transform: none;
-        background-color: var(--primary-color);
+        transform: none; /* إزالة التحويل عند التحويم للحفاظ على الترتيب في الموبايل */
+        background-color: var(--primary-color); /* لون أساسي عند التحويم */
         box-shadow: 0 0 6px var(--primary-color);
-        color: var(--text-color);
+        color: var(--dark-color); /* لون داكن للنص عند التحويم */
+        border-color: var(--accent-color); /* لون الحدود عند التحويم */
     }
     .main-nav ul li a::before {
-        display: none;
+        display: none; /* إخفاء خط التحديد المتحرك على الموبايل */
     }
 
     .hero {
@@ -1075,7 +1083,7 @@ a:hover {
         padding: 0.15rem 0.6rem;
     }
 
-    /* التعديل لتكبير حجم الـ Nav على الموبايل قليلاً */
+    /* التعديل لتكبير حجم الـ Nav على الموبايل قليلاً - (تم تعديل الألوان والأنيميشن هنا) */
     .main-nav {
         margin-top: 0.25rem;
         padding: 0.25rem 0;
@@ -1087,6 +1095,10 @@ a:hover {
     .main-nav ul li a {
         font-size: clamp(0.65rem, 2vw, 0.8rem); /* تكبير حجم الخط قليلاً */
         padding: 0.4rem 0.8rem; /* زيادة الـ padding قليلاً */
+        background: rgba(123, 31, 162, 0.1); /* خلفية شفافة للروابط */
+        border: 1px solid rgba(123, 31, 162, 0.1);
+        box-shadow: 0 0 3px rgba(0,0,0,0.15);
+        color: var(--text-color); /* التأكيد على لون النص */
     }
 
     .hero {
