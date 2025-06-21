@@ -271,7 +271,20 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239023&hd=2&",
             "rating": "7.9/10",
             "duration": "PT1H42M"
-        }
+        },
+                {
+  "id": 16,
+  "title": "The Informers",
+  "description": "Set in 1983 Los Angeles, a group of morally lost individuals — wealthy youth, movie producers, rock stars, and criminals — navigate a world of excess, drugs, and emotional emptiness.",
+  "poster": "https://i.ibb.co/N2WhgF4F/unnamed.jpg",
+  "release_date": "2008-04-18",
+  "genre": "Drama, Crime",
+  "director": "Gregor Jordan",
+  "cast": "Billy Bob Thornton, Kim Basinger, Winona Ryder, Mickey Rourke, Amber Heard",
+  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239024&hd=2&", 
+  "rating": "5.0/10",
+  "duration": "PT1H38M"
+},
     ];
 
     // سيتم ترتيب هذه المصفوفة عشوائيًا عند تحميل الصفحة وفي كل مرة نعود فيها للصفحة الرئيسية
