@@ -58,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 2. Adsterra Configuration (تم الاحتفاظ بها كما هي لعمل إعلانات الفيديو والبوستر) ---
-    // هذا هو الرابط الذي سيفتح عند النقر على بطاقات الأفلام، أو الطبقة الشفافة للفيديو، أو بوستر التفاصيل
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes for movie cards and details poster
@@ -67,9 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoOverlay = 0;
 
-    // --- 3. Movie Data (Example - Replace with your actual data source) ---
-    // **تأكدت هنا من تنسيق كل حقول duration وتواريخ release_date بشكل سليم**
-    // **وتأكدت من وجود جميع الروابط والصور الضرورية.**
+    // --- 3. Movie Data (تأكد من أن هذه البيانات هي نفسها الموجودة في ملفك الفعلي) ---
     const moviesData = [
         {
             "id": 1,
@@ -323,7 +320,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // تم تعديل وظيفة إنشاء بطاقة الفيلم لدعم التحميل الكسول للصور
     function createMovieCard(movie) {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
@@ -333,13 +329,12 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         movieCard.addEventListener('click', () => {
             console.log(`⚡ [Interaction] Movie card clicked for ID: ${movie.id}`);
-            openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'movieCard'); // يفتح إعلان مباشر هنا
+            openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'movieCard');
             showMovieDetails(movie.id);
         });
         return movieCard;
     }
 
-    // وظيفة لتطبيق التحميل الكسول على الصور بعد إضافتها لـ DOM
     function initializeLazyLoad() {
         if ('IntersectionObserver' in window) {
             let lazyLoadImages = document.querySelectorAll('.lazyload');
@@ -358,7 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 imageObserver.observe(image);
             });
         } else {
-            // Fallback for browsers that do not support IntersectionObserver
             let lazyLoadImages = document.querySelectorAll('.lazyload');
             lazyLoadImages.forEach(function(image) {
                 image.src = image.dataset.src;
@@ -385,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         console.log(`🎬 [Display] Displayed ${moviesToDisplay.length} movies in ${targetGridElement.id}.`);
 
-        // استدعاء التحميل الكسول بعد إضافة الأفلام
         initializeLazyLoad();
     }
 
@@ -411,16 +404,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (query) {
             filteredMovies = moviesData.filter(movie =>
                 movie.title.toLowerCase().includes(query) ||
-                movie.director.toLowerCase().includes(query) ||
-                (Array.isArray(movie.cast) ? movie.cast.some(actor => actor.toLowerCase().includes(query)) : (movie.cast && movie.cast.toLowerCase().includes(query))) || // Added check for movie.cast existence
-                movie.genre.toLowerCase().includes(query)
+                (movie.director && movie.director.toLowerCase().includes(query)) ||
+                (Array.isArray(movie.cast) ? movie.cast.some(actor => actor.toLowerCase().includes(query)) : (movie.cast && movie.cast.toLowerCase().includes(query))) ||
+                (movie.genre && movie.genre.toLowerCase().includes(query))
             );
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = `نتائج البحث عن "${query}"`;
             }
             console.log(`🔍 [Search] Performed search for "${query}". Found ${filteredMovies.length} results.`);
         } else {
-            // عند إفراغ البحث، نعرض الأفلام الأصلية مرتبة عشوائيًا
             filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
@@ -471,7 +463,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[Video Player] Loading spinner shown.');
                 }
 
-                // تأخير بسيط قبل تعيين src لضمان ظهور الـ spinner
                 setTimeout(() => {
                     moviePlayer.src = movie.embed_url;
                     console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
@@ -532,50 +523,37 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('📄 [SEO] Meta tags updated.');
     }
 
-    // **التعديلات الجذرية والأخيرة هنا في دالة addJsonLdSchema:**
-    // - تأكدت من أن جميع الخصائص المطلوبة لـ VideoObject موجودة.
-    // - أضفت تحققًا للتأكد من وجود director و cast و genre و rating قبل إضافتها لتجنب الأخطاء إذا كانت مفقودة.
-    // - استخدام تنسيق ISO 8601 الصحيح لـ uploadDate و duration.
     function addJsonLdSchema(movie) {
-        // تنسيق uploadDate ليتضمن منطقة زمنية (ISO 8601)
-        // إذا كان movie.release_date هو 'YYYY-MM-DD'، يمكننا إضافة وقت ومنطقة زمنية افتراضية (UTC)
-        // أو استخدام التوقيت المحلي الحالي إذا كان التاريخ غير محدد بوقت
         let formattedUploadDate;
         if (movie.release_date) {
             try {
-                // محاولة إنشاء Date object من release_date
                 const date = new Date(movie.release_date);
-                // التأكد من أن التاريخ صالح
                 if (!isNaN(date.getTime())) {
-                    // استخدام toISOString للحصول على التنسيق الكامل مع Z (UTC)
                     formattedUploadDate = date.toISOString();
                 } else {
                     console.warn(`⚠️ Invalid date format for release_date: ${movie.release_date}. Using current date for uploadDate.`);
-                    formattedUploadDate = new Date().toISOString(); // Fallback to current date
+                    formattedUploadDate = new Date().toISOString();
                 }
             } catch (e) {
                 console.warn(`⚠️ Error parsing release_date: ${movie.release_date}. Using current date for uploadDate.`);
-                formattedUploadDate = new Date().toISOString(); // Fallback to current date
+                formattedUploadDate = new Date().toISOString();
             }
         } else {
-            formattedUploadDate = new Date().toISOString(); // Fallback to current date if release_date is missing
+            formattedUploadDate = new Date().toISOString();
         }
 
         const schema = {
             "@context": "http://schema.org",
-            "@type": "VideoObject", // تغيير النوع إلى VideoObject
+            "@type": "VideoObject",
             "name": movie.title,
             "description": movie.description,
-            "thumbnailUrl": movie.poster, // هذه الخاصية يجب أن تكون موجودة دائماً
-            "uploadDate": formattedUploadDate, // تم تصحيح التنسيق والتأكد من صلاحه
-            "embedUrl": movie.embed_url, // يجب أن تكون موجودة دائماً
-            "duration": movie.duration, // يجب أن تكون بتنسيق PTxxHxxM
-
-            // خصائص إضافية مفيدة للـ VideoObject لتحسين الـ Rich Snippets
-            "contentUrl": movie.embed_url // غالباً ما يكون هو نفسه embedUrl إذا كان الفيديو يتم تضمينه مباشرة
+            "thumbnailUrl": movie.poster,
+            "uploadDate": formattedUploadDate,
+            "embedUrl": movie.embed_url,
+            "duration": movie.duration,
+            "contentUrl": movie.embed_url
         };
 
-        // إضافة الخصائص الاختيارية فقط إذا كانت موجودة وصالحة
         if (movie.director && typeof movie.director === 'string' && movie.director.trim() !== '') {
             schema.director = {
                 "@type": "Person",
@@ -602,13 +580,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isNaN(ratingValue)) {
                 schema.aggregateRating = {
                     "@type": "AggregateRating",
-                    "ratingValue": ratingValue.toFixed(1), // التأكد من أنه رقم
+                    "ratingValue": ratingValue.toFixed(1),
                     "bestRating": "10",
-                    "ratingCount": "10000" // هذا رقم افتراضي، يفضل أن يكون ديناميكيًا
+                    "ratingCount": "10000"
                 };
             }
         }
-
+        
         // إزالة أي سكربت JSON-LD قديم قبل إضافة الجديد
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
@@ -632,7 +610,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const otherMovies = moviesData.filter(movie => movie.id !== currentMovieId);
-        // الترتيب العشوائي يحدث هنا في كل مرة يتم استدعاء الوظيفة
         const shuffled = otherMovies.sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, 15);
 
@@ -657,7 +634,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchInput) searchInput.value = '';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
 
-        // إعادة ترتيب الأفلام عشوائيًا لكل مرة يتم فيها عرض الصفحة الرئيسية
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
@@ -688,7 +664,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
 
-        // عند العودة للصفحة الرئيسية، يجب إزالة أي JSON-LD خاص بفيلم
         let script = document.querySelector('script[type="application/ld+json"]');
         if (script) {
             script.remove();
@@ -696,9 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     // --- 5. Event Listeners ---
-
     if (menuToggle && mainNav) {
         menuToggle.addEventListener('click', () => {
             mainNav.classList.toggle('nav-open');
@@ -772,7 +745,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Event listener for movie details poster click (سيظل يفتح إعلان مباشر)
     if (movieDetailsPoster) {
         movieDetailsPoster.addEventListener('click', () => {
             console.log('🖼️ [Ad Click] Movie details poster clicked. Attempting to open Direct Link.');
@@ -781,7 +753,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[Event] Movie details poster click listener attached.');
     }
 
-    // Event listener for video overlay to trigger ad and manage cooldown/visibility (سيظل يفتح إعلان مباشر)
     if (videoOverlay) {
         videoOverlay.addEventListener('click', () => {
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
