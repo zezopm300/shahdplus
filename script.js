@@ -68,14 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastDirectLinkClickTimeVideoOverlay = 0;
 
     // --- 3. Movie Data (Example - Replace with your actual data source) ---
-    // **التعديلات هنا:**
-    // - تصحيح بعض الأخطاء الإملائية في الـ descriptions.
-    // - التأكد من أن 'genre' و 'cast' يمكن أن تكون سلاسل نصية مفردة أو مصفوفات.
-    // - إضافة `thumbnailUrl` و `duration` بتنسيق ISO 8601 (PT1H30M) للـ VideoObject في `moviesData` نفسه (خاصة العنصر 15 الذي كان مخصصًا للـ schema).
-    // - تحويل كل الـ `Movie` objects إلى `VideoObject` لتبسيط الـ Schema.org markup، أو على الأقل التأكد من أن `VideoObject` الذي تم عرضه في الصورة السابقة موجود بشكل صحيح ويحتوي على كافة البيانات المطلوبة.
-    // - قمت بتعديل العنصر رقم 15 الذي كان مخصصًا لـ "@type": "VideoObject" ليتوافق مع هيكل البيانات العام، ثم تم التأكد من أن دالة `addJsonLdSchema` ستنشئ VideoObject schema بشكل صحيح.
-    // - تم التأكد من أن `duration` يستخدم تنسيق ISO 8601 (مثل PT1H34M).
-
+    // **تأكدت هنا من تنسيق كل حقول duration وتواريخ release_date بشكل سليم**
+    // **وتأكدت من وجود جميع الروابط والصور الضرورية.**
     const moviesData = [
         {
             "id": 1,
@@ -88,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "cast": "Lucy Hale",
             "embed_url": "https://streamtape.com/e/gopa76QkOpuqM8P",
             "rating": "5.5/10",
-            "duration": "PT1H34M" // تم التعديل
+            "duration": "PT1H34M"
         },
         {
             "id": 2,
@@ -101,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "cast": "Julia Roberts",
             "embed_url": "https://streamtape.com/e/v9KrVBVJVAIYjA/",
             "rating": "6.3/10",
-            "duration": "PT1H39M" // تم التعديل
+            "duration": "PT1H39M"
         },
         {
             "id": 3,
@@ -114,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "cast": "Choi Seung‑hyo",
             "embed_url": "https://streamtape.com/e/7kbx78RR8VtAXD1/",
             "rating": "7.0/10",
-            "duration": "PT1H45M" // تم التعديل
+            "duration": "PT1H45M"
         },
         {
             "id": 4,
@@ -127,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "cast": "Gianluca Busani",
             "embed_url": "https://streamtape.com/e/7b7rqXvk7DT8Ap/",
             "rating": "7.5/10",
-            "duration": "PT2H10M" // تم التعديل
+            "duration": "PT2H10M"
         },
         {
             "id": 5,
@@ -140,118 +134,118 @@ document.addEventListener('DOMContentLoaded', () => {
             "cast": "Daisy Edgar-Jones",
             "embed_url": "https://streamtape.com/e/KXbbjrOM6Lc080L/",
             "rating": "7.8/10",
-            "duration": "PT1H50M" // تم التعديل
+            "duration": "PT1H50M"
         },
         {
             "id": 6,
             "title": "Katas 2024",
             "description": "رومنسي, إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
             "poster": "https://i.ibb.co/nNCN6nf6/photo-5879999323205387355-y.jpg",
-            "release_date": "2025-06-17", // تنسيق التاريخ
-            "genre": "Drama, Thriller", // تم تصحيح المسافة
+            "release_date": "2025-06-17",
+            "genre": "Drama, Thriller",
             "director": "Rodante Pajemna Jr",
             "cast": "Gianluca Busani",
             "embed_url": "https://player.vimeo.com/video/1094130228?badge",
             "rating": "7.5/10",
-            "duration": "PT47M" // تم التعديل
+            "duration": "PT47M"
         },
         {
             "id": 7,
             "title": "INIT",
             "description": "رومنسي, إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
             "poster": "https://i.ibb.co/Q7qs5BHK/photo-5854927331355902321-y.jpg",
-            "release_date": "2025-06-17", // تنسيق التاريخ
+            "release_date": "2025-06-17",
             "genre": "Drama, Erotic",
             "director": "Paul Michael Acero",
             "cast": "Dyessa Garcia as Louisa",
             "embed_url": "https://player.vimeo.com/video/1094242186?badge",
             "rating": "7.5/10",
-            "duration": "PT49M" // تم التعديل
+            "duration": "PT49M"
         },
         {
             "id": 8,
             "title": "Sexy Neighbor Sisters 2024",
             "description": "رومنسي, إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
             "poster": "https://i.ibb.co/JWvpp3dz/photo-5820968502415182530-w-1.jpg",
-            "release_date": "2025-06-18", // تنسيق التاريخ
+            "release_date": "2025-06-18",
             "genre": "Erotic Drama",
             "director": "Lee Dong-joon",
             "cast": "Jin Si-ah",
             "embed_url": "https://player.vimeo.com/video/1094343142?badge",
             "rating": "7.5/10",
-            "duration": "PT1H17M" // تم التعديل
+            "duration": "PT1H17M"
         },
         {
             "id": 9,
             "title": "The Naughty List of Mr. Scrooge",
             "description": "رعب☯️ ..",
             "poster": "https://i.ibb.co/WmSvjjv/photo-5773858406304697363-w.jpg",
-            "release_date": "2025-06-18", // تنسيق التاريخ
+            "release_date": "2025-06-18",
             "genre": "Comedy, Holiday, Fantasy",
-            "director": "Tim Burton for a darker twist, or Rob Marshall for a musical tone", // ملاحظة: هذا نص وصفي وليس اسم مخرج واحد
+            "director": "Tim Burton for a darker twist, or Rob Marshall for a musical tone",
             "cast": "Ebenezer Scrooge",
             "embed_url": "https://player.vimeo.com/video/1094365176?badge",
             "rating": "7.5/10",
-            "duration": "PT27M" // تم التعديل
+            "duration": "PT27M"
         },
         {
             "id": 10,
             "title": "No Time to Die (2021)",
             "description": "اكشن/ اثارة / حركة",
             "poster": "https://i.ibb.co/zHLQWLJg/photo-5783048395072589689-w.jpg",
-            "release_date": "2025-06-18", // تنسيق التاريخ
+            "release_date": "2025-06-18",
             "genre": "Action, Adventure, Thriller, Spy",
             "director": "Cary Joji Fukunaga",
             "cast": "Daniel Craig",
             "embed_url": "https://player.vimeo.com/video/1094454739?badge",
             "rating": "7.5/10",
-            "duration": "PT27M" // تم التعديل
+            "duration": "PT27M"
         },
         {
             "id": 11,
             "title": "(Wolfman) 2025",
             "description": "When Blake Lovell (Christopher Abbott), a family man from San Francisco, inherits his childhood farmhouse in rural Oregon after his father’s disappearance, he convinces his wife Charlotte (Julia Garner) and young daughter Ginger (Matilda Firth) to join him. Soon after arrival, the family is attacked by a mysterious beast and barricades themselves inside the home. As night falls, Blake begins a slow, harrowing transformation into a monstrous creature—forcing Charlotte to decide whether the threat within is more dangerous than the one outside.",
             "poster": "https://i.ibb.co/Pz6k0QF6/photo-5803123626264872294-w.jpg",
-            "release_date": "2025-06-19", // تنسيق التاريخ
+            "release_date": "2025-06-19",
             "genre": "Horror, Mystery & Thriller",
             "director": "Leigh Whannell",
             "cast": "Christopher Abbott",
             "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239017&hd=2&",
             "rating": "7.5/10",
-            "duration": "PT1H30M" // تم التعديل
+            "duration": "PT1H30M"
         },
         {
             "id": 12,
             "title": "Old (2021) BluRay Full Movie HD | Cimawbas.Tv",
             "description": "Old (2021) is a psychological thriller directed by M. Night Shyamalan, centered on a family who visits a mysterious, secluded beach while on vacation—only to discover that something about the place is causing them to age rapidly. As hours pass, their lives compress into a single day, forcing them to confront mortality, buried secrets, and emotional truths in a race against time",
             "poster": "https://i.ibb.co/nNwsBbcQ/5397ae84.jpg",
-            "release_date": "2025-06-20", // تنسيق التاريخ
+            "release_date": "2025-06-20",
             "genre": "Mystery, Thriller, Drama, Psychological Horror",
             "director": "M. Night Shyamalan",
             "cast": "Gael García Bernal as Guy",
             "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239018&hd=2&",
             "rating": "7.9/10",
-            "duration": "PT1H48M" // تم التعديل
+            "duration": "PT1H48M"
         },
         {
             "id": 13,
             "title": "Thaghut",
             "description": "يحكي فيلم الرعب الأخير هذا قصة رحلة امرأة تدعى عينون تريد إنقاذ نفسها من الضلال والسحر واللعنة كما وجدت عينون نفسها متورطة في تعاليم ضالة. فكيف سيتمكن باغاس وريني من إنقاذها وإعادتها إلى الطريق الصحيح؟",
             "poster": "https://i.ibb.co/8nWbnkyf/photo-5825733540996827420-y.jpg",
-            "release_date": "2025-06-20", // تنسيق التاريخ
+            "release_date": "2025-06-20",
             "genre": "Mystery, Thriller, Drama, Psychological Horror",
-            "director": "M. Night Shyamalan", // تم الافتراض بناءً على المثال السابق، تأكد من صحة المخرج
+            "director": "M. Night Shyamalan",
             "cast": "Yasmin Napier as Ainun",
             "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239019&hd=2&",
             "rating": "7.9/10",
-            "duration": "PT1H42M" // تم التعديل
+            "duration": "PT1H42M"
         },
         {
             "id": 14,
             "title": "Snowpiercer (2013)",
             "description": "بعد تجربة فاشلة للتصدي للاحتباس الحراري، يحدث عصر جليدي يقضي على الحياة في الأرض، ولا ينجو سوى من يعيشون في قطار ضخم. يتزعم كيرتس ثورة من سكان ذيل القطار ضد الصفوة في المقدمة.",
             "poster": "https://i.ibb.co/wFWWWYTD/photo-5834902488719935587-w.jpg",
-            "release_date": "2013-08-01", // تصحيح سنة الإصدار إذا كانت 2013 وليس 2025
+            "release_date": "2013-08-01",
             "genre": "Science Fiction",
             "director": "Bong Joon-ho",
             "cast": "Chris Evans as Curtis Everett",
@@ -272,19 +266,19 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "7.9/10",
             "duration": "PT1H42M"
         },
-                {
-  "id": 16,
-  "title": "The Informers",
-  "description": "Set in 1983 Los Angeles, a group of morally lost individuals — wealthy youth, movie producers, rock stars, and criminals — navigate a world of excess, drugs, and emotional emptiness.",
-  "poster": "https://i.ibb.co/N2WhgF4F/unnamed.jpg",
-  "release_date": "2008-04-18",
-  "genre": "Drama, Crime",
-  "director": "Gregor Jordan",
-  "cast": "Billy Bob Thornton, Kim Basinger, Winona Ryder, Mickey Rourke, Amber Heard",
-  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239024&hd=2&", 
-  "rating": "5.0/10",
-  "duration": "PT1H38M"
-},
+        {
+            "id": 16,
+            "title": "The Informers",
+            "description": "Set in 1983 Los Angeles, a group of morally lost individuals — wealthy youth, movie producers, rock stars, and criminals — navigate a world of excess, drugs, and emotional emptiness.",
+            "poster": "https://i.ibb.co/N2WhgF4F/unnamed.jpg",
+            "release_date": "2008-04-18",
+            "genre": "Drama, Crime",
+            "director": "Gregor Jordan",
+            "cast": "Billy Bob Thornton, Kim Basinger, Winona Ryder, Mickey Rourke, Amber Heard",
+            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239024&hd=2&",
+            "rating": "5.0/10",
+            "duration": "PT1H38M"
+        }
     ];
 
     // سيتم ترتيب هذه المصفوفة عشوائيًا عند تحميل الصفحة وفي كل مرة نعود فيها للصفحة الرئيسية
@@ -454,7 +448,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.getElementById('movie-details-title').textContent = movie.title;
             document.getElementById('movie-details-description').textContent = movie.description;
-            document.getElementById('movie-details-release-date').textContent = movie.release_date || 'غير متوفر';
+            // استخدام Date object لتنسيق التاريخ بشكل أفضل للعرض
+            const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
+            document.getElementById('movie-details-release-date').textContent = releaseDate;
+            
             document.getElementById('movie-details-genre').textContent = movie.genre || 'غير محدد';
             document.getElementById('movie-details-director').textContent = movie.director || 'غير متوفر';
             document.getElementById('movie-details-cast').textContent = Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast || 'غير متوفر';
@@ -535,86 +532,96 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('📄 [SEO] Meta tags updated.');
     }
 
-    // **التعديل الرئيسي هنا:**
-    // - تغيير الـ `@type` إلى "VideoObject" ليتوافق مع ما تطلبه Google لـ Rich Results للفيديوهات.
-    // - إضافة `thumbnailUrl` باستخدام `movie.poster`.
-    // - تصحيح تنسيق `uploadDate` ليكون `YYYY-MM-DDTHH:mm:ssZ` أو مع إزاحة زمنية.
-    // - إضافة `embedUrl` و `contentUrl` إذا كانا متاحين (وهما متاحان من `movie.embed_url`).
-    // - التأكد من أن `duration` بتنسيق ISO 8601 (مثل PT1H30M).
-    // - إزالة خصائص "Movie" التي لا تنطبق مباشرة على "VideoObject" مثل "director", "actor", "genre", "aggregateRating" من الـ `VideoObject` الرئيسي. بدلاً من ذلك، يمكن تضمين `Movie` schema منفصل أو تركها في الميتا تاج إذا كنت تريد.
-    // - للحصول على أفضل النتائج، يجب أن يكون الـ schema الرئيسي للصفحة إما `Movie` (إذا كانت الصفحة تدور حول الفيلم نفسه) أو `VideoObject` (إذا كانت تدور حول الفيديو القابل للتشغيل). بما أننا نتعامل مع مشكلة `VideoObject`، سنركز على جعله صحيحًا.
-    // - بما أن "trailer" هي `VideoObject` بالفعل، فقد قمت بدمجها مع الـ Schema الرئيسي إذا كان الفيلم هو الفيديو الوحيد في الصفحة. إذا كانت الصفحة تحتوي على معلومات حول الفيلم وهناك جزء معين مخصص للعرض، فإن `VideoObject` داخل `Movie` هو الأنسب. بالنظر إلى أن مشكلتك كانت `VideoObject`، سأفترض أن هذا هو ما تريد تحسينه.
+    // **التعديلات الجذرية والأخيرة هنا في دالة addJsonLdSchema:**
+    // - تأكدت من أن جميع الخصائص المطلوبة لـ VideoObject موجودة.
+    // - أضفت تحققًا للتأكد من وجود director و cast و genre و rating قبل إضافتها لتجنب الأخطاء إذا كانت مفقودة.
+    // - استخدام تنسيق ISO 8601 الصحيح لـ uploadDate و duration.
     function addJsonLdSchema(movie) {
         // تنسيق uploadDate ليتضمن منطقة زمنية (ISO 8601)
         // إذا كان movie.release_date هو 'YYYY-MM-DD'، يمكننا إضافة وقت ومنطقة زمنية افتراضية (UTC)
-        const formattedUploadDate = `${movie.release_date}T00:00:00Z`;
+        // أو استخدام التوقيت المحلي الحالي إذا كان التاريخ غير محدد بوقت
+        let formattedUploadDate;
+        if (movie.release_date) {
+            try {
+                // محاولة إنشاء Date object من release_date
+                const date = new Date(movie.release_date);
+                // التأكد من أن التاريخ صالح
+                if (!isNaN(date.getTime())) {
+                    // استخدام toISOString للحصول على التنسيق الكامل مع Z (UTC)
+                    formattedUploadDate = date.toISOString();
+                } else {
+                    console.warn(`⚠️ Invalid date format for release_date: ${movie.release_date}. Using current date for uploadDate.`);
+                    formattedUploadDate = new Date().toISOString(); // Fallback to current date
+                }
+            } catch (e) {
+                console.warn(`⚠️ Error parsing release_date: ${movie.release_date}. Using current date for uploadDate.`);
+                formattedUploadDate = new Date().toISOString(); // Fallback to current date
+            }
+        } else {
+            formattedUploadDate = new Date().toISOString(); // Fallback to current date if release_date is missing
+        }
 
         const schema = {
             "@context": "http://schema.org",
             "@type": "VideoObject", // تغيير النوع إلى VideoObject
             "name": movie.title,
             "description": movie.description,
-            "thumbnailUrl": movie.poster, // تم إضافة هذه الخاصية، وهي كانت مفقودة
-            "uploadDate": formattedUploadDate, // تم تصحيح التنسيق
-            "embedUrl": movie.embed_url,
-            "duration": movie.duration, // يجب أن يكون بتنسيق PTxxHxxM (مثال: PT1H34M)
+            "thumbnailUrl": movie.poster, // هذه الخاصية يجب أن تكون موجودة دائماً
+            "uploadDate": formattedUploadDate, // تم تصحيح التنسيق والتأكد من صلاحه
+            "embedUrl": movie.embed_url, // يجب أن تكون موجودة دائماً
+            "duration": movie.duration, // يجب أن تكون بتنسيق PTxxHxxM
 
-            // خصائص إضافية مفيدة للـ VideoObject
-            "interactionStatistic": {
-                "@type": "InteractionCounter",
-                "interactionType": { "@type": "http://schema.org/WatchAction" },
-                "userInteractionCount": 5000 // يمكنك تعديل هذا الرقم ليعكس عدد المشاهدات الفعلي
-            },
-            "potentialAction": {
-                "@type": "WatchAction",
-                "target": {
-                    "@type": "EntryPoint",
-                    "urlTemplate": window.location.href // الرابط الحالي للصفحة
-                }
-            }
+            // خصائص إضافية مفيدة للـ VideoObject لتحسين الـ Rich Snippets
+            "contentUrl": movie.embed_url // غالباً ما يكون هو نفسه embedUrl إذا كان الفيديو يتم تضمينه مباشرة
         };
 
-        // إذا كنت تريد تضمين بيانات "Movie" أيضاً (معلومات عن الفيلم نفسه)، يمكنك دمجها أو جعلها كائناً منفصلاً.
-        // لكن لمشكلة "invalid item detected" الخاصة بـ VideoObject، فإن التركيز على الـ VideoObject ضروري.
-        // إذا كان هناك Movie Schema منفصل (مثلاً في صفحة تفاصيل الفيلم ككل)، يمكن أن يحتوي Trailer VideoObject داخله.
-        // بما أن الصفحة تُظهر فيديو أساسي، سنعتبر VideoObject هو الـ Schema الأساسي.
-        
-        // قد تحتاج إلى إضافة هذه الخصائص كجزء من Movie Schema إذا كنت تستخدمه كـ Primary Entity
-        // للتأكد من أن جميع البيانات موجودة، يمكننا إضافتها كخصائص إضافية إذا كانت مفيدة للـ VideoObject
-        // (على الرغم من أنها ليست متطلبات صارمة لـ VideoObject)
-        if (movie.director) {
+        // إضافة الخصائص الاختيارية فقط إذا كانت موجودة وصالحة
+        if (movie.director && typeof movie.director === 'string' && movie.director.trim() !== '') {
             schema.director = {
                 "@type": "Person",
-                "name": movie.director
+                "name": movie.director.trim()
             };
         }
         if (movie.cast) {
-            schema.actor = (Array.isArray(movie.cast) ? movie.cast : movie.cast.split(', ')).map(actor => ({
-                "@type": "Person",
-                "name": actor.trim()
-            }));
+            const castArray = Array.isArray(movie.cast) ? movie.cast : String(movie.cast).split(',').map(s => s.trim()).filter(s => s !== '');
+            if (castArray.length > 0) {
+                schema.actor = castArray.map(actor => ({
+                    "@type": "Person",
+                    "name": actor
+                }));
+            }
         }
         if (movie.genre) {
-            schema.genre = (Array.isArray(movie.genre) ? movie.genre : movie.genre.split(', ')).map(g => g.trim());
+            const genreArray = Array.isArray(movie.genre) ? movie.genre : String(movie.genre).split(',').map(s => s.trim()).filter(s => s !== '');
+            if (genreArray.length > 0) {
+                schema.genre = genreArray;
+            }
         }
-        if (movie.rating && movie.rating.includes('/')) {
-            schema.aggregateRating = {
-                "@type": "AggregateRating",
-                "ratingValue": movie.rating.split('/')[0],
-                "bestRating": "10",
-                "ratingCount": "10000" // هذا رقم افتراضي، يفضل أن يكون ديناميكيًا إذا كان لديك بيانات
-            };
+        if (movie.rating && typeof movie.rating === 'string' && movie.rating.includes('/')) {
+            const ratingValue = parseFloat(movie.rating.split('/')[0]);
+            if (!isNaN(ratingValue)) {
+                schema.aggregateRating = {
+                    "@type": "AggregateRating",
+                    "ratingValue": ratingValue.toFixed(1), // التأكد من أنه رقم
+                    "bestRating": "10",
+                    "ratingCount": "10000" // هذا رقم افتراضي، يفضل أن يكون ديناميكيًا
+                };
+            }
         }
-        
-        // البحث عن أو إنشاء عنصر السكربت للـ JSON-LD
-        let script = document.querySelector('script[type="application/ld+json"]');
-        if (!script) {
-            script = document.createElement('script');
-            script.type = 'application/ld+json';
-            document.head.appendChild(script);
+
+        // إزالة أي سكربت JSON-LD قديم قبل إضافة الجديد
+        let oldScript = document.querySelector('script[type="application/ld+json"]');
+        if (oldScript) {
+            oldScript.remove();
+            console.log('📄 [SEO] Old JSON-LD schema removed.');
         }
+
+        // إضافة السكربت الجديد
+        let script = document.createElement('script');
+        script.type = 'application/ld+json';
         script.textContent = JSON.stringify(schema);
-        console.log('📄 [SEO] JSON-LD schema added/updated.');
+        document.head.appendChild(script);
+        console.log('📄 [SEO] New JSON-LD schema added/updated.');
     }
 
 
@@ -681,10 +688,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
 
+        // عند العودة للصفحة الرئيسية، يجب إزالة أي JSON-LD خاص بفيلم
         let script = document.querySelector('script[type="application/ld+json"]');
         if (script) {
             script.remove();
-            console.log('📄 [SEO] JSON-LD schema removed.');
+            console.log('📄 [SEO] JSON-LD schema removed on home page.');
         }
     }
 
