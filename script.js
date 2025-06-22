@@ -275,7 +275,20 @@ document.addEventListener('DOMContentLoaded', () => {
             "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239024&hd=2&",
             "rating": "5.0/10",
             "duration": "PT1H38M"
-        }
+        },
+                {
+  "id": 17,
+  "title": "Cruel Intentions (1999)",
+  "description": "In an upscale New York prep school, wealthy step-siblings Sebastian and Kathryn make a bet: Sebastian must seduce the headmaster's daughter, Annette, who has vowed to remain chaste until marriage. As the game unfolds, true feelings, betrayal, and manipulation blur the lines between love and cruelty.",
+  "poster": "https://i.ibb.co/Hpnf3NcL/images.jpg",
+  "release_date": "1999-03-05",
+  "genre": "Drama, Romance",
+  "director": "Roger Kumble",
+  "cast": "Sarah Michelle Gellar as Kathryn, Ryan Phillippe as Sebastian, Reese Witherspoon as Annette, Selma Blair as Cecile",
+  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239028&hd=2&hash=5a5541555eb3ee94&",
+  "rating": "6.8/10",
+  "duration": "PT1H37M"
+},
     ];
 
     // سيتم ترتيب هذه المصفوفة عشوائيًا عند تحميل الصفحة وفي كل مرة نعود فيها للصفحة الرئيسية
