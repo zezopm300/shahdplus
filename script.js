@@ -347,6 +347,21 @@ document.addEventListener('DOMContentLoaded', () => {
   "rating": "6.3/10",
   "duration": "PT1H54M"
 },
+        {
+  "id": 21,
+  "title": "The Brutalist (2024)",
+  "description": "A poignant exploration of displacement, art, and survival, The Brutalist follows a visionary Hungarian architect who flees Europe with his wife in the aftermath of World War II. Upon arriving in America, he struggles to rebuild his identity while grappling with the constraints of his past and the demands of a new world.",
+  "poster": "https://i.ibb.co/CKg1rq93/fff.jpg",
+  "thumbnailUrl": "https://i.ibb.co/CKg1rq93/fff.jpg",
+  "release_date": "2024-12-15",
+  "genre": "Drama, Historical",
+  "director": "Brady Corbet",
+  "cast": "Adrien Brody, Felicity Jones, Guy Pearce, Joe Alwyn, Alessandro Nivola",
+  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239032&hd=2&",
+  "rating": "N/A",
+  "duration": "PT2H5M"
+},
+
 
     ];
 
