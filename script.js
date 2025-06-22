@@ -68,11 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. Movie Data (تأكد من أن هذه البيانات هي نفسها الموجودة في ملفك الفعلي) ---
     const moviesData = [
-        {
+         {
             "id": 1,
             "title": "A Nice Girl Like You 2020",
             "description": "القصّة : لوسي نيل عازفة كمان، تكتشف إدمان صديقها جيف لمشاهدة المواد الإباحية، فتتشاجر معه، وينفصلا، وتصاب بصدمة عصبية، وتقرر على هذا الاساس تعزيز نفسيها، واكتشاف ذاتها خاصة بعد علاقة الصداقة التي تنشأ بينها وبين جرانت، حيث يساعدها على التغلب على مشاكلها السابقة مع صديقها جيف",
             "poster": "https://i.ibb.co/k2jg6TSd/photo-5852675531542218174-y.jpg",
+            "thumbnailUrl": "https://i.ibb.co/k2jg6TSd/photo-5852675531542218174-y.jpg",
             "release_date": "2020-07-17",
             "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط",
             "director": "Chris Riedell",
@@ -86,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Sleeping with the Enemy 1991",
             "description": " تزوجت (لورا) منذ أربع سنوات بالرجل الوسيم (مارتن). يبدو زواجهما مثاليًا في أعين الجميع، ولكن الحقيقة تختلف تمامًا عن هذه الصورة. يعامل مارتن المتسلط لورا بعنف ووحشية ويعتدي عليها، لتصل الزوجة لنقطة تستعد فيها لفعل أي شيء مقابل التخلص من حياتها البائسة. تضع لورا خطة النجاة، والتي تتلخص في قيامها بادعاء الوفاة، وتلفيق كل شيء؛ بحيث تنطلي الخدعة على مارتن. يسير كل شيء حسب الخطة، وتبدأ لورا في العيش بسعادة بهويتها الجديدة، ولكن السعادة لا تدوم طويلًا بعدما تتطور الأحداث بغتة.",
             "poster": "https://i.ibb.co/d4Jmp73r/photo-5852675531542218154-y.jpg",
+            "thumbnailUrl": "https://i.ibb.co/d4Jmp73r/photo-5852675531542218154-y.jpg",
             "release_date": "1991-02-08",
             "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط",
             "director": "Joseph Ruben",
@@ -99,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Moms Friends 2024",
             "description": "القصّة : فيلم رومانسي جديد حول الرغبات الجنسية والعلاقات الحميمة الساخنة بين الشباب والعلاقات الجنسية التي يمارسونها",
             "poster": "https://i.postimg.cc/dtHdLMNL/photo-5838945848241800438-y.jpg",
+            "thumbnailUrl": "https://i.postimg.cc/dtHdLMNL/photo-5838945848241800438-y.jpg",
             "release_date": "2024-01-10",
             "genre": "رومنسي, إثارة جنسية ساخنة/تشويق, للبالغين فقط",
             "director": "Yoo Je‑won.",
@@ -112,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Blood Pay 2025",
             "description": "فيلم إثارة خيال علمي تدور أحداثه في الجنة، وهي مدينة خيالية يسيطر فيها الذكاء الاصطناعي على القوى العاملة ويقود العزلة الاجتماعية.",
             "poster": "https://i.ibb.co/v6d90zjN/photo-5789391950099630510-w.jpg",
+            "thumbnailUrl": "https://i.ibb.co/v6d90zjN/photo-5789391950099630510-w.jpg",
             "release_date": "2025-03-20",
             "genre": "رعب, خيال علمي",
             "director": "Brace Beltempo.",
@@ -125,6 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Twisters",
             "description": "القصة: مع اشتداد موسم العواصف، تتصادم مسارات مطارد العواصف السابق كيت كوبر ونجم وسائل التواصل الاجتماعي المتهور تايلر أوينز عندما يتم إطلاق العنان لظواهر مرعبة لم يسبق لها مثيل. يجد الزوجان وفرقهما المتنافسة أنفسهم مباشرة في مسارات أنظمة العواصف المتعددة المتقاربة فوق وسط أوكلاهوما في معركة حياتهم.",
             "poster": "https://i.ibb.co/Zp7BnYS3/Untitled.jpg",
+            "thumbnailUrl": "https://i.ibb.co/Zp7BnYS3/Untitled.jpg",
             "release_date": "2024-07-19",
             "genre": "اثارة, اكشن",
             "director": "Lee Isaac Chung",
@@ -138,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Katas 2024",
             "description": "رومنسي, إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
             "poster": "https://i.ibb.co/nNCN6nf6/photo-5879999323205387355-y.jpg",
+            "thumbnailUrl": "https://i.ibb.co/nNCN6nf6/photo-5879999323205387355-y.jpg",
             "release_date": "2025-06-17",
             "genre": "Drama, Thriller",
             "director": "Rodante Pajemna Jr",
@@ -151,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "INIT",
             "description": "رومنسي, إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
             "poster": "https://i.ibb.co/Q7qs5BHK/photo-5854927331355902321-y.jpg",
+            "thumbnailUrl": "https://i.ibb.co/Q7qs5BHK/photo-5854927331355902321-y.jpg",
             "release_date": "2025-06-17",
             "genre": "Drama, Erotic",
             "director": "Paul Michael Acero",
@@ -164,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Sexy Neighbor Sisters 2024",
             "description": "رومنسي, إثارة جنسية ساخنة/تشويق / للبالغين فقط +18",
             "poster": "https://i.ibb.co/JWvpp3dz/photo-5820968502415182530-w-1.jpg",
+            "thumbnailUrl": "https://i.ibb.co/JWvpp3dz/photo-5820968502415182530-w-1.jpg",
             "release_date": "2025-06-18",
             "genre": "Erotic Drama",
             "director": "Lee Dong-joon",
@@ -177,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "The Naughty List of Mr. Scrooge",
             "description": "رعب☯️ ..",
             "poster": "https://i.ibb.co/WmSvjjv/photo-5773858406304697363-w.jpg",
+            "thumbnailUrl": "https://i.ibb.co/WmSvjjv/photo-5773858406304697363-w.jpg",
             "release_date": "2025-06-18",
             "genre": "Comedy, Holiday, Fantasy",
             "director": "Tim Burton for a darker twist, or Rob Marshall for a musical tone",
@@ -190,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "No Time to Die (2021)",
             "description": "اكشن/ اثارة / حركة",
             "poster": "https://i.ibb.co/zHLQWLJg/photo-5783048395072589689-w.jpg",
+            "thumbnailUrl": "https://i.ibb.co/zHLQWLJg/photo-5783048395072589689-w.jpg",
             "release_date": "2025-06-18",
             "genre": "Action, Adventure, Thriller, Spy",
             "director": "Cary Joji Fukunaga",
@@ -203,6 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "(Wolfman) 2025",
             "description": "When Blake Lovell (Christopher Abbott), a family man from San Francisco, inherits his childhood farmhouse in rural Oregon after his father’s disappearance, he convinces his wife Charlotte (Julia Garner) and young daughter Ginger (Matilda Firth) to join him. Soon after arrival, the family is attacked by a mysterious beast and barricades themselves inside the home. As night falls, Blake begins a slow, harrowing transformation into a monstrous creature—forcing Charlotte to decide whether the threat within is more dangerous than the one outside.",
             "poster": "https://i.ibb.co/Pz6k0QF6/photo-5803123626264872294-w.jpg",
+            "thumbnailUrl": "https://i.ibb.co/Pz6k0QF6/photo-5803123626264872294-w.jpg",
             "release_date": "2025-06-19",
             "genre": "Horror, Mystery & Thriller",
             "director": "Leigh Whannell",
@@ -216,6 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Old (2021) BluRay Full Movie HD | Cimawbas.Tv",
             "description": "Old (2021) is a psychological thriller directed by M. Night Shyamalan, centered on a family who visits a mysterious, secluded beach while on vacation—only to discover that something about the place is causing them to age rapidly. As hours pass, their lives compress into a single day, forcing them to confront mortality, buried secrets, and emotional truths in a race against time",
             "poster": "https://i.ibb.co/nNwsBbcQ/5397ae84.jpg",
+             "thumbnailUrl": "https://i.ibb.co/nNwsBbcQ/5397ae84.jpg",
             "release_date": "2025-06-20",
             "genre": "Mystery, Thriller, Drama, Psychological Horror",
             "director": "M. Night Shyamalan",
@@ -229,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Thaghut",
             "description": "يحكي فيلم الرعب الأخير هذا قصة رحلة امرأة تدعى عينون تريد إنقاذ نفسها من الضلال والسحر واللعنة كما وجدت عينون نفسها متورطة في تعاليم ضالة. فكيف سيتمكن باغاس وريني من إنقاذها وإعادتها إلى الطريق الصحيح؟",
             "poster": "https://i.ibb.co/8nWbnkyf/photo-5825733540996827420-y.jpg",
+             "thumbnailUrl": "https://i.ibb.co/8nWbnkyf/photo-5825733540996827420-y.jpg",
             "release_date": "2025-06-20",
             "genre": "Mystery, Thriller, Drama, Psychological Horror",
             "director": "M. Night Shyamalan",
@@ -242,6 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Snowpiercer (2013)",
             "description": "بعد تجربة فاشلة للتصدي للاحتباس الحراري، يحدث عصر جليدي يقضي على الحياة في الأرض، ولا ينجو سوى من يعيشون في قطار ضخم. يتزعم كيرتس ثورة من سكان ذيل القطار ضد الصفوة في المقدمة.",
             "poster": "https://i.ibb.co/wFWWWYTD/photo-5834902488719935587-w.jpg",
+             "thumbnailUrl": "https://i.ibb.co/wFWWWYTD/photo-5834902488719935587-w.jpg",
             "release_date": "2013-08-01",
             "genre": "Science Fiction",
             "director": "Bong Joon-ho",
@@ -255,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Flight Risk",
             "description": "طيار غامض يُكلف بنقل شاهد فيدرالي من ألاسكا، لكن الرحلة تتحول إلى صراع مميت حين يُكشف أن الطيار قاتل مأجور.",
             "poster": "https://i.ibb.co/zVN8s7qX/images.jpg",
+             "thumbnailUrl": "https://i.ibb.co/zVN8s7qX/images.jpg",
             "release_date": "2025-01-24",
             "genre": "Action, Thriller",
             "director": "Mel Gibson",
@@ -268,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "The Informers",
             "description": "Set in 1983 Los Angeles, a group of morally lost individuals — wealthy youth, movie producers, rock stars, and criminals — navigate a world of excess, drugs, and emotional emptiness.",
             "poster": "https://i.ibb.co/N2WhgF4F/unnamed.jpg",
+             "thumbnailUrl": "https://i.ibb.co/N2WhgF4F/unnamed.jpg",
             "release_date": "2008-04-18",
             "genre": "Drama, Crime",
             "director": "Gregor Jordan",
@@ -276,11 +292,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "rating": "5.0/10",
             "duration": "PT1H38M"
         },
-                {
+        {
   "id": 17,
   "title": "Cruel Intentions (1999)",
   "description": "In an upscale New York prep school, wealthy step-siblings Sebastian and Kathryn make a bet: Sebastian must seduce the headmaster's daughter, Annette, who has vowed to remain chaste until marriage. As the game unfolds, true feelings, betrayal, and manipulation blur the lines between love and cruelty.",
   "poster": "https://i.ibb.co/Hpnf3NcL/images.jpg",
+   "thumbnailUrl": "https://i.ibb.co/Hpnf3NcL/images.jpg",
   "release_date": "1999-03-05",
   "genre": "Drama, Romance",
   "director": "Roger Kumble",
@@ -302,11 +319,12 @@ document.addEventListener('DOMContentLoaded', () => {
   "rating": "N/A",
   "duration": "PT1H2M"
 },
-        {
+{
   "id": 19,
   "title": "Den of Thieves 2: Pantera (2025)",
   "description": "Big Nick, recently divorced and off-duty, follows master thief Donnie to Europe, where he infiltrates the Panther mafia. As a massive diamond exchange heist unfolds in France, loyalties are tested in a game of deception and violence.",
   "poster": "https://i.ibb.co/YFSQHdd9/MV5-BZGIy-YTI5-N2-Qt-Zm-Q5-ZC00-NDE4-LThh-YWMt-NGE5-Nj-I1-OGU2-M2-Nj-Xk-Ey-Xk-Fqc-Gc-V1.jpg",
+   "thumbnailUrl": "https://i.ibb.co/YFSQHdd9/MV5-BZGIy-YTI5-N2-Qt-Zm-Q5-ZC00-NDE4-LThh-YWMt-NGE5-Nj-I1-OGU2-M2-Nj-Xk-Ey-Xk-Fqc-Gc-V1.jpg",
   "release_date": "2025-01-10",
   "genre": "Action, Crime, Thriller",
   "director": "Christian Gudegast",
@@ -315,8 +333,6 @@ document.addEventListener('DOMContentLoaded', () => {
   "rating": "6.3/10",
   "duration": "PT2H24M"
 },
-
-
 {
   "id": 20,
   "title": "Back in Action (2025)",
