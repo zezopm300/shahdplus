@@ -147,31 +147,57 @@ document.addEventListener('DOMContentLoaded', async () => {
         return movieCard;
     }
 
+    // --- Enhanced Lazy Loading ---
     function initializeLazyLoad() {
         if ('IntersectionObserver' in window) {
-            let lazyLoadImages = document.querySelectorAll('.lazyload');
-            let imageObserver = new IntersectionObserver(function(entries, observer) {
+            let lazyLoadElements = document.querySelectorAll('.lazyload, iframe[data-src]'); // Include iframes
+            let observerOptions = {
+                root: null, // viewport
+                rootMargin: '0px',
+                threshold: 0.1 // Trigger when 10% of element is visible
+            };
+
+            let elementObserver = new IntersectionObserver(function(entries, observer) {
                 entries.forEach(function(entry) {
                     if (entry.isIntersecting) {
-                        let image = entry.target;
-                        image.src = image.dataset.src;
-                        image.classList.remove('lazyload');
-                        observer.unobserve(image);
+                        let element = entry.target;
+                        if (element.tagName === 'IMG') {
+                            element.src = element.dataset.src;
+                        } else if (element.tagName === 'IFRAME') {
+                            element.src = element.dataset.src;
+                            // Add powerful iframe properties on load
+                            element.setAttribute('allowfullscreen', '');
+                            element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock'); // Adjust sandbox as needed
+                            element.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+                            element.setAttribute('title', `Video player for ${document.getElementById('movie-details-title')?.textContent || 'movie'}`);
+                        }
+                        element.classList.remove('lazyload');
+                        observer.unobserve(element);
                     }
                 });
-            });
+            }, observerOptions);
 
-            lazyLoadImages.forEach(function(image) {
-                imageObserver.observe(image);
+            lazyLoadElements.forEach(function(element) {
+                elementObserver.observe(element);
             });
         } else {
-            let lazyLoadImages = document.querySelectorAll('.lazyload');
-            lazyLoadImages.forEach(function(image) {
-                image.src = image.dataset.src;
+            // Fallback for browsers without IntersectionObserver
+            let lazyLoadElements = document.querySelectorAll('.lazyload, iframe[data-src]');
+            lazyLoadElements.forEach(function(element) {
+                if (element.tagName === 'IMG') {
+                    element.src = element.dataset.src;
+                } else if (element.tagName === 'IFRAME') {
+                    element.src = element.dataset.src;
+                    element.setAttribute('allowfullscreen', '');
+                    element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock');
+                    element.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+                    element.setAttribute('title', `Video player for ${document.getElementById('movie-details-title')?.textContent || 'movie'}`);
+                }
             });
         }
-        console.log('🖼️ [Lazy Load] Initialized IntersectionObserver for images.');
+        console.log('🖼️ [Lazy Load] Initialized IntersectionObserver for images and iframes.');
     }
+
 
     function displayMovies(moviesToDisplay, targetGridElement) {
         if (!targetGridElement) {
@@ -269,17 +295,29 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (moviePlayer) {
-                moviePlayer.src = '';
+                moviePlayer.src = ''; // Clear previous src
+                moviePlayer.removeAttribute('src'); // Ensure src is completely removed for proper lazy loading
+
+                // Add powerful iframe attributes here
+                moviePlayer.setAttribute('allowfullscreen', '');
+                moviePlayer.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock'); // Adjust sandbox as needed for video player
+                moviePlayer.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+                moviePlayer.setAttribute('title', `Video player for ${movie.title}`);
+                // Use data-src for lazy loading and set it once the movie details are shown
+                moviePlayer.setAttribute('data-src', movie.embed_url);
+                moviePlayer.classList.add('lazyload'); // Add lazyload class to be picked up by observer
+
                 if (videoLoadingSpinner) {
                     videoLoadingSpinner.style.display = 'block';
                     console.log('[Video Player] Loading spinner shown.');
                 }
 
-                setTimeout(() => {
-                    moviePlayer.src = movie.embed_url;
-                    console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
-                }, 50);
+                // Initialize lazy load after setting data-src
+                initializeLazyLoad();
 
+
+                // Note: The moviePlayer.onload and onerror events will now fire after the IntersectionObserver triggers the actual src load.
+                // We'll keep them here for debugging/future use, but the primary loading is via lazyload.
                 moviePlayer.onload = () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none';
@@ -354,6 +392,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             formattedUploadDate = new Date().toISOString();
         }
 
+        // --- Improved duration formatting for Schema.org ---
+        let schemaDuration = movie.duration;
+        if (typeof movie.duration === 'string' && movie.duration.match(/(\d+)\s*(hour|hr|h)?\s*(\d+)?\s*(minute|min|m)?/i)) {
+            const parts = movie.duration.match(/(\d+)\s*(hour|hr|h)?\s*(\d+)?\s*(minute|min|m)?/i);
+            let hours = 0;
+            let minutes = 0;
+            if (parts[1] && (parts[2]?.startsWith('h') || !parts[2])) { // Check if first number is hours or if no unit specified, assume hours
+                hours = parseInt(parts[1]);
+                if (parts[3] && parts[4]?.startsWith('m')) {
+                    minutes = parseInt(parts[3]);
+                }
+            } else if (parts[1] && parts[2]?.startsWith('m')) { // Check if first number is minutes
+                minutes = parseInt(parts[1]);
+            }
+            if (hours > 0 || minutes > 0) {
+                schemaDuration = `PT${hours ? hours + 'H' : ''}${minutes ? minutes + 'M' : ''}`;
+            }
+        }
+
+
         const schema = {
             "@context": "http://schema.org",
             "@type": "VideoObject",
@@ -362,8 +420,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             "thumbnailUrl": movie.poster,
             "uploadDate": formattedUploadDate,
             "embedUrl": movie.embed_url,
-            "duration": movie.duration,
-            "contentUrl": movie.embed_url
+            "duration": schemaDuration, // Use the formatted duration
+            "contentUrl": movie.embed_url,
+            "publisher": { // Added publisher for better SEO
+                "@type": "Organization",
+                "name": "أفلام عربية", // Replace with your actual site name
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://yourwebsite.com/path/to/your/logo.png", // Replace with your actual logo URL
+                    "width": 600,
+                    "height": 60
+                }
+            }
         };
 
         if (movie.director && typeof movie.director === 'string' && movie.director.trim() !== '') {
@@ -394,7 +462,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     "@type": "AggregateRating",
                     "ratingValue": ratingValue.toFixed(1),
                     "bestRating": "10",
-                    "ratingCount": "10000"
+                    "ratingCount": "10000" // You might want to make this dynamic or an estimate
                 };
             }
         }
@@ -458,7 +526,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             videoLoadingSpinner.style.display = 'none';
         }
         if (moviePlayer) {
-            moviePlayer.src = '';
+            moviePlayer.src = ''; // Clear source
+            moviePlayer.removeAttribute('src'); // Ensure src is removed for next load
+            moviePlayer.removeAttribute('data-src'); // Remove data-src as well
+            moviePlayer.classList.remove('lazyload'); // Remove lazyload class
+            moviePlayer.removeAttribute('allowfullscreen');
+            moviePlayer.removeAttribute('sandbox');
+            moviePlayer.removeAttribute('referrerpolicy');
+            moviePlayer.removeAttribute('title');
             moviePlayer.onload = null;
             moviePlayer.onerror = null;
         }
@@ -492,7 +567,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     navLinks.forEach(link => {
-        link.addEventListener('click', () => {
+        link.addEventListener('click', (e) => {
+            // Check if the clicked link is 'الرئيسية' or 'أفلام'
+            if (link.id === 'nav-home-link' || link.id === 'nav-movies-link') { // Assuming you add IDs to your nav links, e.g., <a id="nav-home-link" href="#">الرئيسية</a>
+                e.preventDefault(); // Prevent default link behavior
+                console.log(`[Interaction] Navbar link "${link.textContent.trim()}" clicked.`);
+                showHomePage();
+            } else {
+                // For other links, keep existing behavior
+                console.log(`[Interaction] Other nav link "${link.textContent.trim()}" clicked.`);
+            }
+
             if (mainNav && mainNav.classList.contains('nav-open')) {
                 mainNav.classList.remove('nav-open');
                 console.log('📱 [Interaction] Nav link clicked, menu closed.');
@@ -566,11 +651,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (videoOverlay) {
-        videoOverlay.addEventListener('click', () => {
+        videoOverlay.addEventListener('click', (e) => {
+            // Prevent the click from bubbling up to the video player or any other parent
+            e.stopPropagation();
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
 
             if (adOpened) {
+                // Temporarily disable clicks on the overlay if an ad was opened
                 videoOverlay.style.pointerEvents = 'none';
                 console.log(`[Video Overlay] Temporarily disabled clicks for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
                 setTimeout(() => {
@@ -601,4 +689,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('🚀 [Initial Load] No specific view in URL. Showing home page.');
         showHomePage();
     }
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', (event) => {
+        console.log('History popstate event triggered.', event.state);
+        if (event.state && event.state.view === 'details' && event.state.id) {
+            showMovieDetails(event.state.id);
+        } else {
+            showHomePage();
+        }
+    });
 });
