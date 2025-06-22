@@ -225,7 +225,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             console.log(`🔍 [Search] Performed search for "${query}". Found ${filteredMovies.length} results.`);
         } else {
-            // إذا كان حقل البحث فارغًا، أظهر الأفلام بالترتيب العشوائي الافتراضي
             filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
@@ -233,7 +232,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('🔍 [Search] Search query empty, showing all movies (randomized).');
         }
         currentPage = 1;
-        moviesDataForPagination = filteredMovies; // تحديث البيانات الخاصة بالترقيم
+        moviesDataForPagination = filteredMovies;
         paginateMovies(moviesDataForPagination, currentPage);
     }
 
@@ -270,17 +269,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (moviePlayer) {
-                moviePlayer.src = ''; // تفريغ الـ src أولاً لإعادة تحميل الـ iframe بالكامل
+                moviePlayer.src = '';
                 if (videoLoadingSpinner) {
-                    videoLoadingSpinner.style.display = 'block'; // إظهار مؤشر التحميل
+                    videoLoadingSpinner.style.display = 'block';
                     console.log('[Video Player] Loading spinner shown.');
                 }
 
-                // تأخير بسيط لإعادة تعيين الـ src للسماح بإعادة تحميل الـ iframe بشكل صحيح
                 setTimeout(() => {
                     moviePlayer.src = movie.embed_url;
                     console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
-                }, 50); // تأخير بسيط (مثل 50ms)
+                }, 50);
 
                 moviePlayer.onload = () => {
                     if (videoLoadingSpinner) {
@@ -288,8 +286,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         console.log('[Video Player] Loading spinner hidden (iframe loaded).');
                     }
                     if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive'); // التأكد من إظهار الـ overlay
-                        videoOverlay.style.pointerEvents = 'auto'; // جعله قابلاً للنقر
+                        videoOverlay.classList.remove('inactive');
+                        videoOverlay.style.pointerEvents = 'auto';
                         console.log('[Video Overlay] Active and clickable after video loaded.');
                     }
                 };
@@ -299,7 +297,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
                     }
                     if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive'); // إبقاؤه نشطاً حتى لو فشل التحميل
+                        videoOverlay.classList.remove('inactive');
                         videoOverlay.style.pointerEvents = 'auto';
                         console.warn('[Video Overlay] Active even after iframe load error.');
                     }
@@ -448,22 +446,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (searchInput) searchInput.value = '';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
 
-        // تهيئة وعرض الأفلام للصفحة الرئيسية بترتيب عشوائي
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
-        // تعطيل وإخفاء Video Overlay ومؤشر التحميل ومشغل الفيديو
         if (videoOverlay) {
-            videoOverlay.classList.add('inactive'); // إخفاء الـ overlay بصرياً
-            videoOverlay.style.pointerEvents = 'none'; // تعطيل النقرات عليه
+            videoOverlay.classList.add('inactive');
+            videoOverlay.style.pointerEvents = 'none';
             console.log('[Video Overlay] Inactive on home page.');
         }
         if (videoLoadingSpinner) {
             videoLoadingSpinner.style.display = 'none';
         }
         if (moviePlayer) {
-            moviePlayer.src = ''; // تفريغ الـ src لإيقاف تشغيل الفيديو
-            moviePlayer.onload = null; // إزالة معالجات الأحداث لتجنب تسرب الذاكرة
+            moviePlayer.src = '';
+            moviePlayer.onload = null;
             moviePlayer.onerror = null;
         }
 
@@ -480,7 +476,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
 
-        // إزالة JSON-LD Schema الخاص بصفحة الفيلم من رأس الصفحة الرئيسية
         let script = document.querySelector('script[type="application/ld+json"]');
         if (script) {
             script.remove();
@@ -497,17 +492,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
+        link.addEventListener('click', () => {
             if (mainNav && mainNav.classList.contains('nav-open')) {
                 mainNav.classList.remove('nav-open');
                 console.log('📱 [Interaction] Nav link clicked, menu closed.');
-            }
-            // إذا كان هذا الرابط يؤدي إلى الصفحة الرئيسية (مثل رابط "الأفلام" أو "الرئيسية")
-            // يجب التأكد من أن الـ href الخاص به فارغ، أو "#"، أو يشير إلى الصفحة الرئيسية
-            if (link.getAttribute('href') === '#' || link.getAttribute('href') === './' || link.getAttribute('href') === '') {
-                e.preventDefault(); // منع السلوك الافتراضي للانتقال لصفحة جديدة
-                showHomePage(); // استدعاء دالة عرض الصفحة الرئيسية
-                console.log('🏠 [Interaction] Nav link directed to home page.');
             }
         });
     });
@@ -583,10 +571,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
 
             if (adOpened) {
-                videoOverlay.style.pointerEvents = 'none'; // تعطيل النقرات مؤقتًا
+                videoOverlay.style.pointerEvents = 'none';
                 console.log(`[Video Overlay] Temporarily disabled clicks for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
                 setTimeout(() => {
-                    videoOverlay.style.pointerEvents = 'auto'; // إعادة تفعيل النقرات
+                    videoOverlay.style.pointerEvents = 'auto';
                     console.log('[Video Overlay] Clicks re-enabled.');
                 }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
             }
