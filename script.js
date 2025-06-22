@@ -317,7 +317,20 @@ document.addEventListener('DOMContentLoaded', () => {
 },
 
 
-
+{
+  "id": 20,
+  "title": "Back in Action (2025)",
+  "description": "Former CIA operatives Emily and Matt, now living undercover with their two children, are pulled back into espionage when their secret is blown. They must return to their spy lives to protect their family.",
+  "poster": "https://i.ibb.co/k277HWcz/g-J4-KMv9dwk-Xg2-Iy-X5y-QVOu-BQh-Rno-W6-Iw-Jl-Yd8yrm-400x400.jpg",
+  "thumbnailUrl": "https://i.ibb.co/k277HWcz/g-J4-KMv9dwk-Xg2-Iy-X5y-QVOu-BQh-Rno-W6-Iw-Jl-Yd8yrm-400x400.jpg",
+  "release_date": "2025-01-17",
+  "genre": "Action, Comedy",
+  "director": "Seth Gordon",
+  "cast": "Jamie Foxx, Cameron Diaz, Kyle Chandler, Glenn Close, Andrew Scott, McKenna Roberts, Rylan Jackson",
+  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239030&hd=2&",
+  "rating": "6.3/10",
+  "duration": "PT1H54M"
+},
 
     ];
 
