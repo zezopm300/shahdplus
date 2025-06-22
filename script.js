@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- 3. Movie Data (سيتم تحميلها الآن من ملف JSON) ---
     let moviesData = [];
-    let moviesDataForPagination = [];
+    let moviesDataForPagination = []; // هذه سيتم تعبئتها فور نجاح تحميل moviesData
     let activeMoviePlayer = null;
 
     async function fetchMoviesData() {
@@ -92,7 +92,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (nextPageBtn) nextPageBtn.style.display = 'none';
                 return false;
             }
-            // Ensure pagination buttons are visible if data loaded
+            
+            // --- هذا الجزء حيوي: تعبئة moviesDataForPagination فوراً بعد التحميل ---
+            moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
+            console.log('✅ [Data Init] moviesDataForPagination initialized with', moviesDataForPagination.length, 'movies.');
+
             if (prevPageBtn) prevPageBtn.style.display = 'inline-block';
             if (nextPageBtn) nextPageBtn.style.display = 'inline-block';
             return true;
@@ -191,7 +195,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('❌ displayMovies: Target grid element is null or undefined.');
             return;
         }
-        targetGridElement.innerHTML = ''; // Clear previous content
+        targetGridElement.innerHTML = '';
 
         if (moviesToDisplay.length === 0) {
             targetGridElement.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد أفلام مطابقة للبحث أو مقترحة.</p>';
@@ -277,7 +281,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             activeMoviePlayer = null;
             console.log('[Video Player] Existing iframe removed.');
         }
-        // Clear any error messages or old content in the player container
         moviePlayerContainer.innerHTML = '';
 
         if (videoLoadingSpinner) {
@@ -331,6 +334,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const movie = moviesData.find(m => m.id === movieId);
 
         if (movie) {
+            // Hide home sections and show details sections
             if (heroSection) heroSection.style.display = 'none';
             if (movieGridSection) movieGridSection.style.display = 'none';
 
@@ -489,11 +493,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function showHomePage() {
         console.log('🏠 [Routing] Showing home page.');
+        // Show home sections and hide details sections
         if (movieDetailsSection) movieDetailsSection.style.display = 'none';
         if (suggestedMoviesSection) suggestedMoviesSection.style.display = 'none';
 
-        if (heroSection) heroSection.style.display = 'flex';
-        if (movieGridSection) movieGridSection.style.display = 'block';
+        if (heroSection) heroSection.style.display = 'flex'; // Ensure hero is visible
+        if (movieGridSection) movieGridSection.style.display = 'block'; // Ensure movie grid is visible
 
         if (searchInput) searchInput.value = '';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
@@ -503,11 +508,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
             paginateMovies(moviesDataForPagination, 1);
         } else {
-            // If moviesData is empty, ensure the grid shows an empty message
+            // If moviesData is empty (e.g., failed to load), display empty message
             displayMovies([], movieGrid);
             updatePaginationButtons(0);
         }
-
 
         if (videoOverlay) {
             videoOverlay.classList.add('inactive');
@@ -687,13 +691,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- 6. Initial Page Load Logic (Routing) ---
-    const isDataLoaded = await fetchMoviesData();
+    const isDataLoaded = await fetchMoviesData(); // هنا بننتظر تحميل البيانات أولاً
 
     if (isDataLoaded) {
         const urlParams = new URLSearchParams(window.location.search);
         const viewParam = urlParams.get('view');
         const idParam = urlParams.get('id');
 
+        // تحديد الحالة الأولية للصفحة بناءً على الـ URL أو عرض الصفحة الرئيسية
         if (viewParam === 'details' && idParam) {
             const movieId = parseInt(idParam);
             if (!isNaN(movieId)) {
@@ -701,22 +706,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showMovieDetails(movieId);
             } else {
                 console.warn('⚠️ [Initial Load] Invalid movie ID in URL. Showing home page.');
-                showHomePage();
+                showHomePage(); // If invalid ID, fallback to home
             }
         } else {
             console.log('🚀 [Initial Load] No specific view in URL. Showing home page.');
-            showHomePage();
+            showHomePage(); // Show home page by default
         }
     } else {
         console.error('🛑 Initial movie data load failed. Cannot display content.');
+        // fetchMoviesData() will handle displaying an error message in movieGrid
     }
 
     // Event listener for browser's back/forward buttons
     window.addEventListener('popstate', (event) => {
         console.log('↩️ [History] Popstate event triggered.', event.state);
-        // We only proceed if moviesData is already loaded
+        // Important: Ensure moviesData is loaded before attempting to route
         if (moviesData.length === 0) {
-            console.warn('⚠️ [Popstate] No movie data available, cannot route. Staying on current page or redirecting to home.');
+            console.warn('⚠️ [Popstate] No movie data available, attempting to reload home.');
             showHomePage(); // Try to show home, which will show error if data still not loaded
             return;
         }
