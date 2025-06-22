@@ -302,6 +302,20 @@ document.addEventListener('DOMContentLoaded', () => {
   "rating": "N/A",
   "duration": "PT1H2M"
 },
+        {
+  "id": 19,
+  "title": "Den of Thieves 2: Pantera (2025)",
+  "description": "Big Nick, recently divorced and off-duty, follows master thief Donnie to Europe, where he infiltrates the Panther mafia. As a massive diamond exchange heist unfolds in France, loyalties are tested in a game of deception and violence.",
+  "poster": "https://i.ibb.co/YFSQHdd9/MV5-BZGIy-YTI5-N2-Qt-Zm-Q5-ZC00-NDE4-LThh-YWMt-NGE5-Nj-I1-OGU2-M2-Nj-Xk-Ey-Xk-Fqc-Gc-V1.jpg",
+  "release_date": "2025-01-10",
+  "genre": "Action, Crime, Thriller",
+  "director": "Christian Gudegast",
+  "cast": "Gerard Butler, O'Shea Jackson Jr., Evin Ahmad, Salvatore Esposito, Meadow Williams, Swen Temmel",
+  "embed_url": "https://player.vimeo.com/video/1095363603?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479", 
+  "rating": "6.3/10",
+  "duration": "PT2H24M"
+},
+
 
 
 
