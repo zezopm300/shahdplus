@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
-    const moviePlayer = document.getElementById('movie-player');
+    const moviePlayer = document.getElementById('movie-player'); // This is the iframe
     const videoOverlay = document.getElementById('video-overlay');
     const homeLogoLink = document.getElementById('home-logo-link');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
@@ -147,14 +147,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         return movieCard;
     }
 
-    // --- Enhanced Lazy Loading ---
+    // --- Enhanced Lazy Loading for images and iframes ---
     function initializeLazyLoad() {
         if ('IntersectionObserver' in window) {
-            let lazyLoadElements = document.querySelectorAll('.lazyload, iframe[data-src]'); // Include iframes
+            // Select all elements with 'lazyload' class and iframes with 'data-src'
+            let lazyLoadElements = document.querySelectorAll('.lazyload, iframe[data-src]'); 
             let observerOptions = {
                 root: null, // viewport
                 rootMargin: '0px',
-                threshold: 0.1 // Trigger when 10% of element is visible
+                threshold: 0.01 // Trigger when 1% of element is visible to load iframes faster
             };
 
             let elementObserver = new IntersectionObserver(function(entries, observer) {
@@ -163,13 +164,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                         let element = entry.target;
                         if (element.tagName === 'IMG') {
                             element.src = element.dataset.src;
+                            console.log(`🖼️ [Lazy Load] Image loaded: ${element.src}`);
                         } else if (element.tagName === 'IFRAME') {
                             element.src = element.dataset.src;
-                            // Add powerful iframe properties on load
+                            // Set iframe properties here as it's about to be loaded
                             element.setAttribute('allowfullscreen', '');
-                            element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock'); // Adjust sandbox as needed
+                            // Re-evaluated sandbox: removed 'allow-popups' if it's the video player iframe
+                            // The problem with video stopping might be related to the iframe re-rendering/reloading
+                            // or security sandbox issues. Let's start with a less restrictive sandbox for video playback
+                            // and allow essential functionalities.
+                            // `allow-top-navigation` is sometimes needed for full-screen from iframe, but also a security risk if not careful.
+                            // 'allow-same-origin' is critical if the iframe content needs to interact with parent scripts (e.g. for video events)
+                            // 'allow-scripts' is required for the video player scripts themselves.
+                            // 'allow-presentation' is often needed for full-screen APIs.
+                            // 'allow-forms' and 'allow-pointer-lock' are generally fine.
+                            element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation'); 
                             element.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-                            element.setAttribute('title', `Video player for ${document.getElementById('movie-details-title')?.textContent || 'movie'}`);
+                            element.setAttribute('title', `Video player for ${element.alt || 'movie'}`); // Use alt or title for accessibility
+                            console.log(`🎥 [Lazy Load] Iframe loaded: ${element.src}`);
                         }
                         element.classList.remove('lazyload');
                         observer.unobserve(element);
@@ -180,6 +192,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             lazyLoadElements.forEach(function(element) {
                 elementObserver.observe(element);
             });
+            console.log('🖼️ [Lazy Load] Initialized IntersectionObserver for images and iframes.');
         } else {
             // Fallback for browsers without IntersectionObserver
             let lazyLoadElements = document.querySelectorAll('.lazyload, iframe[data-src]');
@@ -189,13 +202,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } else if (element.tagName === 'IFRAME') {
                     element.src = element.dataset.src;
                     element.setAttribute('allowfullscreen', '');
-                    element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock');
+                    element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation');
                     element.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-                    element.setAttribute('title', `Video player for ${document.getElementById('movie-details-title')?.textContent || 'movie'}`);
+                    element.setAttribute('title', `Video player for ${element.alt || 'movie'}`);
                 }
             });
+            console.log('🖼️ [Lazy Load] Fallback lazy load executed for images and iframes (no IntersectionObserver).');
         }
-        console.log('🖼️ [Lazy Load] Initialized IntersectionObserver for images and iframes.');
     }
 
 
@@ -217,7 +230,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         console.log(`🎬 [Display] Displayed ${moviesToDisplay.length} movies in ${targetGridElement.id}.`);
 
-        initializeLazyLoad();
+        initializeLazyLoad(); // Initialize lazy load after elements are added to DOM
     }
 
     function paginateMovies(moviesArray, page) {
@@ -278,7 +291,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             document.getElementById('movie-details-title').textContent = movie.title;
             document.getElementById('movie-details-description').textContent = movie.description;
-            // استخدام Date object لتنسيق التاريخ بشكل أفضل للعرض
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
             document.getElementById('movie-details-release-date').textContent = releaseDate;
             
@@ -295,29 +307,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (moviePlayer) {
-                moviePlayer.src = ''; // Clear previous src
-                moviePlayer.removeAttribute('src'); // Ensure src is completely removed for proper lazy loading
+                // Clear previous src and data-src to ensure re-initialization
+                moviePlayer.src = ''; 
+                moviePlayer.removeAttribute('src'); 
+                moviePlayer.removeAttribute('data-src'); // Ensure data-src is also reset
 
-                // Add powerful iframe attributes here
+                // Set iframe properties for the video player
                 moviePlayer.setAttribute('allowfullscreen', '');
-                moviePlayer.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock'); // Adjust sandbox as needed for video player
+                // Relaxed sandbox for video playback. 'allow-top-navigation' is added cautiously.
+                // It might be required for some embedded players to go full screen properly.
+                moviePlayer.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation allow-top-navigation'); 
                 moviePlayer.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
                 moviePlayer.setAttribute('title', `Video player for ${movie.title}`);
-                // Use data-src for lazy loading and set it once the movie details are shown
+                
+                // Set data-src for lazy loading and add lazyload class
                 moviePlayer.setAttribute('data-src', movie.embed_url);
-                moviePlayer.classList.add('lazyload'); // Add lazyload class to be picked up by observer
-
+                moviePlayer.classList.add('lazyload'); 
+                
                 if (videoLoadingSpinner) {
                     videoLoadingSpinner.style.display = 'block';
                     console.log('[Video Player] Loading spinner shown.');
                 }
 
-                // Initialize lazy load after setting data-src
+                // Re-initialize lazy load specifically for the video player iframe
+                // This ensures the IntersectionObserver starts observing the iframe immediately.
                 initializeLazyLoad();
 
-
-                // Note: The moviePlayer.onload and onerror events will now fire after the IntersectionObserver triggers the actual src load.
-                // We'll keep them here for debugging/future use, but the primary loading is via lazyload.
+                // Onload/onerror handlers will now fire when the iframe loads its src from lazyload
                 moviePlayer.onload = () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none';
@@ -325,7 +341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                     if (videoOverlay) {
                         videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.style.pointerEvents = 'auto'; // Re-enable clicks
                         console.log('[Video Overlay] Active and clickable after video loaded.');
                     }
                 };
@@ -336,7 +352,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                     if (videoOverlay) {
                         videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.style.pointerEvents = 'auto'; // Re-enable clicks
                         console.warn('[Video Overlay] Active even after iframe load error.');
                     }
                 };
@@ -392,20 +408,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             formattedUploadDate = new Date().toISOString();
         }
 
-        // --- Improved duration formatting for Schema.org ---
         let schemaDuration = movie.duration;
         if (typeof movie.duration === 'string' && movie.duration.match(/(\d+)\s*(hour|hr|h)?\s*(\d+)?\s*(minute|min|m)?/i)) {
             const parts = movie.duration.match(/(\d+)\s*(hour|hr|h)?\s*(\d+)?\s*(minute|min|m)?/i);
             let hours = 0;
             let minutes = 0;
-            if (parts[1] && (parts[2]?.startsWith('h') || !parts[2])) { // Check if first number is hours or if no unit specified, assume hours
+            // Improved parsing for duration (handles "2 hours", "90 minutes", "1h 30m")
+            if (parts[2] && parts[2].toLowerCase().startsWith('h')) { // If hour unit is specified
                 hours = parseInt(parts[1]);
-                if (parts[3] && parts[4]?.startsWith('m')) {
+                if (parts[3] && parts[4] && parts[4].toLowerCase().startsWith('m')) { // And minutes are specified
                     minutes = parseInt(parts[3]);
                 }
-            } else if (parts[1] && parts[2]?.startsWith('m')) { // Check if first number is minutes
+            } else if (parts[2] && parts[2].toLowerCase().startsWith('m')) { // If minute unit is specified
                 minutes = parseInt(parts[1]);
+            } else if (!parts[2] && parts[1]) { // If no unit, assume hours if > 1, or minutes if < 2 (heuristic)
+                const num = parseInt(parts[1]);
+                if (num > 2) hours = num; // Assume "2" means 2 hours
+                else minutes = num; // Assume "90" means 90 minutes if no unit
             }
+
             if (hours > 0 || minutes > 0) {
                 schemaDuration = `PT${hours ? hours + 'H' : ''}${minutes ? minutes + 'M' : ''}`;
             }
@@ -420,9 +441,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             "thumbnailUrl": movie.poster,
             "uploadDate": formattedUploadDate,
             "embedUrl": movie.embed_url,
-            "duration": schemaDuration, // Use the formatted duration
+            "duration": schemaDuration,
             "contentUrl": movie.embed_url,
-            "publisher": { // Added publisher for better SEO
+            "publisher": {
                 "@type": "Organization",
                 "name": "أفلام عربية", // Replace with your actual site name
                 "logo": {
@@ -462,19 +483,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     "@type": "AggregateRating",
                     "ratingValue": ratingValue.toFixed(1),
                     "bestRating": "10",
-                    "ratingCount": "10000" // You might want to make this dynamic or an estimate
+                    "ratingCount": "10000"
                 };
             }
         }
         
-        // إزالة أي سكربت JSON-LD قديم قبل إضافة الجديد
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
             oldScript.remove();
             console.log('📄 [SEO] Old JSON-LD schema removed.');
         }
 
-        // إضافة السكربت الجديد
         let script = document.createElement('script');
         script.type = 'application/ld+json';
         script.textContent = JSON.stringify(schema);
@@ -530,6 +549,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             moviePlayer.removeAttribute('src'); // Ensure src is removed for next load
             moviePlayer.removeAttribute('data-src'); // Remove data-src as well
             moviePlayer.classList.remove('lazyload'); // Remove lazyload class
+            // Reset iframe attributes when returning to homepage
             moviePlayer.removeAttribute('allowfullscreen');
             moviePlayer.removeAttribute('sandbox');
             moviePlayer.removeAttribute('referrerpolicy');
@@ -569,12 +589,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             // Check if the clicked link is 'الرئيسية' or 'أفلام'
-            if (link.id === 'nav-home-link' || link.id === 'nav-movies-link') { // Assuming you add IDs to your nav links, e.g., <a id="nav-home-link" href="#">الرئيسية</a>
+            // Ensure you have these IDs in your HTML nav links for this to work:
+            // <a id="nav-home-link" href="#">الرئيسية</a>
+            // <a id="nav-movies-link" href="#">أفلام</a>
+            if (link.id === 'nav-home-link' || link.id === 'nav-movies-link') { 
                 e.preventDefault(); // Prevent default link behavior
                 console.log(`[Interaction] Navbar link "${link.textContent.trim()}" clicked.`);
                 showHomePage();
             } else {
-                // For other links, keep existing behavior
                 console.log(`[Interaction] Other nav link "${link.textContent.trim()}" clicked.`);
             }
 
@@ -652,8 +674,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (videoOverlay) {
         videoOverlay.addEventListener('click', (e) => {
-            // Prevent the click from bubbling up to the video player or any other parent
-            e.stopPropagation();
+            // This is the crucial part to prevent video pause:
+            // Stop the event from bubbling up to the iframe or its parent
+            e.stopPropagation(); 
+            e.preventDefault(); // Also prevent default behavior for the overlay itself
+
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
 
@@ -671,7 +696,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- 6. Initial Page Load Logic (Routing) ---
-    // يتم تنفيذ هذا الجزء الآن بعد التأكد من تحميل بيانات الأفلام.
     const urlParams = new URLSearchParams(window.location.search);
     const viewParam = urlParams.get('view');
     const idParam = urlParams.get('id');
