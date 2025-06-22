@@ -4,7 +4,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- 1. DOM Element References ---
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.getElementById('main-nav');
-    const navLinks = document.querySelectorAll('.main-nav ul li a');
+    // Using specific IDs for navbar links for robust targeting
+    const homeNavLink = document.getElementById('nav-home-link'); 
+    const moviesNavLink = document.getElementById('nav-movies-link');
+    const navLinks = document.querySelectorAll('.main-nav ul li a'); // Still useful for general menu closing
+    
     const heroSection = document.getElementById('hero-section');
     const watchNowBtn = document.getElementById('watch-now-btn');
     const movieGridSection = document.getElementById('movie-grid-section');
@@ -13,11 +17,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
-    const moviePlayer = document.getElementById('movie-player'); // This is the iframe
-    const videoOverlay = document.getElementById('video-overlay');
+    const moviePlayer = document.getElementById('movie-player'); // This is the iframe for video playback
+    const videoOverlay = document.getElementById('video-overlay'); // Ad overlay
     const homeLogoLink = document.getElementById('home-logo-link');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
     const movieDetailsPoster = document.getElementById('movie-details-poster');
+
+    // Movie Details Specific Elements
+    const movieDetailsTitle = document.getElementById('movie-details-title');
+    const movieDetailsDescription = document.getElementById('movie-details-description');
+    const movieDetailsReleaseDate = document.getElementById('movie-details-release-date');
+    const movieDetailsGenre = document.getElementById('movie-details-genre');
+    const movieDetailsDirector = document.getElementById('movie-details-director');
+    const movieDetailsCast = document.getElementById('movie-details-cast');
+    const movieDetailsDuration = document.getElementById('movie-details-duration');
+    const movieDetailsRating = document.getElementById('movie-details-rating');
+
 
     // Pagination elements
     const prevPageBtn = document.getElementById('prev-page-btn');
@@ -41,7 +56,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         '#suggested-movie-grid': suggestedMovieGrid,
         '#suggested-movies-section': suggestedMoviesSection,
         '#video-loading-spinner': videoLoadingSpinner,
-        '#movie-details-poster': movieDetailsPoster
+        '#movie-details-poster': movieDetailsPoster,
+        // Add all critical details elements
+        '#movie-details-title': movieDetailsTitle,
+        '#movie-details-description': movieDetailsDescription,
+        '#movie-details-release-date': movieDetailsReleaseDate,
+        '#movie-details-genre': movieDetailsGenre,
+        '#movie-details-director': movieDetailsDirector,
+        '#movie-details-cast': movieDetailsCast,
+        '#movie-details-duration': movieDetailsDuration,
+        '#movie-details-rating': movieDetailsRating
     };
 
     let criticalError = false;
@@ -59,6 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- 2. Adsterra Configuration (تم الاحتفاظ بها كما هي لعمل إعلانات الفيديو والبوستر) ---
+    // هذه الأكواد لم يتم لمسها بناءً على طلبك
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes for movie cards and details poster
@@ -69,9 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- 3. Movie Data (سيتم تحميلها الآن من ملف JSON) ---
     let moviesData = []; // متغير لتخزين البيانات التي سيتم جلبها
-
-    // سيتم ترتيب هذه المصفوفة عشوائيًا عند تحميل الصفحة وفي كل مرة نعود فيها للصفحة الرئيسية
-    let moviesDataForPagination = [];
+    let moviesDataForPagination = []; // سيتم ترتيب هذه المصفوفة عشوائيًا عند تحميل الصفحة وفي كل مرة نعود فيها للصفحة الرئيسية
 
     // --- جلب بيانات الأفلام من ملف JSON في بداية التحميل ---
     try {
@@ -150,12 +173,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Enhanced Lazy Loading for images and iframes ---
     function initializeLazyLoad() {
         if ('IntersectionObserver' in window) {
-            // Select all elements with 'lazyload' class and iframes with 'data-src'
             let lazyLoadElements = document.querySelectorAll('.lazyload, iframe[data-src]'); 
             let observerOptions = {
                 root: null, // viewport
                 rootMargin: '0px',
-                threshold: 0.01 // Trigger when 1% of element is visible to load iframes faster
+                threshold: 0.01 // Load iframes and images very early (1% visible)
             };
 
             let elementObserver = new IntersectionObserver(function(entries, observer) {
@@ -167,21 +189,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                             console.log(`🖼️ [Lazy Load] Image loaded: ${element.src}`);
                         } else if (element.tagName === 'IFRAME') {
                             element.src = element.dataset.src;
-                            // Set iframe properties here as it's about to be loaded
+                            // Ensure all critical iframe attributes are set here too
                             element.setAttribute('allowfullscreen', '');
-                            // Re-evaluated sandbox: removed 'allow-popups' if it's the video player iframe
-                            // The problem with video stopping might be related to the iframe re-rendering/reloading
-                            // or security sandbox issues. Let's start with a less restrictive sandbox for video playback
-                            // and allow essential functionalities.
-                            // `allow-top-navigation` is sometimes needed for full-screen from iframe, but also a security risk if not careful.
-                            // 'allow-same-origin' is critical if the iframe content needs to interact with parent scripts (e.g. for video events)
-                            // 'allow-scripts' is required for the video player scripts themselves.
-                            // 'allow-presentation' is often needed for full-screen APIs.
-                            // 'allow-forms' and 'allow-pointer-lock' are generally fine.
-                            element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation'); 
+                            // Re-evaluated sandbox for VK/video players:
+                            // These permissions are generally needed for full functionality (fullscreen, scripts, popups by player)
+                            // 'allow-top-navigation' is crucial for some fullscreen implementations that change the top window URL, use with caution.
+                            element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation allow-top-navigation'); 
                             element.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-                            element.setAttribute('title', `Video player for ${element.alt || 'movie'}`); // Use alt or title for accessibility
-                            console.log(`🎥 [Lazy Load] Iframe loaded: ${element.src}`);
+                            element.setAttribute('title', `Video player for ${element.alt || element.getAttribute('title') || 'movie'}`); // Use title if available, fallback to alt
+                            // Try to autoplay muted to ensure video loading starts
+                            element.setAttribute('autoplay', '1');
+                            element.setAttribute('muted', '1');
+                            console.log(`🎥 [Lazy Load] Iframe loaded: ${element.src} with autoplay/muted.`);
                         }
                         element.classList.remove('lazyload');
                         observer.unobserve(element);
@@ -202,15 +221,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 } else if (element.tagName === 'IFRAME') {
                     element.src = element.dataset.src;
                     element.setAttribute('allowfullscreen', '');
-                    element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation');
+                    element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation allow-top-navigation');
                     element.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-                    element.setAttribute('title', `Video player for ${element.alt || 'movie'}`);
+                    element.setAttribute('title', `Video player for ${element.alt || element.getAttribute('title') || 'movie'}`);
+                    element.setAttribute('autoplay', '1');
+                    element.setAttribute('muted', '1');
                 }
             });
             console.log('🖼️ [Lazy Load] Fallback lazy load executed for images and iframes (no IntersectionObserver).');
         }
     }
-
 
     function displayMovies(moviesToDisplay, targetGridElement) {
         if (!targetGridElement) {
@@ -289,16 +309,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
             console.log('[Routing] Scrolled to top.');
 
-            document.getElementById('movie-details-title').textContent = movie.title;
-            document.getElementById('movie-details-description').textContent = movie.description;
+            movieDetailsTitle.textContent = movie.title;
+            movieDetailsDescription.textContent = movie.description;
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
-            document.getElementById('movie-details-release-date').textContent = releaseDate;
+            movieDetailsReleaseDate.textContent = releaseDate;
             
-            document.getElementById('movie-details-genre').textContent = movie.genre || 'غير محدد';
-            document.getElementById('movie-details-director').textContent = movie.director || 'غير متوفر';
-            document.getElementById('movie-details-cast').textContent = Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast || 'غير متوفر';
-            document.getElementById('movie-details-duration').textContent = movie.duration || 'غير متوفر';
-            document.getElementById('movie-details-rating').textContent = movie.rating || 'N/A';
+            movieDetailsGenre.textContent = movie.genre || 'غير محدد';
+            movieDetailsDirector.textContent = movie.director || 'غير متوفر';
+            movieDetailsCast.textContent = Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast || 'غير متوفر';
+            movieDetailsDuration.textContent = movie.duration || 'غير متوفر';
+            movieDetailsRating.textContent = movie.rating || 'N/A';
 
             if (movieDetailsPoster) {
                 movieDetailsPoster.src = movie.poster;
@@ -307,18 +327,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (moviePlayer) {
-                // Clear previous src and data-src to ensure re-initialization
                 moviePlayer.src = ''; 
                 moviePlayer.removeAttribute('src'); 
                 moviePlayer.removeAttribute('data-src'); // Ensure data-src is also reset
 
                 // Set iframe properties for the video player
                 moviePlayer.setAttribute('allowfullscreen', '');
-                // Relaxed sandbox for video playback. 'allow-top-navigation' is added cautiously.
-                // It might be required for some embedded players to go full screen properly.
+                // Comprehensive sandbox permissions for VK player stability
+                // 'allow-top-navigation' is included for robust fullscreen, but be aware of its implications.
                 moviePlayer.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation allow-top-navigation'); 
                 moviePlayer.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
                 moviePlayer.setAttribute('title', `Video player for ${movie.title}`);
+                // Try to autoplay muted to ensure video loading starts immediately
+                moviePlayer.setAttribute('autoplay', '1');
+                moviePlayer.setAttribute('muted', '1');
                 
                 // Set data-src for lazy loading and add lazyload class
                 moviePlayer.setAttribute('data-src', movie.embed_url);
@@ -353,7 +375,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (videoOverlay) {
                         videoOverlay.classList.remove('inactive');
                         videoOverlay.style.pointerEvents = 'auto'; // Re-enable clicks
-                        console.warn('[Video Overlay] Active even after iframe load error.');
+                        console.log('[Video Overlay] Active even after iframe load error.');
                     }
                 };
             }
@@ -386,7 +408,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', movie.title);
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', movie.description);
         document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', movie.poster);
-        console.log('📄 [SEO] Meta tags updated.');
+        // Canonical URL for SEO
+        let canonicalLink = document.querySelector('link[rel="canonical"]');
+        if (!canonicalLink) {
+            canonicalLink = document.createElement('link');
+            canonicalLink.setAttribute('rel', 'canonical');
+            document.head.appendChild(canonicalLink);
+        }
+        canonicalLink.setAttribute('href', window.location.href.split('?')[0]); // Use base URL without query params for canonical
+        console.log('📄 [SEO] Meta tags updated, including canonical.');
     }
 
     function addJsonLdSchema(movie) {
@@ -413,20 +443,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             const parts = movie.duration.match(/(\d+)\s*(hour|hr|h)?\s*(\d+)?\s*(minute|min|m)?/i);
             let hours = 0;
             let minutes = 0;
-            // Improved parsing for duration (handles "2 hours", "90 minutes", "1h 30m")
-            if (parts[2] && parts[2].toLowerCase().startsWith('h')) { // If hour unit is specified
+            if (parts[2] && parts[2].toLowerCase().startsWith('h')) {
                 hours = parseInt(parts[1]);
-                if (parts[3] && parts[4] && parts[4].toLowerCase().startsWith('m')) { // And minutes are specified
+                if (parts[3] && parts[4] && parts[4].toLowerCase().startsWith('m')) {
                     minutes = parseInt(parts[3]);
                 }
-            } else if (parts[2] && parts[2].toLowerCase().startsWith('m')) { // If minute unit is specified
+            } else if (parts[2] && parts[2].toLowerCase().startsWith('m')) {
                 minutes = parseInt(parts[1]);
-            } else if (!parts[2] && parts[1]) { // If no unit, assume hours if > 1, or minutes if < 2 (heuristic)
+            } else if (!parts[2] && parts[1]) {
                 const num = parseInt(parts[1]);
-                if (num > 2) hours = num; // Assume "2" means 2 hours
-                else minutes = num; // Assume "90" means 90 minutes if no unit
+                if (num >= 60) { // Assume if value is 60 or more without unit, it's minutes
+                    hours = Math.floor(num / 60);
+                    minutes = num % 60;
+                } else { // Otherwise, assume it's minutes
+                    minutes = num;
+                }
             }
-
             if (hours > 0 || minutes > 0) {
                 schemaDuration = `PT${hours ? hours + 'H' : ''}${minutes ? minutes + 'M' : ''}`;
             }
@@ -435,14 +467,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const schema = {
             "@context": "http://schema.org",
-            "@type": "VideoObject",
+            "@type": "VideoObject", // Use VideoObject for individual videos
             "name": movie.title,
             "description": movie.description,
             "thumbnailUrl": movie.poster,
             "uploadDate": formattedUploadDate,
             "embedUrl": movie.embed_url,
             "duration": schemaDuration,
-            "contentUrl": movie.embed_url,
+            "contentUrl": movie.embed_url, // For direct video file (if applicable)
+            "interactionStatistic": { // Adding interaction statistic for SEO
+                "@type": "InteractionCounter",
+                "interactionType": "http://schema.org/WatchAction",
+                "userInteractionCount": Math.floor(Math.random() * (100000 - 10000 + 1)) + 10000 // Placeholder, ideally dynamic
+            },
             "publisher": {
                 "@type": "Organization",
                 "name": "أفلام عربية", // Replace with your actual site name
@@ -452,9 +489,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     "width": 600,
                     "height": 60
                 }
-            }
+            },
+            // Add Movie specific properties if it's a "Movie" rather than just a "VideoObject"
+            // If you have a separate type for Movie, you can change @type to "Movie" here
+            // And add properties like:
+            // "director": { "@type": "Person", "name": movie.director.trim() },
+            // "actor": movie.cast.map(actor => ({ "@type": "Person", "name": actor }))
+            // For now, sticking with VideoObject as it covers embedded videos well.
         };
 
+        // Add director, cast, genre, rating if they exist and are useful for VideoObject
         if (movie.director && typeof movie.director === 'string' && movie.director.trim() !== '') {
             schema.director = {
                 "@type": "Person",
@@ -545,8 +589,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             videoLoadingSpinner.style.display = 'none';
         }
         if (moviePlayer) {
-            moviePlayer.src = ''; // Clear source
-            moviePlayer.removeAttribute('src'); // Ensure src is removed for next load
+            moviePlayer.src = ''; 
+            moviePlayer.removeAttribute('src'); 
             moviePlayer.removeAttribute('data-src'); // Remove data-src as well
             moviePlayer.classList.remove('lazyload'); // Remove lazyload class
             // Reset iframe attributes when returning to homepage
@@ -554,6 +598,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             moviePlayer.removeAttribute('sandbox');
             moviePlayer.removeAttribute('referrerpolicy');
             moviePlayer.removeAttribute('title');
+            moviePlayer.removeAttribute('autoplay');
+            moviePlayer.removeAttribute('muted');
             moviePlayer.onload = null;
             moviePlayer.onerror = null;
         }
@@ -565,11 +611,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.title = 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين';
         document.querySelector('meta[name="description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
         document.querySelector('meta[property="og:title"]')?.setAttribute('content', 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين');
-        document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
+        document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أônلاين بجودة عالية.');
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.href);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
+        // Update canonical URL for home page
+        let canonicalLink = document.querySelector('link[rel="canonical"]');
+        if (!canonicalLink) {
+            canonicalLink = document.createElement('link');
+            canonicalLink.setAttribute('rel', 'canonical');
+            document.head.appendChild(canonicalLink);
+        }
+        canonicalLink.setAttribute('href', window.location.origin);
 
         let script = document.querySelector('script[type="application/ld+json"]');
         if (script) {
@@ -586,20 +640,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            // Check if the clicked link is 'الرئيسية' or 'أفلام'
-            // Ensure you have these IDs in your HTML nav links for this to work:
-            // <a id="nav-home-link" href="#">الرئيسية</a>
-            // <a id="nav-movies-link" href="#">أفلام</a>
-            if (link.id === 'nav-home-link' || link.id === 'nav-movies-link') { 
-                e.preventDefault(); // Prevent default link behavior
-                console.log(`[Interaction] Navbar link "${link.textContent.trim()}" clicked.`);
-                showHomePage();
-            } else {
-                console.log(`[Interaction] Other nav link "${link.textContent.trim()}" clicked.`);
+    // New specific event listeners for Navbar links
+    if (homeNavLink) {
+        homeNavLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('[Interaction] Navbar Home link clicked.');
+            showHomePage();
+            if (mainNav && mainNav.classList.contains('nav-open')) {
+                mainNav.classList.remove('nav-open');
             }
+        });
+    }
 
+    if (moviesNavLink) { // Assuming 'أفلام' link has id="nav-movies-link"
+        moviesNavLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('[Interaction] Navbar Movies link clicked.');
+            showHomePage(); // 'أفلام' link often points to the main movie grid which is usually the homepage view
+            // You might want to scroll to the movie grid section if it's below the fold on homepage
+            // movieGridSection.scrollIntoView({ behavior: 'smooth' });
+            if (mainNav && mainNav.classList.contains('nav-open')) {
+                mainNav.classList.remove('nav-open');
+            }
+        });
+    }
+
+    // Still useful for closing menu for any other links
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
             if (mainNav && mainNav.classList.contains('nav-open')) {
                 mainNav.classList.remove('nav-open');
                 console.log('📱 [Interaction] Nav link clicked, menu closed.');
@@ -674,8 +742,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (videoOverlay) {
         videoOverlay.addEventListener('click', (e) => {
-            // This is the crucial part to prevent video pause:
-            // Stop the event from bubbling up to the iframe or its parent
+            // This is crucial to prevent the video from pausing.
+            // It stops the click event from bubbling up to the iframe or its parent.
             e.stopPropagation(); 
             e.preventDefault(); // Also prevent default behavior for the overlay itself
 
