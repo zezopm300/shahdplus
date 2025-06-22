@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
   "genre": "Drama, Romance",
   "director": "Roger Kumble",
   "cast": "Sarah Michelle Gellar as Kathryn, Ryan Phillippe as Sebastian, Reese Witherspoon as Annette, Selma Blair as Cecile",
-  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239028&hd=2&hash=5a5541555eb3ee94&",
+  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239029&hd=2&",
   "rating": "6.8/10",
   "duration": "PT1H37M"
 },
