@@ -8,17 +8,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const heroSection = document.getElementById('hero-section');
     const watchNowBtn = document.getElementById('watch-now-btn');
     const movieGridSection = document.getElementById('movie-grid-section');
+    // **CHANGED:** moviePlayer is now dynamic, so we refer to its container
+    const moviePlayerContainer = document.getElementById('movie-player-container');
     const movieDetailsSection = document.getElementById('movie-details-section');
     const movieGrid = document.getElementById('movie-grid');
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
-    // **NOTE: moviePlayer will now be managed dynamically, but we still need its parent container**
-    const moviePlayerContainer = document.getElementById('movie-player-container'); // Add a container for the iframe
     const videoOverlay = document.getElementById('video-overlay');
     const homeLogoLink = document.getElementById('home-logo-link');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
     const movieDetailsPoster = document.getElementById('movie-details-poster');
+
+    // **NEW:** Reference to the "Movies" link in the navbar
+    const navMoviesLink = document.getElementById('nav-movies-link'); // Make sure your HTML has id="nav-movies-link" on the <a> tag for "Movies"
 
     // Pagination elements
     const prevPageBtn = document.getElementById('prev-page-btn');
@@ -37,12 +40,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         '#movie-grid-section': movieGridSection,
         '#movie-details-section': movieDetailsSection,
         '#hero-section': heroSection,
-        '#movie-player-container': moviePlayerContainer, // Verify the new container
+        '#movie-player-container': moviePlayerContainer,
         '#video-overlay': videoOverlay,
         '#suggested-movie-grid': suggestedMovieGrid,
         '#suggested-movies-section': suggestedMoviesSection,
         '#video-loading-spinner': videoLoadingSpinner,
-        '#movie-details-poster': movieDetailsPoster
+        '#movie-details-poster': movieDetailsPoster,
+        '#nav-movies-link': navMoviesLink // Verify the new nav link
     };
 
     let criticalError = false;
@@ -74,24 +78,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     // سيتم ترتيب هذه المصفوفة عشوائيًا عند تحميل الصفحة وفي كل مرة نعود فيها للصفحة الرئيسية
     let moviesDataForPagination = [];
 
-    // --- جلب بيانات الأفلام من ملف JSON في بداية التحميل ---
-    try {
-        console.log('📡 [Data Load] Attempting to fetch movie data from movies.json...');
-        const response = await fetch('movies.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        moviesData = await response.json();
-        console.log('✅ [Data Load] Movie data loaded successfully from movies.json', moviesData.length, 'movies found.');
+    // Reference to the currently active iframe player
+    let activeMoviePlayer = null;
 
-        if (moviesData.length === 0) {
-            console.warn('⚠️ No movie data found in movies.json. Displaying empty grid.');
-            // يمكنك هنا عرض رسالة للمستخدم بأنه لا توجد بيانات لعرضها
+    // --- جلب بيانات الأفلام من ملف JSON في بداية التحميل ---
+    async function fetchMoviesData() {
+        try {
+            console.log('📡 [Data Load] Attempting to fetch movie data from movies.json...');
+            const response = await fetch('movies.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            moviesData = await response.json();
+            console.log('✅ [Data Load] Movie data loaded successfully from movies.json', moviesData.length, 'movies found.');
+
+            if (moviesData.length === 0) {
+                console.warn('⚠️ No movie data found in movies.json. Displaying empty grid.');
+                // Optionally display a message to the user
+                movieGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">عذراً، لا توجد أفلام لعرضها حالياً.</p>';
+                if (prevPageBtn) prevPageBtn.style.display = 'none';
+                if (nextPageBtn) nextPageBtn.style.display = 'none';
+                return false; // Indicate failure to load data for display
+            }
+            if (prevPageBtn) prevPageBtn.style.display = 'inline-block'; // Show if data loaded
+            if (nextPageBtn) nextPageBtn.style.display = 'inline-block'; // Show if data loaded
+            return true; // Indicate success
+        } catch (error) {
+            console.error('❌ [Data Load] Error loading movie data from movies.json:', error);
+            alert('حدث خطأ أثناء تحميل بيانات الأفلام. يرجى المحاولة لاحقًا.');
+            movieGrid.innerHTML = '<p style="text-align: center; color: var(--text-error);">تعذر تحميل الأفلام. يرجى التحقق من اتصال الإنترنت أو المحاولة لاحقًا.</p>';
+            if (prevPageBtn) prevPageBtn.style.display = 'none';
+            if (nextPageBtn) nextPageBtn.style.display = 'none';
+            return false; // Indicate failure
         }
-    } catch (error) {
-        console.error('❌ [Data Load] Error loading movie data from movies.json:', error);
-        alert('حدث خطأ أثناء تحميل بيانات الأفلام. يرجى المحاولة لاحقًا.');
-        return; // توقف عن تنفيذ بقية السكربت إذا فشل تحميل البيانات بشكل حرج
     }
 
     // --- 4. Functions ---
@@ -197,6 +216,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function paginateMovies(moviesArray, page) {
+        // Ensure moviesArray is not empty
+        if (!moviesArray || moviesArray.length === 0) {
+            displayMovies([], movieGrid); // Display empty grid message
+            updatePaginationButtons(0);
+            return;
+        }
+
         const startIndex = (page - 1) * moviesPerPage;
         const endIndex = startIndex + moviesPerPage;
         const paginatedMovies = moviesArray.slice(startIndex, endIndex);
@@ -207,9 +233,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function updatePaginationButtons(totalMovies) {
+        const totalPages = Math.ceil(totalMovies / moviesPerPage);
         if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
-        if (nextPageBtn) nextPageBtn.disabled = currentPage * moviesPerPage >= totalMovies;
-        console.log(`🔄 [Pagination] Buttons updated. Current page: ${currentPage}, Total Movies: ${totalMovies}`);
+        if (nextPageBtn) nextPageBtn.disabled = currentPage >= totalPages;
+
+        // Hide pagination buttons if there's only one page or no movies
+        if (prevPageBtn && nextPageBtn) {
+            if (totalMovies <= moviesPerPage) {
+                prevPageBtn.style.display = 'none';
+                nextPageBtn.style.display = 'none';
+            } else {
+                prevPageBtn.style.display = 'inline-block';
+                nextPageBtn.style.display = 'inline-block';
+            }
+        }
+        console.log(`🔄 [Pagination] Buttons updated. Current page: ${currentPage}, Total Movies: ${totalMovies}, Total Pages: ${totalPages}`);
     }
 
     function performSearch() {
@@ -227,6 +265,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             console.log(`🔍 [Search] Performed search for "${query}". Found ${filteredMovies.length} results.`);
         } else {
+            // If query is empty, show all movies randomized
             filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
@@ -238,8 +277,70 @@ document.addEventListener('DOMContentLoaded', async () => {
         paginateMovies(moviesDataForPagination, currentPage);
     }
 
-    // Reference to the currently active iframe player
-    let activeMoviePlayer = null; 
+    function createVideoPlayer(embedUrl) {
+        if (!moviePlayerContainer) {
+            console.error('moviePlayerContainer not found. Cannot create video player.');
+            return null;
+        }
+
+        // Remove existing iframe if any
+        if (activeMoviePlayer) {
+            activeMoviePlayer.remove();
+            activeMoviePlayer = null;
+            console.log('[Video Player] Existing iframe removed.');
+        }
+
+        // Show spinner
+        if (videoLoadingSpinner) {
+            videoLoadingSpinner.style.display = 'block';
+            console.log('[Video Player] Loading spinner shown.');
+        }
+
+        // Create new iframe
+        const newIframe = document.createElement('iframe');
+        // It's better not to give it a static ID like 'movie-player' if you're creating it dynamically
+        // Use a class for styling, or manage its properties via the activeMoviePlayer reference.
+        // For compatibility with old CSS that might target #movie-player, you can keep the ID.
+        // newIframe.id = 'movie-player'; // Optional: if old CSS targets this ID
+        newIframe.classList.add('movie-player'); // Use this for styling
+        newIframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
+        newIframe.setAttribute('allowfullscreen', '');
+        newIframe.setAttribute('frameborder', '0');
+        newIframe.src = embedUrl;
+
+        newIframe.onload = () => {
+            if (videoLoadingSpinner) {
+                videoLoadingSpinner.style.display = 'none';
+                console.log('[Video Player] Loading spinner hidden (iframe loaded).');
+            }
+            if (videoOverlay) {
+                videoOverlay.classList.remove('inactive');
+                videoOverlay.style.pointerEvents = 'auto'; // Re-enable clicks after load
+                console.log('[Video Overlay] Active and clickable after video loaded.');
+            }
+        };
+
+        newIframe.onerror = () => {
+            if (videoLoadingSpinner) {
+                videoLoadingSpinner.style.display = 'none';
+                console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
+            }
+            if (videoOverlay) {
+                videoOverlay.classList.remove('inactive');
+                videoOverlay.style.pointerEvents = 'auto';
+                console.warn('[Video Overlay] Active even after iframe load error.');
+            }
+            moviePlayerContainer.innerHTML = '<p class="error-message" style="text-align: center; color: var(--text-error);">تعذر تحميل الفيديو. يرجى التأكد من الرابط أو المحاولة لاحقًا.</p>';
+            console.error(`❌ [Video Player] Failed to load iframe from: ${embedUrl}`);
+        };
+
+        moviePlayerContainer.appendChild(newIframe);
+        activeMoviePlayer = newIframe; // Store reference to the new iframe
+        console.log(`[Video Player] New iframe created and set src to: ${embedUrl}`);
+
+        return newIframe;
+    }
+
 
     function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
@@ -273,67 +374,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
-            // --- التعديلات الرئيسية هنا لمشغل الفيديو: إعادة إنشاء الـ iframe ---
-            if (moviePlayerContainer) {
-                // Remove existing iframe if any
-                if (activeMoviePlayer) {
-                    activeMoviePlayer.remove();
-                    activeMoviePlayer = null;
-                    console.log('[Video Player] Existing iframe removed.');
-                }
-
-                // Show spinner
-                if (videoLoadingSpinner) {
-                    videoLoadingSpinner.style.display = 'block';
-                    console.log('[Video Player] Loading spinner shown.');
-                }
-
-                // Create new iframe
-                const newIframe = document.createElement('iframe');
-                newIframe.id = 'movie-player'; // Give it the same ID if needed for CSS/reference, but internal logic will use activeMoviePlayer
-                newIframe.classList.add('movie-player'); // Add the class for styling
-                newIframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
-                newIframe.setAttribute('allowfullscreen', '');
-                newIframe.setAttribute('frameborder', '0');
-                newIframe.src = movie.embed_url; // Set src immediately
-
-                newIframe.onload = () => {
-                    if (videoLoadingSpinner) {
-                        videoLoadingSpinner.style.display = 'none';
-                        console.log('[Video Player] Loading spinner hidden (iframe loaded).');
-                    }
-                    if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.pointerEvents = 'auto'; // Re-enable clicks after load
-                        console.log('[Video Overlay] Active and clickable after video loaded.');
-                    }
-                };
-
-                newIframe.onerror = () => {
-                    if (videoLoadingSpinner) {
-                        videoLoadingSpinner.style.display = 'none';
-                        console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
-                    }
-                    if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.pointerEvents = 'auto';
-                        console.warn('[Video Overlay] Active even after iframe load error.');
-                    }
-                    // Optional: Display a user-friendly error message
-                    // moviePlayerContainer.innerHTML = '<p class="error-message">تعذر تحميل الفيديو. يرجى المحاولة لاحقًا.</p>';
-                };
-
-                moviePlayerContainer.appendChild(newIframe);
-                activeMoviePlayer = newIframe; // Store reference to the new iframe
-                console.log(`[Video Player] New iframe created and set src to: ${movie.embed_url}`);
-
-                // Ensure overlay is correctly positioned over the new iframe
-                // This might be handled by CSS, but good to re-check
-                if (videoOverlay) {
-                    videoOverlay.style.zIndex = '10'; // Ensure it's above the iframe
-                }
-            }
-
+            // Create and embed the video player
+            createVideoPlayer(movie.embed_url);
 
             const newUrl = new URL(window.location.origin);
             newUrl.searchParams.set('view', 'details');
@@ -475,6 +517,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (searchInput) searchInput.value = '';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
 
+        // Re-randomize and paginate for the home page view
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
@@ -492,6 +535,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             activeMoviePlayer = null;
             console.log('[Video Player] Iframe removed on home page transition.');
         }
+        // Clear any error messages in the player container
+        if (moviePlayerContainer) {
+            moviePlayerContainer.innerHTML = '';
+        }
+
 
         const newUrl = new URL(window.location.origin);
         history.pushState({ view: 'home' }, 'أفلام عربية - الصفحة الرئيسية', newUrl.toString());
@@ -504,7 +552,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.href);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين');
-        document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أonلاين بجودة عالية.');
+        document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
 
         let script = document.querySelector('script[type="application/ld+json"]');
         if (script) {
@@ -564,6 +612,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (currentPage > 1) {
                 currentPage--;
                 paginateMovies(moviesDataForPagination, currentPage);
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page change
             }
             console.log(`⬅️ [Pagination] Previous page clicked. Current page: ${currentPage}`);
         });
@@ -574,6 +623,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (currentPage < totalPages) {
                 currentPage++;
                 paginateMovies(moviesDataForPagination, currentPage);
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page change
             }
             console.log(`➡️ [Pagination] Next page clicked. Current page: ${currentPage}`);
         });
@@ -586,6 +636,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             showHomePage();
         });
     }
+
+    // **NEW:** Event listener for the "Movies" link in the navbar
+    if (navMoviesLink) {
+        navMoviesLink.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            console.log('🎬 [Interaction] Nav "Movies" link clicked.');
+            showHomePage(); // Always show home page (which means showing movies)
+            if (mainNav && mainNav.classList.contains('nav-open')) {
+                mainNav.classList.remove('nav-open'); // Close mobile menu if open
+            }
+        });
+    }
+
 
     if (movieDetailsPoster) {
         movieDetailsPoster.addEventListener('click', () => {
@@ -606,6 +669,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     activeMoviePlayer.remove();
                     activeMoviePlayer = null;
                     console.log('[Video Player] Video iframe removed due to ad click.');
+                    // Clear any error messages in the player container
+                    if (moviePlayerContainer) {
+                        moviePlayerContainer.innerHTML = '';
+                    }
                 }
 
                 videoOverlay.style.pointerEvents = 'none';
@@ -615,47 +682,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 setTimeout(() => {
                     videoOverlay.style.pointerEvents = 'auto';
                     console.log('[Video Overlay] Clicks re-enabled.');
-                    // Only recreate if we are still on the movie details page
+                    // Only recreate if we are still on the movie details page AND a movie is specified in URL
                     if (movieDetailsSection && movieDetailsSection.style.display === 'block') {
-                        // Re-get the movie data for the current displayed movie
                         const urlParams = new URLSearchParams(window.location.search);
                         const idParam = urlParams.get('id');
                         const movieId = parseInt(idParam);
                         if (!isNaN(movieId)) {
                             const movie = moviesData.find(m => m.id === movieId);
                             if (movie) {
-                                // Explicitly call the iframe creation logic again
-                                if (videoLoadingSpinner) {
-                                    videoLoadingSpinner.style.display = 'block';
-                                }
-                                const newIframe = document.createElement('iframe');
-                                newIframe.id = 'movie-player'; // Assign ID
-                                newIframe.classList.add('movie-player'); // Assign class
-                                newIframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
-                                newIframe.setAttribute('allowfullscreen', '');
-                                newIframe.setAttribute('frameborder', '0');
-                                newIframe.src = movie.embed_url;
-
-                                newIframe.onload = () => {
-                                    if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
-                                    if (videoOverlay) {
-                                        videoOverlay.classList.remove('inactive');
-                                        videoOverlay.style.pointerEvents = 'auto';
-                                    }
-                                };
-                                newIframe.onerror = () => {
-                                    if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
-                                    if (videoOverlay) {
-                                        videoOverlay.classList.remove('inactive');
-                                        videoOverlay.style.pointerEvents = 'auto';
-                                    }
-                                };
-
-                                moviePlayerContainer.appendChild(newIframe);
-                                activeMoviePlayer = newIframe;
-                                console.log('[Video Player] Iframe recreated after ad cooldown.');
+                                console.log('[Video Player] Recreating iframe after ad cooldown.');
+                                createVideoPlayer(movie.embed_url); // Recreate the player
+                            } else {
+                                console.warn('[Video Player] Movie not found in data to recreate player after ad.');
                             }
+                        } else {
+                            console.warn('[Video Player] No valid movie ID in URL to recreate player after ad.');
                         }
+                    } else {
+                        console.log('[Video Player] Not on movie details page, not recreating player after ad.');
                     }
                 }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY + 500); // Give a little extra time
             }
@@ -664,27 +708,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // --- 6. Initial Page Load Logic (Routing) ---
-    const urlParams = new URLSearchParams(window.location.search);
-    const viewParam = urlParams.get('view');
-    const idParam = urlParams.get('id');
+    // Ensure data is loaded BEFORE attempting to display anything or route.
+    const isDataLoaded = await fetchMoviesData(); // Call the async fetch function
 
-    if (viewParam === 'details' && idParam) {
-        const movieId = parseInt(idParam);
-        if (!isNaN(movieId)) {
-            console.log(`🚀 [Initial Load] Attempting to load movie details from URL: ID ${movieId}`);
-            showMovieDetails(movieId);
+    if (isDataLoaded) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewParam = urlParams.get('view');
+        const idParam = urlParams.get('id');
+
+        if (viewParam === 'details' && idParam) {
+            const movieId = parseInt(idParam);
+            if (!isNaN(movieId)) {
+                console.log(`🚀 [Initial Load] Attempting to load movie details from URL: ID ${movieId}`);
+                showMovieDetails(movieId);
+            } else {
+                console.warn('⚠️ [Initial Load] Invalid movie ID in URL. Showing home page.');
+                showHomePage();
+            }
         } else {
-            console.warn('⚠️ [Initial Load] Invalid movie ID in URL. Showing home page.');
+            console.log('🚀 [Initial Load] No specific view in URL. Showing home page.');
             showHomePage();
         }
     } else {
-        console.log('🚀 [Initial Load] No specific view in URL. Showing home page.');
-        showHomePage();
+        console.error('🛑 Initial movie data load failed. Cannot display content.');
+        // The fetchMoviesData function already displays an alert and message in movieGrid
     }
 
     // Event listener for browser's back/forward buttons
     window.addEventListener('popstate', (event) => {
         console.log('↩️ [History] Popstate event triggered.', event.state);
+        // Ensure moviesData is available before routing (should be, if initial load succeeded)
+        if (moviesData.length === 0) {
+            console.warn('⚠️ [Popstate] No movie data available, attempting to reload home.');
+            showHomePage();
+            return;
+        }
+
         if (event.state && event.state.view === 'details' && event.state.id) {
             showMovieDetails(event.state.id);
         } else {
