@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
   "rating": "6.8/10",
   "duration": "PT1H37M"
 },
-        {
+{
   "id": 18,
   "title": "Female Workers: Romance at Work 3 (2023)",
   "description": "Yoo-ra, who is burdened by her family's financial problems, finally lands a job. However, the assistant manager takes advantage of her situation and offers money for a sexual relationship. Meanwhile, the female manager Hye-seon seduces the new employee Min-soo. Intense romantic entanglements unfold in this office drama.",
@@ -298,10 +298,11 @@ document.addEventListener('DOMContentLoaded', () => {
   "genre": "Romance, Drama, Softcore",
   "director": "Choi Jong-gyoo",
   "cast": "Yoo-ra, Hye-seon, Min-soo, Soo Hee, Lee Chae-dam, Hae Il, Woo Yeol, Yoon Taek-seung",
-  "embed_url": "https://player.vimeo.com/video/1095323276?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479",
+  "embed_url": "https://player.vimeo.com/video/1095323276?autoplay=0&title=0&byline=0&portrait=0",
   "rating": "N/A",
   "duration": "PT1H2M"
-}
+},
+
 
 
     ];
