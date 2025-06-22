@@ -165,6 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 imageObserver.observe(image);
             });
         } else {
+            // Fallback for browsers that don't support IntersectionObserver
             let lazyLoadImages = document.querySelectorAll('.lazyload');
             lazyLoadImages.forEach(function(image) {
                 image.src = image.dataset.src;
@@ -236,6 +237,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         paginateMovies(moviesDataForPagination, currentPage);
     }
 
+    let currentMovieEmbedUrl = ''; // لتخزين رابط الفيديو الحالي
+
     function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
         const movie = moviesData.find(m => m.id === movieId);
@@ -255,7 +258,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // استخدام Date object لتنسيق التاريخ بشكل أفضل للعرض
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
             document.getElementById('movie-details-release-date').textContent = releaseDate;
-            
+
             document.getElementById('movie-details-genre').textContent = movie.genre || 'غير محدد';
             document.getElementById('movie-details-director').textContent = movie.director || 'غير متوفر';
             document.getElementById('movie-details-cast').textContent = Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast || 'غير متوفر';
@@ -263,23 +266,35 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('movie-details-rating').textContent = movie.rating || 'N/A';
 
             if (movieDetailsPoster) {
+                // تأكد أن البوستر في صفحة التفاصيل لا يستخدم lazyload
                 movieDetailsPoster.src = movie.poster;
                 movieDetailsPoster.alt = movie.title;
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
+            // --- التعديلات هنا لمشغل الفيديو ---
             if (moviePlayer) {
-                moviePlayer.src = '';
+                currentMovieEmbedUrl = movie.embed_url; // حفظ رابط الفيديو الحالي
+
+                // إظهار اللودر وتفريغ الـ src لضمان إعادة التحميل
                 if (videoLoadingSpinner) {
                     videoLoadingSpinner.style.display = 'block';
                     console.log('[Video Player] Loading spinner shown.');
                 }
+                moviePlayer.src = ''; // مسح الـ src القديم
 
+                // إضافة خاصية allow للمزيد من الصلاحيات (autoplay, fullscreen)
+                moviePlayer.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
+                moviePlayer.setAttribute('allowfullscreen', '');
+                moviePlayer.setAttribute('frameborder', '0'); // تأكد من عدم وجود إطار
+
+                // تأخير بسيط لضمان إفراغ الـ src قبل إعادة التعيين
                 setTimeout(() => {
-                    moviePlayer.src = movie.embed_url;
-                    console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
-                }, 50);
+                    moviePlayer.src = currentMovieEmbedUrl;
+                    console.log(`[Video Player] Final iframe src set to: ${currentMovieEmbedUrl}`);
+                }, 50); // تأخير بسيط جدًا
 
+                // استمع لحدث onload لإخفاء اللودر
                 moviePlayer.onload = () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none';
@@ -291,6 +306,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         console.log('[Video Overlay] Active and clickable after video loaded.');
                     }
                 };
+                // استمع لحدث onerror أيضًا
                 moviePlayer.onerror = () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none';
@@ -301,6 +317,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         videoOverlay.style.pointerEvents = 'auto';
                         console.warn('[Video Overlay] Active even after iframe load error.');
                     }
+                    // يمكنك هنا عرض رسالة خطأ للمستخدم إذا فشل تحميل الفيديو
                 };
             }
 
@@ -398,7 +415,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 };
             }
         }
-        
+
         // إزالة أي سكربت JSON-LD قديم قبل إضافة الجديد
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
@@ -458,9 +475,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             videoLoadingSpinner.style.display = 'none';
         }
         if (moviePlayer) {
-            moviePlayer.src = '';
+            moviePlayer.src = ''; // توقف الفيديو عند العودة للصفحة الرئيسية
             moviePlayer.onload = null;
             moviePlayer.onerror = null;
+            moviePlayer.removeAttribute('allow'); // إزالة الصلاحيات
+            moviePlayer.removeAttribute('allowfullscreen');
+            moviePlayer.removeAttribute('frameborder');
         }
 
         const newUrl = new URL(window.location.origin);
@@ -571,12 +591,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
 
             if (adOpened) {
+                // عند فتح إعلان، أوقف الفيديو مؤقتًا
+                // بما أننا نستخدم iframe، أفضل طريقة "لإيقافه" هي مسح الـ src
+                // ومن ثم إعادة تعيينه عند عودة المستخدم.
+                if (moviePlayer && currentMovieEmbedUrl) {
+                    moviePlayer.src = ''; // مسح الـ src لإيقاف التشغيل
+                    console.log('[Video Player] Video iframe src cleared due to ad click.');
+                }
+
                 videoOverlay.style.pointerEvents = 'none';
                 console.log(`[Video Overlay] Temporarily disabled clicks for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
+
+                // بعد انتهاء الكول داون (أو افتراضيًا بعد أن يغلق المستخدم الإعلان)،
+                // أعد تحميل الفيديو إذا كان لا يزال في صفحة التفاصيل
                 setTimeout(() => {
                     videoOverlay.style.pointerEvents = 'auto';
                     console.log('[Video Overlay] Clicks re-enabled.');
-                }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
+                    // إذا كان المستخدم لا يزال في صفحة التفاصيل، أعد تحميل الفيديو
+                    if (movieDetailsSection && movieDetailsSection.style.display === 'block' && moviePlayer && currentMovieEmbedUrl) {
+                        if (videoLoadingSpinner) {
+                            videoLoadingSpinner.style.display = 'block'; // أعد إظهار اللودر
+                        }
+                        moviePlayer.src = currentMovieEmbedUrl; // أعد تعيين الـ src لاستئناف التشغيل
+                        console.log('[Video Player] Video iframe src reloaded after ad cooldown.');
+                    }
+                }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY + 500); // زيادة بسيطة للتأكد من انتهاء الإعلان
             }
         });
         console.log('[Video Overlay] Click listener attached for ad interaction (with cooldown logic).');
@@ -601,4 +640,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('🚀 [Initial Load] No specific view in URL. Showing home page.');
         showHomePage();
     }
+
+    // استمع لحدث popstate للتعامل مع أزرار الرجوع/الأمام في المتصفح
+    window.addEventListener('popstate', (event) => {
+        console.log('↩️ [History] Popstate event triggered.', event.state);
+        if (event.state && event.state.view === 'details' && event.state.id) {
+            showMovieDetails(event.state.id);
+        } else {
+            showHomePage();
+        }
+    });
 });
