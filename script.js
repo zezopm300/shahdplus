@@ -5,10 +5,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.getElementById('main-nav');
     // Using specific IDs for navbar links for robust targeting
-    const homeNavLink = document.getElementById('nav-home-link'); 
+    const homeNavLink = document.getElementById('nav-home-link');
     const moviesNavLink = document.getElementById('nav-movies-link');
     const navLinks = document.querySelectorAll('.main-nav ul li a'); // Still useful for general menu closing
-    
+
     const heroSection = document.getElementById('hero-section');
     const watchNowBtn = document.getElementById('watch-now-btn');
     const movieGridSection = document.getElementById('movie-grid-section');
@@ -173,7 +173,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- Enhanced Lazy Loading for images and iframes ---
     function initializeLazyLoad() {
         if ('IntersectionObserver' in window) {
-            let lazyLoadElements = document.querySelectorAll('.lazyload, iframe[data-src]'); 
+            // استهدف فقط العناصر التي لم يتم تحميلها بعد
+            let lazyLoadElements = document.querySelectorAll('.lazyload:not([src]):not([data-src=""])');
             let observerOptions = {
                 root: null, // viewport
                 rootMargin: '0px',
@@ -194,13 +195,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                             // Re-evaluated sandbox for VK/video players:
                             // These permissions are generally needed for full functionality (fullscreen, scripts, popups by player)
                             // 'allow-top-navigation' is crucial for some fullscreen implementations that change the top window URL, use with caution.
-                            element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation allow-top-navigation'); 
+                            element.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation allow-top-navigation');
                             element.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
                             element.setAttribute('title', `Video player for ${element.alt || element.getAttribute('title') || 'movie'}`); // Use title if available, fallback to alt
                             // Try to autoplay muted to ensure video loading starts
                             element.setAttribute('autoplay', '1');
                             element.setAttribute('muted', '1');
-                            console.log(`🎥 [Lazy Load] Iframe loaded: ${element.src} with autoplay/muted.`);
+                            // **تحسين جديد: إضافة loading="eager" للتحميل السريع بعد ظهور الـ iframe**
+                            element.setAttribute('loading', 'eager');
+                            console.log(`🎥 [Lazy Load] Iframe loaded: ${element.src} with autoplay/muted and eager loading.`);
                         }
                         element.classList.remove('lazyload');
                         observer.unobserve(element);
@@ -214,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log('🖼️ [Lazy Load] Initialized IntersectionObserver for images and iframes.');
         } else {
             // Fallback for browsers without IntersectionObserver
-            let lazyLoadElements = document.querySelectorAll('.lazyload, iframe[data-src]');
+            let lazyLoadElements = document.querySelectorAll('.lazyload:not([src]):not([data-src=""])');
             lazyLoadElements.forEach(function(element) {
                 if (element.tagName === 'IMG') {
                     element.src = element.dataset.src;
@@ -226,7 +229,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     element.setAttribute('title', `Video player for ${element.alt || element.getAttribute('title') || 'movie'}`);
                     element.setAttribute('autoplay', '1');
                     element.setAttribute('muted', '1');
+                    // **تحسين جديد: إضافة loading="eager" للتحميل السريع بعد ظهور الـ iframe**
+                    element.setAttribute('loading', 'eager');
                 }
+                element.classList.remove('lazyload');
             });
             console.log('🖼️ [Lazy Load] Fallback lazy load executed for images and iframes (no IntersectionObserver).');
         }
@@ -313,7 +319,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             movieDetailsDescription.textContent = movie.description;
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
             movieDetailsReleaseDate.textContent = releaseDate;
-            
+
             movieDetailsGenre.textContent = movie.genre || 'غير محدد';
             movieDetailsDirector.textContent = movie.director || 'غير متوفر';
             movieDetailsCast.textContent = Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast || 'غير متوفر';
@@ -327,25 +333,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (moviePlayer) {
-                moviePlayer.src = ''; 
-                moviePlayer.removeAttribute('src'); 
+                // **مهم: إعادة تعيين معالجات الأحداث لمنع التراكم**
+                moviePlayer.onload = null;
+                moviePlayer.onerror = null;
+
+                moviePlayer.src = '';
+                moviePlayer.removeAttribute('src');
                 moviePlayer.removeAttribute('data-src'); // Ensure data-src is also reset
 
                 // Set iframe properties for the video player
                 moviePlayer.setAttribute('allowfullscreen', '');
                 // Comprehensive sandbox permissions for VK player stability
                 // 'allow-top-navigation' is included for robust fullscreen, but be aware of its implications.
-                moviePlayer.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation allow-top-navigation'); 
+                moviePlayer.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms allow-pointer-lock allow-presentation allow-top-navigation');
                 moviePlayer.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
                 moviePlayer.setAttribute('title', `Video player for ${movie.title}`);
                 // Try to autoplay muted to ensure video loading starts immediately
                 moviePlayer.setAttribute('autoplay', '1');
                 moviePlayer.setAttribute('muted', '1');
-                
+                // **التحسين الجديد: إخبار المتصفح بأن هذا الـ iframe يحتاج إلى تحميل سريع**
+                moviePlayer.setAttribute('loading', 'eager');
+
+
                 // Set data-src for lazy loading and add lazyload class
                 moviePlayer.setAttribute('data-src', movie.embed_url);
-                moviePlayer.classList.add('lazyload'); 
-                
+                moviePlayer.classList.add('lazyload');
+
                 if (videoLoadingSpinner) {
                     videoLoadingSpinner.style.display = 'block';
                     console.log('[Video Player] Loading spinner shown.');
@@ -353,7 +366,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Re-initialize lazy load specifically for the video player iframe
                 // This ensures the IntersectionObserver starts observing the iframe immediately.
-                initializeLazyLoad();
+                initializeLazyLoad(); // هذا سيقوم بتعيين moviePlayer.src من data-src
 
                 // Onload/onerror handlers will now fire when the iframe loads its src from lazyload
                 moviePlayer.onload = () => {
@@ -531,7 +544,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 };
             }
         }
-        
+
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
             oldScript.remove();
@@ -589,8 +602,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             videoLoadingSpinner.style.display = 'none';
         }
         if (moviePlayer) {
-            moviePlayer.src = ''; 
-            moviePlayer.removeAttribute('src'); 
+            // **مهم: إعادة تعيين معالجات الأحداث لمنع التراكم**
+            moviePlayer.onload = null;
+            moviePlayer.onerror = null;
+
+            moviePlayer.src = '';
+            moviePlayer.removeAttribute('src');
             moviePlayer.removeAttribute('data-src'); // Remove data-src as well
             moviePlayer.classList.remove('lazyload'); // Remove lazyload class
             // Reset iframe attributes when returning to homepage
@@ -600,8 +617,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             moviePlayer.removeAttribute('title');
             moviePlayer.removeAttribute('autoplay');
             moviePlayer.removeAttribute('muted');
-            moviePlayer.onload = null;
-            moviePlayer.onerror = null;
+            // **إزالة سمة loading="eager" عند العودة للصفحة الرئيسية**
+            moviePlayer.removeAttribute('loading');
         }
 
         const newUrl = new URL(window.location.origin);
@@ -744,7 +761,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         videoOverlay.addEventListener('click', (e) => {
             // This is crucial to prevent the video from pausing.
             // It stops the click event from bubbling up to the iframe or its parent.
-            e.stopPropagation(); 
+            e.stopPropagation();
             e.preventDefault(); // Also prevent default behavior for the overlay itself
 
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
