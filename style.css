@@ -211,11 +211,6 @@ a:hover {
     background: linear-gradient(45deg, var(--accent-color) 0%, var(--primary-color) 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    /* >>>>>> الحل لمشكلة شفافية اسم الموقع هنا <<<<<< */
-    /* تمت إزالة: -webkit-text-fill-color: transparent; */
-    /* تمت إزالة: color: transparent; */
-    /* سيظهر النص الآن بلون التدرج المحدد */
-
     text-shadow:
         0 0 8px rgba(0, 229, 255, 0.3),
         0 0 15px rgba(255, 82, 82, 0.15);
@@ -651,8 +646,7 @@ a:hover {
 .video-player-container {
     position: relative;
     width: 100%;
-    /* تكبير أقصى عرض للفيديو قليلاً */
-    max-width: 720px; /* تم التعديل من 700px إلى 720px */
+    max-width: 720px;
     margin-left: auto;
     margin-right: auto;
     background-color: #000;
@@ -663,84 +657,35 @@ a:hover {
     border: 1.5px solid var(--secondary-color);
 
     height: 0;
-    /* هذا هو التعديل الرئيسي: نسبة أبعاد قياسية 16:9 للمحافظة على شكل الفيديو */
     padding-bottom: 56.25%; /* نسبة 16:9 (9 / 16) * 100% */
-    /* يتم ضبط max-height بدقة بناءً على max-width (720 * 0.5625 = 405) */
     max-height: 405px; 
 }
 
-/* عناصر المشغل الجديدة: الصورة المصغرة، زر التشغيل، السبينر */
-.video-player-container iframe,
-.movie-player-thumbnail {
+/* عناصر المشغل: iframe و Spinner و Overlay (بدون صورة مصغرة أو زر تشغيل ظاهر) */
+.video-player-container iframe {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     border: none;
-    z-index: 10; /* الـ iframe والصورة المصغرة سيكونان فوق أي شيء آخر في الحاوية */
-    object-fit: cover; /* لضمان تغطية الصورة للمساحة */
+    z-index: 10; /* الـ iframe سيكون مرئياً فوق أي شيء آخر داخل الحاوية */
 }
 
-.play-button-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.6); /* خلفية شبه شفافة لتظليل البوستر */
-    z-index: 20; /* فوق الصورة المصغرة والـ iframe عند الحاجة */
-    cursor: pointer;
-    transition: opacity 0.3s ease;
-}
-
-.custom-play-button {
-    background: var(--gradient-button);
-    color: var(--text-color);
-    border: none;
-    border-radius: 50px;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: all var(--transition-speed) ease-in-out;
-    box-shadow: var(--shadow-button);
-    border: 1px solid var(--primary-color);
-}
-
-.custom-play-button:hover {
-    background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
-    transform: translateY(-2px) scale(1.01);
-    box-shadow: var(--shadow-subtle-glow), 0 0 10px var(--primary-color);
-    border-color: var(--accent-color);
-    color: var(--dark-color);
-}
-
-.play-icon {
-    fill: currentColor;
-    width: 24px;
-    height: 24px;
-}
-
+/* طبقة السبينر (ستظهر فوق الـ iframe مباشرة عند تحميله) */
 .spinner-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.7); /* خلفية داكنة مع شفافية */
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 25; /* أعلى من زر التشغيل */
+    z-index: 25; /* أعلى من الـ iframe */
     border-radius: 8px;
+    /* إظهاره بشكل افتراضي (في CSS) لأنه سيختفي بالـ JS عند تحميل الـ iframe */
 }
 
 .spinner {
@@ -756,12 +701,6 @@ a:hover {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
-/* إخفاء زر التشغيل عندما يظهر السبينر */
-.spinner-overlay:not([style*="display: none"]) + .custom-play-button {
-    display: none;
-}
-
 
 /* أكواد الإعلانات المتعلقة بالـ overlay في الفيديو لم تُلمس على الإطلاق - تم التأكد من بقائها كما هي تمامًا */
 .video-overlay {
