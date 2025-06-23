@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
+
+ document.addEventListener('DOMContentLoaded', () => {
     console.log('🏁 DOM Content Loaded. Script execution started.');
 
     // --- 1. DOM Element References ---
@@ -53,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (criticalError) {
         console.error('🛑 Script will not execute fully due to missing critical DOM elements. Fix your HTML!');
-        return; // توقف عن تنفيذ السكريبت إذا كانت العناصر الأساسية مفقودة
+        return;
     } else {
         console.log('✅ All critical DOM elements found.');
     }
@@ -68,10 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastDirectLinkClickTimeVideoOverlay = 0;
 
     // --- 3. Movie Data (سيتم جلبها من ملف JSON خارجي) ---
-    // هذا المتغير سيحتوي على بيانات الأفلام بعد جلبها
     let moviesData = [];
-    // سيتم ترتيب هذه المصفوفة عشوائيًا عند تحميل الصفحة وفي كل مرة نعود فيها للصفحة الرئيسية
     let moviesDataForPagination = [];
+
+    // هذا المتغير سيخزن الفيلم المعروض حاليًا في صفحة التفاصيل
+    let currentDetailedMovie = null; // NEW: Track the currently displayed movie for details
 
     // --- 3.1. Fetch Movie Data from JSON (جلب بيانات الأفلام من ملف JSON) ---
     async function fetchMoviesData() {
@@ -82,11 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             moviesData = await response.json();
             console.log('✅ Movie data loaded successfully from movies.json', moviesData);
-            // بمجرد تحميل البيانات، ابدأ بعملية عرض الصفحة الرئيسية
             initialPageLoadLogic();
         } catch (error) {
             console.error('❌ Failed to load movie data:', error);
-            // عرض رسالة خطأ للمستخدم أو إظهار محتوى احتياطي
             if (movieGrid) {
                 movieGrid.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 50px;">عذرًا، لم نتمكن من تحميل بيانات الأفلام. يرجى المحاولة مرة أخرى لاحقًا.</p>';
             }
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             lastClickTime = lastDirectLinkClickTimeVideoOverlay;
             setLastClickTime = (time) => lastDirectLinkClickTimeVideoOverlay = time;
         } else if (type === 'movieDetailsPoster') {
-            lastClickTime = lastDirectLinkClickTimeMovieCard; // Use same cooldown as movieCard
+            lastClickTime = lastDirectLinkClickTimeMovieCard;
             setLastClickTime = (time) => lastDirectLinkClickTimeMovieCard = time;
         } else {
             console.error('Invalid ad type provided for openAdLink:', type);
@@ -244,6 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const movie = moviesData.find(m => m.id === movieId);
 
         if (movie) {
+            currentDetailedMovie = movie; // NEW: Store the current movie in a global variable
+
             if (heroSection) heroSection.style.display = 'none';
             if (movieGridSection) movieGridSection.style.display = 'none';
 
@@ -313,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`🔗 [URL] URL updated to ${newUrl.toString()}`);
 
             updateMetaTags(movie);
-            addJsonLdSchema(movie); // تم استدعاء الدالة هنا لتحديث الـ Schema
+            addJsonLdSchema(movie);
             displaySuggestedMovies(movieId);
             console.log(`✨ [Suggestions] Calling displaySuggestedMovies for ID: ${movieId}`);
 
@@ -401,21 +403,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // إزالة أي سكربت JSON-LD قديم قبل إضافة الجديد
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
             oldScript.remove();
             console.log('📄 [SEO] Old JSON-LD schema removed.');
         }
 
-        // إضافة السكربت الجديد
         let script = document.createElement('script');
         script.type = 'application/ld+json';
         script.textContent = JSON.stringify(schema);
         document.head.appendChild(script);
         console.log('📄 [SEO] New JSON-LD schema added/updated.');
     }
-
 
     function displaySuggestedMovies(currentMovieId) {
         if (!suggestedMovieGrid) {
@@ -451,6 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
+        // Reset video player and overlay state when returning to home page
         if (videoOverlay) {
             videoOverlay.classList.add('inactive');
             videoOverlay.style.pointerEvents = 'none';
@@ -460,10 +460,11 @@ document.addEventListener('DOMContentLoaded', () => {
             videoLoadingSpinner.style.display = 'none';
         }
         if (moviePlayer) {
-            moviePlayer.src = '';
+            moviePlayer.src = ''; // Clear the video source
             moviePlayer.onload = null;
             moviePlayer.onerror = null;
         }
+        currentDetailedMovie = null; // NEW: Clear the currently detailed movie
 
         const newUrl = new URL(window.location.origin);
         history.pushState({ view: 'home' }, 'أفلام عربية - الصفحة الرئيسية', newUrl.toString());
@@ -572,7 +573,18 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
 
+            // NEW: If an ad was opened, try to keep the video player active
+            if (adOpened && currentDetailedMovie && moviePlayer) {
+                const originalSrc = moviePlayer.src; // Store current src
+                moviePlayer.src = ''; // Temporarily clear src to force a refresh
+                setTimeout(() => {
+                    moviePlayer.src = originalSrc; // Re-set original src
+                    console.log('[Video Player] Attempting to resume video after ad click by refreshing iframe source.');
+                }, 100); // Small delay to allow browser to register src change
+            }
+
             if (adOpened) {
+                // هذا الجزء يقوم بتعطيل/تمكين الطبقة كما كان موجودًا بالفعل
                 videoOverlay.style.pointerEvents = 'none';
                 console.log(`[Video Overlay] Temporarily disabled clicks for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
                 setTimeout(() => {
@@ -581,11 +593,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
             }
         });
-        console.log('[Video Overlay] Click listener attached for ad interaction (with cooldown logic).');
+        console.log('[Video Overlay] Click listener attached for ad interaction (with cooldown logic and video resume).');
     }
 
     // --- 6. Initial Page Load Logic (Routing) ---
-    // هذه الدالة سيتم استدعاؤها بعد تحميل بيانات الأفلام بنجاح
     function initialPageLoadLogic() {
         const urlParams = new URLSearchParams(window.location.search);
         const viewParam = urlParams.get('view');
