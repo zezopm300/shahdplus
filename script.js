@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- جلب بيانات الأفلام من ملف JSON في بداية التحميل ---
     try {
         console.log('📡 [Data Load] Attempting to fetch movie data from movies.json...');
+        // تأكد من أن هذا المسار صحيح لملف movies.json الخاص بك
         const response = await fetch('movies.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
