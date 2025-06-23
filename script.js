@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const homeLogoLink = document.getElementById('home-logo-link');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
     const movieDetailsPoster = document.getElementById('movie-details-poster');
+    const videoErrorPrompt = document.getElementById('video-error-prompt'); // New element for error messages
 
     // Pagination elements
     const prevPageBtn = document.getElementById('prev-page-btn');
@@ -41,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
         '#suggested-movie-grid': suggestedMovieGrid,
         '#suggested-movies-section': suggestedMoviesSection,
         '#video-loading-spinner': videoLoadingSpinner,
-        '#movie-details-poster': movieDetailsPoster
+        '#movie-details-poster': movieDetailsPoster,
+        '#video-error-prompt': videoErrorPrompt // New element verification
     };
 
     let criticalError = false;
@@ -53,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (criticalError) {
         console.error('🛑 Script will not execute fully due to missing critical DOM elements. Fix your HTML!');
+        return; // Stop script execution if critical elements are missing
     } else {
         console.log('✅ All critical DOM elements found.');
     }
@@ -227,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Old (2021) BluRay Full Movie HD | Cimawbas.Tv",
             "description": "Old (2021) is a psychological thriller directed by M. Night Shyamalan, centered on a family who visits a mysterious, secluded beach while on vacation—only to discover that something about the place is causing them to age rapidly. As hours pass, their lives compress into a single day, forcing them to confront mortality, buried secrets, and emotional truths in a race against time",
             "poster": "https://i.ibb.co/nNwsBbcQ/5397ae84.jpg",
-             "thumbnailUrl": "https://i.ibb.co/nNwsBbcQ/5397ae84.jpg",
+            "thumbnailUrl": "https://i.ibb.co/nNwsBbcQ/5397ae84.jpg",
             "release_date": "2025-06-20",
             "genre": "Mystery, Thriller, Drama, Psychological Horror",
             "director": "M. Night Shyamalan",
@@ -241,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Thaghut",
             "description": "يحكي فيلم الرعب الأخير هذا قصة رحلة امرأة تدعى عينون تريد إنقاذ نفسها من الضلال والسحر واللعنة كما وجدت عينون نفسها متورطة في تعاليم ضالة. فكيف سيتمكن باغاس وريني من إنقاذها وإعادتها إلى الطريق الصحيح؟",
             "poster": "https://i.ibb.co/8nWbnkyf/photo-5825733540996827420-y.jpg",
-             "thumbnailUrl": "https://i.ibb.co/8nWbnkyf/photo-5825733540996827420-y.jpg",
+            "thumbnailUrl": "https://i.ibb.co/8nWbnkyf/photo-5825733540996827420-y.jpg",
             "release_date": "2025-06-20",
             "genre": "Mystery, Thriller, Drama, Psychological Horror",
             "director": "M. Night Shyamalan",
@@ -255,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Snowpiercer (2013)",
             "description": "بعد تجربة فاشلة للتصدي للاحتباس الحراري، يحدث عصر جليدي يقضي على الحياة في الأرض، ولا ينجو سوى من يعيشون في قطار ضخم. يتزعم كيرتس ثورة من سكان ذيل القطار ضد الصفوة في المقدمة.",
             "poster": "https://i.ibb.co/wFWWWYTD/photo-5834902488719935587-w.jpg",
-             "thumbnailUrl": "https://i.ibb.co/wFWWWYTD/photo-5834902488719935587-w.jpg",
+            "thumbnailUrl": "https://i.ibb.co/wFWWWYTD/photo-5834902488719935587-w.jpg",
             "release_date": "2013-08-01",
             "genre": "Science Fiction",
             "director": "Bong Joon-ho",
@@ -269,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "Flight Risk",
             "description": "طيار غامض يُكلف بنقل شاهد فيدرالي من ألاسكا، لكن الرحلة تتحول إلى صراع مميت حين يُكشف أن الطيار قاتل مأجور.",
             "poster": "https://i.ibb.co/zVN8s7qX/images.jpg",
-             "thumbnailUrl": "https://i.ibb.co/zVN8s7qX/images.jpg",
+            "thumbnailUrl": "https://i.ibb.co/zVN8s7qX/images.jpg",
             "release_date": "2025-01-24",
             "genre": "Action, Thriller",
             "director": "Mel Gibson",
@@ -283,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "title": "The Informers",
             "description": "Set in 1983 Los Angeles, a group of morally lost individuals — wealthy youth, movie producers, rock stars, and criminals — navigate a world of excess, drugs, and emotional emptiness.",
             "poster": "https://i.ibb.co/N2WhgF4F/unnamed.jpg",
-             "thumbnailUrl": "https://i.ibb.co/N2WhgF4F/unnamed.jpg",
+            "thumbnailUrl": "https://i.ibb.co/N2WhgF4F/unnamed.jpg",
             "release_date": "2008-04-18",
             "genre": "Drama, Crime",
             "director": "Gregor Jordan",
@@ -293,77 +296,74 @@ document.addEventListener('DOMContentLoaded', () => {
             "duration": "PT1H38M"
         },
         {
-  "id": 17,
-  "title": "Cruel Intentions (1999)",
-  "description": "In an upscale New York prep school, wealthy step-siblings Sebastian and Kathryn make a bet: Sebastian must seduce the headmaster's daughter, Annette, who has vowed to remain chaste until marriage. As the game unfolds, true feelings, betrayal, and manipulation blur the lines between love and cruelty.",
-  "poster": "https://i.ibb.co/Hpnf3NcL/images.jpg",
-   "thumbnailUrl": "https://i.ibb.co/Hpnf3NcL/images.jpg",
-  "release_date": "1999-03-05",
-  "genre": "Drama, Romance",
-  "director": "Roger Kumble",
-  "cast": "Sarah Michelle Gellar as Kathryn, Ryan Phillippe as Sebastian, Reese Witherspoon as Annette, Selma Blair as Cecile",
-  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239029&hd=2&",
-  "rating": "6.8/10",
-  "duration": "PT1H37M"
-},
-{
-  "id": 18,
-  "title": "Female Workers: Romance at Work 3 (2023)",
-  "description": "Yoo-ra, who is burdened by her family's financial problems, finally lands a job. However, the assistant manager takes advantage of her situation and offers money for a sexual relationship. Meanwhile, the female manager Hye-seon seduces the new employee Min-soo. Intense romantic entanglements unfold in this office drama.",
-  "poster": "https://i.ibb.co/VpLcjPTQ/c4-HACOcv-Ks-WAa-NTsy-Ys1-Jzfw-XWi.webp",
-  "release_date": "2023-11-25",
-  "genre": "Romance, Drama, Softcore",
-  "director": "Choi Jong-gyoo",
-  "cast": "Yoo-ra, Hye-seon, Min-soo, Soo Hee, Lee Chae-dam, Hae Il, Woo Yeol, Yoon Taek-seung",
-  "embed_url": "https://player.vimeo.com/video/1095323276?autoplay=0&title=0&byline=0&portrait=0",
-  "rating": "N/A",
-  "duration": "PT1H2M"
-},
-{
-  "id": 19,
-  "title": "Den of Thieves 2: Pantera (2025)",
-  "description": "Big Nick, recently divorced and off-duty, follows master thief Donnie to Europe, where he infiltrates the Panther mafia. As a massive diamond exchange heist unfolds in France, loyalties are tested in a game of deception and violence.",
-  "poster": "https://i.ibb.co/YFSQHdd9/MV5-BZGIy-YTI5-N2-Qt-Zm-Q5-ZC00-NDE4-LThh-YWMt-NGE5-Nj-I1-OGU2-M2-Nj-Xk-Ey-Xk-Fqc-Gc-V1.jpg",
-   "thumbnailUrl": "https://i.ibb.co/YFSQHdd9/MV5-BZGIy-YTI5-N2-Qt-Zm-Q5-ZC00-NDE4-LThh-YWMt-NGE5-Nj-I1-OGU2-M2-Nj-Xk-Ey-Xk-Fqc-Gc-V1.jpg",
-  "release_date": "2025-01-10",
-  "genre": "Action, Crime, Thriller",
-  "director": "Christian Gudegast",
-  "cast": "Gerard Butler, O'Shea Jackson Jr., Evin Ahmad, Salvatore Esposito, Meadow Williams, Swen Temmel",
-  "embed_url": "https://player.vimeo.com/video/1095363603?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479", 
-  "rating": "6.3/10",
-  "duration": "PT2H24M"
-},
-{
-  "id": 20,
-  "title": "Back in Action (2025)",
-  "description": "Former CIA operatives Emily and Matt, now living undercover with their two children, are pulled back into espionage when their secret is blown. They must return to their spy lives to protect their family.",
-  "poster": "https://i.ibb.co/k277HWcz/g-J4-KMv9dwk-Xg2-Iy-X5y-QVOu-BQh-Rno-W6-Iw-Jl-Yd8yrm-400x400.jpg",
-  "thumbnailUrl": "https://i.ibb.co/k277HWcz/g-J4-KMv9dwk-Xg2-Iy-X5y-QVOu-BQh-Rno-W6-Iw-Jl-Yd8yrm-400x400.jpg",
-  "release_date": "2025-01-17",
-  "genre": "Action, Comedy",
-  "director": "Seth Gordon",
-  "cast": "Jamie Foxx, Cameron Diaz, Kyle Chandler, Glenn Close, Andrew Scott, McKenna Roberts, Rylan Jackson",
-  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239030&hd=2&",
-  "rating": "6.3/10",
-  "duration": "PT1H54M"
-},
-{
-  "id": 21,
-  "title": "The Brutalist (2024)",
-  "description": "A poignant exploration of displacement, art, and survival, The Brutalist follows a visionary Hungarian architect who flees Europe with his wife in the aftermath of World War II. Upon arriving in America, he struggles to rebuild his identity while grappling with the constraints of his past and the demands of a new world.",
-  "poster": "https://i.ibb.co/CKg1rq93/fff.jpg",
-  "thumbnailUrl": "https://i.ibb.co/CKg1rq93/fff.jpg",
-  "release_date": "2024-12-15",
-  "genre": "Drama, Historical",
-  "director": "Brady Corbet",
-  "cast": "Adrien Brody, Felicity Jones, Guy Pearce, Joe Alwyn, Alessandro Nivola",
-  "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239032&hd=2&",
-  "rating": "N/A",
-  "duration": "PT2H5M"
-}
-
-
-
+            "id": 17,
+            "title": "Cruel Intentions (1999)",
+            "description": "In an upscale New York prep school, wealthy step-siblings Sebastian and Kathryn make a bet: Sebastian must seduce the headmaster's daughter, Annette, who has vowed to remain chaste until marriage. As the game unfolds, true feelings, betrayal, and manipulation blur the lines between love and cruelty.",
+            "poster": "https://i.ibb.co/Hpnf3NcL/images.jpg",
+            "thumbnailUrl": "https://i.ibb.co/Hpnf3NcL/images.jpg",
+            "release_date": "1999-03-05",
+            "genre": "Drama, Romance",
+            "director": "Roger Kumble",
+            "cast": "Sarah Michelle Gellar as Kathryn, Ryan Phillippe as Sebastian, Reese Witherspoon as Annette, Selma Blair as Cecile",
+            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239029&hd=2&",
+            "rating": "6.8/10",
+            "duration": "PT1H37M"
+        },
+        {
+            "id": 18,
+            "title": "Female Workers: Romance at Work 3 (2023)",
+            "description": "Yoo-ra, who is burdened by her family's financial problems, finally lands a job. However, the assistant manager takes advantage of her situation and offers money for a sexual relationship. Meanwhile, the female manager Hye-seon seduces the new employee Min-soo. Intense romantic entanglements unfold in this office drama.",
+            "poster": "https://i.ibb.co/VpLcjPTQ/c4-HACOcv-Ks-WAa-NTsy-Ys1-Jzfw-XWi.webp",
+            "release_date": "2023-11-25",
+            "genre": "Romance, Drama, Softcore",
+            "director": "Choi Jong-gyoo",
+            "cast": "Yoo-ra, Hye-seon, Min-soo, Soo Hee, Lee Chae-dam, Hae Il, Woo Yeol, Yoon Taek-seung",
+            "embed_url": "https://player.vimeo.com/video/1095323276?autoplay=0&title=0&byline=0&portrait=0",
+            "rating": "N/A",
+            "duration": "PT1H2M"
+        },
+        {
+            "id": 19,
+            "title": "Den of Thieves 2: Pantera (2025)",
+            "description": "Big Nick, recently divorced and off-duty, follows master thief Donnie to Europe, where he infiltrates the Panther mafia. As a massive diamond exchange heist unfolds in France, loyalties are tested in a game of deception and violence.",
+            "poster": "https://i.ibb.co/YFSQHdd9/MV5-BZGIy-YTI5-N2-Qt-Zm-Q5-ZC00-NDE4-LThh-YWMt-NGE5-Nj-I1-OGU2-M2-Nj-Xk-Ey-Xk-Fqc-Gc-V1.jpg",
+            "thumbnailUrl": "https://i.ibb.co/YFSQHdd9/MV5-BZGIy-YTI5-N2-Qt-Zm-Q5-ZC00-NDE4-LThh-YWMt-NGE5-Nj-I1-OGU2-M2-Nj-Xk-Ey-Xk-Fqc-Gc-V1.jpg",
+            "release_date": "2025-01-10",
+            "genre": "Action, Crime, Thriller",
+            "director": "Christian Gudegast",
+            "cast": "Gerard Butler, O'Shea Jackson Jr., Evin Ahmad, Salvatore Esposito, Meadow Williams, Swen Temmel",
+            "embed_url": "https://player.vimeo.com/video/1095363603?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479", 
+            "rating": "6.3/10",
+            "duration": "PT2H24M"
+        },
+        {
+            "id": 20,
+            "title": "Back in Action (2025)",
+            "description": "Former CIA operatives Emily and Matt, now living undercover with their two children, are pulled back into espionage when their secret is blown. They must return to their spy lives to protect their family.",
+            "poster": "https://i.ibb.co/k277HWcz/g-J4-KMv9dwk-Xg2-Iy-X5y-QVOu-BQh-Rno-W6-Iw-Jl-Yd8yrm-400x400.jpg",
+            "thumbnailUrl": "https://i.ibb.co/k277HWcz/g-J4-KMv9dwk-Xg2-Iy-X5y-QVOu-BQh-Rno-W6-Iw-Jl-Yd8yrm-400x400.jpg",
+            "release_date": "2025-01-17",
+            "genre": "Action, Comedy",
+            "director": "Seth Gordon",
+            "cast": "Jamie Foxx, Cameron Diaz, Kyle Chandler, Glenn Close, Andrew Scott, McKenna Roberts, Rylan Jackson",
+            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239030&hd=2&",
+            "rating": "6.3/10",
+            "duration": "PT1H54M"
+        },
+        {
+            "id": 21,
+            "title": "The Brutalist (2024)",
+            "description": "A poignant exploration of displacement, art, and survival, The Brutalist follows a visionary Hungarian architect who flees Europe with his wife in the aftermath of World War II. Upon arriving in America, he struggles to rebuild his identity while grappling with the constraints of his past and the demands of a new world.",
+            "poster": "https://i.ibb.co/CKg1rq93/fff.jpg",
+            "thumbnailUrl": "https://i.ibb.co/CKg1rq93/fff.jpg",
+            "release_date": "2024-12-15",
+            "genre": "Drama, Historical",
+            "director": "Brady Corbet",
+            "cast": "Adrien Brody, Felicity Jones, Guy Pearce, Joe Alwyn, Alessandro Nivola",
+            "embed_url": "https://vkvideo.ru/video_ext.php?oid=-231089883&id=456239032&hd=2&",
+            "rating": "N/A",
+            "duration": "PT2H5M"
+        }
     ];
 
     // سيتم ترتيب هذه المصفوفة عشوائيًا عند تحميل الصفحة وفي كل مرة نعود فيها للصفحة الرئيسية
@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // استخدام Date object لتنسيق التاريخ بشكل أفضل للعرض
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
             document.getElementById('movie-details-release-date').textContent = releaseDate;
-            
+
             document.getElementById('movie-details-genre').textContent = movie.genre || 'غير محدد';
             document.getElementById('movie-details-director').textContent = movie.director || 'غير متوفر';
             document.getElementById('movie-details-cast').textContent = Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast || 'غير متوفر';
@@ -545,17 +545,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (moviePlayer) {
-                moviePlayer.src = '';
+                moviePlayer.src = ''; // Clear previous source
                 if (videoLoadingSpinner) {
                     videoLoadingSpinner.style.display = 'block';
                     console.log('[Video Player] Loading spinner shown.');
                 }
+                if (videoErrorPrompt) { // Hide error prompt
+                    videoErrorPrompt.style.display = 'none';
+                }
 
+                // Add a small delay before setting the source to ensure spinner is visible
                 setTimeout(() => {
                     moviePlayer.src = movie.embed_url;
                     console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
                 }, 50);
 
+                // Event listener for when the iframe content loads
                 moviePlayer.onload = () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none';
@@ -566,16 +571,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlay.style.pointerEvents = 'auto';
                         console.log('[Video Overlay] Active and clickable after video loaded.');
                     }
+                    if (videoErrorPrompt) { // Hide error prompt on successful load
+                        videoErrorPrompt.style.display = 'none';
+                    }
                 };
+
+                // Event listener for when the iframe fails to load (e.g., broken URL, blocked content)
                 moviePlayer.onerror = () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none';
                         console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
                     }
                     if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.classList.remove('inactive'); // Keep active for ad click
+                        videoOverlay.style.pointerEvents = 'auto'; // Keep active for ad click
                         console.warn('[Video Overlay] Active even after iframe load error.');
+                    }
+                    if (videoErrorPrompt) { // Show error prompt
+                        videoErrorPrompt.style.display = 'block';
+                        videoErrorPrompt.textContent = 'عذراً، لم يتمكن الفيديو من التحميل. يرجى التحقق من اتصالك بالإنترنت أو تجربة متصفح آخر.';
+                        console.error('[Video Player] Error loading iframe source. Displaying error prompt.');
                     }
                 };
             }
@@ -674,7 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             }
         }
-        
+
         // إزالة أي سكربت JSON-LD قديم قبل إضافة الجديد
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
@@ -735,8 +750,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (moviePlayer) {
             moviePlayer.src = '';
-            moviePlayer.onload = null;
-            moviePlayer.onerror = null;
+            moviePlayer.onload = null; // Clear onload listener
+            moviePlayer.onerror = null; // Clear onerror listener
+        }
+        if (videoErrorPrompt) { // Hide error prompt on home page
+            videoErrorPrompt.style.display = 'none';
         }
 
         const newUrl = new URL(window.location.origin);
