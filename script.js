@@ -13,9 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
-    // عنصر جديد: حاوية لمشغل الفيديو
-    const moviePlayerContainer = document.getElementById('movie-player-container'); 
-    let moviePlayer = null; // متغير هيكون فيه الـ iframe اللي هيتنشأ ديناميكيًا
+    const moviePlayer = document.getElementById('movie-player'); 
 
     const videoOverlay = document.getElementById('video-overlay');
     const homeLogoLink = document.getElementById('home-logo-link');
@@ -37,8 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '#movie-grid-section': movieGridSection,
         '#movie-details-section': movieDetailsSection,
         '#hero-section': heroSection,
-        // تم تغيير moviePlayer إلى moviePlayerContainer هنا للتأكد من وجود الحاوية
-        '#movie-player-container': moviePlayerContainer, 
+        '#movie-player': moviePlayer, 
         '#video-overlay': videoOverlay,
         '#suggested-movie-grid': suggestedMovieGrid,
         '#suggested-movies-section': suggestedMoviesSection,
@@ -239,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         paginateMovies(moviesDataForPagination, currentPage);
     }
 
-    // --- هذا هو الجزء المُحسّن لمعالجة مشغل الفيديو ---
+    // --- هذا هو الجزء المحسن الخاص بمشغل الفيديو ---
     function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
         const movie = moviesData.find(m => m.id === movieId);
@@ -273,19 +270,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
-            // *** نقطة التحسين لمشغل الفيديو: إنشاء الـ iframe ديناميكيًا ***
-            if (moviePlayerContainer) {
-                // 1. مسح أي مشغل فيديو قديم موجود داخل الحاوية لتحرير الموارد تمامًا
-                moviePlayerContainer.innerHTML = '';
-                moviePlayer = null; // تفريغ المتغير moviePlayer للتأكد من عدم وجود مرجع لـ iframe قديم
+            // *** نقطة التحسين لمشغل الفيديو: أقصى تنظيف وإعادة تهيئة ***
+            if (moviePlayer) {
+                // 1. إيقاف أي تحميل سابق للفيديو بشكل فوري
+                // ده أهم جزء: بنستبدل الـ iframe نفسه بـ iframe جديد بنفس خصائصه
+                // ده بيضمن تنظيف كامل للموارد وإعادة تهيئة المتصفح للعنصر
+                const oldPlayerParent = moviePlayer.parentNode;
+                const newPlayer = moviePlayer.cloneNode(true); // استنساخ الـ iframe القديم للحفاظ على الـ IDs والـ classes
+                newPlayer.src = 'about:blank'; // نبدأ برابط فارغ تمامًا
+                newPlayer.onload = null; // إزالة أي مستمعات قديمة
+                newPlayer.onerror = null; // إزالة أي مستمعات قديمة
 
-                // 2. إظهار مؤشر التحميل
+                // 2. إظهار مؤشر التحميل والأوفرلاي قبل أي تحميل جديد
                 if (videoLoadingSpinner) {
                     videoLoadingSpinner.style.display = 'block'; 
                     console.log('[Video Player] Loading spinner shown.');
                 }
-                
-                // 3. التأكد من أن الأوفرلاي مرئي وقابل للنقر للسماح بظهور الإعلان
                 if (videoOverlay) {
                     videoOverlay.classList.remove('inactive');
                     videoOverlay.style.display = 'block';
@@ -293,49 +293,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[Video Overlay] Active and clickable before video loads.');
                 }
 
-                // 4. إنشاء الـ iframe الجديد تمامًا
-                const newPlayer = document.createElement('iframe');
-                newPlayer.id = 'movie-player'; // احتفظ بنفس الـ ID إذا كانت هناك قواعد CSS تعتمد عليه
-                newPlayer.setAttribute('frameborder', '0');
-                newPlayer.setAttribute('allowfullscreen', '');
-                newPlayer.src = 'about:blank'; // ابدأ بـ "about:blank" لمنع التحميل الفوري ولإعطاء المتصفح فرصة للتهيئة
-                newPlayer.style.width = '100%'; // تأكد من الأبعاد الصحيحة
-                newPlayer.style.height = '100%'; // تأكد من الأبعاد الصحيحة
+                // 3. استبدال الـ iframe القديم بالجديد في الـ DOM
+                if (oldPlayerParent) {
+                    oldPlayerParent.replaceChild(newPlayer, moviePlayer);
+                    moviePlayer = newPlayer; // تحديث مرجع moviePlayer للـ iframe الجديد
+                    console.log('[Video Player] Iframe replaced with a fresh instance.');
+                }
 
-                // تعيين مستمعي الأحداث للـ iframe الجديد
-                newPlayer.onload = () => {
+                // 4. إعادة تعيين مستمعات الأحداث للـ iframe الجديد
+                moviePlayer.onload = () => {
                     if (videoLoadingSpinner) {
-                        videoLoadingSpinner.style.display = 'none'; // إخفاء مؤشر التحميل عند انتهاء تحميل الـ iframe
+                        videoLoadingSpinner.style.display = 'none'; 
                         console.log('[Video Player] Loading spinner hidden (iframe loaded).');
                     }
                 };
-
-                newPlayer.onerror = () => {
+                moviePlayer.onerror = () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none';
                         console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
                     }
                     if (videoOverlay) {
-                        // في حالة الخطأ، نتأكد أن الأوفرلاي يظل مرئيًا وقابلًا للنقر لضمان استمرارية الإعلان
                         videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.display = 'block';
+                        videoOverlay.style.display = 'block'; 
                         videoOverlay.style.pointerEvents = 'auto';
                         console.warn('[Video Overlay] Active even after iframe load error.');
                     }
                 };
-                
-                // إضافة الـ iframe الجديد إلى الحاوية في الـ DOM
-                moviePlayerContainer.appendChild(newPlayer);
-                moviePlayer = newPlayer; // تحديث متغير moviePlayer ليشير إلى الـ iframe الجديد
-                console.log('[Video Player] New iframe created and added to container.');
 
-                // 5. تحميل الفيديو بعد فترة قصيرة: هذا التأخير يسمح للمتصفح بإنشاء الـ iframe وتجهيزه قبل بدء تحميل محتواه
+                // 5. تحميل الـ src للفيديو بعد تأخير مناسب
+                // ده بيسمح للمتصفح بإنهاء كل عمليات التنظيف والإعداد قبل بدء تحميل الفيديو
                 setTimeout(() => {
-                    if (moviePlayer && moviePlayer.src !== movie.embed_url) { // تجنب إعادة تعيين الـ src لو هو نفسه لمنع التحميل المتكرر
-                        moviePlayer.src = movie.embed_url;
-                        console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
+                    if (moviePlayer.src !== movie.embed_url) { // تجنب إعادة التعيين لو نفس الرابط
+                         moviePlayer.src = movie.embed_url;
+                         console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
                     }
-                }, 100); // تأخير 100 مللي ثانية (يمكنك تجربته أقل أو أكثر بناءً على الأداء)
+                }, 200); // تأخير أكبر (200 مللي ثانية) لتحسين الاستقرار على الأجهزة المحمولة
             }
 
             const newUrl = new URL(window.location.origin);
@@ -480,12 +472,14 @@ document.addEventListener('DOMContentLoaded', () => {
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
-        // *** نقطة تحسين مهمة: إزالة الـ iframe بالكامل عند العودة للصفحة الرئيسية ***
-        // ده بيحرر كل الموارد اللي كان بيستهلكها مشغل الفيديو وبيخلي الصفحة أخف بكتير.
-        if (moviePlayerContainer) {
-            moviePlayerContainer.innerHTML = ''; // مسح كل المحتويات داخل الحاوية (بما في ذلك الـ iframe)
-            moviePlayer = null; // تفريغ المتغير moviePlayer للتأكد من عدم وجود مرجع لـ iframe قديم
-            console.log('[Video Player] Iframe removed completely from DOM on home page.');
+        // *** إيقاف الفيديو وتنظيف الـ iframe عند العودة للصفحة الرئيسية ***
+        if (moviePlayer) {
+            // مسح مصدر الفيديو لإيقافه تمامًا
+            moviePlayer.src = 'about:blank'; 
+            // إزالة مستمعات الأحداث القديمة لمنع أي مشاكل مستقبلية
+            moviePlayer.onload = null; 
+            moviePlayer.onerror = null;
+            console.log('[Video Player] Source cleared and listeners removed on home page.');
         }
         if (videoOverlay) {
             videoOverlay.classList.add('inactive');
