@@ -106,23 +106,12 @@
             <h1 id="movie-details-title"></h1>
             
             <div class="video-player-container">
-                <img id="movie-player-thumbnail" class="movie-player-thumbnail" alt="Movie Thumbnail">
-
-                <div id="play-button-overlay" class="play-button-overlay">
-                    <button id="custom-play-button" class="custom-play-button">
-                        <svg class="play-icon" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z"/>
-                        </svg>
-                        تشغيل الفيلم
-                    </button>
-                    <div id="video-loading-spinner" class="spinner-overlay" style="display: none;">
-                        <div class="spinner"></div>
-                    </div>
+                <iframe id="movie-player" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%; height:100%;"></iframe>
+                <div id="video-loading-spinner" class="spinner-overlay">
+                    <div class="spinner"></div>
                 </div>
 
-                <iframe id="movie-player" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%; height:100%; display: none;"></iframe>
-
-                <div id="video-overlay" class="video-overlay inactive" style="display: none;"></div>
+                <div id="video-overlay" class="video-overlay inactive"></div>
             </div>
             <div class="movie-info">
                 <div id="movie-details-poster-container" style="text-align: center; margin-bottom: 20px;">
