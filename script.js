@@ -631,23 +631,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // **الأهم: التحكم في طبقة إعلان الفيديو (Video Overlay)**
+    // هذا هو الجزء الذي تم تحسينه لحل مشكلة توقف الفيديو
     if (videoOverlay) {
         videoOverlay.addEventListener('click', (e) => {
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
 
             if (adOpened) {
-                // **الحل المقترح لضمان عدم توقف الفيديو:**
-                // 1. إخفاء الأوفرلاي تمامًا عند فتح الإعلان
-                // هذا يضمن أن أي تفاعلات لاحقة ستمر مباشرة إلى الـ iframe
-                videoOverlay.style.display = 'none'; 
+                // *** الحل المقترح لضمان عدم توقف الفيديو ***
+                // 1. إخفاء طبقة الأوفرلاي تمامًا عند فتح الإعلان.
+                // هذا يضمن أن أي تفاعلات لاحقة ستمر مباشرة إلى الـ iframe (مشغل الفيديو).
+                videoOverlay.style.display = 'none';
                 console.log(`[Video Overlay] Hidden temporarily for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
 
-                // 2. منع انتشار حدث النقر إلى الـ iframe الأساسي
-                // هذا يمنع مشغل الفيديو من معالجة النقرة وتوقيف التشغيل.
-                e.stopPropagation(); 
+                // 2. منع انتشار حدث النقر إلى الـ iframe الأساسي.
+                // هذا يمنع مشغل الفيديو من معالجة النقرة وتوقيف التشغيل أو تغيير حالته.
+                e.stopPropagation();
 
-                // 3. إعادة إظهار الأوفرلاي بعد انتهاء فترة التهدئة
+                // 3. إعادة إظهار الأوفرلاي بعد انتهاء فترة التهدئة.
+                // لكي يعود الأوفرلاي للعمل بعد انتهاء الكولداون ويكون جاهزًا لفتح إعلان آخر.
                 setTimeout(() => {
                     videoOverlay.style.display = 'block'; // إعادة إظهار الأوفرلاي
                     console.log('[Video Overlay] Displayed again after cooldown.');
@@ -663,7 +665,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function initialPageLoadLogic() {
         const urlParams = new URLSearchParams(window.location.search);
         const viewParam = urlParams.get('view'); // الحصول على 'view' من رابط URL
-        const idParam = urlParams.get('id');     // الحصول على 'id' من رابط URL
+        const idParam = urlParams.get('id');    // الحصول على 'id' من رابط URL
 
         if (viewParam === 'details' && idParam) {
             const movieId = parseInt(idParam);
