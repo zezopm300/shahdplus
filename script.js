@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('✅ All critical DOM elements found.');
     }
 
-    // --- 2. Adsterra Configuration (تم الاحتفاظ بها كما هي لعمل إعلانات الفيديو والبوستر) ---
+    // --- 2. Adsterra Configuration (لم يتم المساس بها - تم الحفاظ عليها) ---
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes for movie cards and details poster
@@ -230,7 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.getElementById('movie-details-title').textContent = movie.title;
             document.getElementById('movie-details-description').textContent = movie.description;
-            // استخدام Date object لتنسيق التاريخ بشكل أفضل للعرض
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
             document.getElementById('movie-details-release-date').textContent = releaseDate;
             
@@ -246,18 +245,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
+            // --- حل مشكلة تقطيع الفيديو: إعادة تعيين المصدر لضمان إعادة التحميل ---
             if (moviePlayer) {
-                moviePlayer.src = '';
+                moviePlayer.src = ''; // مهم جداً: مسح الـ src لإجبار المتصفح على إعادة تحميل الـ iframe بالكامل
                 if (videoLoadingSpinner) {
                     videoLoadingSpinner.style.display = 'block';
                     console.log('[Video Player] Loading spinner shown.');
                 }
-
-                // تأخير بسيط لإعادة تعيين src والتأكد من إعادة تشغيل الفيديو
-                setTimeout(() => {
-                    moviePlayer.src = movie.embed_url;
-                    console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
-                }, 50);
+                
+                // تعيين الـ src الجديد مباشرة دون أي تأخير إضافي
+                moviePlayer.src = movie.embed_url;
+                console.log(`[Video Player] Final iframe src set to: ${movie.embed_url}`);
 
                 moviePlayer.onload = () => {
                     if (videoLoadingSpinner) {
@@ -275,6 +273,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoLoadingSpinner.style.display = 'none';
                         console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
                     }
+                    console.error('[Video Player] Failed to load video from URL:', movie.embed_url);
+                    // يمكنك هنا عرض رسالة خطأ للمستخدم داخل واجهة المستخدم
                     if (videoOverlay) {
                         videoOverlay.classList.remove('inactive');
                         videoOverlay.style.pointerEvents = 'auto';
@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`🔗 [URL] URL updated to ${newUrl.toString()}`);
 
             updateMetaTags(movie);
-            addJsonLdSchema(movie); // تم استدعاء الدالة هنا لتحديث الـ Schema
+            addJsonLdSchema(movie);
             displaySuggestedMovies(movieId);
             console.log(`✨ [Suggestions] Calling displaySuggestedMovies for ID: ${movieId}`);
 
@@ -378,21 +378,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // إزالة أي سكربت JSON-LD قديم قبل إضافة الجديد
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
             oldScript.remove();
             console.log('📄 [SEO] Old JSON-LD schema removed.');
         }
 
-        // إضافة السكربت الجديد
         let script = document.createElement('script');
         script.type = 'application/ld+json';
         script.textContent = JSON.stringify(schema);
         document.head.appendChild(script);
         console.log('📄 [SEO] New JSON-LD schema added/updated.');
     }
-
 
     function displaySuggestedMovies(currentMovieId) {
         if (!suggestedMovieGrid) {
@@ -437,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
             videoLoadingSpinner.style.display = 'none';
         }
         if (moviePlayer) {
-            moviePlayer.src = '';
+            moviePlayer.src = ''; // مسح الـ src عندما نعود للصفحة الرئيسية
             moviePlayer.onload = null;
             moviePlayer.onerror = null;
         }
@@ -483,7 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
         watchNowBtn.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('🎬 [Interaction] Watch Now button clicked.');
-            movieGridSection.scrollIntoIntoView({ behavior: 'smooth' });
+            movieGridSection.scrollIntoView({ behavior: 'smooth' });
         });
     }
 
@@ -558,11 +555,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
             }
         });
-        console.log('[Video Overlay] Click listener attached for ad interaction (with cooldown logic).');
+        console.log('[Video Overlay] Click listener attached for ad interaction (مع منطق فترة التهدئة).');
     }
 
     // --- 6. Initial Page Load Logic (Routing) ---
-    // جلب البيانات من ملف JSON أولاً
+    // جلب البيانات من ملف JSON أولاً قبل تهيئة أي شيء يعتمد عليها
     fetch('movies.json') // تأكد من المسار الصحيح لملف JSON
         .then(response => {
             if (!response.ok) {
@@ -574,6 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
             moviesData = data; // قم بتعيين البيانات التي تم جلبها إلى moviesData
             console.log('✅ Movie data loaded successfully from movies.json.');
 
+            // الآن بعد تحميل البيانات، يمكننا بدء منطق عرض الصفحة
             const urlParams = new URLSearchParams(window.location.search);
             const viewParam = urlParams.get('view');
             const idParam = urlParams.get('id');
@@ -599,5 +597,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 movieGrid.innerHTML = '<p style="text-align: center; color: var(--danger-color);">فشل تحميل بيانات الأفلام. يرجى المحاولة لاحقًا.</p>';
             }
             if (movieDetailsSection) movieDetailsSection.innerHTML = '<p style="text-align: center; color: var(--danger-color);">فشل تحميل بيانات الفيلم. يرجى المحاولة لاحقًا.</p>';
+            // إخفاء الـ spinner إذا كان مرئيًا
+            if (videoLoadingSpinner) {
+                videoLoadingSpinner.style.display = 'none';
+            }
         });
 });
