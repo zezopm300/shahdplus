@@ -248,51 +248,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
-            // --- FIX for Video Playback after Ad / Mobile Buffering ---
-            if (moviePlayer) {
-                // Store the current video URL before potentially changing it
+            // --- Aggressive Video Reload & Playback Strategy ---
+            if (moviePlayer && videoLoadingSpinner && videoOverlay) {
+                // Store the current video URL
                 currentVideoEmbedUrl = movie.embed_url; 
 
-                // Ensure the video player is stopped/reset
-                // Setting src to empty string *then* to the actual URL forces a re-initialization
-                // This is crucial for preventing issues after an ad redirect or on mobile.
-                moviePlayer.src = ''; 
-                
-                if (videoLoadingSpinner) {
-                    videoLoadingSpinner.style.display = 'block'; // Show spinner while video loads
-                    console.log('[Video Player] Loading spinner shown.');
-                }
-                
-                // Immediately set the source. No artificial delay.
-                moviePlayer.src = currentVideoEmbedUrl; 
-                console.log(`[Video Player] Final iframe src set to: ${currentVideoEmbedUrl}`);
+                // Ensure player and overlay are visible (after being hidden on home/start)
+                moviePlayer.style.display = 'block'; 
+                videoOverlay.style.display = 'block';
 
-                // Event listeners for when the iframe content loads or errors
+                // Show spinner immediately
+                videoLoadingSpinner.style.display = 'block';
+                console.log('[Video Player] Loading spinner shown.');
+
+                // CRITICAL FOR SMOOTHNESS: Force a full re-initialization of the iframe.
+                // This clears any cached state and makes the browser load it fresh.
+                moviePlayer.src = 'about:blank'; // First set to blank to truly detach
+                // Small delay to allow browser to process blank, then set actual source
+                setTimeout(() => {
+                    moviePlayer.src = currentVideoEmbedUrl;
+                    console.log(`[Video Player] Final iframe src set to: ${currentVideoEmbedUrl}`);
+                }, 50); // A very small delay, but crucial for some browsers/devices
+
+                // Re-attach event listeners for loading/error states
+                // Remove old listeners first to prevent duplicates
+                moviePlayer.onload = null;
+                moviePlayer.onerror = null;
+
                 moviePlayer.onload = () => {
-                    if (videoLoadingSpinner) {
-                        videoLoadingSpinner.style.display = 'none'; 
-                        console.log('[Video Player] Loading spinner hidden (iframe loaded).');
-                    }
-                    if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.pointerEvents = 'auto'; // Re-enable overlay clicks
-                        console.log('[Video Overlay] Active and clickable after video loaded.');
-                    }
-                    // Optional: Try to send a postMessage to the iframe to play the video,
-                    // if the embed provider supports it. This is highly specific per provider.
-                    // For example, for Vimeo: moviePlayer.contentWindow.postMessage('{ "method": "play" }', '*');
+                    console.log('✅ [Video Player] Iframe content loaded.');
+                    // This doesn't mean video is buffered, but iframe is ready.
+                    videoLoadingSpinner.style.display = 'none'; // Hide spinner
+                    videoOverlay.classList.remove('inactive');
+                    videoOverlay.style.pointerEvents = 'auto'; // Re-enable overlay clicks
                 };
+
                 moviePlayer.onerror = () => {
-                    if (videoLoadingSpinner) {
-                        videoLoadingSpinner.style.display = 'none'; 
-                        console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
-                    }
-                    console.error('[Video Player] Failed to load video from URL:', currentVideoEmbedUrl);
-                    if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.pointerEvents = 'auto'; 
-                        console.warn('[Video Overlay] Active even after iframe load error.');
-                    }
+                    console.error('❌ [Video Player] Error loading iframe content from:', currentVideoEmbedUrl);
+                    videoLoadingSpinner.style.display = 'none'; // Hide spinner
+                    // Potentially show a user-friendly error message on the UI
+                    // e.g., moviePlayer.style.display = 'none'; alert('فشل تحميل الفيديو. يرجى المحاولة لاحقًا.');
+                    videoOverlay.classList.remove('inactive');
+                    videoOverlay.style.pointerEvents = 'auto'; // Still allow ad clicks on overlay
                 };
             }
 
@@ -314,6 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showHomePage(); 
         }
     }
+
 
     function updateMetaTags(movie) {
         document.title = `${movie.title} - مشاهدة أونلاين`;
@@ -439,17 +437,18 @@ document.addEventListener('DOMContentLoaded', () => {
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
+        // Reset video player state on home page
         if (videoOverlay) {
             videoOverlay.classList.add('inactive');
             videoOverlay.style.pointerEvents = 'none';
-            console.log('[Video Overlay] Inactive on home page.');
+            videoOverlay.style.display = 'none'; // Ensure it's hidden
         }
         if (videoLoadingSpinner) {
             videoLoadingSpinner.style.display = 'none';
         }
         if (moviePlayer) {
             moviePlayer.src = '';
-            // Remove event listeners to prevent memory leaks, especially important for iframes
+            moviePlayer.style.display = 'none'; // Hide player on home page
             moviePlayer.onload = null;
             moviePlayer.onerror = null;
         }
@@ -563,12 +562,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- FIX: Video continues playing after ad opens ---
             if (adOpened) {
-                // If an ad was successfully opened, re-set the video source to force reload and continue playback.
-                // This is especially important for mobile browsers that might pause/stop the iframe on focus loss.
+                // If an ad was successfully opened, re-initialize the video source
+                // This forces the iframe to re-evaluate and typically resume playback.
                 if (moviePlayer && currentVideoEmbedUrl) {
-                    moviePlayer.src = ''; // Clear to force reload
-                    moviePlayer.src = currentVideoEmbedUrl; // Set back to current video
-                    console.log('[Video Playback] Re-initializing video after ad click to ensure continuous playback.');
+                    // Critical for mobile: clear then reset src to force reload and continue playback.
+                    moviePlayer.src = 'about:blank'; // Detach completely
+                    setTimeout(() => {
+                        moviePlayer.src = currentVideoEmbedUrl; // Re-attach
+                        console.log('[Video Playback] Re-initializing video after ad click for continuous playback.');
+                    }, 50); // Small delay to allow detachment
                 }
 
                 // Temporarily disable clicks on overlay to prevent rapid ad pop-ups
@@ -584,18 +586,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 6. Initial Page Load Logic (Routing) ---
-    // Fetch movie data from JSON file FIRST.
-    fetch('movies.json') 
+    // IMPORTANT: Fetch movie data from JSON file FIRST.
+    // All subsequent operations that depend on `moviesData` must be inside this chain.
+    fetch('movies.json') // Make sure this path is correct relative to your HTML file
         .then(response => {
             if (!response.ok) {
+                // If the network response is not OK (e.g., 404 Not Found), throw an error
                 throw new Error(`HTTP error! status: ${response.status} - Could not load movies.json`);
             }
-            return response.json(); 
+            return response.json(); // Parse the JSON data
         })
         .then(data => {
-            moviesData = data; 
+            moviesData = data; // Assign the fetched data to your moviesData variable
             console.log('✅ Movie data loaded successfully from movies.json.');
 
+            // Now that data is loaded, proceed with page routing and display
             const urlParams = new URLSearchParams(window.location.search);
             const viewParam = urlParams.get('view');
             const idParam = urlParams.get('id');
@@ -607,21 +612,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     showMovieDetails(movieId);
                 } else {
                     console.warn('⚠️ [Initial Load] Invalid movie ID in URL. Showing home page.');
-                    showHomePage();
+                    showHomePage(); // Fallback if ID is not a valid number
                 }
             } else {
                 console.log('🚀 [Initial Load] No specific view in URL. Showing home page.');
-                showHomePage();
+                showHomePage(); // Default to home page
             }
         })
         .catch(error => {
             console.error('❌ Failed to load movie data:', error);
+            // Display an error message to the user if data loading fails
             if (movieGrid) {
                 movieGrid.innerHTML = '<p style="text-align: center; color: var(--danger-color);">فشل تحميل بيانات الأفلام. يرجى المحاولة لاحقًا أو التحقق من ملف movies.json.</p>';
             }
             if (movieDetailsSection) {
                 movieDetailsSection.innerHTML = '<p style="text-align: center; color: var(--danger-color);">فشل تحميل بيانات الفيلم. يرجى المحاولة لاحقًا.</p>';
             }
+            // Ensure spinner is hidden if it was shown during a failed load
             if (videoLoadingSpinner) {
                 videoLoadingSpinner.style.display = 'none';
             }
