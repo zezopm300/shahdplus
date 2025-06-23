@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
-    // سنستخدم هذا العنصر كـ "حاوية" لمشغل الفيديو، بدلًا من moviePlayer مباشرةً
+    // عنصر جديد: حاوية لمشغل الفيديو
     const moviePlayerContainer = document.getElementById('movie-player-container'); 
-    let moviePlayer = null; // moviePlayer هيكون متغير يتم تعيينه ديناميكيًا
+    let moviePlayer = null; // متغير هيكون فيه الـ iframe اللي هيتنشأ ديناميكيًا
 
     const videoOverlay = document.getElementById('video-overlay');
     const homeLogoLink = document.getElementById('home-logo-link');
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '#movie-grid-section': movieGridSection,
         '#movie-details-section': movieDetailsSection,
         '#hero-section': heroSection,
-        // تم تغيير moviePlayer إلى moviePlayerContainer هنا
+        // تم تغيير moviePlayer إلى moviePlayerContainer هنا للتأكد من وجود الحاوية
         '#movie-player-container': moviePlayerContainer, 
         '#video-overlay': videoOverlay,
         '#suggested-movie-grid': suggestedMovieGrid,
@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 2. Adsterra Configuration ---
+    // أكواد الإعلانات دي لم يتم تغييرها نهائيًا
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes
@@ -143,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         movieCard.addEventListener('click', () => {
             console.log(`⚡ [Interaction] Movie card clicked for ID: ${movie.id}`);
-            // لا نفتح إعلان هنا بشكل مباشر
+            // لم يتم إضافة إعلان هنا، الإعلان سيظهر فقط عند محاولة تشغيل الفيديو
             showMovieDetails(movie.id);
         });
         return movieCard;
@@ -238,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         paginateMovies(moviesDataForPagination, currentPage);
     }
 
-    // *** هذا هو الجزء المحسن الخاص بمشغل الفيديو ***
+    // --- هذا هو الجزء المُحسّن لمعالجة مشغل الفيديو ---
     function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
         const movie = moviesData.find(m => m.id === movieId);
@@ -274,9 +275,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // *** نقطة التحسين لمشغل الفيديو: إنشاء الـ iframe ديناميكيًا ***
             if (moviePlayerContainer) {
-                // 1. مسح أي مشغل فيديو قديم موجود داخل الحاوية
+                // 1. مسح أي مشغل فيديو قديم موجود داخل الحاوية لتحرير الموارد تمامًا
                 moviePlayerContainer.innerHTML = '';
-                moviePlayer = null; // تأكد من تفريغ المتغير moviePlayer
+                moviePlayer = null; // تفريغ المتغير moviePlayer للتأكد من عدم وجود مرجع لـ iframe قديم
 
                 // 2. إظهار مؤشر التحميل
                 if (videoLoadingSpinner) {
@@ -284,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[Video Player] Loading spinner shown.');
                 }
                 
-                // 3. التأكد من أن الأوفرلاي مرئي وقابل للنقر
+                // 3. التأكد من أن الأوفرلاي مرئي وقابل للنقر للسماح بظهور الإعلان
                 if (videoOverlay) {
                     videoOverlay.classList.remove('inactive');
                     videoOverlay.style.display = 'block';
@@ -292,20 +293,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[Video Overlay] Active and clickable before video loads.');
                 }
 
-                // 4. إنشاء الـ iframe الجديد
+                // 4. إنشاء الـ iframe الجديد تمامًا
                 const newPlayer = document.createElement('iframe');
-                newPlayer.id = 'movie-player'; // احتفظ بنفس الـ ID إذا كانت هناك حاجة إليه في CSS
+                newPlayer.id = 'movie-player'; // احتفظ بنفس الـ ID إذا كانت هناك قواعد CSS تعتمد عليه
                 newPlayer.setAttribute('frameborder', '0');
                 newPlayer.setAttribute('allowfullscreen', '');
-                // قم بتعيين src بعد فترة زمنية قصيرة
-                newPlayer.src = 'about:blank'; // ابدأ بـ blank لمنع التحميل الفوري
+                newPlayer.src = 'about:blank'; // ابدأ بـ "about:blank" لمنع التحميل الفوري ولإعطاء المتصفح فرصة للتهيئة
                 newPlayer.style.width = '100%'; // تأكد من الأبعاد الصحيحة
                 newPlayer.style.height = '100%'; // تأكد من الأبعاد الصحيحة
 
-                // تعيين مستمعي الأحداث قبل إضافة الـ iframe للـ DOM
+                // تعيين مستمعي الأحداث للـ iframe الجديد
                 newPlayer.onload = () => {
                     if (videoLoadingSpinner) {
-                        videoLoadingSpinner.style.display = 'none'; // إخفاء مؤشر التحميل
+                        videoLoadingSpinner.style.display = 'none'; // إخفاء مؤشر التحميل عند انتهاء تحميل الـ iframe
                         console.log('[Video Player] Loading spinner hidden (iframe loaded).');
                     }
                 };
@@ -316,26 +316,26 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
                     }
                     if (videoOverlay) {
+                        // في حالة الخطأ، نتأكد أن الأوفرلاي يظل مرئيًا وقابلًا للنقر لضمان استمرارية الإعلان
                         videoOverlay.classList.remove('inactive');
                         videoOverlay.style.display = 'block';
                         videoOverlay.style.pointerEvents = 'auto';
                         console.warn('[Video Overlay] Active even after iframe load error.');
                     }
-                    // يمكنك هنا إضافة رسالة خطأ للمستخدم
                 };
                 
+                // إضافة الـ iframe الجديد إلى الحاوية في الـ DOM
                 moviePlayerContainer.appendChild(newPlayer);
                 moviePlayer = newPlayer; // تحديث متغير moviePlayer ليشير إلى الـ iframe الجديد
                 console.log('[Video Player] New iframe created and added to container.');
 
-                // 5. تحميل الفيديو بعد فترة قصيرة
-                // هذا التأخير يعطي المتصفح فرصة لتجهيز الـ iframe بالكامل قبل بدء التحميل
+                // 5. تحميل الفيديو بعد فترة قصيرة: هذا التأخير يسمح للمتصفح بإنشاء الـ iframe وتجهيزه قبل بدء تحميل محتواه
                 setTimeout(() => {
-                    if (moviePlayer && moviePlayer.src !== movie.embed_url) { // تجنب إعادة تعيين الـ src لو هو نفسه
+                    if (moviePlayer && moviePlayer.src !== movie.embed_url) { // تجنب إعادة تعيين الـ src لو هو نفسه لمنع التحميل المتكرر
                         moviePlayer.src = movie.embed_url;
                         console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
                     }
-                }, 100); // تأخير 100 مللي ثانية (يمكنك تعديله)
+                }, 100); // تأخير 100 مللي ثانية (يمكنك تجربته أقل أو أكثر بناءً على الأداء)
             }
 
             const newUrl = new URL(window.location.origin);
@@ -481,6 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         paginateMovies(moviesDataForPagination, 1);
 
         // *** نقطة تحسين مهمة: إزالة الـ iframe بالكامل عند العودة للصفحة الرئيسية ***
+        // ده بيحرر كل الموارد اللي كان بيستهلكها مشغل الفيديو وبيخلي الصفحة أخف بكتير.
         if (moviePlayerContainer) {
             moviePlayerContainer.innerHTML = ''; // مسح كل المحتويات داخل الحاوية (بما في ذلك الـ iframe)
             moviePlayer = null; // تفريغ المتغير moviePlayer للتأكد من عدم وجود مرجع لـ iframe قديم
@@ -600,8 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[Event] Movie details poster click listener attached.');
     }
 
-    // *** هذا هو الجزء الأهم للتحكم في طبقة إعلان الفيديو (Video Overlay) ***
-    // يحافظ على الإعلانات ويعالج مشكلة التوقف
+    // --- هذا هو الجزء الخاص بإعلانات الـ video overlay، ولم يتم المساس به ---
     if (videoOverlay) {
         videoOverlay.addEventListener('click', (e) => {
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
