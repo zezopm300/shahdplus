@@ -15,13 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const backToHomeBtn = document.getElementById('back-to-home-btn');
 
     // New/Updated references for video player elements
-    // moviePlayer الآن هو مرجع ثابت لـ iframe موجود في HTML
-    let moviePlayer = document.getElementById('movie-player'); // تم تغييرها لـ 'let' لتسمح بإعادة تعيينها
-    const moviePlayerThumbnail = document.getElementById('movie-player-thumbnail'); // الصورة المصغرة الجديدة
-    const playButtonOverlay = document.getElementById('play-button-overlay');   // طبقة زر التشغيل والسبينر
-    const customPlayButton = document.getElementById('custom-play-button');     // زر التشغيل المخصص
+    let moviePlayer = document.getElementById('movie-player'); 
+    const moviePlayerThumbnail = document.getElementById('movie-player-thumbnail');
+    const playButtonOverlay = document.getElementById('play-button-overlay');
+    const customPlayButton = document.getElementById('custom-play-button');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
-    const videoOverlay = document.getElementById('video-overlay'); // Adsterra overlay
+    const videoOverlay = document.getElementById('video-overlay');
 
     const homeLogoLink = document.getElementById('home-logo-link');
     const movieDetailsPoster = document.getElementById('movie-details-poster');
@@ -289,15 +288,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // --- منطق شاشة البداية لمشغل الفيديو المخصص ---
             if (moviePlayer && moviePlayerThumbnail && playButtonOverlay && customPlayButton && videoLoadingSpinner && videoOverlay) {
-                // أولاً: تنظيف شامل للـ iframe ووقف أي تحميل سابق
                 const oldPlayerParent = moviePlayer.parentNode;
                 if (oldPlayerParent) {
-                    // إزالة الـ iframe القديم بالكامل
+                    // 1. إزالة الـ iframe القديم بالكامل لضمان إعادة تعيين حالة المتصفح المتعلقة به
                     oldPlayerParent.removeChild(moviePlayer);
                     console.log('[Video Player] Old iframe removed for full reset.');
                 }
                 
-                // إعادة إنشاء iframe جديد تمامًا لضمان بيئة نظيفة
+                // 2. إعادة إنشاء iframe جديد تمامًا لضمان بيئة نظيفة وجديدة
                 const newPlayer = document.createElement('iframe');
                 newPlayer.id = 'movie-player'; // الحفاظ على الـ ID لـ CSS و JS references
                 newPlayer.setAttribute('frameborder', '0');
@@ -307,18 +305,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 newPlayer.style.height = '100%';
                 newPlayer.style.display = 'none'; // مخفي في البداية
 
-                // إعادة إضافة الـ iframe الجديد إلى الـ DOM
+                // 3. إعادة إضافة الـ iframe الجديد إلى الـ DOM
                 if (oldPlayerParent) {
                     oldPlayerParent.appendChild(newPlayer);
                     moviePlayer = newPlayer; // تحديث مرجع moviePlayer ليشير إلى الـ iframe الجديد
                     console.log('[Video Player] Fresh iframe created and added to DOM.');
                 } else {
                     console.error('❌ [Video Player] Parent of moviePlayer not found after removal. Cannot re-add iframe.');
-                    // إذا لم يتم العثور على العنصر الأب، فالمشغل لن يعمل
                     return;
                 }
 
-                // إزالة أي روابط preconnect/prefetch مضافة مسبقًا بشكل قاطع
+                // 4. إزالة أي روابط preconnect/prefetch مضافة مسبقًا بشكل قاطع
                 document.querySelectorAll('link[rel="preconnect"][data-video-url], link[rel="prefetch"][data-video-url]').forEach(link => {
                     if (link.parentNode) {
                         link.parentNode.removeChild(link);
@@ -326,13 +323,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 console.log('[Preload] Removed all previous preconnect/prefetch links.');
 
-                // إعادة تعيين حالة واجهة المستخدم: إخفاء السبينر و overlay الإعلانات
+                // 5. إعادة تعيين حالة واجهة المستخدم: إخفاء السبينر و overlay الإعلانات
                 videoLoadingSpinner.style.display = 'none';
                 videoOverlay.classList.remove('inactive');
                 videoOverlay.style.display = 'none';
                 videoOverlay.style.pointerEvents = 'none';
 
-                // إظهار عناصر شاشة البداية (الصورة وزر التشغيل)
+                // 6. إظهار عناصر شاشة البداية (الصورة وزر التشغيل)
                 customPlayButton.style.display = 'flex';
                 playButtonOverlay.style.display = 'flex';
                 moviePlayerThumbnail.src = movie.poster;
@@ -340,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 moviePlayerThumbnail.style.display = 'block';
                 console.log('[Video Player] Ready for playback with splash screen.');
 
-                // إعداد تلميحات التحميل المسبق (Preconnect و Prefetch) للفيديو الجديد فقط
+                // 7. إعداد تلميحات التحميل المسبق (Preconnect و Prefetch) للفيديو الجديد فقط
                 let currentPreconnectLink = null;
                 let currentPrefetchLink = null;
                 try {
@@ -349,41 +346,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentPreconnectLink = document.createElement('link');
                     currentPreconnectLink.rel = 'preconnect';
                     currentPreconnectLink.href = videoHost;
-                    currentPreconnectLink.setAttribute('data-video-url', movie.embed_url); // وضع علامة لإزالته لاحقًا
+                    currentPreconnectLink.setAttribute('data-video-url', movie.embed_url);
                     document.head.appendChild(currentPreconnectLink);
                     console.log(`[Preload] Added preconnect to ${videoHost} for current movie.`);
 
                     currentPrefetchLink = document.createElement('link');
                     currentPrefetchLink.rel = 'prefetch';
                     currentPrefetchLink.href = movie.embed_url;
-                    currentPrefetchLink.as = 'document'; // أو 'video' أو 'fetch'
-                    currentPrefetchLink.setAttribute('data-video-url', movie.embed_url); // وضع علامة لإزالته لاحقًا
+                    currentPrefetchLink.as = 'document';
+                    currentPrefetchLink.setAttribute('data-video-url', movie.embed_url);
                     document.head.appendChild(currentPrefetchLink);
                     console.log(`[Preload] Added prefetch for ${movie.embed_url} for current movie.`);
                 } catch (e) {
                     console.warn('⚠️ [Preload] Could not add prefetch/preconnect links (invalid URL or other error):', e);
                 }
 
-                // إضافة مستمع الحدث لزر التشغيل المخصص (على الـ iframe الجديد)
+                // 8. إضافة مستمع الحدث لزر التشغيل المخصص (على الـ iframe الجديد)
                 customPlayButton.onclick = () => {
                     console.log('▶️ [Interaction] Custom play button clicked. Initiating video load.');
                     // إخفاء زر التشغيل والصورة المصغرة، وإظهار السبينر
                     customPlayButton.style.display = 'none';
                     moviePlayerThumbnail.style.display = 'none';
                     videoLoadingSpinner.style.display = 'block';
-                    playButtonOverlay.style.display = 'flex'; // التأكد من أن طبقة زر التشغيل مرئية للسبينر
+                    playButtonOverlay.style.display = 'flex';
 
-                    // تأخير تحميل الـ iframe لضمان سلاسة الانتقال وتجنب أي تقطيع
+                    // هذا هو التأخير الأقصى الذي سنطبقه
                     setTimeout(() => {
                         moviePlayer.src = movie.embed_url;
-                        moviePlayer.style.display = 'block'; // إظهار الـ iframe
+                        moviePlayer.style.display = 'block';
 
                         // عند انتهاء الـ iframe من التحميل
                         moviePlayer.onload = () => {
-                            videoLoadingSpinner.style.display = 'none'; // إخفاء السبينر
-                            playButtonOverlay.style.display = 'none'; // إخفاء طبقة زر التشغيل بالكامل
-                            videoOverlay.style.display = 'block'; // إظهار overlay الإعلانات
-                            videoOverlay.style.pointerEvents = 'auto'; // جعل overlay الإعلانات قابلًا للنقر
+                            videoLoadingSpinner.style.display = 'none';
+                            playButtonOverlay.style.display = 'none';
+                            videoOverlay.style.display = 'block';
+                            videoOverlay.style.pointerEvents = 'auto';
                             console.log('[Video Player] Iframe loaded successfully and spinner hidden.');
 
                             // إزالة روابط preconnect/prefetch بعد تحميل الـ iframe بالكامل
@@ -394,11 +391,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         moviePlayer.onerror = () => {
                             videoLoadingSpinner.style.display = 'none';
-                            playButtonOverlay.style.display = 'flex'; // إظهار طبقة زر التشغيل مرة أخرى عند الخطأ
-                            customPlayButton.style.display = 'flex'; // إظهار زر التشغيل مرة أخرى عند الخطأ
-                            moviePlayerThumbnail.style.display = 'block'; // إظهار الصورة المصغرة مرة أخرى عند الخطأ
-                            moviePlayer.style.display = 'none'; // إخفاء الـ iframe عند الخطأ
-                            videoOverlay.style.display = 'none'; // إخفاء overlay الإعلانات عند الخطأ
+                            playButtonOverlay.style.display = 'flex';
+                            customPlayButton.style.display = 'flex';
+                            moviePlayerThumbnail.style.display = 'block';
+                            moviePlayer.style.display = 'none';
+                            videoOverlay.style.display = 'none';
                             console.error('❌ [Video Player] Iframe failed to load. Displaying play button again.');
 
                             // إزالة روابط preconnect/prefetch حتى في حالة وجود خطأ
@@ -408,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         };
 
                         console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
-                    }, 750); // زيادة التأخير إلى 750 مللي ثانية (من 500) للسماح بتهيئة أكبر
+                    }, 1500); // **التأخير الأقصى: 1500 مللي ثانية (1.5 ثانية)**
                 };
             }
 
