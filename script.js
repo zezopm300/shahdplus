@@ -14,10 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
 
-    // New/Updated references for video player elements
-    // moviePlayer سيتم استخدامه كمرجع لـ iframe الفيديو الموجود في الـ HTML
+    // References for video player elements
     let moviePlayer = document.getElementById('movie-player'); 
-    // لم نعد نحتاج لـ moviePlayerThumbnail و customPlayButton و playButtonOverlay في هذا الإصدار للتشغيل التلقائي
+    // لم نعد نحتاج لهذه المراجع بعد إزالة العناصر من HTML
+    // const moviePlayerThumbnail = document.getElementById('movie-player-thumbnail');
+    // const playButtonOverlay = document.getElementById('play-button-overlay');
+    // const customPlayButton = document.getElementById('custom-play-button');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
     const videoOverlay = document.getElementById('video-overlay'); // Adsterra overlay
 
@@ -34,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
 
     // --- 1.1. Critical DOM Element Verification ---
+    // تم إصلاح هذا القسم بإزالة المراجع التي لم تعد موجودة في HTML
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
@@ -296,7 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 newPlayer.setAttribute('allowfullscreen', '');
                 newPlayer.style.width = '100%';
                 newPlayer.style.height = '100%';
-                // لن نضع display: none هنا، لأننا نريد الـ iframe أن يكون مرئياً فوراً مع السبينر
                 newPlayer.style.opacity = '0'; // إخفاء مؤقتًا حتى يبدأ التحميل بشكل مرئي
                 newPlayer.style.transition = 'opacity 0.5s ease-in-out'; // إضافة انتقال سلس
 
@@ -544,13 +546,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 newPlayer.setAttribute('allowfullscreen', '');
                 newPlayer.style.width = '100%';
                 newPlayer.style.height = '100%';
-                // لن نضع display: none هنا لضمان وجوده في الـ DOM للعناصر التالية
                 playerContainer.appendChild(newPlayer);
                 moviePlayer = newPlayer; // Update reference
                 console.log('[Video Player] Fresh iframe re-created for home page.');
             }
         }
-        // لم نعد نحتاج لـ moviePlayerThumbnail و customPlayButton و playButtonOverlay في هذا الإصدار للتشغيل التلقائي
         if (videoLoadingSpinner) {
             videoLoadingSpinner.style.display = 'none'; // إخفاء السبينر
         }
@@ -694,20 +694,18 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[Video Overlay] Click listener attached for ad interaction (with display toggle and cooldown).');
     }
 
-    // لم نعد نحتاج لمستمع حدث على playButtonOverlay لأنه لم يعد موجودًا.
-    // إذا كنت تريد فتح إعلان عند النقر على المنطقة اللي كان فيها زر التشغيل، يمكنك إضافة مستمع حدث هنا لـ video-player-container
-    // مثال:
+    // تم إزالة مستمع حدث playButtonOverlay لأنه لم يعد موجودًا.
+    // إذا أردت نقطة إعلانية بديلة، يمكن إضافة مستمع حدث لحاوية الفيديو نفسها:
     // const videoPlayerContainer = document.querySelector('.video-player-container');
     // if (videoPlayerContainer) {
     //     videoPlayerContainer.addEventListener('click', (e) => {
-    //         // تأكد أن النقر ليس على الـ iframe نفسه، بل على الطبقة الخلفية (لو فيه)
+    //         // تأكد أن النقر ليس على الـ iframe نفسه، بل على الطبقة الخلفية (التي قد تكون مرئية في بعض الحالات)
     //         if (e.target !== moviePlayer) {
     //             console.log('🖼️ [Ad Click] Video player container clicked. Attempting to open Direct Link.');
     //             openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'moviePlayerContainer');
     //         }
     //     });
     // }
-
 
     // التعامل مع أزرار الرجوع/التقدم في المتصفح
     window.onpopstate = (event) => {
