@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes
-    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 8* 1000; // 4 seconds
+    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 8 * 1000; // 8 seconds (تم زيادة المدة قليلاً لفرصة أكبر لتحميل الإعلان)
 
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoOverlay = 0;
@@ -139,7 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         movieCard.addEventListener('click', () => {
             console.log(`⚡ [Interaction] Movie card clicked for ID: ${movie.id}`);
-            openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'movieCard');
+            // لا نفتح إعلان هنا بشكل مباشر، نتركه لـ showMovieDetails لتقليل مرات فتح الإعلان ولتحسين تجربة المستخدم
+            // openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'movieCard'); // تم تعطيل هذا السطر
             showMovieDetails(movie.id);
         });
         return movieCard;
@@ -271,7 +272,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // *** نقطة التحسين لمشغل الفيديو ***
             if (moviePlayer) {
                 // مهم: مسح الـ src الحالي وتعيين onload/onerror لضمان تهيئة نظيفة
-                moviePlayer.src = '';
+                // إيقاف أي تحميل سابق للفيديو
+                moviePlayer.src = ''; 
+                // إزالة أي مستمعات أحداث قديمة
                 moviePlayer.onload = null;
                 moviePlayer.onerror = null;
 
@@ -279,10 +282,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     videoLoadingSpinner.style.display = 'block'; // إظهار مؤشر التحميل
                     console.log('[Video Player] Loading spinner shown.');
                 }
+                
+                // التأكد من أن الأوفرلاي مرئي وقابل للنقر عند بدء تحميل الفيديو
+                // هذا يضمن أن الإعلان يمكن أن يظهر قبل بدء تشغيل الفيديو
+                if (videoOverlay) {
+                    videoOverlay.classList.remove('inactive');
+                    videoOverlay.style.display = 'block';
+                    videoOverlay.style.pointerEvents = 'auto';
+                    console.log('[Video Overlay] Active and clickable before video loads.');
+                }
 
                 // تعيين الـ src لمشغل الفيديو
-                moviePlayer.src = movie.embed_url;
-                console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
+                // استخدام setTimeout بسيط لإعطاء المتصفح فرصة لتحديث DOM وعرض السبينر والأوفرلاي
+                setTimeout(() => {
+                    moviePlayer.src = movie.embed_url;
+                    console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
+                }, 50); // تأخير بسيط جدًا
 
                 // عند تحميل الـ iframe بنجاح
                 moviePlayer.onload = () => {
@@ -290,12 +305,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoLoadingSpinner.style.display = 'none'; // إخفاء مؤشر التحميل
                         console.log('[Video Player] Loading spinner hidden (iframe loaded).');
                     }
-                    if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.display = 'block'; // التأكد من أن الأوفرلاي مرئي
-                        videoOverlay.style.pointerEvents = 'auto'; // التأكد من أنه قابل للنقر
-                        console.log('[Video Overlay] Active and clickable after video loaded.');
-                    }
+                    // لا نلمس videoOverlay هنا، سيتم إخفاؤه بواسطة listener الخاص به بعد النقر على الإعلان
+                    // أو سيظل مرئياً حتى يتم النقر عليه.
                 };
 
                 // عند حدوث خطأ في تحميل الـ iframe
@@ -305,8 +316,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
                     }
                     if (videoOverlay) {
+                        // في حالة الخطأ، نتأكد أن الأوفرلاي يظل مرئيًا وقابلًا للنقر
+                        // لكي يظل الإعلان متاحًا حتى لو الفيديو لم يحمل.
                         videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.display = 'block'; // الأوفرلاي يظل مرئيًا حتى لو حدث خطأ
+                        videoOverlay.style.display = 'block';
                         videoOverlay.style.pointerEvents = 'auto';
                         console.warn('[Video Overlay] Active even after iframe load error.');
                     }
@@ -458,6 +471,13 @@ document.addEventListener('DOMContentLoaded', () => {
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
+        // تأكد من إخفاء وإيقاف الفيديو تمامًا عند العودة للصفحة الرئيسية
+        if (moviePlayer) {
+            moviePlayer.src = ''; // مسح مصدر الفيديو لإيقافه تمامًا
+            moviePlayer.onload = null; // إزالة مستمعات الأحداث
+            moviePlayer.onerror = null;
+            console.log('[Video Player] Source cleared and listeners removed on home page.');
+        }
         if (videoOverlay) {
             videoOverlay.classList.add('inactive');
             videoOverlay.style.display = 'none';
@@ -466,11 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (videoLoadingSpinner) {
             videoLoadingSpinner.style.display = 'none';
-        }
-        if (moviePlayer) {
-            moviePlayer.src = ''; // مسح مصدر الفيديو لإيقافه تمامًا
-            moviePlayer.onload = null;
-            moviePlayer.onerror = null;
+            console.log('[Video Loading Spinner] Hidden on home page.');
         }
         currentDetailedMovie = null;
 
