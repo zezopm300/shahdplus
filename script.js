@@ -1,5 +1,4 @@
-
- document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     console.log('🏁 DOM Content Loaded. Script execution started.');
 
     // --- 1. DOM Element References ---
@@ -73,7 +72,8 @@
     let moviesDataForPagination = [];
 
     // هذا المتغير سيخزن الفيلم المعروض حاليًا في صفحة التفاصيل
-    let currentDetailedMovie = null; // NEW: Track the currently displayed movie for details
+    // لم يعد يستخدم مباشرة في حل مشكلة توقف الفيديو، لكنه مفيد لأغراض أخرى
+    let currentDetailedMovie = null;
 
     // --- 3.1. Fetch Movie Data from JSON (جلب بيانات الأفلام من ملف JSON) ---
     async function fetchMoviesData() {
@@ -244,7 +244,7 @@
         const movie = moviesData.find(m => m.id === movieId);
 
         if (movie) {
-            currentDetailedMovie = movie; // NEW: Store the current movie in a global variable
+            currentDetailedMovie = movie; // قم بتخزين الفيلم الحالي
 
             if (heroSection) heroSection.style.display = 'none';
             if (movieGridSection) movieGridSection.style.display = 'none';
@@ -450,7 +450,6 @@
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
-        // Reset video player and overlay state when returning to home page
         if (videoOverlay) {
             videoOverlay.classList.add('inactive');
             videoOverlay.style.pointerEvents = 'none';
@@ -460,11 +459,11 @@
             videoLoadingSpinner.style.display = 'none';
         }
         if (moviePlayer) {
-            moviePlayer.src = ''; // Clear the video source
+            moviePlayer.src = '';
             moviePlayer.onload = null;
             moviePlayer.onerror = null;
         }
-        currentDetailedMovie = null; // NEW: Clear the currently detailed movie
+        currentDetailedMovie = null;
 
         const newUrl = new URL(window.location.origin);
         history.pushState({ view: 'home' }, 'أفلام عربية - الصفحة الرئيسية', newUrl.toString());
@@ -573,18 +572,10 @@
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
 
-            // NEW: If an ad was opened, try to keep the video player active
-            if (adOpened && currentDetailedMovie && moviePlayer) {
-                const originalSrc = moviePlayer.src; // Store current src
-                moviePlayer.src = ''; // Temporarily clear src to force a refresh
-                setTimeout(() => {
-                    moviePlayer.src = originalSrc; // Re-set original src
-                    console.log('[Video Player] Attempting to resume video after ad click by refreshing iframe source.');
-                }, 100); // Small delay to allow browser to register src change
-            }
+            // تمت إزالة منطق إعادة تشغيل الفيديو هنا
+            // لأن هذا هو ما كان يسبب مشاكل التحميل/التوقف
 
             if (adOpened) {
-                // هذا الجزء يقوم بتعطيل/تمكين الطبقة كما كان موجودًا بالفعل
                 videoOverlay.style.pointerEvents = 'none';
                 console.log(`[Video Overlay] Temporarily disabled clicks for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
                 setTimeout(() => {
@@ -593,7 +584,7 @@
                 }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
             }
         });
-        console.log('[Video Overlay] Click listener attached for ad interaction (with cooldown logic and video resume).');
+        console.log('[Video Overlay] Click listener attached for ad interaction (with cooldown logic).');
     }
 
     // --- 6. Initial Page Load Logic (Routing) ---
@@ -617,6 +608,5 @@
         }
     }
 
-    // ابدأ بجلب البيانات عند تحميل DOM بالكامل
     fetchMoviesData();
 });
