@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes
-    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 6 * 1000; // 4 seconds
+    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 8* 1000; // 4 seconds
 
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoOverlay = 0;
