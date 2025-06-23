@@ -637,17 +637,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
 
             if (adOpened) {
-                // **هنا الحل لضمان عدم توقف الفيديو:**
-                // 1. إخفاء الأوفرلاي تمامًا فور فتح الإعلان
-                // هذا يسمح لأي نقرات لاحقة بالوصول إلى الـ iframe مباشرةً
+                // **الحل المقترح لضمان عدم توقف الفيديو:**
+                // 1. إخفاء الأوفرلاي تمامًا عند فتح الإعلان
+                // هذا يضمن أن أي تفاعلات لاحقة ستمر مباشرة إلى الـ iframe
                 videoOverlay.style.display = 'none'; 
                 console.log(`[Video Overlay] Hidden temporarily for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
 
-                // 2. منع حدث النقر من الوصول إلى الـ iframe الأساسي
-                // هذا يضمن أن نقرة الأوفرلاي لا تشغل/توقف الفيديو عن طريق الخطأ.
+                // 2. منع انتشار حدث النقر إلى الـ iframe الأساسي
+                // هذا يمنع مشغل الفيديو من معالجة النقرة وتوقيف التشغيل.
                 e.stopPropagation(); 
 
-                // 3. إعادة إظهار الأوفرلاي بعد انتهاء فترة التهدئة الخاصة بالإعلان
+                // 3. إعادة إظهار الأوفرلاي بعد انتهاء فترة التهدئة
                 setTimeout(() => {
                     videoOverlay.style.display = 'block'; // إعادة إظهار الأوفرلاي
                     console.log('[Video Overlay] Displayed again after cooldown.');
@@ -684,4 +684,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // هذا يضمن أن يتم تحميل بيانات الأفلام أولاً قبل أن يحاول السكريبت عرض أي شيء.
     fetchMoviesData();
 });
-
