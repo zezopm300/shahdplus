@@ -663,42 +663,125 @@ a:hover {
     border: 1.5px solid var(--secondary-color);
 
     height: 0;
-    /* هذا هو التعديل الرئيسي: تقليل padding-bottom لتقليل ارتفاع الفيديو مباشرة */
-    padding-bottom: 40%; /* تم تقليله لتقصير الفيديو بشكل ملحوظ (أقل من 56.25% لـ 16:9) */
-    /* يتم ضبط max-height بدقة بناءً على max-width الجديد (700 * 0.40 = 280) */
-    max-height: 288px; /* تم التعديل ليتناسب مع 720px * 0.40 */
+    /* هذا هو التعديل الرئيسي: نسبة أبعاد قياسية 16:9 للمحافظة على شكل الفيديو */
+    padding-bottom: 56.25%; /* نسبة 16:9 (9 / 16) * 100% */
+    /* يتم ضبط max-height بدقة بناءً على max-width (720 * 0.5625 = 405) */
+    max-height: 405px; 
 }
 
-.video-player-container iframe {
+/* عناصر المشغل الجديدة: الصورة المصغرة، زر التشغيل، السبينر */
+.video-player-container iframe,
+.movie-player-thumbnail {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     border: none;
-    z-index: 10;
+    z-index: 10; /* الـ iframe والصورة المصغرة سيكونان فوق أي شيء آخر في الحاوية */
+    object-fit: cover; /* لضمان تغطية الصورة للمساحة */
 }
 
+.play-button-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.6); /* خلفية شبه شفافة لتظليل البوستر */
+    z-index: 20; /* فوق الصورة المصغرة والـ iframe عند الحاجة */
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.custom-play-button {
+    background: var(--gradient-button);
+    color: var(--text-color);
+    border: none;
+    border-radius: 50px;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all var(--transition-speed) ease-in-out;
+    box-shadow: var(--shadow-button);
+    border: 1px solid var(--primary-color);
+}
+
+.custom-play-button:hover {
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: var(--shadow-subtle-glow), 0 0 10px var(--primary-color);
+    border-color: var(--accent-color);
+    color: var(--dark-color);
+}
+
+.play-icon {
+    fill: currentColor;
+    width: 24px;
+    height: 24px;
+}
+
+.spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 25; /* أعلى من زر التشغيل */
+    border-radius: 8px;
+}
+
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* إخفاء زر التشغيل عندما يظهر السبينر */
+.spinner-overlay:not([style*="display: none"]) + .custom-play-button {
+    display: none;
+}
+
+
 /* أكواد الإعلانات المتعلقة بالـ overlay في الفيديو لم تُلمس على الإطلاق - تم التأكد من بقائها كما هي تمامًا */
-/* >>>>>> لم يتم لمس أي كود هنا <<<<<< */
 .video-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.3); /* تم تعديل اللون ليكون مرئياً أكثر عند الظهور */
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    z-index: 50;
+    z-index: 30; /* أعلى من الـ iframe وأي عناصر تحكم */
     opacity: 1;
     visibility: visible;
     transition: opacity 0.3s ease;
 }
 
-.video-overlay.hidden {
+.video-overlay.inactive {
     opacity: 0;
     pointer-events: none;
 }
@@ -707,21 +790,9 @@ a:hover {
     display: none !important;
 }
 
+/* إخفاء السبينر الأصلي إذا كان موجودًا في HTML القديم */
 .video-loading-spinner {
-    border: 4px solid rgba(255, 255, 255, 0.15);
-    border-radius: 50%;
-    border-top: 4px solid var(--accent-color);
-    width: 40px;
-    height: 40px;
-    animation: spin 0.4s linear infinite;
-    display: none;
-    z-index: 60;
-    filter: drop-shadow(0 0 6px var(--accent-color));
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    display: none !important;
 }
 
 .movie-info p {
@@ -1068,7 +1139,7 @@ a:hover {
         letter-spacing: 1px; /* تم التعديل من 0.9px */
     }
     .main-header .logo .logo-dot {
-        font-size: clamp(1.8rem, 5.8vw, 2.1rem); /* تم التعديل من 1.7rem و 2rem للتكبير */
+        font-size: clamp(1.8rem, 5.8vw, 2.1rem); /* تم التعديل من 1.7rem و 2.0rem للتكبير */
     }
     .search-container {
         width: clamp(190px, 98vw, 280px); /* تم التعديل من 180px و 270px للتكبير */
