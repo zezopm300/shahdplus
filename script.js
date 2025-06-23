@@ -13,7 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
-    const moviePlayer = document.getElementById('movie-player');
+    // سنستخدم هذا العنصر كـ "حاوية" لمشغل الفيديو، بدلًا من moviePlayer مباشرةً
+    const moviePlayerContainer = document.getElementById('movie-player-container'); 
+    let moviePlayer = null; // moviePlayer هيكون متغير يتم تعيينه ديناميكيًا
+
     const videoOverlay = document.getElementById('video-overlay');
     const homeLogoLink = document.getElementById('home-logo-link');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
@@ -34,7 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
         '#movie-grid-section': movieGridSection,
         '#movie-details-section': movieDetailsSection,
         '#hero-section': heroSection,
-        '#movie-player': moviePlayer,
+        // تم تغيير moviePlayer إلى moviePlayerContainer هنا
+        '#movie-player-container': moviePlayerContainer, 
         '#video-overlay': videoOverlay,
         '#suggested-movie-grid': suggestedMovieGrid,
         '#suggested-movies-section': suggestedMoviesSection,
@@ -60,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes
-    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 8 * 1000; // 8 seconds (تم زيادة المدة قليلاً لفرصة أكبر لتحميل الإعلان)
+    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 8 * 1000; // 8 seconds
 
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoOverlay = 0;
@@ -139,8 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         movieCard.addEventListener('click', () => {
             console.log(`⚡ [Interaction] Movie card clicked for ID: ${movie.id}`);
-            // لا نفتح إعلان هنا بشكل مباشر، نتركه لـ showMovieDetails لتقليل مرات فتح الإعلان ولتحسين تجربة المستخدم
-            // openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'movieCard'); // تم تعطيل هذا السطر
+            // لا نفتح إعلان هنا بشكل مباشر
             showMovieDetails(movie.id);
         });
         return movieCard;
@@ -269,22 +272,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
-            // *** نقطة التحسين لمشغل الفيديو ***
-            if (moviePlayer) {
-                // مهم: مسح الـ src الحالي وتعيين onload/onerror لضمان تهيئة نظيفة
-                // إيقاف أي تحميل سابق للفيديو
-                moviePlayer.src = ''; 
-                // إزالة أي مستمعات أحداث قديمة
-                moviePlayer.onload = null;
-                moviePlayer.onerror = null;
+            // *** نقطة التحسين لمشغل الفيديو: إنشاء الـ iframe ديناميكيًا ***
+            if (moviePlayerContainer) {
+                // 1. مسح أي مشغل فيديو قديم موجود داخل الحاوية
+                moviePlayerContainer.innerHTML = '';
+                moviePlayer = null; // تأكد من تفريغ المتغير moviePlayer
 
+                // 2. إظهار مؤشر التحميل
                 if (videoLoadingSpinner) {
-                    videoLoadingSpinner.style.display = 'block'; // إظهار مؤشر التحميل
+                    videoLoadingSpinner.style.display = 'block'; 
                     console.log('[Video Player] Loading spinner shown.');
                 }
                 
-                // التأكد من أن الأوفرلاي مرئي وقابل للنقر عند بدء تحميل الفيديو
-                // هذا يضمن أن الإعلان يمكن أن يظهر قبل بدء تشغيل الفيديو
+                // 3. التأكد من أن الأوفرلاي مرئي وقابل للنقر
                 if (videoOverlay) {
                     videoOverlay.classList.remove('inactive');
                     videoOverlay.style.display = 'block';
@@ -292,41 +292,50 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[Video Overlay] Active and clickable before video loads.');
                 }
 
-                // تعيين الـ src لمشغل الفيديو
-                // استخدام setTimeout بسيط لإعطاء المتصفح فرصة لتحديث DOM وعرض السبينر والأوفرلاي
-                setTimeout(() => {
-                    moviePlayer.src = movie.embed_url;
-                    console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
-                }, 50); // تأخير بسيط جدًا
+                // 4. إنشاء الـ iframe الجديد
+                const newPlayer = document.createElement('iframe');
+                newPlayer.id = 'movie-player'; // احتفظ بنفس الـ ID إذا كانت هناك حاجة إليه في CSS
+                newPlayer.setAttribute('frameborder', '0');
+                newPlayer.setAttribute('allowfullscreen', '');
+                // قم بتعيين src بعد فترة زمنية قصيرة
+                newPlayer.src = 'about:blank'; // ابدأ بـ blank لمنع التحميل الفوري
+                newPlayer.style.width = '100%'; // تأكد من الأبعاد الصحيحة
+                newPlayer.style.height = '100%'; // تأكد من الأبعاد الصحيحة
 
-                // عند تحميل الـ iframe بنجاح
-                moviePlayer.onload = () => {
+                // تعيين مستمعي الأحداث قبل إضافة الـ iframe للـ DOM
+                newPlayer.onload = () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none'; // إخفاء مؤشر التحميل
                         console.log('[Video Player] Loading spinner hidden (iframe loaded).');
                     }
-                    // لا نلمس videoOverlay هنا، سيتم إخفاؤه بواسطة listener الخاص به بعد النقر على الإعلان
-                    // أو سيظل مرئياً حتى يتم النقر عليه.
                 };
 
-                // عند حدوث خطأ في تحميل الـ iframe
-                moviePlayer.onerror = () => {
+                newPlayer.onerror = () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none';
                         console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
                     }
                     if (videoOverlay) {
-                        // في حالة الخطأ، نتأكد أن الأوفرلاي يظل مرئيًا وقابلًا للنقر
-                        // لكي يظل الإعلان متاحًا حتى لو الفيديو لم يحمل.
                         videoOverlay.classList.remove('inactive');
                         videoOverlay.style.display = 'block';
                         videoOverlay.style.pointerEvents = 'auto';
                         console.warn('[Video Overlay] Active even after iframe load error.');
                     }
-                    // يمكنك هنا إضافة رسالة خطأ للمستخدم داخل مشغل الفيديو نفسه
-                    // أو في مكان قريب ليعرف أن الفيديو لم يتم تحميله.
-                    // مثال: moviePlayer.parentNode.innerHTML += '<p style="color: red;">عذراً، لم نتمكن من تحميل الفيديو.</p>';
+                    // يمكنك هنا إضافة رسالة خطأ للمستخدم
                 };
+                
+                moviePlayerContainer.appendChild(newPlayer);
+                moviePlayer = newPlayer; // تحديث متغير moviePlayer ليشير إلى الـ iframe الجديد
+                console.log('[Video Player] New iframe created and added to container.');
+
+                // 5. تحميل الفيديو بعد فترة قصيرة
+                // هذا التأخير يعطي المتصفح فرصة لتجهيز الـ iframe بالكامل قبل بدء التحميل
+                setTimeout(() => {
+                    if (moviePlayer && moviePlayer.src !== movie.embed_url) { // تجنب إعادة تعيين الـ src لو هو نفسه
+                        moviePlayer.src = movie.embed_url;
+                        console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
+                    }
+                }, 100); // تأخير 100 مللي ثانية (يمكنك تعديله)
             }
 
             const newUrl = new URL(window.location.origin);
@@ -471,12 +480,11 @@ document.addEventListener('DOMContentLoaded', () => {
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
-        // تأكد من إخفاء وإيقاف الفيديو تمامًا عند العودة للصفحة الرئيسية
-        if (moviePlayer) {
-            moviePlayer.src = ''; // مسح مصدر الفيديو لإيقافه تمامًا
-            moviePlayer.onload = null; // إزالة مستمعات الأحداث
-            moviePlayer.onerror = null;
-            console.log('[Video Player] Source cleared and listeners removed on home page.');
+        // *** نقطة تحسين مهمة: إزالة الـ iframe بالكامل عند العودة للصفحة الرئيسية ***
+        if (moviePlayerContainer) {
+            moviePlayerContainer.innerHTML = ''; // مسح كل المحتويات داخل الحاوية (بما في ذلك الـ iframe)
+            moviePlayer = null; // تفريغ المتغير moviePlayer للتأكد من عدم وجود مرجع لـ iframe قديم
+            console.log('[Video Player] Iframe removed completely from DOM on home page.');
         }
         if (videoOverlay) {
             videoOverlay.classList.add('inactive');
@@ -600,18 +608,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
 
             if (adOpened) {
-                // الحل لضمان عدم توقف الفيديو:
-                // 1. إخفاء طبقة الأوفرلاي تمامًا عند فتح الإعلان.
-                // هذا يضمن أن أي تفاعلات لاحقة ستمر مباشرة إلى الـ iframe (مشغل الفيديو).
                 videoOverlay.style.display = 'none';
                 console.log(`[Video Overlay] Hidden temporarily for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
 
-                // 2. منع انتشار حدث النقر إلى الـ iframe الأساسي.
-                // هذا يمنع مشغل الفيديو من معالجة النقرة وتوقيف التشغيل أو تغيير حالته.
                 e.stopPropagation();
 
-                // 3. إعادة إظهار الأوفرلاي بعد انتهاء فترة التهدئة.
-                // لكي يعود الأوفرلاي للعمل بعد انتهاء الكولداون ويكون جاهزًا لفتح إعلان آخر.
                 setTimeout(() => {
                     videoOverlay.style.display = 'block';
                     console.log('[Video Overlay] Displayed again after cooldown.');
