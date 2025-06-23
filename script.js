@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🏁 DOM Content Loaded. Script execution started.');
 
     // --- 1. DOM Element References ---
-    // جمع كل مراجع عناصر الـ DOM في بداية السكربت لتحسين الأداء وسهولة الوصول
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.getElementById('main-nav');
     const navLinks = document.querySelectorAll('.main-nav ul li a');
@@ -14,12 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
-    // moviePlayer سيتم استخدامه كمرجع لـ iframe الفيديو الموجود في الـ HTML
-    let moviePlayer = document.getElementById('movie-player'); 
 
-    const videoOverlay = document.getElementById('video-overlay');
-    const homeLogoLink = document.getElementById('home-logo-link');
+    // New/Updated references for video player elements
+    // moviePlayer الآن هو مرجع ثابت لـ iframe موجود في HTML
+    const moviePlayer = document.getElementById('movie-player');
+    const moviePlayerThumbnail = document.getElementById('movie-player-thumbnail'); // الصورة المصغرة الجديدة
+    const playButtonOverlay = document.getElementById('play-button-overlay');   // طبقة زر التشغيل والسبينر
+    const customPlayButton = document.getElementById('custom-play-button');     // زر التشغيل المخصص
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
+    const videoOverlay = document.getElementById('video-overlay'); // Adsterra overlay
+
+    const homeLogoLink = document.getElementById('home-logo-link');
     const movieDetailsPoster = document.getElementById('movie-details-poster');
 
     const prevPageBtn = document.getElementById('prev-page-btn');
@@ -32,17 +36,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
 
     // --- 1.1. Critical DOM Element Verification ---
-    // التحقق من وجود جميع العناصر الأساسية لضمان عمل السكربت بشكل صحيح
+    // تم تحديث هذا القسم ليشمل العناصر الجديدة لمشغل الفيديو
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
         '#movie-details-section': movieDetailsSection,
         '#hero-section': heroSection,
-        '#movie-player': moviePlayer, 
+        '#movie-player': moviePlayer,
+        '#movie-player-thumbnail': moviePlayerThumbnail, // عنصر حرج جديد
+        '#play-button-overlay': playButtonOverlay,       // عنصر حرج جديد
+        '#custom-play-button': customPlayButton,         // عنصر حرج جديد
+        '#video-loading-spinner': videoLoadingSpinner,
         '#video-overlay': videoOverlay,
         '#suggested-movie-grid': suggestedMovieGrid,
         '#suggested-movies-section': suggestedMoviesSection,
-        '#video-loading-spinner': videoLoadingSpinner,
         '#movie-details-poster': movieDetailsPoster
     };
 
@@ -61,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 2. Adsterra Configuration ---
-    // هذه الأكواد خاصة بإعلانات Adsterra Direct Link ولم يتم المساس بها نهائياً.
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 دقائق
@@ -76,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentDetailedMovie = null;
 
     // --- 3.1. Fetch Movie Data from JSON ---
-    // جلب بيانات الأفلام من ملف movies.json
     async function fetchMoviesData() {
         try {
             const response = await fetch('movies.json');
@@ -111,6 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
             lastClickTime = lastDirectLinkClickTimeVideoOverlay;
             setLastClickTime = (time) => lastDirectLinkClickTimeVideoOverlay = time;
         } else if (type === 'movieDetailsPoster') {
+            lastClickTime = lastDirectLinkClickTimeMovieCard; // استخدام تهدئة بطاقة الفيلم للملصق أيضًا
+            setLastClickTime = (time) => lastDirectLinkClickTimeMovieCard = time;
+        } else if (type === 'playButtonOverlay') { // نوع جديد لـ Adsterra من خلفية زر التشغيل
             lastClickTime = lastDirectLinkClickTimeMovieCard;
             setLastClickTime = (time) => lastDirectLinkClickTimeMovieCard = time;
         } else {
@@ -147,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         movieCard.addEventListener('click', () => {
             console.log(`⚡ [Interaction] Movie card clicked for ID: ${movie.id}`);
-            showMovieDetails(movie.id); 
+            showMovieDetails(movie.id);
         });
         return movieCard;
     }
@@ -246,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         paginateMovies(moviesDataForPagination, currentPage);
     }
 
-    // --- هذا هو الجزء المحسن الخاص بمشغل الفيديو لحل مشكلة التقطيع ---
+    // --- هذا هو الجزء المحسّن الخاص بمشغل الفيديو لحل مشكلة التقطيع ---
     function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
         const movie = moviesData.find(m => m.id === movieId);
@@ -267,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('movie-details-description').textContent = movie.description;
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
             document.getElementById('movie-details-release-date').textContent = releaseDate;
-            
+
             document.getElementById('movie-details-genre').textContent = movie.genre || 'غير محدد';
             document.getElementById('movie-details-director').textContent = movie.director || 'غير متوفر';
             document.getElementById('movie-details-cast').textContent = Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast || 'غير متوفر';
@@ -280,103 +288,98 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
-            // *** الحل النهائي: استبدال الـ iframe بـ iframe جديد تمامًا مع تحسين التحميل المسبق (Preloading) ***
-            if (moviePlayer) {
-                const oldPlayerParent = moviePlayer.parentNode;
-                if (oldPlayerParent) {
-                    // 1. إظهار مؤشر التحميل والأوفرلاي فوراً قبل أي عملية تحميل
-                    if (videoLoadingSpinner) {
-                        videoLoadingSpinner.style.display = 'block'; 
-                        console.log('[Video Player] Loading spinner shown.');
-                    }
-                    if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.display = 'block';
-                        videoOverlay.style.pointerEvents = 'auto'; // قابل للنقر للإعلان
-                        console.log('[Video Overlay] Active and clickable before video loads.');
-                    }
+            // --- منطق شاشة البداية لمشغل الفيديو المخصص ---
+            if (moviePlayer && moviePlayerThumbnail && playButtonOverlay && customPlayButton && videoLoadingSpinner && videoOverlay) {
+                // إعادة تعيين حالة المشغل: إخفاء الـ iframe، إظهار شاشة البداية
+                moviePlayer.src = 'about:blank'; // مسح مصدر الفيديو لإيقافه تمامًا
+                moviePlayer.style.display = 'none'; // إخفاء الـ iframe
 
-                    // 2. إعداد تلميحات التحميل المسبق (Preconnect و Prefetch)
-                    // هذه إشارات للمتصفح لجلب الموارد بشكل أسرع في الخلفية.
-                    let preconnectLink = null;
-                    let prefetchLink = null;
-                    try {
-                        const videoHost = new URL(movie.embed_url).origin;
-                        
-                        preconnectLink = document.createElement('link');
-                        preconnectLink.rel = 'preconnect';
-                        preconnectLink.href = videoHost;
-                        document.head.appendChild(preconnectLink);
-                        console.log(`[Preload] Added preconnect to ${videoHost}`);
+                videoLoadingSpinner.style.display = 'none'; // إخفاء السبينر
+                videoOverlay.classList.remove('inactive'); // التأكد من أن الـ overlay يمكن إظهاره
+                videoOverlay.style.display = 'none'; // إخفاء overlay الإعلانات مبدئيًا
+                videoOverlay.style.pointerEvents = 'none'; // جعله غير قابل للنقر مبدئيًا
 
-                        prefetchLink = document.createElement('link');
-                        prefetchLink.rel = 'prefetch';
-                        prefetchLink.href = movie.embed_url;
-                        prefetchLink.as = 'document'; // أو 'video' أو 'fetch'
-                        document.head.appendChild(prefetchLink);
-                        console.log(`[Preload] Added prefetch for ${movie.embed_url}`);
-                    } catch (e) {
-                        console.warn('⚠️ [Preload] Could not add prefetch/preconnect links (invalid URL or other error):', e);
-                    }
+                customPlayButton.style.display = 'flex'; // إظهار زر التشغيل المخصص
+                playButtonOverlay.style.display = 'flex'; // إظهار طبقة زر التشغيل بأكملها
 
-                    // 3. إنشاء iframe جديد تمامًا بنفس الخصائص الأصلية
-                    const newPlayer = document.createElement('iframe');
-                    newPlayer.id = moviePlayer.id; // الحفاظ على الـ ID لـ CSS و JS references
-                    newPlayer.className = moviePlayer.className; // الحفاظ على الـ Classes
-                    newPlayer.setAttribute('frameborder', '0');
-                    newPlayer.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
-                    newPlayer.setAttribute('allowfullscreen', '');
-                    newPlayer.style.width = '100%'; // تأكد من الأبعاد الصحيحة
-                    newPlayer.style.height = '100%'; // تأكد من الأبعاد الصحيحة
-                    
-                    // 4. استبدال الـ iframe القديم بالـ iframe الجديد النظيف
-                    // هذا يضمن تنظيف كامل لموارد المتصفح المرتبطة بالـ iframe القديم،
-                    // ويعطي المتصفح "فرصة جديدة" لتحميل الفيديو بشكل صحيح.
-                    oldPlayerParent.replaceChild(newPlayer, moviePlayer);
-                    // تحديث مرجع moviePlayer ليشير إلى الـ iframe الجديد النظيف
-                    moviePlayer = newPlayer; 
-                    console.log('[Video Player] Iframe fully replaced with a fresh instance for clean slate.');
+                // تعيين الصورة المصغرة للمشغل المخصص
+                moviePlayerThumbnail.src = movie.poster;
+                moviePlayerThumbnail.alt = `Play ${movie.title}`;
+                moviePlayerThumbnail.style.display = 'block'; // التأكد من أن الصورة المصغرة مرئية
 
-                    // 5. تعيين مستمعات الأحداث للـ iframe الجديد
-                    // مهم: يتم تعيينها بعد استبدال العنصر لضمان ربطها بالعنصر الجديد
-                    moviePlayer.onload = () => {
-                        if (videoLoadingSpinner) {
-                            videoLoadingSpinner.style.display = 'none'; 
-                            console.log('[Video Player] Loading spinner hidden (iframe loaded).');
-                        }
-                        // إزالة روابط الـ preload/prefetch بعد تحميل الـ iframe لتقليل تلوث الـ DOM
-                        if(preconnectLink && preconnectLink.parentNode) preconnectLink.parentNode.removeChild(preconnectLink);
-                        if(prefetchLink && prefetchLink.parentNode) prefetchLink.parentNode.removeChild(prefetchLink);
-                        console.log('[Preload] Removed preconnect/prefetch links after iframe loaded.');
-                    };
-                    moviePlayer.onerror = () => {
-                        if (videoLoadingSpinner) {
-                            videoLoadingSpinner.style.display = 'none';
-                            console.warn('[Video Player] Iframe failed to load. Spinner hidden.');
-                        }
-                        if (videoOverlay) {
-                            videoOverlay.classList.remove('inactive');
-                            videoOverlay.style.display = 'block'; 
-                            videoOverlay.style.pointerEvents = 'auto';
-                            console.warn('[Video Overlay] Active even after iframe load error.');
-                        }
-                        // إزالة روابط الـ preload/prefetch حتى لو حدث خطأ
-                        if(preconnectLink && preconnectLink.parentNode) preconnectLink.parentNode.removeChild(preconnectLink);
-                        if(prefetchLink && prefetchLink.parentNode) prefetchLink.parentNode.removeChild(prefetchLink);
-                        console.log('[Preload] Removed preconnect/prefetch links after iframe error.');
-                    };
+                // إزالة أي روابط preconnect/prefetch مضافة مسبقًا لتجنب التكرار
+                document.querySelectorAll('link[rel="preconnect"][data-video-url], link[rel="prefetch"][data-video-url]').forEach(link => link.remove());
 
-                    // 6. تحميل الـ src للفيديو بعد تأخير كافي للسماح للمتصفح بالتهيئة الكاملة
-                    // هذا التأخير حيوي للسماح للمتصفحات المحمولة بإعداد الـ iframe بشكل صحيح.
-                    setTimeout(() => {
-                        if (moviePlayer.src !== movie.embed_url) { // تجنب إعادة التعيين لو نفس الرابط
-                             moviePlayer.src = movie.embed_url;
-                             console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
-                        }
-                    }, 300); // تأخير 300 مللي ثانية: وقت كافي للتهيئة على الأجهزة الضعيفة
-                } else {
-                    console.error('❌ [Video Player] Parent of moviePlayer not found. Cannot replace iframe.');
+                // إعداد تلميحات التحميل المسبق (Preconnect و Prefetch)
+                let preconnectLink = null;
+                let prefetchLink = null;
+                try {
+                    const videoHost = new URL(movie.embed_url).origin;
+
+                    preconnectLink = document.createElement('link');
+                    preconnectLink.rel = 'preconnect';
+                    preconnectLink.href = videoHost;
+                    preconnectLink.setAttribute('data-video-url', movie.embed_url); // وضع علامة لإزالته لاحقًا
+                    document.head.appendChild(preconnectLink);
+                    console.log(`[Preload] Added preconnect to ${videoHost}`);
+
+                    prefetchLink = document.createElement('link');
+                    prefetchLink.rel = 'prefetch';
+                    prefetchLink.href = movie.embed_url;
+                    prefetchLink.as = 'document'; // أو 'video' أو 'fetch'
+                    prefetchLink.setAttribute('data-video-url', movie.embed_url); // وضع علامة لإزالته لاحقًا
+                    document.head.appendChild(prefetchLink);
+                    console.log(`[Preload] Added prefetch for ${movie.embed_url}`);
+                } catch (e) {
+                    console.warn('⚠️ [Preload] Could not add prefetch/preconnect links (invalid URL or other error):', e);
                 }
+
+                // إضافة مستمع الحدث لزر التشغيل المخصص
+                customPlayButton.onclick = () => {
+                    console.log('▶️ [Interaction] Custom play button clicked.');
+                    // إخفاء زر التشغيل والصورة المصغرة، وإظهار السبينر
+                    customPlayButton.style.display = 'none';
+                    moviePlayerThumbnail.style.display = 'none';
+                    videoLoadingSpinner.style.display = 'block';
+                    playButtonOverlay.style.display = 'flex'; // التأكد من أن طبقة زر التشغيل مرئية للسبينر
+
+                    // تحميل الفيديو بعد تأخير بسيط للانتقال السلس في واجهة المستخدم
+                    setTimeout(() => {
+                        moviePlayer.src = movie.embed_url;
+                        moviePlayer.style.display = 'block'; // إظهار الـ iframe
+
+                        // عند انتهاء الـ iframe من التحميل
+                        moviePlayer.onload = () => {
+                            videoLoadingSpinner.style.display = 'none'; // إخفاء السبينر
+                            playButtonOverlay.style.display = 'none'; // إخفاء طبقة زر التشغيل
+                            videoOverlay.style.display = 'block'; // إظهار overlay الإعلانات
+                            videoOverlay.style.pointerEvents = 'auto'; // جعل overlay الإعلانات قابلًا للنقر
+                            console.log('[Video Player] Iframe loaded and spinner hidden.');
+
+                            // إزالة روابط preconnect/prefetch بعد تحميل الـ iframe
+                            if (preconnectLink && preconnectLink.parentNode) preconnectLink.parentNode.removeChild(preconnectLink);
+                            if (prefetchLink && prefetchLink.parentNode) prefetchLink.parentNode.removeChild(prefetchLink);
+                            console.log('[Preload] Removed preconnect/prefetch links after iframe loaded.');
+                        };
+
+                        moviePlayer.onerror = () => {
+                            videoLoadingSpinner.style.display = 'none';
+                            playButtonOverlay.style.display = 'flex'; // إظهار طبقة زر التشغيل مرة أخرى عند الخطأ
+                            customPlayButton.style.display = 'flex'; // إظهار زر التشغيل مرة أخرى عند الخطأ
+                            moviePlayerThumbnail.style.display = 'block'; // إظهار الصورة المصغرة مرة أخرى عند الخطأ
+                            moviePlayer.style.display = 'none'; // إخفاء الـ iframe عند الخطأ
+                            videoOverlay.style.display = 'none'; // إخفاء overlay الإعلانات عند الخطأ
+                            console.error('❌ [Video Player] Iframe failed to load. Please check the embed URL.');
+
+                            // إزالة روابط preconnect/prefetch حتى في حالة وجود خطأ
+                            if (preconnectLink && preconnectLink.parentNode) preconnectLink.parentNode.removeChild(preconnectLink);
+                            if (prefetchLink && prefetchLink.parentNode) prefetchLink.parentNode.removeChild(prefetchLink);
+                            console.log('[Preload] Removed preconnect/prefetch links after iframe error.');
+                        };
+
+                        console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
+                    }, 500); // تأخير 500 مللي ثانية قبل تحميل الـ iframe للسماح بانتقال واجهة المستخدم
+                };
             }
 
             const newUrl = new URL(window.location.origin);
@@ -473,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             }
         }
-        
+
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
             oldScript.remove();
@@ -521,24 +524,27 @@ document.addEventListener('DOMContentLoaded', () => {
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
-        // *** إيقاف الفيديو وتنظيف الـ iframe عند العودة للصفحة الرئيسية ***
+        // --- تنظيف حالة مشغل الفيديو عند العودة للصفحة الرئيسية ---
         if (moviePlayer) {
-            moviePlayer.src = 'about:blank'; // مسح مصدر الفيديو لإيقافه تمامًا
-            moviePlayer.onload = null; // إزالة مستمعات الأحداث القديمة
+            moviePlayer.src = 'about:blank'; // مسح مصدر الفيديو
+            moviePlayer.style.display = 'none'; // إخفاء الـ iframe
+            moviePlayer.onload = null; // إزالة مستمعات الأحداث
             moviePlayer.onerror = null;
-            console.log('[Video Player] Source cleared and listeners removed on home page.');
+            console.log('[Video Player] Iframe source cleared and hidden on home page.');
         }
+        if (moviePlayerThumbnail) moviePlayerThumbnail.style.display = 'none'; // إخفاء الصورة المصغرة
+        if (playButtonOverlay) playButtonOverlay.style.display = 'none'; // إخفاء شاشة البداية
+        if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none'; // إخفاء السبينر
         if (videoOverlay) {
-            videoOverlay.classList.add('inactive');
-            videoOverlay.style.display = 'none';
-            videoOverlay.style.pointerEvents = 'none';
-            console.log('[Video Overlay] Inactive and hidden on home page.');
-        }
-        if (videoLoadingSpinner) {
-            videoLoadingSpinner.style.display = 'none';
-            console.log('[Video Loading Spinner] Hidden on home page.');
+            videoOverlay.style.display = 'none'; // إخفاء overlay الإعلانات
+            videoOverlay.style.pointerEvents = 'none'; // جعله غير قابل للنقر
+            videoOverlay.classList.remove('inactive'); // التأكد من إمكانية تنشيطه مرة أخرى
+            console.log('[Video Overlay] Hidden and inactive on home page.');
         }
         currentDetailedMovie = null;
+
+        // إزالة أي روابط preconnect/prefetch المضافة ديناميكيًا
+        document.querySelectorAll('link[rel="preconnect"][data-video-url], link[rel="prefetch"][data-video-url]').forEach(link => link.remove());
 
         const newUrl = new URL(window.location.origin);
         history.pushState({ view: 'home' }, 'أفلام عربية - الصفحة الرئيسية', newUrl.toString());
@@ -634,6 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // إعلان Adsterra المباشر من ملصق تفاصيل الفيلم
     if (movieDetailsPoster) {
         movieDetailsPoster.addEventListener('click', () => {
             console.log('🖼️ [Ad Click] Movie details poster clicked. Attempting to open Direct Link.');
@@ -642,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[Event] Movie details poster click listener attached.');
     }
 
-    // --- هذا هو الجزء الخاص بإعلانات الـ video overlay، ولم يتم المساس به ---
+    // إعلان Adsterra المباشر من overlay الفيديو (يبقى فوق المشغل)
     if (videoOverlay) {
         videoOverlay.addEventListener('click', (e) => {
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
@@ -652,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoOverlay.style.display = 'none';
                 console.log(`[Video Overlay] Hidden temporarily for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
 
-                e.stopPropagation();
+                e.stopPropagation(); // منع النقر من الانتشار إلى الـ iframe
 
                 setTimeout(() => {
                     videoOverlay.style.display = 'block';
@@ -662,6 +669,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         console.log('[Video Overlay] Click listener attached for ad interaction (with display toggle and cooldown).');
     }
+
+    // إعلان Adsterra المباشر من خلفية طبقة زر التشغيل (جديد)
+    // هذا يسمح لك بعرض إعلان عندما ينقر المستخدم على أي مكان في منطقة المشغل قبل الضغط على زر التشغيل
+    if (playButtonOverlay) {
+        playButtonOverlay.addEventListener('click', (e) => {
+            // تفعيل الإعلان فقط إذا لم يتم النقر على زر التشغيل نفسه
+            if (e.target.id !== 'custom-play-button' && !e.target.closest('#custom-play-button')) {
+                console.log('🖼️ [Ad Click] Play button overlay background clicked. Attempting to open Direct Link.');
+                // استخدم تهدئة بطاقة الفيلم لهذا الموضع الإعلاني أيضًا
+                openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'playButtonOverlay');
+            }
+        });
+        console.log('[Event] Play button overlay click listener attached for ad interaction.');
+    }
+
+
+    // التعامل مع أزرار الرجوع/التقدم في المتصفح
+    window.onpopstate = (event) => {
+        console.log('⬅️➡️ [History] Popstate event triggered:', event.state);
+        if (event.state && event.state.view === 'details' && event.state.id) {
+            showMovieDetails(event.state.id);
+        } else {
+            showHomePage();
+        }
+    };
 
     // --- 6. Initial Page Load Logic ---
     function initialPageLoadLogic() {
