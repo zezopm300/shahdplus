@@ -680,8 +680,6 @@ a:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    /* هنا نستخدم display: block أو flex لو المشغل يتطلب ذلك لتخطيط داخلي.
-       لكن الأهم هو التحكم في العناصر داخل video-js */
 }
 
 /* قواعد Video.js لضمان التكيف داخل الـ container */
@@ -690,10 +688,13 @@ a:hover {
     top: 0;
     left: 0;
     width: 100% !important;
-    height: 100% !important;
+    height: 100% !important; /* **الارتفاع 100% ليملأ المساحة** */
     margin: 0 !important;
     padding: 0 !important;
-    /* vertical-align: top; */ /* لم يعد ضرورياً مع absolute positioning */
+    /* **التعديل هنا:** استخدام object-fit: contain; للسماح بالحدود السوداء عند الضرورة أو fill; للتشويه */
+    object-fit: contain; /* **إرجاعها إلى 'contain' للحفاظ على نسبة العرض للارتفاع الأصلية للفيديو مع الحدود السوداء إذا لزم الأمر** */
+    /* إذا كنت لا تريد رؤية أي حدود سوداء إطلاقاً، حتى لو تسبب ذلك في تمدد أو ضغط الصورة، فاستخدم: */
+    /* object-fit: fill; */ 
 }
 
 /* **التعديلات الأساسية لشريط التحكم لضمان دخوله داخل الفيديو وظهوره في الأسفل** */
@@ -702,6 +703,7 @@ a:hover {
     bottom: 0 !important; /* يدفعه لأسفل المشغل */
     left: 0 !important; /* مهم لضمان عرض 100% */
     width: 100% !important;
+    height: 40px !important; /* تحديد ارتفاع ثابت للشريط لضمان المساحة */
     margin-bottom: 0 !important; /* إزالة أي margin-bottom */
     background-color: rgba(0, 0, 0, 0.7); /* خلفية لشريط التحكم لضمان رؤيته */
     border-radius: 0 0 var(--border-radius-base) var(--border-radius-base); /* لو الـ wrapper ليه border-radius */
