@@ -41,7 +41,7 @@
 }
 
 html {
-    font-size: 16.5px;
+    font-size: 16px; /* أساسي 16px */
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -58,7 +58,7 @@ body {
     text-align: right;
     overflow-x: hidden;
     min-height: 100vh;
-    font-size: 1rem;
+    font-size: 1rem; /* 1rem = 16px */
     position: relative;
 }
 
@@ -209,8 +209,8 @@ a:hover {
     background: linear-gradient(45deg, var(--accent-color) 0%, var(--primary-color) 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    color: var(--text-color); /* Keep this as a fallback for browsers that don't support text-fill-color */
-    -webkit-text-fill-color: transparent; /* This makes the gradient visible through the text */
+    color: transparent; /* Makes the text fully transparent to show the gradient */
+    -webkit-text-fill-color: transparent; /* For WebKit browsers */
 
 
     text-shadow:
@@ -263,7 +263,7 @@ a:hover {
 }
 
 
-/* تحديثات الـ Nav - أنيقة ومضغوطة - (تم تعديل الألوان والأنيميشن هنا فقط) */
+/* تحديثات الـ Nav - أنيقة ومضغوطة */
 .main-nav {
     flex-grow: 1;
     display: flex;
@@ -399,7 +399,7 @@ a:hover {
     color: var(--text-color);
 }
 
-/* Mobile Menu Toggle - لا يزال مخفياً تماماً */
+/* Mobile Menu Toggle (Currently hidden and unused) */
 .menu-toggle {
     display: none !important;
 }
@@ -505,6 +505,7 @@ a:hover {
 
 .movie-grid {
     display: grid;
+    /* ضمان 6 بوسترات على الكمبيوتر */
     grid-template-columns: repeat(6, 1fr);
     gap: 1.2vw;
     padding: 0 0.7vw;
@@ -642,7 +643,6 @@ a:hover {
 }
 
 /* Video Player Wrapper and Container - حجم مثالي ومتحكم بشكل نهائي */
-/* هذا هو العنصر الجديد الذي يغلف movie-player-container و video-overlay */
 .video-player-wrapper {
     position: relative;
     width: 100%;
@@ -656,11 +656,9 @@ a:hover {
     box-shadow: var(--shadow-deep);
     border: 1.5px solid var(--secondary-color);
     
-    /* نسبة أبعاد 16:9 (9 / 16 = 0.5625 = 56.25%) */
-    /* استخدم padding-top بدلاً من padding-bottom لمرونة أفضل مع الـ flex/grid الآباء */
     height: 0;
-    padding-top: 56.25%; /* نسبة 16:9 كاملة */
-    position: relative; /* مهم لتموضع children المطلق */
+    padding-top: 56.25%; /* نسبة 16:9 كاملة (9 / 16 = 0.5625) */
+    position: relative;
 }
 
 /* الحاوية الداخلية التي سيتم إنشاء عنصر الفيديو فيها */
@@ -675,14 +673,14 @@ a:hover {
 
 /* قواعد Video.js لضمان التكيف داخل الـ container */
 .video-js {
-    position: absolute !important; /* مهم لملء الحاوية */
+    position: absolute !important;
     top: 0;
     left: 0;
     width: 100% !important;
     height: 100% !important;
 }
 
-/* أكواد الإعلانات المتعلقة بالـ overlay في الفيديو لم تُلمس على الإطلاق - تم التأكد من بقائها كما هي تمامًا */
+/* أكواد الإعلانات المتعلقة بالـ overlay في الفيديو */
 .video-overlay {
     position: absolute;
     top: 0;
@@ -856,9 +854,14 @@ a:hover {
     border-color: var(--primary-color);
 }
 
-/* Media Queries - للتحكم في التصميم المتجاوب باحترافية فائقة (موبايل جامد) */
+/* Media Queries for Responsive Design */
 
-@media (max-width: 992px) { /* للتابلت والموبايل الكبير */
+/* Tablet and Larger Mobile Devices */
+@media (max-width: 992px) {
+    /* Removed large font-size adjustments from html/body. clamp() should handle scaling. */
+    /* html { font-size: 15.5px; } */
+    /* body { font-size: 1rem; } */
+
     .main-header {
         padding: 0.4rem 0;
         border-bottom: 1px solid var(--primary-color);
@@ -881,7 +884,6 @@ a:hover {
         font-size: clamp(2rem, 5vw, 2.5rem);
     }
 
-    /* الـ Search Container على الموبايل - يظهر تحت اللوجو */
     .search-container {
         order: 2;
         flex-grow: 0;
@@ -901,7 +903,6 @@ a:hover {
         padding: 0.3rem 0.9rem;
     }
 
-    /* الـ Navigation على الموبايل - تظهر تحت البحث - (تم تعديل الألوان والأنيميشن هنا) */
     .main-nav {
         flex-basis: 100%;
         justify-content: center;
@@ -983,15 +984,15 @@ a:hover {
         padding-bottom: 0.7rem;
     }
 
-    /* ضمان 2 بوستر جنب بعض على الموبايل والتابلت (في هذا الميديا كويري) */
+    /* 2 بوستر على التابلت (بدلاً من 3-4 لتجنب التقطيع في العرض) */
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 3.5vw;
-        padding: 0 3.5vw;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Changed to 2 columns on tablet */
+        gap: 3vw; /* Adjusted gap for tablet */
+        padding: 0 3vw; /* Adjusted padding */
     }
 
     .movie-card img {
-        height: clamp(160px, 65vw, 210px);
+        height: clamp(140px, 40vw, 200px); /* Adjust height for tablet */
     }
 
     .movie-card h3 {
@@ -1015,11 +1016,10 @@ a:hover {
         font-size: clamp(0.8rem, 1.6vw, 0.95rem);
     }
 
-    /* Video Player Wrapper for Tablets */
     .video-player-wrapper {
         max-width: 100%;
-        padding-top: 56.25% !important; /* إعادة نسبة 16:9 للتابلت */
-        max-height: 350px;
+        padding-top: 56.25% !important;
+        max-height: 380px;
         margin-bottom: 4vw;
     }
 
@@ -1058,12 +1058,13 @@ a:hover {
     }
 }
 
-@media (max-width: 480px) { /* لأصغر الهواتف - احترافية وسرعة قصوى */
-    body {
-        font-size: 1.25rem;
-    }
+/* Smaller Mobile Devices (e.g., iPhone SE) */
+@media (max-width: 480px) {
     html {
-        font-size: 17.5px;
+        font-size: 14.5px; /* Slightly smaller base font for very small mobiles */
+    }
+    body {
+        font-size: 1rem;
     }
 
     .main-header .container {
@@ -1071,11 +1072,11 @@ a:hover {
         gap: 0.5rem;
     }
     .main-header .logo {
-        font-size: clamp(1.6rem, 4.8vw, 1.9rem);
+        font-size: clamp(1.5rem, 4.8vw, 1.8rem);
         letter-spacing: 1px;
     }
     .main-header .logo .logo-dot {
-        font-size: clamp(1.8rem, 5.8vw, 2.1rem);
+        font-size: clamp(1.7rem, 5.8vw, 2.0rem);
     }
     .search-container {
         width: clamp(190px, 98vw, 280px);
@@ -1109,31 +1110,32 @@ a:hover {
         padding: 0 3.5vw;
     }
     .hero h1 {
-        font-size: clamp(1.9rem, 6.2vw, 2.5rem);
+        font-size: clamp(1.8rem, 6.2vw, 2.4rem);
         margin-bottom: 1.5vh;
     }
     .hero p {
-        font-size: clamp(0.9rem, 2.8vw, 1.1rem);
+        font-size: clamp(0.85rem, 2.8vw, 1.05rem);
         padding: 0.65rem 1.3rem;
         margin-bottom: 2.5vh;
     }
     .hero .btn {
-        font-size: clamp(0.9rem, 2.6vw, 1.05rem);
+        font-size: clamp(0.85rem, 2.6vw, 1.05rem);
         padding: 0.75rem 1.5rem;
     }
 
     .movie-grid-section h2, .movie-details-section h1, .suggested-movies-section h2 {
-        font-size: clamp(1.7rem, 5.8vw, 2.3rem);
+        font-size: clamp(1.6rem, 5.8vw, 2.2rem);
         margin-bottom: 3.5vw;
         padding-bottom: 0.65rem;
     }
     .movie-grid {
+        /* Always 2 columns on small mobile */
         grid-template-columns: repeat(2, 1fr);
         gap: 3.5vw;
         padding: 0 3.5vw;
     }
     .movie-card img {
-        height: clamp(135px, 62vw, 175px);
+        height: clamp(135px, 45vw, 175px);
     }
     .movie-card h3 {
         font-size: clamp(0.8rem, 2.6vw, 0.95rem);
@@ -1153,9 +1155,8 @@ a:hover {
         padding: 0.65rem 1.3rem;
         font-size: clamp(0.75rem, 2.4vw, 0.9rem);
     }
-    /* Video Player Wrapper for Small Mobiles */
     .video-player-wrapper {
-        padding-top: 56.25% !important; /* إعادة نسبة 16:9 للهواتف الصغيرة */
+        padding-top: 56.25% !important;
         max-height: 210px;
         margin-bottom: 3.5vw;
     }
