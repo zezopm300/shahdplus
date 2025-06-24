@@ -40,6 +40,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
 
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    
     <script type="application/ld+json"></script>
 </head>
 <body>
@@ -106,12 +108,27 @@
             <h1 id="movie-details-title"></h1>
             
             <div class="video-player-container">
-                <iframe id="movie-player" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="width:100%; height:100%;"></iframe>
-                <div id="video-loading-spinner" class="spinner-overlay">
+                <video
+                    id="my-video"
+                    class="video-js vjs-big-play-centered"
+                    controls
+                    preload="auto"
+                    width="640"
+                    height="360"
+                    poster="" data-setup='{}'
+                >
+                    <source src="" type="application/x-mpegURL"> 
+                    <p class="vjs-no-js">
+                        لتشغيل الفيديو، يرجى تفعيل JavaScript، أو قم بترقية متصفحك.
+                        <a href="https://videojs.com/html5-video-support/" target="_blank">
+                            يدعم HTML5 Video
+                        </a>
+                    </p>
+                </video>
+                 <div id="video-loading-spinner" class="spinner-overlay" style="display: none;">
                     <div class="spinner"></div>
                 </div>
-
-                <div id="video-overlay" class="video-overlay inactive"></div>
+                <div id="video-overlay" class="video-overlay inactive" style="display: none;"></div>
             </div>
             <div class="movie-info">
                 <div id="movie-details-poster-container" style="text-align: center; margin-bottom: 20px;">
@@ -150,6 +167,9 @@
 
     <script async="async" data-cfasync="false" src="//pl26877662.profitableratecpm.com/e106700efc7a857b58a04a6abb040494/invoke.js"></script>
     <div id="container-e106700efc7a857b58a04a6abb040494"></div>
+    
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <script src="https://unpkg.com/@videojs/http-streaming/dist/videojs-http-streaming.min.js"></script>
     
     <script src="script.js"></script>
     
