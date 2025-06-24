@@ -663,8 +663,8 @@ a:hover {
     position: relative;
     width: 100%;
     max-width: 800px; /* عرض معقول للكمبيوتر */
-    height: 0; /* مهم لتقنية Aspect Ratio Box */
-    padding-bottom: 56.25%; /* نسبة 16:9 (9 / 16 = 0.5625) */
+    height: 450px; /* **عاد الارتفاع الثابت للكمبيوتر** */
+    /* إزالة padding-bottom من هنا ليعمل الارتفاع الثابت */
     margin: 0 auto 2.5vw auto; /* ضبط الهوامش ليكون في المنتصف وإزالة أي فراغات */
     background-color: #000;
     border-radius: var(--border-radius-base);
@@ -1079,21 +1079,21 @@ a:hover {
         font-size: clamp(0.8rem, 1.6vw, 0.95rem);
     }
 
-    /* الفيديو في التابلت */
+    /* الفيديو في التابلت: نستخدم Aspect Ratio Box */
     .video-player-wrapper {
-        max-width: 100%;
-        height: 0; /* تم إزالة الارتفاع الثابت */
-        padding-bottom: 56.25%; /* نسبة 16:9 - يتم ضبط الارتفاع بناءً على العرض */
+        max-width: 100%; /* تظل 100% لتملأ العرض المتاح */
+        height: 0; /* **إلغاء الارتفاع الثابت هنا** */
+        padding-bottom: 56.25%; /* **تحديد الارتفاع بنسبة 16:9 للعرض** */
         margin-bottom: 4vw;
     }
     /*
-    ** ملاحظة هامة:
-    تم إزالة object-fit من هنا لأن الـ video-js نفسه أصبح يملأ الـ wrapper بالكامل بفضل position: absolute
-    والـ wrapper نفسه يحافظ على نسبة الأبعاد الصحيحة.
-    */
     .video-js {
-        /* object-fit: cover; */ /* لم تعد هناك حاجة لتغييرها هنا */
+        object-fit: cover;
     }
+    ** ملاحظة: object-fit: cover; في هذا النطاق قد لا تكون ضرورية إذا كانت في النطاق العام،
+    لكن تركها هنا يضمن أن الفيديو يملأ الحاوية 100% بقطع الأطراف إن لزم الأمر
+    بعد أن أصبح للحاوية نسبة أبعاد صحيحة.
+    */
 
     .movie-info p {
         margin-bottom: 0.9rem;
@@ -1243,20 +1243,20 @@ a:hover {
         padding: 0.65rem 1.3rem;
         font-size: clamp(0.75rem, 2.4vw, 0.9rem);
     }
-    /* الفيديو في الموبايل الصغير */
+    /* الفيديو في الموبايل الصغير: نستخدم Aspect Ratio Box */
     .video-player-wrapper {
-        height: 0; /* تم إزالة الارتفاع الثابت */
-        padding-bottom: 56.25%; /* نسبة 16:9 - يتم ضبط الارتفاع بناءً على العرض */
+        height: 0; /* **إلغاء الارتفاع الثابت هنا** */
+        padding-bottom: 56.25%; /* **تحديد الارتفاع بنسبة 16:9 للعرض** */
         margin-bottom: 3.5vw;
     }
     /*
-    ** ملاحظة هامة:
-    تم إزالة object-fit من هنا لأن الـ video-js نفسه أصبح يملأ الـ wrapper بالكامل بفضل position: absolute
-    والـ wrapper نفسه يحافظ على نسبة الأبعاد الصحيحة.
-    */
     .video-js {
-        /* object-fit: cover; */ /* لم تعد هناك حاجة لتغييرها هنا */
+        object-fit: cover;
     }
+    ** ملاحظة: object-fit: cover; في هذا النطاق قد لا تكون ضرورية إذا كانت في النطاق العام،
+    لكن تركها هنا يضمن أن الفيديو يملأ الحاوية 100% بقطع الأطراف إن لزم الأمر
+    بعد أن أصبح للحاوية نسبة أبعاد صحيحة.
+    */
 
     .movie-info p {
         font-size: clamp(0.85rem, 2.2vw, 1rem);
