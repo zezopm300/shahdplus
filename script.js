@@ -279,7 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // تهيئة مشغل الفيديو باستخدام Video.js
             if (moviePlayer) {
                 // أولاً: تحقق إذا كان المشغل موجود بالفعل وتخلص منه.
-                // هذا يمنع رسالة "Player is already initialised"
                 if (videojs.getPlayer(moviePlayer.id)) {
                     console.log('[Video.js] Existing player instance found. Disposing for clean re-initialization.');
                     videojs.getPlayer(moviePlayer.id).dispose();
@@ -297,94 +296,104 @@ document.addEventListener('DOMContentLoaded', () => {
                     videoOverlayText.textContent = ''; // مسح النص
                 }
 
-                // *** محاولة تهيئة المشغل الآن بعد التأكد من أن movieDetailsSection مرئي ***
-                videoJsPlayerInstance = videojs(moviePlayer, {
-                    autoplay: false,
-                    controls: true,
-                    responsive: true,
-                    fluid: true,
-                    sources: [{
-                        src: movie.embed_url,
-                        type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
-                    }],
-                });
-                console.log(`[Video.js] Player initialized with source: ${movie.embed_url}`);
-
-
-                // --- إدارة الأوفرلاي والتشغيل ---
-                videoJsPlayerInstance.on('loadeddata', () => {
-                    console.log('[Video.js] Video loadeddata event fired. Attempting autoplay.');
-                    if (videoLoadingSpinner) {
-                        videoLoadingSpinner.style.display = 'none'; // إخفاء مؤشر التحميل
-                        console.log('[Video Player] Loading spinner hidden (video loadeddata).');
+                // *** التعديل الرئيسي هنا: تأخير تهيئة Video.js قليلاً ***
+                setTimeout(() => {
+                    if (!moviePlayer.isConnected) {
+                        console.warn('⚠️ [Video.js Init] moviePlayer is not connected to DOM after timeout. Skipping initialization.');
+                        return;
                     }
-                    if (videoOverlay) {
-                        videoJsPlayerInstance.play().then(() => {
-                            videoOverlay.style.display = 'none';
-                            videoOverlay.style.pointerEvents = 'none';
-                            if (videoOverlayText) videoOverlayText.style.display = 'none';
-                            console.log('[Video Overlay] Hidden (autoplay successful).');
-                        }).catch(error => {
-                            console.warn('⚠️ [Video.js] Autoplay prevented by browser, user interaction required:', error);
-                            if (videoOverlay) {
-                                videoOverlay.style.display = 'flex';
-                                videoOverlay.style.pointerEvents = 'auto';
-                                if (videoOverlayText) {
-                                    videoOverlayText.style.display = 'block';
-                                    videoOverlayText.textContent = 'انقر للتشغيل';
+                    if (videojs.getPlayer(moviePlayer.id)) {
+                        console.warn('⚠️ [Video.js Init] Player already initialized in setTimeout block. Skipping.');
+                        return;
+                    }
+
+                    videoJsPlayerInstance = videojs(moviePlayer, {
+                        autoplay: false,
+                        controls: true,
+                        responsive: true,
+                        fluid: true,
+                        sources: [{
+                            src: movie.embed_url,
+                            type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
+                        }],
+                    });
+                    console.log(`[Video.js] Player initialized with source: ${movie.embed_url} after setTimeout.`);
+
+
+                    // --- إدارة الأوفرلاي والتشغيل ---
+                    videoJsPlayerInstance.on('loadeddata', () => {
+                        console.log('[Video.js] Video loadeddata event fired. Attempting autoplay.');
+                        if (videoLoadingSpinner) {
+                            videoLoadingSpinner.style.display = 'none';
+                            console.log('[Video Player] Loading spinner hidden (video loadeddata).');
+                        }
+                        if (videoOverlay) {
+                            videoJsPlayerInstance.play().then(() => {
+                                videoOverlay.style.display = 'none';
+                                videoOverlay.style.pointerEvents = 'none';
+                                if (videoOverlayText) videoOverlayText.style.display = 'none';
+                                console.log('[Video Overlay] Hidden (autoplay successful).');
+                            }).catch(error => {
+                                console.warn('⚠️ [Video.js] Autoplay prevented by browser, user interaction required:', error);
+                                if (videoOverlay) {
+                                    videoOverlay.style.display = 'flex';
+                                    videoOverlay.style.pointerEvents = 'auto';
+                                    if (videoOverlayText) {
+                                        videoOverlayText.style.display = 'block';
+                                        videoOverlayText.textContent = 'انقر للتشغيل';
+                                    }
+                                    console.log('[Video Overlay] Displayed (autoplay failed), click to play.');
                                 }
-                                console.log('[Video Overlay] Displayed (autoplay failed), click to play.');
+                            });
+                        }
+                    });
+
+                    videoJsPlayerInstance.on('error', (e) => {
+                        const error = videoJsPlayerInstance.error();
+                        console.error('[Video.js] Player Error:', error ? error.message : 'Unknown error', error);
+                        if (videoLoadingSpinner) {
+                            videoLoadingSpinner.style.display = 'none';
+                        }
+                        if (videoOverlay) {
+                            videoOverlay.style.display = 'flex';
+                            videoOverlay.style.pointerEvents = 'auto';
+                            if (videoOverlayText) {
+                                videoOverlayText.style.display = 'block';
+                                videoOverlayText.textContent = `عذراً، لم نتمكن من تشغيل الفيديو. (${error ? error.code : ''}) تأكد من أن الرابط مباشر ويعمل أو حاول لاحقاً.`;
                             }
-                        });
-                    }
-                });
-
-                videoJsPlayerInstance.on('error', (e) => {
-                    const error = videoJsPlayerInstance.error();
-                    console.error('[Video.js] Player Error:', error ? error.message : 'Unknown error', error);
-                    if (videoLoadingSpinner) {
-                        videoLoadingSpinner.style.display = 'none';
-                    }
-                    if (videoOverlay) {
-                        videoOverlay.style.display = 'flex';
-                        videoOverlay.style.pointerEvents = 'auto';
-                        if (videoOverlayText) {
-                            videoOverlayText.style.display = 'block';
-                            videoOverlayText.textContent = `عذراً، لم نتمكن من تشغيل الفيديو. (${error ? error.code : ''}) تأكد من أن الرابط مباشر ويعمل أو حاول لاحقاً.`;
+                            console.log('[Video Overlay] Displayed with error message.');
                         }
-                        console.log('[Video Overlay] Displayed with error message.');
-                    }
-                    const errorDisplay = videoJsPlayerInstance.el().querySelector('.vjs-error-display');
-                    if (errorDisplay) {
-                        errorDisplay.style.display = 'block';
-                        errorDisplay.textContent = `عذراً، لم نتمكن من تحميل الفيديو. (${error ? error.code : ''}) تأكد من أن الرابط مباشر ويعمل.`;
-                    }
-                });
-
-                videoJsPlayerInstance.on('pause', () => {
-                    console.log('[Video.js] Video paused.');
-                    if (videoJsPlayerInstance && !videoJsPlayerInstance.ended() && videoOverlay) { // لا نعيد الأوفرلاي إذا كان الفيديو قد انتهى بالفعل
-                        videoOverlay.style.display = 'flex';
-                        videoOverlay.style.pointerEvents = 'auto';
-                        if (videoOverlayText) {
-                            videoOverlayText.style.display = 'block';
-                            videoOverlayText.textContent = 'انقر للمتابعة';
+                        const errorDisplay = videoJsPlayerInstance.el().querySelector('.vjs-error-display');
+                        if (errorDisplay) {
+                            errorDisplay.style.display = 'block';
+                            errorDisplay.textContent = `عذراً، لم نتمكن من تحميل الفيديو. (${error ? error.code : ''}) تأكد من أن الرابط مباشر ويعمل.`;
                         }
-                    }
-                });
+                    });
 
-                videoJsPlayerInstance.on('ended', () => {
-                    console.log('[Video.js] Video ended.');
-                    if (videoOverlay) {
-                        videoOverlay.style.display = 'flex';
-                        videoOverlay.style.pointerEvents = 'auto';
-                        if (videoOverlayText) {
-                            videoOverlayText.style.display = 'block';
-                            videoOverlayText.textContent = 'انتهى الفيديو. انقر لإعادة التشغيل.';
+                    videoJsPlayerInstance.on('pause', () => {
+                        console.log('[Video.js] Video paused.');
+                        if (videoJsPlayerInstance && !videoJsPlayerInstance.ended() && videoOverlay) {
+                            videoOverlay.style.display = 'flex';
+                            videoOverlay.style.pointerEvents = 'auto';
+                            if (videoOverlayText) {
+                                videoOverlayText.style.display = 'block';
+                                videoOverlayText.textContent = 'انقر للمتابعة';
+                            }
                         }
-                    }
-                });
-                // -----------------------------
+                    });
+
+                    videoJsPlayerInstance.on('ended', () => {
+                        console.log('[Video.js] Video ended.');
+                        if (videoOverlay) {
+                            videoOverlay.style.display = 'flex';
+                            videoOverlay.style.pointerEvents = 'auto';
+                            if (videoOverlayText) {
+                                videoOverlayText.style.display = 'block';
+                                videoOverlayText.textContent = 'انتهى الفيديو. انقر لإعادة التشغيل.';
+                            }
+                        }
+                    });
+                }, 0); // *** تأخير بسيط جداً لضمان تحديث الـ DOM ***
             }
 
             const newUrl = new URL(window.location.origin);
