@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const homeLogoLink = document.getElementById('home-logo-link');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
     const movieDetailsPoster = document.getElementById('movie-details-poster');
+    const videoOverlayText = document.getElementById('video-overlay-text'); // إضافة مرجع للنص في الأوفرلاي
 
     const prevPageBtn = document.getElementById('prev-page-btn');
     const nextPageBtn = document.getElementById('next-page-btn');
@@ -39,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
         '#suggested-movie-grid': suggestedMovieGrid,
         '#suggested-movies-section': suggestedMoviesSection,
         '#video-loading-spinner': videoLoadingSpinner,
-        '#movie-details-poster': movieDetailsPoster
+        '#movie-details-poster': movieDetailsPoster,
+        '#video-overlay-text': videoOverlayText // إضافة هنا
     };
 
     let criticalError = false;
@@ -57,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 2. Adsterra Configuration (لم يتم المساس بها) ---
-    // تم التأكيد على عدم لمس هذه الأكواد حسب طلبك
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes
@@ -288,47 +289,54 @@ document.addEventListener('DOMContentLoaded', () => {
                     videoLoadingSpinner.style.display = 'block'; // إظهار مؤشر التحميل
                     console.log('[Video Player] Loading spinner shown.');
                 }
+                if (videoOverlayText) {
+                    videoOverlayText.style.display = 'none'; // إخفاء أي رسالة سابقة على الأوفرلاي
+                }
 
                 // تهيئة مشغل Video.js وتخزين المثيل في المتغير العام
                 videoJsPlayerInstance = videojs(moviePlayer, {
-                    autoplay: false, // سنبدأ التشغيل يدوياً بعد إزالة الـ overlay
+                    autoplay: false, // سنبدأ التشغيل يدوياً بعد إزالة الـ overlay أو تفاعل المستخدم
                     controls: true,
                     responsive: true,
-                    fluid: true, // يجعل المشغل يتكيف مع حجم الـ container
+                    fluid: true,
                     sources: [{
                         src: movie.embed_url, // URL الفيديو الفعلي
-                        // يمكنك محاولة تحديد النوع ديناميكياً إذا كان الرابط لا ينتهي بـ .mp4
                         type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
                     }],
-                    // خيارات إضافية إذا لزم الأمر
-                    // preferFullWindowOnFullScreenChange: true,
                 });
 
-                // حدث عندما يكون الفيديو جاهزًا للتشغيل (meta data and current playback position)
+                // --- إدارة الأوفرلاي والتشغيل ---
+                // عند تحميل بيانات الفيديو (جاهز للتشغيل)
                 videoJsPlayerInstance.on('loadeddata', () => {
+                    console.log('[Video.js] Video loadeddata event fired.');
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none'; // إخفاء مؤشر التحميل
                         console.log('[Video Player] Loading spinner hidden (video loadeddata).');
                     }
                     if (videoOverlay) {
-                        // إخفاء الأوفرلاي وإلغاء إمكانية النقر عليه بعد تحميل الفيديو مباشرة
-                        videoOverlay.style.display = 'none'; // إخفاء الأوفرلاي
-                        videoOverlay.style.pointerEvents = 'none'; // تعطيل النقر
-                        console.log('[Video Overlay] Hidden and unclickable after video loadeddata.');
+                        // محاولة التشغيل التلقائي (قد تفشل بسبب قيود المتصفح)
+                        videoJsPlayerInstance.play().then(() => {
+                            // تم التشغيل بنجاح، إخفاء الأوفرلاي تمامًا
+                            videoOverlay.style.display = 'none';
+                            videoOverlay.style.pointerEvents = 'none';
+                            console.log('[Video Overlay] Hidden and unclickable (autoplay successful).');
+                        }).catch(error => {
+                            // فشل التشغيل التلقائي (عادةً بسبب قيود المتصفح)
+                            console.warn('⚠️ [Video.js] Autoplay prevented by browser, user interaction required:', error);
+                            if (videoOverlay) {
+                                videoOverlay.style.display = 'flex'; // أظهر الأوفرلاي لطلب تفاعل المستخدم
+                                videoOverlay.style.pointerEvents = 'auto'; // اجعله قابل للنقر
+                                if (videoOverlayText) {
+                                    videoOverlayText.style.display = 'block';
+                                    videoOverlayText.textContent = 'انقر للتشغيل';
+                                }
+                                console.log('[Video Overlay] Displayed (autoplay failed), click to play.');
+                            }
+                        });
                     }
-                    // محاولة التشغيل مباشرة بعد loadeddata (قد يمنعها المتصفح بدون تفاعل المستخدم)
-                    videoJsPlayerInstance.play().catch(error => {
-                        console.warn('⚠️ [Video.js] Autoplay prevented by browser:', error);
-                        // إذا تم منع التشغيل التلقائي، أظهر الأوفرلاي مرة أخرى مع مؤشر النقر
-                        if (videoOverlay) {
-                            videoOverlay.style.display = 'flex'; // أظهره مرة أخرى
-                            videoOverlay.style.pointerEvents = 'auto'; // اجعله قابل للنقر
-                            console.log('[Video Overlay] Displayed again due to autoplay prevention. Click to play.');
-                        }
-                    });
                 });
 
-                // حدث عند حدوث خطأ في الفيديو
+                // عند حدوث خطأ في الفيديو
                 videoJsPlayerInstance.on('error', (e) => {
                     const error = videoJsPlayerInstance.error();
                     console.error('[Video.js] Player Error:', error ? error.message : 'Unknown error', error);
@@ -336,24 +344,47 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoLoadingSpinner.style.display = 'none';
                     }
                     if (videoOverlay) {
-                        videoOverlay.style.display = 'flex'; // الأوفرلاي يظل مرئيًا حتى لو حدث خطأ
-                        videoOverlay.style.pointerEvents = 'auto';
-                        // إظهار رسالة الخطأ للمستخدم على الأوفرلاي أو داخل المشغل
-                        const videoOverlayText = document.getElementById('video-overlay-text');
+                        videoOverlay.style.display = 'flex'; // إظهار الأوفرلاي في حالة الخطأ
+                        videoOverlay.style.pointerEvents = 'auto'; // اجعله قابل للنقر (للتبليغ بالخطأ)
                         if (videoOverlayText) {
                             videoOverlayText.style.display = 'block';
-                            videoOverlayText.textContent = `عذراً، لم نتمكن من تشغيل الفيديو. (${error ? error.code : ''}) يرجى التأكد من أن الرابط مباشر ويعمل أو حاول لاحقاً.`;
+                            videoOverlayText.textContent = `عذراً، لم نتمكن من تشغيل الفيديو. (${error ? error.code : ''}) تأكد من أن الرابط مباشر ويعمل.`;
                         }
+                        console.log('[Video Overlay] Displayed with error message.');
                     }
-                    // إضافة رسالة خطأ للمستخدم داخل مشغل الفيديو
+                    // رسالة الخطأ الافتراضية لـ Video.js (إن وجدت)
                     const errorDisplay = videoJsPlayerInstance.el().querySelector('.vjs-error-display');
                     if (errorDisplay) {
-                        errorDisplay.style.display = 'block'; // تأكد من إظهار رسالة الخطأ الافتراضية لـ Video.js
+                        errorDisplay.style.display = 'block';
                         errorDisplay.textContent = `عذراً، لم نتمكن من تحميل الفيديو. (${error ? error.code : ''}) تأكد من أن الرابط مباشر ويعمل.`;
-                    } else {
-                        console.warn('[Video.js] Could not find default error display element.');
                     }
                 });
+
+                // مراقبة توقف الفيديو لإعادة إظهار الأوفرلاي
+                videoJsPlayerInstance.on('pause', () => {
+                    console.log('[Video.js] Video paused.');
+                    if (videoOverlay) {
+                        videoOverlay.style.display = 'flex';
+                        videoOverlay.style.pointerEvents = 'auto';
+                        if (videoOverlayText) {
+                            videoOverlayText.style.display = 'block';
+                            videoOverlayText.textContent = 'انقر للمتابعة';
+                        }
+                    }
+                });
+
+                videoJsPlayerInstance.on('ended', () => {
+                    console.log('[Video.js] Video ended.');
+                    if (videoOverlay) {
+                        videoOverlay.style.display = 'flex';
+                        videoOverlay.style.pointerEvents = 'auto';
+                        if (videoOverlayText) {
+                            videoOverlayText.style.display = 'block';
+                            videoOverlayText.textContent = 'انتهى الفيديو. انقر لإعادة التشغيل.';
+                        }
+                    }
+                });
+                // -----------------------------
                 console.log(`[Video.js] Player initialized with source: ${movie.embed_url}`);
             }
 
@@ -500,10 +531,10 @@ document.addEventListener('DOMContentLoaded', () => {
         paginateMovies(moviesDataForPagination, 1);
 
         if (videoOverlay) {
-            videoOverlay.classList.add('inactive');
-            videoOverlay.style.display = 'none';
+            videoOverlay.style.display = 'none'; // إخفاء الأوفرلاي تمامًا عند العودة للرئيسية
             videoOverlay.style.pointerEvents = 'none';
-            console.log('[Video Overlay] Inactive and hidden on home page.');
+            if (videoOverlayText) videoOverlayText.style.display = 'none';
+            console.log('[Video Overlay] Hidden on home page.');
         }
         if (videoLoadingSpinner) {
             videoLoadingSpinner.style.display = 'none';
@@ -626,40 +657,50 @@ document.addEventListener('DOMContentLoaded', () => {
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY, 'videoOverlay');
 
             if (adOpened) {
-                // الحل لضمان عدم توقف الفيديو:
-                // 1. إخفاء طبقة الأوفرلاي تمامًا عند فتح الإعلان.
+                // إخفاء الأوفرلاي وإزالة مؤشراته لضمان عدم إعاقة التشغيل
                 videoOverlay.style.display = 'none';
+                videoOverlay.style.pointerEvents = 'none';
+                if (videoOverlayText) videoOverlayText.style.display = 'none';
                 console.log(`[Video Overlay] Hidden temporarily for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
 
-                // 2. منع انتشار حدث النقر إلى مشغل الفيديو الأساسي.
-                e.stopPropagation(); // يمنع النقر من الوصول للمشغل
+                e.stopPropagation(); // منع النقر من الوصول للمشغل
 
-                // 3. تشغيل الفيديو باستخدام Video.js API
-                // تأكد أن player موجود قبل محاولة التشغيل
                 if (videoJsPlayerInstance && videoJsPlayerInstance.paused()) {
-                    videoJsPlayerInstance.play().catch(error => {
-                        console.warn('⚠️ [Video.js] Play failed after overlay click (user interaction required):', error);
-                        // إذا فشل التشغيل التلقائي حتى بعد النقر (بسبب حظر المتصفح الصارم)
-                        // ممكن نعرض رسالة للمستخدم أو نجرب حلول أخرى
+                    videoJsPlayerInstance.play().then(() => {
+                        console.log('[Video.js] Player started playing after overlay click.');
+                    }).catch(error => {
+                        console.warn('⚠️ [Video.js] Play failed after overlay click (user interaction required or other issue):', error);
+                        // إذا فشل التشغيل حتى بعد النقر، أظهر الأوفرلاي برسالة توضيحية
+                        if (videoOverlay) {
+                            videoOverlay.style.display = 'flex';
+                            videoOverlay.style.pointerEvents = 'auto';
+                            if (videoOverlayText) {
+                                videoOverlayText.style.display = 'block';
+                                videoOverlayText.textContent = 'فشل التشغيل التلقائي. يرجى النقر يدويًا على مشغل الفيديو.';
+                            }
+                        }
                     });
-                    console.log('[Video.js] Player attempted to play after overlay click.');
+                } else if (videoJsPlayerInstance && videoJsPlayerInstance.ended()) {
+                    // إذا كان الفيديو قد انتهى بالفعل، أعد التشغيل
+                    videoJsPlayerInstance.currentTime(0); // إعادة الفيديو للبداية
+                    videoJsPlayerInstance.play().then(() => {
+                        console.log('[Video.js] Player restarted after overlay click (video was ended).');
+                    }).catch(error => {
+                        console.warn('⚠️ [Video.js] Restart failed after overlay click:', error);
+                    });
                 } else if (videoJsPlayerInstance) {
-                    console.log('[Video.js] Player was already playing or ended, no need to play.');
+                    console.log('[Video.js] Player was already playing or not in a suitable state for direct play via overlay click.');
                 } else {
-                    console.warn('[Video.js] Player instance not found when trying to play after overlay click.');
+                    console.warn('[Video.js] Player instance not found when trying to play via overlay click.');
                 }
 
-                // 4. إعادة إظهار الأوفرلاي بعد انتهاء فترة التهدئة إذا كان الفيديو متوقفاً أو انتهى
-                // هذا الجزء قد يتسبب في "توقف" الفيديو إذا أعاد الأوفرلاي الظهور والفيديو لم يبدأ أو توقف.
-                // أفضل استراتيجية هي إظهار الأوفرلاي فقط عندما يكون الفيديو متوقفًا أو فيه خطأ
-                // وليس بناءً على مؤقت ثابت.
-                // تم تعديل هذا الجزء في الدالة showMovieDetails في حدث 'loadeddata' و 'error' ليكون أكثر ديناميكية.
-                // هنا نضمن فقط أن الأوفرلاي يظل مخفياً طالما أننا نحاول تشغيل الفيديو.
+                // لا داعي لـ setTimeout هنا لإعادة إظهار الأوفرلاي بناءً على وقت ثابت،
+                // لأننا نعتمد على أحداث 'loadeddata', 'error', 'pause', 'ended' للتحكم فيه.
             } else {
                 console.log('[Video Overlay] Ad not opened due to cooldown. Video will not attempt to play automatically.');
             }
         });
-        console.log('[Video Overlay] Click listener attached for ad interaction (بكل تعديلاتك الجديدة هنا).');
+        console.log('[Video Overlay] Click listener attached for ad interaction (مُحسّن).');
     }
 
     // --- 6. Initial Page Load Logic ---
