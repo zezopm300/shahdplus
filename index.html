@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-    <meta http-equiv="Cache-Control" content="no-cache">
-
-    <link rel="dns-prefetch" href="https://dood.watch">
-    <link rel="preconnect" href="https://dood.watch" crossorigin>
-    <link rel="dns-prefetch" href="https://doodstream.com">
-    <link rel="preconnect" href="https://doodstream.com" crossorigin>
+    
+<link rel="dns-prefetch" href="https://vjs.zencdn.net">
+<link rel="preconnect" href="https://vjs.zencdn.net" crossorigin>
+<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +12,7 @@
     <meta name="keywords" content="شاهد بلس, أفلام, مسلسلات, مشاهدة أونلاين, 4K, أفلام عربية, أفلام أجنبية, مسلسلات حصرية, سينما, ترفيه فاخر, مترجم, دبلجة, أفلام 2025, مسلسلات جديدة, أكشن, دراما, خيال علمي, كوميديا">
     <meta name="author" content="شاهد بلس فريق التطوير">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://shahidplus.online/">
+   <link rel="canonical" href="https://shahidplus.online/">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://shahidplus.online/">
@@ -26,22 +23,20 @@
     <meta property="og:locale" content="ar_AR">
 
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://shahidplus.online/">
+   <meta property="twitter:url" content="https://shahidplus.online/">
     <meta property="twitter:title" content="شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K">
     <meta property="twitter:description" content="شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.">
     <meta property="twitter:image" content="https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop">
     <meta property="twitter:creator" content="@YourTwitterHandle">
 
     <title>شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K أونلاين</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
 
-    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
-    
     <script type="application/ld+json"></script>
 </head>
 <body>
@@ -81,7 +76,7 @@
         <div class="container">
             <h2 id="section-title">الأكثر مشاهدة</h2>
             <div id="movie-grid" class="movie-grid">
-            </div>
+                </div>
             <div class="pagination">
                 <button id="prev-page-btn" class="btn-page" aria-label="الانتقال إلى الصفحة السابقة">السابق</button>
                 <button id="next-page-btn" class="btn-page" aria-label="الانتقال إلى الصفحة التالية">التالي</button>
@@ -106,29 +101,23 @@
         <div class="container">
             <button id="back-to-home-btn" class="back-btn" aria-label="العودة إلى الرئيسية">العودة إلى الرئيسية</button>
             <h1 id="movie-details-title"></h1>
-            
             <div class="video-player-container">
                 <video
-                    id="my-video"
-                    class="video-js vjs-big-play-centered"
+                    id="movie-player"
+                    class="video-js vjs-default-skin"
                     controls
                     preload="auto"
-                    width="640"
-                    height="360"
-                    poster="" data-setup='{}'
+                    data-setup='{}'
                 >
-                    <source src="" type="application/x-mpegURL"> 
                     <p class="vjs-no-js">
-                        لتشغيل الفيديو، يرجى تفعيل JavaScript، أو قم بترقية متصفحك.
-                        <a href="https://videojs.com/html5-video-support/" target="_blank">
-                            يدعم HTML5 Video
-                        </a>
+                        لتشغيل هذا الفيديو، يرجى تمكين JavaScript، وفكر في الترقية إلى متصفح يدعم
+                        HTML5 video
                     </p>
                 </video>
-                 <div id="video-loading-spinner" class="spinner-overlay" style="display: none;">
-                    <div class="spinner"></div>
+                <div id="video-overlay" class="video-overlay" aria-label="انقر لتشغيل الفيديو">
+                    <p id="video-overlay-text" style="display: none;"></p>
+                    <div id="video-loading-spinner" class="video-loading-spinner"></div>
                 </div>
-                <div id="video-overlay" class="video-overlay inactive" style="display: none;"></div>
             </div>
             <div class="movie-info">
                 <div id="movie-details-poster-container" style="text-align: center; margin-bottom: 20px;">
@@ -149,7 +138,7 @@
         <div class="container">
             <h2>أفلام قد تعجبك</h2>
             <div id="suggested-movie-grid" class="movie-grid">
-            </div>
+                </div>
         </div>
     </section>
 
@@ -169,9 +158,6 @@
     <div id="container-e106700efc7a857b58a04a6abb040494"></div>
     
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-    <script src="https://unpkg.com/@videojs/http-streaming/dist/videojs-http-streaming.min.js"></script>
-    
     <script src="script.js"></script>
-    
 </body>
 </html>
