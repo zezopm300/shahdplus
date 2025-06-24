@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
-    // تحديث: moviePlayer الآن يشير إلى عنصر <video>
     const moviePlayer = document.getElementById('movie-player'); 
     const videoOverlay = document.getElementById('video-overlay');
     const homeLogoLink = document.getElementById('home-logo-link');
@@ -70,6 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let moviesData = [];
     let moviesDataForPagination = [];
     let currentDetailedMovie = null;
+
+    // Global variable to hold the Video.js player instance for clean disposal
+    let videoJsPlayerInstance = null;
 
     // --- 3.1. Fetch Movie Data from JSON ---
     async function fetchMoviesData() {
@@ -224,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             console.log(`🔍 [Search] Performed search for "${query}". Found ${filteredMovies.length} results.`);
         } else {
+            // عرض الأفلام بترتيب عشوائي إذا كان مربع البحث فارغًا
             filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
@@ -272,9 +275,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // تهيئة مشغل الفيديو باستخدام Video.js
             if (moviePlayer) {
                 // تدمير أي نسخة سابقة من مشغل Video.js قبل إنشاء واحدة جديدة
-                if (videojs.getPlayers()[moviePlayer.id]) {
-                    videojs(moviePlayer.id).dispose();
-                    console.log('[Video.js] Disposed previous player instance.');
+                // استخدام متغير عام (videoJsPlayerInstance) لضمان تتبع وإدارة المشغل بشكل صحيح
+                if (videoJsPlayerInstance) {
+                    console.log('[Video.js] Disposing existing player instance for clean re-initialization.');
+                    videoJsPlayerInstance.dispose();
+                    videoJsPlayerInstance = null; // إزالة المرجع بعد التدمير
+                } else {
+                    console.log('[Video.js] No active player instance to dispose, proceeding with new initialization.');
                 }
 
                 if (videoLoadingSpinner) {
@@ -282,22 +289,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[Video Player] Loading spinner shown.');
                 }
 
-                // تهيئة مشغل Video.js
-                const player = videojs(moviePlayer, {
+                // تهيئة مشغل Video.js وتخزين المثيل في المتغير العام
+                videoJsPlayerInstance = videojs(moviePlayer, {
                     autoplay: false, // سنبدأ التشغيل يدوياً بعد إزالة الـ overlay
                     controls: true,
                     responsive: true,
                     fluid: true, // يجعل المشغل يتكيف مع حجم الـ container
                     sources: [{
                         src: movie.embed_url, // URL الفيديو الفعلي
-                        type: 'video/mp4' // يجب أن يكون هذا صحيحًا لنوع الفيديو (مثال: 'application/x-mpegURL' لـ M3U8)
+                        // يمكنك محاولة تحديد النوع ديناميكياً إذا كان الرابط لا ينتهي بـ .mp4
+                        type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' 
                     }],
                     // خيارات إضافية إذا لزم الأمر
-                    // preferFullWindowOnFullScreenChange: true, // قد يساعد في بعض حالات العرض
+                    // preferFullWindowOnFullScreenChange: true, 
                 });
 
                 // حدث عندما يكون الفيديو جاهزًا للتشغيل (meta data and current playback position)
-                player.on('loadeddata', () => {
+                videoJsPlayerInstance.on('loadeddata', () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none'; // إخفاء مؤشر التحميل
                         console.log('[Video Player] Loading spinner hidden (video loadeddata).');
@@ -311,8 +319,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 // حدث عند حدوث خطأ في الفيديو
-                player.on('error', (e) => {
-                    console.error('[Video.js] Player Error:', player.error());
+                videoJsPlayerInstance.on('error', (e) => {
+                    const error = videoJsPlayerInstance.error();
+                    console.error('[Video.js] Player Error:', error ? error.message : 'Unknown error', error);
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none';
                     }
@@ -321,8 +330,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlay.style.display = 'flex'; // الأوفرلاي يظل مرئيًا حتى لو حدث خطأ
                         videoOverlay.style.pointerEvents = 'auto';
                     }
-                    // يمكنك هنا عرض رسالة خطأ للمستخدم داخل مشغل الفيديو أو في واجهة المستخدم
-                    // مثال: player.el().querySelector('.vjs-error-display .vjs-modal-dialog-content').textContent = 'عذراً، لم نتمكن من تحميل الفيديو.';
+                    // إضافة رسالة خطأ للمستخدم داخل مشغل الفيديو
+                    const errorDisplay = videoJsPlayerInstance.el().querySelector('.vjs-error-display');
+                    if (errorDisplay) {
+                        errorDisplay.style.display = 'block'; // تأكد من إظهار رسالة الخطأ الافتراضية لـ Video.js
+                        errorDisplay.textContent = `عذراً، لم نتمكن من تحميل الفيديو. (${error ? error.code : ''}) تأكد من أن الرابط مباشر ويعمل.`;
+                    } else {
+                        console.warn('[Video.js] Could not find default error display element.');
+                    }
                 });
                 console.log(`[Video.js] Player initialized with source: ${movie.embed_url}`);
             }
@@ -479,9 +494,10 @@ document.addEventListener('DOMContentLoaded', () => {
             videoLoadingSpinner.style.display = 'none';
         }
         // تدمير مشغل Video.js عند العودة للصفحة الرئيسية
-        if (moviePlayer && videojs.getPlayers()[moviePlayer.id]) {
-            videojs(moviePlayer.id).dispose(); // تدمير المشغل لتحرير الموارد
-            console.log('[Video.js] Player disposed on home page.');
+        if (videoJsPlayerInstance) {
+            console.log('[Video.js] Disposing player on home page navigation.');
+            videoJsPlayerInstance.dispose();
+            videoJsPlayerInstance = null; // إزالة المرجع بعد التدمير
         }
         currentDetailedMovie = null;
 
@@ -597,7 +613,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (adOpened) {
                 // الحل لضمان عدم توقف الفيديو:
                 // 1. إخفاء طبقة الأوفرلاي تمامًا عند فتح الإعلان.
-                // هذا يضمن أن أي تفاعلات لاحقة ستمر مباشرة إلى المشغل (مشغل الفيديو).
                 videoOverlay.style.display = 'none';
                 console.log(`[Video Overlay] Hidden temporarily for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
 
@@ -606,11 +621,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // 3. تشغيل الفيديو باستخدام Video.js API
                 // تأكد أن player موجود قبل محاولة التشغيل
-                const player = videojs.getPlayers()[moviePlayer.id];
-                if (player && player.paused()) {
-                    player.play();
+                if (videoJsPlayerInstance && videoJsPlayerInstance.paused()) {
+                    videoJsPlayerInstance.play();
                     console.log('[Video.js] Player started playing after overlay click.');
-                } else if (player) {
+                } else if (videoJsPlayerInstance) {
                     console.log('[Video.js] Player was already playing or ended, no need to play.');
                 } else {
                     console.warn('[Video.js] Player instance not found when trying to play after overlay click.');
@@ -618,11 +632,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // 4. إعادة إظهار الأوفرلاي بعد انتهاء فترة التهدئة إذا كان الفيديو متوقفاً أو انتهى
                 setTimeout(() => {
-                    const currentPlayer = videojs.getPlayers()[moviePlayer.id];
-                    if (currentPlayer && (currentPlayer.paused() || currentPlayer.ended())) {
+                    if (videoJsPlayerInstance && (videoJsPlayerInstance.paused() || videoJsPlayerInstance.ended())) {
                         videoOverlay.style.display = 'flex'; // أعدها 'flex' لتوسيط الـ spinner بشكل صحيح
                         console.log('[Video Overlay] Displayed again after cooldown (video is paused/ended).');
-                    } else if (currentPlayer) {
+                    } else if (videoJsPlayerInstance) {
                         console.log('[Video Overlay] Not displayed after cooldown because video is still playing.');
                     } else {
                         console.log('[Video Overlay] Player no longer exists, not displaying overlay after cooldown.');
