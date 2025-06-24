@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 2. Adsterra Configuration (لم يتم المساس بها) ---
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes
-    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 8 * 1000; // 8 seconds (تم زيادة المدة لفرصة أفضل للإعلان)
+    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 2 * 1000; // 8 seconds (تم زيادة المدة لفرصة أفضل للإعلان)
 
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoOverlay = 0;
