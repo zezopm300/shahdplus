@@ -1,4 +1,4 @@
-/* الأكواد الأساسية للصفحة والتصميم الاحترافي الجديد - "Galactic Noir v3.0 - Final Polish" */
+/* الأكواد الأساسية للصفحة والتصميم الاحترافي الجديد - "Galactic Noir v3.1 - Syntax Reviewed" */
 :root {
     /* لوحة ألوان "Galactic Noir" النهائية - احترافية وفخمة للغاية */
     --dark-color: #03060B; /* Deep Space Black - أسود كوني عميق جداً */
@@ -36,44 +36,45 @@
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
-    will-change: transform, opacity, box-shadow, background, color;
-    outline: none;
+    /* will-change: تحسين أداء الرسوم المتحركة. يمكن إزالته إذا لم تلاحظ تحسينًا ملحوظًا أو سبّب مشاكل */
+    will-change: transform, opacity, box-shadow, background, color; 
+    outline: none; /* إزالة الخطوط العريضة حول العناصر عند التركيز عليها */
 }
 
 html {
     font-size: 16px; /* أساسي 16px */
-    scroll-behavior: smooth;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth; /* تمرير ناعم للصفحة */
+    -webkit-font-smoothing: antialiased; /* تحسين تنعيم الخطوط لـ WebKit browsers */
+    -moz-osx-font-smoothing: grayscale; /* تحسين تنعيم الخطوط لـ Firefox */
 }
 
 body {
     font-family: var(--font-family-arabic);
     background: radial-gradient(at 20% 80%, var(--gradient-start-bg) 0%, var(--gradient-end-bg) 70%),
                 radial-gradient(at 80% 20%, var(--gradient-end-bg) 0%, var(--dark-color) 70%);
-    background-attachment: fixed;
+    background-attachment: fixed; /* تثبيت الخلفية عند التمرير */
     color: var(--text-color);
-    line-height: 1.5;
-    direction: rtl;
-    text-align: right;
-    overflow-x: hidden;
-    min-height: 100vh;
+    line-height: 1.5; /* تباعد الأسطر */
+    direction: rtl; /* اتجاه النص من اليمين لليسار */
+    text-align: right; /* محاذاة النص لليمين */
+    overflow-x: hidden; /* إخفاء شريط التمرير الأفقي لمنع مشاكل التصميم */
+    min-height: 100vh; /* ضمان أن الجسم يملأ ارتفاع الشاشة بالكامل */
     font-size: 1rem; /* 1rem = 16px */
     position: relative;
 }
 
 /* شريط التمرير المخصص - تصميم احترافي وناعم */
 body::-webkit-scrollbar {
-    width: 8px;
+    width: 8px; /* عرض شريط التمرير */
 }
 
 body::-webkit-scrollbar-track {
-    background: var(--dark-color);
+    background: var(--dark-color); /* خلفية المسار */
     border-radius: 5px;
 }
 
 body::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
+    background: var(--primary-color); /* لون مقبض التمرير */
     border-radius: 5px;
     border: 1px solid var(--dark-color);
 }
@@ -93,10 +94,10 @@ body::before {
     height: 100%;
     background-image: radial-gradient(var(--text-color) 0.4px, transparent 0.4px),
                       radial-gradient(var(--text-muted) 0.2px, transparent 0.2px);
-    background-size: 160px 160px, 90px 90px;
+    background-size: 160px 160px, 90px 90px; /* حجم النجوم */
     opacity: 0.025; /* خفيف جداً وغير مزعج */
-    z-index: -1;
-    animation: star-field 80s linear infinite;
+    z-index: -1; /* وضعه خلف المحتوى */
+    animation: star-field 80s linear infinite; /* حركة النجوم */
 }
 @keyframes star-field {
     from { background-position: 0 0; }
@@ -107,7 +108,7 @@ body::before {
     width: 95vw;
     max-width: 1250px;
     margin: auto;
-    overflow: hidden;
+    overflow: hidden; /* لمنع تجاوز المحتوى للعرض */
     padding: 0 0.7rem;
 }
 
@@ -144,7 +145,7 @@ a:hover {
     overflow: hidden;
     font-weight: 700;
     border: 1px solid transparent;
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px); /* تأثير الضبابية */
 }
 
 .btn:hover {
@@ -189,7 +190,7 @@ a:hover {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
-    align-items: center; /* التأكيد على align-items: center; */
+    align-items: center; 
     gap: 0.7rem;
 }
 
@@ -205,12 +206,11 @@ a:hover {
     text-transform: uppercase;
     transition: all var(--transition-speed) ease-in-out;
     position: relative;
-    /* **التعديل هنا: لجعل النص أبيض بالكامل** */
-    background: none; /* إزالة الخلفية المتدرجة */
-    -webkit-background-clip: unset; /* إلغاء خاصية background-clip */
-    background-clip: unset; /* إلغاء خاصية background-clip */
-    color: var(--text-color); /* تحديد اللون الأبيض من متغير CSS */
-    -webkit-text-fill-color: var(--text-color); /* للويب كيت براوزرز */
+    background: none; 
+    -webkit-background-clip: unset; 
+    background-clip: unset; 
+    color: var(--text-color); 
+    -webkit-text-fill-color: var(--text-color); 
 
     text-shadow:
         0 0 8px rgba(0, 229, 255, 0.3),
@@ -267,14 +267,14 @@ a:hover {
     flex-grow: 1;
     display: flex;
     justify-content: flex-end;
-    align-items: center; /* التأكيد على align-items: center; */
+    align-items: center; 
 }
 
 .main-nav ul {
     list-style: none;
     display: flex;
     flex-direction: row;
-    align-items: center; /* التأكيد على align-items: center; */
+    align-items: center; 
     padding: 0;
     margin: 0;
 }
@@ -554,7 +554,7 @@ a:hover {
     height: clamp(160px, 14vw, 220px);
     object-fit: cover;
     display: block;
-    border-bottom: 1% solid var(--primary-color);
+    border-bottom: 1px solid var(--primary-color); /* Fixed typo 1% to 1px */
     transition: transform var(--transition-speed) ease;
     flex-shrink: 0;
 }
@@ -663,8 +663,7 @@ a:hover {
     position: relative;
     width: 100%;
     max-width: 800px; /* عرض معقول للكمبيوتر */
-    height: 450px; /* **عاد الارتفاع الثابت للكمبيوتر** */
-    /* إزالة padding-bottom من هنا ليعمل الارتفاع الثابت */
+    height: 450px; /* الارتفاع الثابت للكمبيوتر */
     margin: 0 auto 2.5vw auto; /* ضبط الهوامش ليكون في المنتصف وإزالة أي فراغات */
     background-color: #000;
     border-radius: var(--border-radius-base);
@@ -730,15 +729,15 @@ a:hover {
 }
 
 
-/* أكواد الإعلانات المتعلقة بالـ overlay في الفيديو (لم يتم المساس بها) */
+/* أكواد الإعلانات المتعلقة بالـ overlay في الفيديو (تم تعديلها) */
 .video-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
+    background-color: rgba(0, 0, 0, 0.4); /* Make it slightly visible as a clickable area */
+    display: flex; /* Always display it initially, JS will hide on play */
     justify-content: center;
     align-items: center;
     cursor: pointer;
@@ -748,21 +747,12 @@ a:hover {
     transition: opacity 0.3s ease;
 }
 
-.video-overlay.hidden {
+.video-overlay.hidden { /* This class can be used by JS to fully hide it */
     opacity: 0;
     pointer-events: none;
 }
 
-.video-overlay p {
-    color: var(--text-color);
-    font-size: clamp(1rem, 1.8vw, 1.3rem);
-    text-align: center;
-    font-weight: bold;
-    text-shadow: 0 0 5px rgba(0,0,0,0.8);
-    padding: 15px;
-    background: rgba(0,0,0,0.6);
-    border-radius: var(--border-radius-base);
-}
+/* .video-overlay p { -- REMOVED AS REQUESTED -- } */
 
 .video-loading-spinner {
     border: 4px solid rgba(255, 255, 255, 0.15);
@@ -771,7 +761,7 @@ a:hover {
     width: 40px;
     height: 40px;
     animation: spin 0.4s linear infinite;
-    display: none;
+    display: none; /* Hidden by default, JS will show when buffering */
     z-index: 60;
     filter: drop-shadow(0 0 6px var(--accent-color));
 }
@@ -1081,20 +1071,12 @@ a:hover {
 
     /* الفيديو في التابلت: نستخدم Aspect Ratio Box */
     .video-player-wrapper {
-        max-width: 100%; /* تظل 100% لتملأ العرض المتاح */
-        height: 0; /* **إلغاء الارتفاع الثابت هنا** */
-        padding-bottom: 56.25%; /* **تحديد الارتفاع بنسبة 16:9 للعرض** */
+        max-width: 100%; 
+        height: 0; 
+        padding-bottom: 56.25%; /* تحديد الارتفاع بنسبة 16:9 للعرض */
         margin-bottom: 4vw;
     }
-    /*
-    .video-js {
-        object-fit: cover;
-    }
-    ** ملاحظة: object-fit: cover; في هذا النطاق قد لا تكون ضرورية إذا كانت في النطاق العام،
-    لكن تركها هنا يضمن أن الفيديو يملأ الحاوية 100% بقطع الأطراف إن لزم الأمر
-    بعد أن أصبح للحاوية نسبة أبعاد صحيحة.
-    */
-
+    
     .movie-info p {
         margin-bottom: 0.9rem;
         font-size: clamp(0.9rem, 1.8vw, 1.05rem);
@@ -1245,19 +1227,11 @@ a:hover {
     }
     /* الفيديو في الموبايل الصغير: نستخدم Aspect Ratio Box */
     .video-player-wrapper {
-        height: 0; /* **إلغاء الارتفاع الثابت هنا** */
-        padding-bottom: 56.25%; /* **تحديد الارتفاع بنسبة 16:9 للعرض** */
+        height: 0; 
+        padding-bottom: 56.25%; /* تحديد الارتفاع بنسبة 16:9 للعرض */
         margin-bottom: 3.5vw;
     }
-    /*
-    .video-js {
-        object-fit: cover;
-    }
-    ** ملاحظة: object-fit: cover; في هذا النطاق قد لا تكون ضرورية إذا كانت في النطاق العام،
-    لكن تركها هنا يضمن أن الفيديو يملأ الحاوية 100% بقطع الأطراف إن لزم الأمر
-    بعد أن أصبح للحاوية نسبة أبعاد صحيحة.
-    */
-
+    
     .movie-info p {
         font-size: clamp(0.85rem, 2.2vw, 1rem);
         margin-bottom: 0.9rem;
