@@ -14,12 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
 
-    // References for video player elements
-    let moviePlayer = document.getElementById('movie-player'); 
-    // لم نعد نحتاج لهذه المراجع بعد إزالة العناصر من HTML
-    // const moviePlayerThumbnail = document.getElementById('movie-player-thumbnail');
-    // const playButtonOverlay = document.getElementById('play-button-overlay');
-    // const customPlayButton = document.getElementById('custom-play-button');
+    // مرجع لمشغل الفيديو Video.js
+    let videoJsPlayerInstance = null; // هنستخدم ده عشان نخزن مشغل Video.js
+
+    // العناصر اللي ما زالت موجودة في HTML ومحتاجينها
+    const videoElement = document.getElementById('my-video'); // عنصر الـ <video> الجديد
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
     const videoOverlay = document.getElementById('video-overlay'); // Adsterra overlay
 
@@ -36,13 +35,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
 
     // --- 1.1. Critical DOM Element Verification ---
-    // تم إصلاح هذا القسم بإزالة المراجع التي لم تعد موجودة في HTML
+    // تم تحديث هذا القسم لإزالة المراجع القديمة وإضافة مرجع Video.js
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
         '#movie-details-section': movieDetailsSection,
         '#hero-section': heroSection,
-        '#movie-player': moviePlayer, 
+        '#my-video': videoElement, // تأكدنا من وجود عنصر Video.js
         '#video-loading-spinner': videoLoadingSpinner,
         '#video-overlay': videoOverlay,
         '#suggested-movie-grid': suggestedMovieGrid,
@@ -73,35 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoOverlay = 0;
 
-    // --- 3. Movie Data ---
-    let moviesData = [];
-    let moviesDataForPagination = [];
-    let currentDetailedMovie = null;
-
-    // --- 3.1. Fetch Movie Data from JSON ---
-    async function fetchMoviesData() {
-        try {
-            const response = await fetch('movies.json');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            moviesData = await response.json();
-            console.log('✅ Movie data loaded successfully from movies.json', moviesData);
-            initialPageLoadLogic(); // بدء منطق التحميل الأولي بعد جلب البيانات
-        } catch (error) {
-            console.error('❌ Failed to load movie data:', error);
-            if (movieGrid) {
-                movieGrid.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 50px;">عذرًا، لم نتمكن من تحميل بيانات الأفلام. يرجى المحاولة مرة أخرى لاحقًا.</p>';
-            }
-            if (sectionTitleElement) {
-                sectionTitleElement.textContent = 'خطأ في تحميل الأفلام';
-            }
-        }
-    }
-
-    // --- 4. Functions ---
-
-    // دالة لفتح رابط إعلان Adsterra مع نظام التهدئة
+    // دالة لفتح رابط إعلان Adsterra مع نظام التهدئة (لم تتغير)
     function openAdLink(cooldownDuration, type) {
         let lastClickTime;
         let setLastClickTime;
@@ -109,11 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type === 'movieCard') {
             lastClickTime = lastDirectLinkClickTimeMovieCard;
             setLastClickTime = (time) => lastDirectLinkClickTimeMovieCard = time;
-        } else if (type === 'videoOverlay') {
+        } else if (type === 'videoOverlay') { 
             lastClickTime = lastDirectLinkClickTimeVideoOverlay;
             setLastClickTime = (time) => lastDirectLinkClickTimeVideoOverlay = time;
         } else if (type === 'movieDetailsPoster') {
-            lastClickTime = lastDirectLinkClickTimeMovieCard; // استخدام تهدئة بطاقة الفيلم للملصق أيضًا
+            lastClickTime = lastDirectLinkClickTimeMovieCard;
             setLastClickTime = (time) => lastDirectLinkClickTimeMovieCard = time;
         } else {
             console.error('Invalid ad type provided for openAdLink:', type);
@@ -139,7 +110,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // إنشاء بطاقة الفيلم لعرضها في الشبكة
+    // --- 3. Movie Data (لم تتغير) ---
+    let moviesData = [];
+    let moviesDataForPagination = [];
+    let currentDetailedMovie = null;
+
+    // --- 3.1. Fetch Movie Data from JSON (لم تتغير) ---
+    async function fetchMoviesData() {
+        try {
+            const response = await fetch('movies.json');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            moviesData = await response.json();
+            console.log('✅ Movie data loaded successfully from movies.json', moviesData);
+            initialPageLoadLogic(); // بدء منطق التحميل الأولي بعد جلب البيانات
+        } catch (error) {
+            console.error('❌ Failed to load movie data:', error);
+            if (movieGrid) {
+                movieGrid.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 50px;">عذرًا، لم نتمكن من تحميل بيانات الأفلام. يرجى المحاولة مرة أخرى لاحقًا.</p>';
+            }
+            if (sectionTitleElement) {
+                sectionTitleElement.textContent = 'خطأ في تحميل الأفلام';
+            }
+        }
+    }
+
+    // --- 4. Functions ---
+
+    // إنشاء بطاقة الفيلم لعرضها في الشبكة (لم تتغير)
     function createMovieCard(movie) {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
@@ -154,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return movieCard;
     }
 
-    // تهيئة خاصية Lazy Load للصور لتحسين أداء التحميل الأولي
+    // تهيئة خاصية Lazy Load للصور لتحسين أداء التحميل الأولي (لم تتغير)
     function initializeLazyLoad() {
         if ('IntersectionObserver' in window) {
             let lazyLoadImages = document.querySelectorAll('.lazyload');
@@ -181,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('🖼️ [Lazy Load] Initialized IntersectionObserver for images.');
     }
 
-    // عرض الأفلام في الشبكة المستهدفة
+    // عرض الأفلام في الشبكة المستهدفة (لم تتغير)
     function displayMovies(moviesToDisplay, targetGridElement) {
         if (!targetGridElement) {
             console.error('❌ displayMovies: Target grid element is null or undefined.');
@@ -203,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeLazyLoad();
     }
 
-    // تقسيم الأفلام إلى صفحات (Pagination)
+    // تقسيم الأفلام إلى صفحات (Pagination) (لم تتغير)
     function paginateMovies(moviesArray, page) {
         const startIndex = (page - 1) * moviesPerPage;
         const endIndex = startIndex + moviesPerPage;
@@ -214,14 +213,14 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`➡️ [Pagination] Displaying page ${page}. Movies from index ${startIndex} to ${Math.min(endIndex, moviesArray.length)-1}.`);
     }
 
-    // تحديث حالة أزرار التنقل بين الصفحات
+    // تحديث حالة أزرار التنقل بين الصفحات (لم تتغير)
     function updatePaginationButtons(totalMovies) {
         if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
         if (nextPageBtn) nextPageBtn.disabled = currentPage * moviesPerPage >= totalMovies;
         console.log(`🔄 [Pagination] Buttons updated. Current page: ${currentPage}, Total Movies: ${totalMovies}`);
     }
 
-    // تنفيذ عملية البحث عن الأفلام
+    // تنفيذ عملية البحث عن الأفلام (لم تتغير)
     function performSearch() {
         const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
         let filteredMovies = [];
@@ -248,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
         paginateMovies(moviesDataForPagination, currentPage);
     }
 
-    // --- هذا هو الجزء المحسّن الخاص بمشغل الفيديو لحل مشكلة التقطيع مع التشغيل التلقائي ---
+    // --- هذا هو الجزء الأساسي: تهيئة مشغل Video.js ---
     function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
         const movie = moviesData.find(m => m.id === movieId);
@@ -282,37 +281,70 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
-            // --- منطق مشغل الفيديو للتشغيل التلقائي ---
-            if (moviePlayer && videoLoadingSpinner && videoOverlay) {
-                const oldPlayerParent = moviePlayer.parentNode;
-                if (oldPlayerParent) {
-                    // 1. إزالة الـ iframe القديم بالكامل لضمان إعادة تعيين حالة المتصفح المتعلقة به
-                    oldPlayerParent.removeChild(moviePlayer);
-                    console.log('[Video Player] Old iframe removed for full reset.');
+            // --- منطق تهيئة مشغل Video.js ---
+            if (videoElement) {
+                // تدمير أي مشغل Video.js سابق موجود لضمان بداية نظيفة
+                if (videoJsPlayerInstance) {
+                    videoJsPlayerInstance.dispose();
+                    console.log('[Video.js] Previous player instance disposed.');
                 }
                 
-                // 2. إعادة إنشاء iframe جديد تمامًا لضمان بيئة نظيفة وجديدة
-                const newPlayer = document.createElement('iframe');
-                newPlayer.id = 'movie-player'; // الحفاظ على الـ ID لـ CSS و JS references
-                newPlayer.setAttribute('frameborder', '0');
-                newPlayer.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
-                newPlayer.setAttribute('allowfullscreen', '');
-                newPlayer.style.width = '100%';
-                newPlayer.style.height = '100%';
-                newPlayer.style.opacity = '0'; // إخفاء مؤقتًا حتى يبدأ التحميل بشكل مرئي
-                newPlayer.style.transition = 'opacity 0.5s ease-in-out'; // إضافة انتقال سلس
+                // إخفاء الـ video element مبدئيًا وعرض السبينر والـ overlay
+                videoElement.style.opacity = '0'; // إخفاء المشغل مؤقتاً
+                videoLoadingSpinner.style.display = 'block'; // إظهار السبينر
+                videoOverlay.classList.remove('inactive'); // تفعيل الـ overlay للإعلانات
+                videoOverlay.style.display = 'block';
+                videoOverlay.style.pointerEvents = 'auto'; // تفعيل النقر على الـ overlay للإعلان
 
-                // 3. إعادة إضافة الـ iframe الجديد إلى الـ DOM
-                if (oldPlayerParent) {
-                    oldPlayerParent.appendChild(newPlayer);
-                    moviePlayer = newPlayer; // تحديث مرجع moviePlayer ليشير إلى الـ iframe الجديد
-                    console.log('[Video Player] Fresh iframe created and added to DOM.');
-                } else {
-                    console.error('❌ [Video Player] Parent of moviePlayer not found after removal. Cannot re-add iframe.');
-                    return;
-                }
+                // إعداد خيارات مشغل الفيديو
+                const playerOptions = {
+                    autoplay: true, // التشغيل التلقائي
+                    preload: 'auto', // التحميل المسبق
+                    controls: true, // إظهار عناصر التحكم
+                    responsive: true, // استجابة لحجم الشاشة
+                    fluid: true, // حجم مرن
+                    sources: [{
+                        src: movie.embed_url, // رابط الفيديو من movies.json
+                        // هذا النوع يجب أن يتطابق مع نوع الفيديو الذي يوفره مزودك (مثلاً HLS أو MP4)
+                        type: 'application/x-mpegURL' // مثال: لو مزودك بيوفر HLS
+                        // أو 'video/mp4' لو بيوفر MP4 مباشر
+                    }],
+                    poster: movie.poster // بوستر الفيديو
+                };
 
-                // 4. إزالة أي روابط preconnect/prefetch مضافة مسبقًا بشكل قاطع
+                // تهيئة مشغل Video.js
+                videoJsPlayerInstance = videojs(videoElement, playerOptions, function() {
+                    console.log('[Video.js] Player initialized.');
+                    
+                    // عند انتهاء تهيئة المشغل وبدء تحميل البيانات
+                    this.on('loadeddata', function() {
+                        console.log('[Video.js] Video data loaded.');
+                        videoLoadingSpinner.style.display = 'none';
+                        videoElement.style.opacity = '1'; // إظهار المشغل بسلاسة
+                        // الـ videoOverlay سيظل مرئيًا للإعلانات فوق المشغل
+                    });
+
+                    // التعامل مع أخطاء التشغيل
+                    this.on('error', function(e) {
+                        console.error('❌ [Video.js] Player error:', this.error());
+                        videoLoadingSpinner.style.display = 'none';
+                        videoElement.style.opacity = '0'; // إخفاء المشغل في حالة الخطأ
+                        videoOverlay.style.display = 'block'; // إبقاء الـ overlay مرئيًا للإعلانات
+                        videoOverlay.style.pointerEvents = 'auto';
+                        alert('عذرًا، حدث خطأ أثناء تشغيل الفيديو. يرجى المحاولة لاحقًا.');
+                    });
+
+                    // عشان نضمن التشغيل التلقائي في بعض المتصفحات اللي بتحظرها
+                    this.play().catch(error => {
+                        console.warn('[Video.js] Autoplay was prevented:', error);
+                        // هنا ممكن تعمل أي حاجة لو المتصفح حظر التشغيل التلقائي (زي إظهار زر تشغيل يدوي)
+                        // لكن في حالتك دي، بما إننا عايزين تشغيل تلقائي، ممكن تتجاهل الرسالة دي
+                        // أو تحاول تشغل المشغل يدويا بعد فترة قصيرة
+                        // مثلاً: setTimeout(() => this.play(), 500);
+                    });
+                });
+
+                // إزالة أي روابط preconnect/prefetch قديمة
                 document.querySelectorAll('link[rel="preconnect"][data-video-url], link[rel="prefetch"][data-video-url]').forEach(link => {
                     if (link.parentNode) {
                         link.parentNode.removeChild(link);
@@ -320,14 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 console.log('[Preload] Removed all previous preconnect/prefetch links.');
 
-                // 5. إظهار السبينر وطبقة الإعلانات (Overlay) فوراً
-                videoLoadingSpinner.style.display = 'block'; // أظهر السبينر
-                videoOverlay.classList.remove('inactive'); // تأكد إن الـ overlay مش inactive
-                videoOverlay.style.display = 'block'; // أظهر الـ overlay
-                videoOverlay.style.pointerEvents = 'auto'; // خليه قابل للنقر (للإعلانات)
-                console.log('[Video Player] Loading spinner and ad overlay shown.');
-
-                // 6. إعداد تلميحات التحميل المسبق (Preconnect و Prefetch) للفيديو الجديد فقط
+                // إعداد تلميحات التحميل المسبق (Preconnect و Prefetch)
+                // يجب أن تتطابق هذه الروابط مع مزود الفيديو الجديد
                 let currentPreconnectLink = null;
                 let currentPrefetchLink = null;
                 try {
@@ -343,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     currentPrefetchLink = document.createElement('link');
                     currentPrefetchLink.rel = 'prefetch';
                     currentPrefetchLink.href = movie.embed_url;
-                    currentPrefetchLink.as = 'document';
+                    currentPrefetchLink.as = 'video'; // أو 'document'
                     currentPrefetchLink.setAttribute('data-video-url', movie.embed_url);
                     document.head.appendChild(currentPrefetchLink);
                     console.log(`[Preload] Added prefetch for ${movie.embed_url} for current movie.`);
@@ -351,41 +377,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.warn('⚠️ [Preload] Could not add prefetch/preconnect links (invalid URL or other error):', e);
                 }
 
-                // 7. التأخير الأقصى قبل تعيين رابط الفيديو
-                setTimeout(() => {
-                    moviePlayer.src = movie.embed_url; // تعيين رابط الفيديو لـ iframe
-                    moviePlayer.style.opacity = '1'; // إظهار الـ iframe بسلاسة
-                    console.log(`[Video Player] Iframe src set to: ${movie.embed_url}`);
-
-                    // 8. مستمعات الأحداث لـ iframe الجديد
-                    moviePlayer.onload = () => {
-                        videoLoadingSpinner.style.display = 'none'; // إخفاء السبينر بعد التحميل
-                        // الـ videoOverlay هيظل مرئيًا للإعلانات فوق الفيديو
-                        console.log('[Video Player] Iframe loaded successfully, spinner hidden.');
-
-                        // إزالة روابط preconnect/prefetch بعد تحميل الـ iframe بالكامل
-                        if (currentPreconnectLink && currentPreconnectLink.parentNode) currentPreconnectLink.parentNode.removeChild(currentPreconnectLink);
-                        if (currentPrefetchLink && currentPrefetchLink.parentNode) currentPrefetchLink.parentNode.removeChild(currentPrefetchLink);
-                        console.log('[Preload] Removed preconnect/prefetch links after iframe loaded.');
-                    };
-
-                    moviePlayer.onerror = () => {
-                        // في حالة حدوث خطأ في التحميل
-                        videoLoadingSpinner.style.display = 'none';
-                        videoOverlay.style.display = 'block'; // الـ overlay يظل مرئيًا
-                        videoOverlay.style.pointerEvents = 'auto'; // قابل للنقر
-                        moviePlayer.style.display = 'none'; // إخفاء الـ iframe الفاشل
-                        console.error('❌ [Video Player] Iframe failed to load. Ad overlay remains active.');
-
-                        // إزالة روابط preconnect/prefetch حتى في حالة حدوث خطأ
-                        if (currentPreconnectLink && currentPreconnectLink.parentNode) currentPreconnectLink.parentNode.removeChild(currentPreconnectLink);
-                        if (currentPrefetchLink && currentPrefetchLink.parentNode) currentPrefetchLink.parentNode.removeChild(currentPrefetchLink);
-                        console.log('[Preload] Removed preconnect/prefetch links after iframe error.');
-                    };
-                }, 3000); // **التأخير الجديد والأقصى: 3000 مللي ثانية (3 ثواني)**
-
             } else {
-                console.error('❌ [Video Player] Critical player elements not found.');
+                console.error('❌ [Video.js] Video element #my-video not found in DOM.');
             }
 
             const newUrl = new URL(window.location.origin);
@@ -405,6 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // دالة لتحديث الـ Meta Tags (لم تتغير)
     function updateMetaTags(movie) {
         document.title = `${movie.title} - مشاهدة أونلاين`;
         document.querySelector('meta[name="description"]')?.setAttribute('content', movie.description);
@@ -419,6 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('📄 [SEO] Meta tags updated.');
     }
 
+    // دالة لإضافة الـ JSON-LD Schema (لم تتغير)
     function addJsonLdSchema(movie) {
         let formattedUploadDate;
         if (movie.release_date) {
@@ -496,6 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('📄 [SEO] New JSON-LD schema added/updated.');
     }
 
+    // دالة لعرض الأفلام المقترحة (لم تتغير)
     function displaySuggestedMovies(currentMovieId) {
         if (!suggestedMovieGrid) {
             console.error('❌ displaySuggestedMovies: suggestedMovieGrid element not found. Cannot display suggested movies.');
@@ -516,6 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`✨ [Suggestions] Displayed ${selected.length} suggested movies in ${suggestedMovieGrid.id}.`);
     }
 
+    // دالة للعودة للصفحة الرئيسية (تم تعديلها لإدارة Video.js)
     function showHomePage() {
         console.log('🏠 [Routing] Showing home page.');
         if (movieDetailsSection) movieDetailsSection.style.display = 'none';
@@ -530,34 +527,25 @@ document.addEventListener('DOMContentLoaded', () => {
         moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
-        // --- تنظيف حالة مشغل الفيديو عند العودة للصفحة الرئيسية ---
-        if (moviePlayer) {
-            const playerContainer = moviePlayer.parentNode;
-            if (playerContainer) {
-                // Remove the current iframe
-                playerContainer.removeChild(moviePlayer);
-                console.log('[Video Player] Old iframe removed on home page.');
-
-                // Re-create a fresh iframe to avoid potential issues on subsequent loads
-                const newPlayer = document.createElement('iframe');
-                newPlayer.id = 'movie-player';
-                newPlayer.setAttribute('frameborder', '0');
-                newPlayer.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
-                newPlayer.setAttribute('allowfullscreen', '');
-                newPlayer.style.width = '100%';
-                newPlayer.style.height = '100%';
-                playerContainer.appendChild(newPlayer);
-                moviePlayer = newPlayer; // Update reference
-                console.log('[Video Player] Fresh iframe re-created for home page.');
-            }
+        // --- تنظيف مشغل Video.js عند العودة للصفحة الرئيسية ---
+        if (videoJsPlayerInstance) {
+            videoJsPlayerInstance.dispose(); // تدمير مشغل Video.js
+            videoJsPlayerInstance = null;
+            console.log('[Video.js] Player disposed on home page.');
         }
-        if (videoLoadingSpinner) {
-            videoLoadingSpinner.style.display = 'none'; // إخفاء السبينر
+        
+        // إخفاء السبينر والـ Overlay (لو كانوا ظاهرين)
+        if (videoElement) { // تأكد من وجود عنصر الـ <video>
+            videoElement.style.opacity = '0'; // إخفاء عنصر الـ <video>
+            // إعادة تعيين الـ src عشان ميكنش فيه فيديو شغال في الخلفية لو المشغل ما تدمرش صح
+            videoElement.src = ''; 
+            videoElement.load(); // إعادة تحميل المشغل بـ src فاضي عشان يوقف أي بث
         }
+        if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
         if (videoOverlay) {
-            videoOverlay.style.display = 'none'; // إخفاء overlay الإعلانات
-            videoOverlay.style.pointerEvents = 'none'; // جعله غير قابل للنقر
-            videoOverlay.classList.remove('inactive'); // التأكد من إمكانية تنشيطه مرة أخرى
+            videoOverlay.style.display = 'none';
+            videoOverlay.style.pointerEvents = 'none';
+            videoOverlay.classList.remove('inactive');
             console.log('[Video Overlay] Hidden and inactive on home page.');
         }
         currentDetailedMovie = null;
@@ -590,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 5. Event Listeners ---
+    // --- 5. Event Listeners (لم تتغير، باستثناء ملاحظة الـ overlay) ---
     if (menuToggle && mainNav) {
         menuToggle.addEventListener('click', () => {
             mainNav.classList.toggle('nav-open');
@@ -683,7 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoOverlay.style.display = 'none';
                 console.log(`[Video Overlay] Hidden temporarily for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
 
-                e.stopPropagation(); // منع النقر من الانتشار إلى الـ iframe
+                e.stopPropagation(); // منع النقر من الانتشار إلى المشغل
 
                 setTimeout(() => {
                     videoOverlay.style.display = 'block';
@@ -693,19 +681,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         console.log('[Video Overlay] Click listener attached for ad interaction (with display toggle and cooldown).');
     }
-
-    // تم إزالة مستمع حدث playButtonOverlay لأنه لم يعد موجودًا.
-    // إذا أردت نقطة إعلانية بديلة، يمكن إضافة مستمع حدث لحاوية الفيديو نفسها:
-    // const videoPlayerContainer = document.querySelector('.video-player-container');
-    // if (videoPlayerContainer) {
-    //     videoPlayerContainer.addEventListener('click', (e) => {
-    //         // تأكد أن النقر ليس على الـ iframe نفسه، بل على الطبقة الخلفية (التي قد تكون مرئية في بعض الحالات)
-    //         if (e.target !== moviePlayer) {
-    //             console.log('🖼️ [Ad Click] Video player container clicked. Attempting to open Direct Link.');
-    //             openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'moviePlayerContainer');
-    //         }
-    //     });
-    // }
 
     // التعامل مع أزرار الرجوع/التقدم في المتصفح
     window.onpopstate = (event) => {
