@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 2. Adsterra Configuration (لم يتم المساس بها) ---
+    // تم التأكيد على عدم لمس هذه الأكواد حسب طلبك
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
 
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes
@@ -275,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // تهيئة مشغل الفيديو باستخدام Video.js
             if (moviePlayer) {
                 // تدمير أي نسخة سابقة من مشغل Video.js قبل إنشاء واحدة جديدة
-                // استخدام متغير عام (videoJsPlayerInstance) لضمان تتبع وإدارة المشغل بشكل صحيح
                 if (videoJsPlayerInstance) {
                     console.log('[Video.js] Disposing existing player instance for clean re-initialization.');
                     videoJsPlayerInstance.dispose();
@@ -311,11 +311,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log('[Video Player] Loading spinner hidden (video loadeddata).');
                     }
                     if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive');
-                        videoOverlay.style.display = 'flex'; // التأكد من أن الأوفرلاي مرئي
-                        videoOverlay.style.pointerEvents = 'auto'; // التأكد من أنه قابل للنقر
-                        console.log('[Video Overlay] Active and clickable after video loaded.');
+                        // إخفاء الأوفرلاي وإلغاء إمكانية النقر عليه بعد تحميل الفيديو مباشرة
+                        videoOverlay.style.display = 'none'; // إخفاء الأوفرلاي
+                        videoOverlay.style.pointerEvents = 'none'; // تعطيل النقر
+                        console.log('[Video Overlay] Hidden and unclickable after video loadeddata.');
                     }
+                    // محاولة التشغيل مباشرة بعد loadeddata (قد يمنعها المتصفح بدون تفاعل المستخدم)
+                    videoJsPlayerInstance.play().catch(error => {
+                        console.warn('⚠️ [Video.js] Autoplay prevented by browser:', error);
+                        // إذا تم منع التشغيل التلقائي، أظهر الأوفرلاي مرة أخرى مع مؤشر النقر
+                        if (videoOverlay) {
+                            videoOverlay.style.display = 'flex'; // أظهره مرة أخرى
+                            videoOverlay.style.pointerEvents = 'auto'; // اجعله قابل للنقر
+                            console.log('[Video Overlay] Displayed again due to autoplay prevention. Click to play.');
+                        }
+                    });
                 });
 
                 // حدث عند حدوث خطأ في الفيديو
@@ -326,9 +336,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoLoadingSpinner.style.display = 'none';
                     }
                     if (videoOverlay) {
-                        videoOverlay.classList.remove('inactive');
                         videoOverlay.style.display = 'flex'; // الأوفرلاي يظل مرئيًا حتى لو حدث خطأ
                         videoOverlay.style.pointerEvents = 'auto';
+                        // إظهار رسالة الخطأ للمستخدم على الأوفرلاي أو داخل المشغل
+                        const videoOverlayText = document.getElementById('video-overlay-text');
+                        if (videoOverlayText) {
+                            videoOverlayText.style.display = 'block';
+                            videoOverlayText.textContent = `عذراً، لم نتمكن من تشغيل الفيديو. (${error ? error.code : ''}) يرجى التأكد من أن الرابط مباشر ويعمل أو حاول لاحقاً.`;
+                        }
                     }
                     // إضافة رسالة خطأ للمستخدم داخل مشغل الفيديو
                     const errorDisplay = videoJsPlayerInstance.el().querySelector('.vjs-error-display');
@@ -617,13 +632,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[Video Overlay] Hidden temporarily for ${DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY / 1000} seconds.`);
 
                 // 2. منع انتشار حدث النقر إلى مشغل الفيديو الأساسي.
-                e.stopPropagation();
+                e.stopPropagation(); // يمنع النقر من الوصول للمشغل
 
                 // 3. تشغيل الفيديو باستخدام Video.js API
                 // تأكد أن player موجود قبل محاولة التشغيل
                 if (videoJsPlayerInstance && videoJsPlayerInstance.paused()) {
-                    videoJsPlayerInstance.play();
-                    console.log('[Video.js] Player started playing after overlay click.');
+                    videoJsPlayerInstance.play().catch(error => {
+                        console.warn('⚠️ [Video.js] Play failed after overlay click (user interaction required):', error);
+                        // إذا فشل التشغيل التلقائي حتى بعد النقر (بسبب حظر المتصفح الصارم)
+                        // ممكن نعرض رسالة للمستخدم أو نجرب حلول أخرى
+                    });
+                    console.log('[Video.js] Player attempted to play after overlay click.');
                 } else if (videoJsPlayerInstance) {
                     console.log('[Video.js] Player was already playing or ended, no need to play.');
                 } else {
@@ -631,16 +650,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // 4. إعادة إظهار الأوفرلاي بعد انتهاء فترة التهدئة إذا كان الفيديو متوقفاً أو انتهى
-                setTimeout(() => {
-                    if (videoJsPlayerInstance && (videoJsPlayerInstance.paused() || videoJsPlayerInstance.ended())) {
-                        videoOverlay.style.display = 'flex'; // أعدها 'flex' لتوسيط الـ spinner بشكل صحيح
-                        console.log('[Video Overlay] Displayed again after cooldown (video is paused/ended).');
-                    } else if (videoJsPlayerInstance) {
-                        console.log('[Video Overlay] Not displayed after cooldown because video is still playing.');
-                    } else {
-                        console.log('[Video Overlay] Player no longer exists, not displaying overlay after cooldown.');
-                    }
-                }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
+                // هذا الجزء قد يتسبب في "توقف" الفيديو إذا أعاد الأوفرلاي الظهور والفيديو لم يبدأ أو توقف.
+                // أفضل استراتيجية هي إظهار الأوفرلاي فقط عندما يكون الفيديو متوقفًا أو فيه خطأ
+                // وليس بناءً على مؤقت ثابت.
+                // تم تعديل هذا الجزء في الدالة showMovieDetails في حدث 'loadeddata' و 'error' ليكون أكثر ديناميكية.
+                // هنا نضمن فقط أن الأوفرلاي يظل مخفياً طالما أننا نحاول تشغيل الفيديو.
+            } else {
+                console.log('[Video Overlay] Ad not opened due to cooldown. Video will not attempt to play automatically.');
             }
         });
         console.log('[Video Overlay] Click listener attached for ad interaction (بكل تعديلاتك الجديدة هنا).');
