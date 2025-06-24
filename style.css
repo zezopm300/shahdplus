@@ -189,7 +189,7 @@ a:hover {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; /* التأكيد على align-items: center; */
     gap: 0.7rem;
 }
 
@@ -205,11 +205,12 @@ a:hover {
     text-transform: uppercase;
     transition: all var(--transition-speed) ease-in-out;
     position: relative;
-    background: none;
-    -webkit-background-clip: unset;
-    background-clip: unset;
-    color: var(--text-color);
-    -webkit-text-fill-color: var(--text-color);
+    /* **التعديل هنا: لجعل النص أبيض بالكامل** */
+    background: none; /* إزالة الخلفية المتدرجة */
+    -webkit-background-clip: unset; /* إلغاء خاصية background-clip */
+    background-clip: unset; /* إلغاء خاصية background-clip */
+    color: var(--text-color); /* تحديد اللون الأبيض من متغير CSS */
+    -webkit-text-fill-color: var(--text-color); /* للويب كيت براوزرز */
 
     text-shadow:
         0 0 8px rgba(0, 229, 255, 0.3),
@@ -266,14 +267,14 @@ a:hover {
     flex-grow: 1;
     display: flex;
     justify-content: flex-end;
-    align-items: center;
+    align-items: center; /* التأكيد على align-items: center; */
 }
 
 .main-nav ul {
     list-style: none;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: center; /* التأكيد على align-items: center; */
     padding: 0;
     margin: 0;
 }
@@ -662,7 +663,8 @@ a:hover {
     position: relative;
     width: 100%;
     max-width: 800px; /* عرض معقول للكمبيوتر */
-    height: 450px; /* الارتفاع الثابت للكمبيوتر */
+    height: 450px; /* **عاد الارتفاع الثابت للكمبيوتر** */
+    /* إزالة padding-bottom من هنا ليعمل الارتفاع الثابت */
     margin: 0 auto 2.5vw auto; /* ضبط الهوامش ليكون في المنتصف وإزالة أي فراغات */
     background-color: #000;
     border-radius: var(--border-radius-base);
@@ -689,7 +691,7 @@ a:hover {
     height: 100% !important;    
     margin: 0 !important;
     padding: 0 !important;
-    object-fit: cover;
+    object-fit: cover; /* لملء الحاوية بالكامل بعد أن أصبحت أبعادها صحيحة */
 }
 
 /* شريط التحكم لضمان دخوله داخل الفيديو وظهوره في الأسفل */
@@ -728,7 +730,7 @@ a:hover {
 }
 
 
-/* أكواد الإعلانات المتعلقة بالـ overlay في الفيديو */
+/* أكواد الإعلانات المتعلقة بالـ overlay في الفيديو (لم يتم المساس بها) */
 .video-overlay {
     position: absolute;
     top: 0;
@@ -1079,12 +1081,20 @@ a:hover {
 
     /* الفيديو في التابلت: نستخدم Aspect Ratio Box */
     .video-player-wrapper {
-        max-width: 100%;
-        height: 0;
-        padding-bottom: 56.25%;
+        max-width: 100%; /* تظل 100% لتملأ العرض المتاح */
+        height: 0; /* **إلغاء الارتفاع الثابت هنا** */
+        padding-bottom: 56.25%; /* **تحديد الارتفاع بنسبة 16:9 للعرض** */
         margin-bottom: 4vw;
     }
-    
+    /*
+    .video-js {
+        object-fit: cover;
+    }
+    ** ملاحظة: object-fit: cover; في هذا النطاق قد لا تكون ضرورية إذا كانت في النطاق العام،
+    لكن تركها هنا يضمن أن الفيديو يملأ الحاوية 100% بقطع الأطراف إن لزم الأمر
+    بعد أن أصبح للحاوية نسبة أبعاد صحيحة.
+    */
+
     .movie-info p {
         margin-bottom: 0.9rem;
         font-size: clamp(0.9rem, 1.8vw, 1.05rem);
@@ -1235,11 +1245,19 @@ a:hover {
     }
     /* الفيديو في الموبايل الصغير: نستخدم Aspect Ratio Box */
     .video-player-wrapper {
-        height: 0;
-        padding-bottom: 56.25%;
+        height: 0; /* **إلغاء الارتفاع الثابت هنا** */
+        padding-bottom: 56.25%; /* **تحديد الارتفاع بنسبة 16:9 للعرض** */
         margin-bottom: 3.5vw;
     }
-    
+    /*
+    .video-js {
+        object-fit: cover;
+    }
+    ** ملاحظة: object-fit: cover; في هذا النطاق قد لا تكون ضرورية إذا كانت في النطاق العام،
+    لكن تركها هنا يضمن أن الفيديو يملأ الحاوية 100% بقطع الأطراف إن لزم الأمر
+    بعد أن أصبح للحاوية نسبة أبعاد صحيحة.
+    */
+
     .movie-info p {
         font-size: clamp(0.85rem, 2.2vw, 1rem);
         margin-bottom: 0.9rem;
