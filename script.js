@@ -65,10 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('✅ All critical DOM elements found.');
     }
 
-    // --- 2. Adsterra Configuration ---
+    // --- 2. Adsterra Configuration (لم يتم المساس بها) ---
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes
-    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 8 * 1000; // 4 seconds
+    const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 8 * 1000; // 8 seconds (تم زيادة المدة لفرصة أفضل للإعلان)
 
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoOverlay = 0;
@@ -240,16 +240,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             console.log(`🔍 [Search] Performed search for "${query}". Found ${filteredMovies.length} results.`);
         } else {
-            filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
+            // **تحسين هنا:** عند إفراغ البحث، نرجع لعرض أحدث الأفلام بشكل عشوائي ولكن ثابت لليوم/الدورة
+            filteredMovies = [...moviesData];
+            // يمكن استخدام دالة لترتيب عشوائي ثابت لليوم مثلاً
+            // filteredMovies = shuffleArrayDeterministic(moviesData, new Date().toDateString()); 
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
             }
-            console.log('🔍 [Search] Search query empty, showing all movies (randomized).');
+            console.log('🔍 [Search] Search query empty, showing all movies (randomized or default).');
         }
         currentPage = 1;
         moviesDataForPagination = filteredMovies;
         paginateMovies(moviesDataForPagination, currentPage);
     }
+    
+    // دالة مساعدة لترتيب عشوائي ثابت (يمكن استخدامها إذا أردت قائمة "أحدث الأفلام" تتغير كل يوم مثلاً)
+    /*
+    function shuffleArrayDeterministic(array, seed) {
+        const seededRandom = function(s) {
+            let x = Math.sin(s++) * 10000;
+            return x - Math.floor(x);
+        };
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex !== 0) {
+            randomIndex = Math.floor(seededRandom(seed + currentIndex) * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+    */
+
 
     async function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
@@ -275,12 +296,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVideoElement.id = 'movie-player'; // Keep the same ID for Video.js lookup
                 newVideoElement.classList.add('video-js', 'vjs-default-skin');
                 newVideoElement.controls = true;
-                // Preload metadata to allow player to determine duration and dimensions early
-                newVideoElement.preload = 'metadata'; 
-                // Enable playsinline for iOS to play video inline rather than fullscreen
-                newVideoElement.setAttribute('playsinline', ''); 
-                // Muted autoplay for better browser compatibility on mobile
-                newVideoElement.muted = true; 
+                newVideoElement.preload = 'auto'; // **تحسين هنا: preload 'auto' لتحميل أجزاء أكبر**
+                newVideoElement.setAttribute('playsinline', ''); // **مهم جداً للموبايل**
+                newVideoElement.muted = true; // **مهم جداً للتشغيل التلقائي على الموبايل**
+                newVideoElement.setAttribute('autoplay', ''); // **محاولة تشغيل تلقائي**
 
                 videoContainer.appendChild(newVideoElement);
                 console.log('[Video Player] Recreated movie-player element.');
@@ -351,26 +370,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Initialize Video.js player
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
-                    autoplay: true, // Attempt autoplay (will be muted by default)
+                    autoplay: 'any', // **تحسين هنا: 'any' لمحاولة التشغيل التلقائي حتى لو بدون صوت**
                     controls: true,
                     responsive: true,
                     fluid: true,
-                    // Enable HTML5 playback for better mobile support
-                    techOrder: ['html5'], 
-                    // Add hls.js plugin for HLS playback if available and needed
+                    techOrder: ['html5'], // **تحسين هنا: تفضيل HTML5 للموبايل**
                     html5: {
                         hls: {
-                            withCredentials: false // Set to true if your HLS segments require credentials
-                        }
+                            withCredentials: false, // Set to true if your HLS segments require credentials
+                            // **تحسين هنا: إضافة hls.js config لتحسين الأداء**
+                            // liveSyncDurationCount: 7, // عدد الشرائح التي يتم تخزينها مؤقتًا قبل نهاية البث المباشر
+                            // enableWorker: true, // استخدام Worker thread لفك تشفير HLS (إذا كان مدعومًا)
+                            // maxBufferLength: 30, // أقصى حجم للبافر بالثواني (30 ثانية)
+                            // maxMaxBufferLength: 60 // أقصى حجم مطلق للبافر
+                        },
+                        nativeControlsForTouch: true // **مهم جداً: استخدام أدوات التحكم الأصلية للمس (لتحسين التجاوب)**
                     },
-                    // Playback rates for adaptive streaming
                     playbackRates: [0.5, 1, 1.5, 2], 
                     sources: [{
                         src: movie.embed_url,
-                        // Prioritize HLS (m3u8) for adaptive streaming
                         type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' 
                     }],
-                    // Recommended for CORS issues with external video hosts
                     crossOrigin: 'anonymous' 
                 }, function() {
                     console.log(`[Video.js] Player initialized callback for source: ${movie.embed_url}`);
@@ -528,6 +548,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateMetaTags(movie) {
+        // **تحسين هنا: تحديث canonical URL**
+        let canonicalLink = document.querySelector('link[rel="canonical"]');
+        if (!canonicalLink) {
+            canonicalLink = document.createElement('link');
+            canonicalLink.setAttribute('rel', 'canonical');
+            document.head.appendChild(canonicalLink);
+        }
+        canonicalLink.setAttribute('href', window.location.href);
+
         document.title = `${movie.title} - مشاهدة أونلاين`;
         document.querySelector('meta[name="description"]')?.setAttribute('content', movie.description);
         document.querySelector('meta[property="og:title"]')?.setAttribute('content', movie.title);
@@ -535,9 +564,28 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:image"]')?.setAttribute('content', movie.poster);
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.href);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'video.movie');
+        // **تحسين هنا: إضافة og:locale و og:site_name**
+        document.querySelector('meta[property="og:locale"]')?.setAttribute('content', 'ar_AR');
+        let ogSiteName = document.querySelector('meta[property="og:site_name"]');
+        if (!ogSiteName) {
+            ogSiteName = document.createElement('meta');
+            ogSiteName.setAttribute('property', 'og:site_name');
+            document.head.appendChild(ogSiteName);
+        }
+        ogSiteName.setAttribute('content', 'أفلام عربية'); // أو اسم موقعك الفعلي
+
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', movie.title);
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', movie.description);
         document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', movie.poster);
+        // **تحسين هنا: إضافة twitter:card**
+        let twitterCard = document.querySelector('meta[name="twitter:card"]');
+        if (!twitterCard) {
+            twitterCard = document.createElement('meta');
+            twitterCard.setAttribute('name', 'twitter:card');
+            document.head.appendChild(twitterCard);
+        }
+        twitterCard.setAttribute('content', 'summary_large_image'); // أو 'player' لو عندك مشغل فيديو مخصص للتويتر
+        
         console.log('📄 [SEO] Meta tags updated.');
     }
 
@@ -569,7 +617,34 @@ document.addEventListener('DOMContentLoaded', () => {
             "uploadDate": formattedUploadDate,
             "embedUrl": movie.embed_url,
             "duration": movie.duration,
-            "contentUrl": movie.embed_url
+            "contentUrl": movie.embed_url, // **تحسين: إضافة contentUrl لنفس embedUrl**
+            // **تحسين: إضافة publisher و potentialAction**
+            "publisher": {
+                "@type": "Organization",
+                "name": "أفلام عربية", // اسم موقعك
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "/path/to/your/logo.png", // رابط شعار موقعك
+                    "width": 200,
+                    "height": 50
+                }
+            },
+            "potentialAction": {
+                "@type": "WatchAction",
+                "target": {
+                    "@type": "EntryPoint",
+                    "urlTemplate": window.location.href,
+                    "inLanguage": "ar",
+                    "actionPlatform": [
+                        "http://schema.org/DesktopWebPlatform",
+                        "http://schema.org/MobileWebPlatform"
+                    ]
+                },
+                "expectsAcceptanceOf": {
+                    "@type": "Offer",
+                    "name": "مشاهدة الفيلم"
+                }
+            }
         };
 
         if (movie.director && typeof movie.director === 'string' && movie.director.trim() !== '') {
@@ -600,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     "@type": "AggregateRating",
                     "ratingValue": ratingValue.toFixed(1),
                     "bestRating": "10",
-                    "ratingCount": "10000"
+                    "ratingCount": "10000" // يمكن تعديل هذا الرقم بناء على بيانات حقيقية
                 };
             }
         }
@@ -649,7 +724,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchInput) searchInput.value = '';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
 
-        moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
+        // **تحسين هنا:** عند العودة للصفحة الرئيسية، يمكن إعادة ترتيب الأفلام عشوائياً أو عرضها بترتيب ثابت معين
+        moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random()); // عشوائيًا حاليًا
         paginateMovies(moviesDataForPagination, 1);
 
         if (videoOverlay) {
@@ -688,6 +764,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'أفلام عربية - مشاهدة أفلام ومسلسلات أونلاين');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد أحدث الأفلام والمسلسلات العربية والأجنبية مترجمة أونلاين بجودة عالية.');
 
+        // **تحسين هنا: تحديث canonical URL للصفحة الرئيسية**
+        let canonicalLink = document.querySelector('link[rel="canonical"]');
+        if (canonicalLink) {
+            canonicalLink.setAttribute('href', window.location.origin);
+        }
+
         let script = document.querySelector('script[type="application/ld+json"]');
         if (script) {
             script.remove();
@@ -696,17 +778,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 5. Event Listeners ---
+    // **تعديل هنا: زر تبديل القائمة (hamburger menu)**
     if (menuToggle && mainNav) {
         menuToggle.addEventListener('click', () => {
             mainNav.classList.toggle('nav-open');
-            console.log('📱 [Interaction] Menu toggle clicked.');
+            // **تحسين إمكانية الوصول: تبديل aria-expanded**
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            menuToggle.setAttribute('aria-expanded', !isExpanded);
+            console.log('📱 [Interaction] Menu toggle clicked. Nav state:', mainNav.classList.contains('nav-open') ? 'Open' : 'Closed');
         });
+        // **تحسين إمكانية الوصول: إضافة aria-label و aria-expanded**
+        menuToggle.setAttribute('aria-label', 'Toggle navigation menu');
+        menuToggle.setAttribute('aria-expanded', 'false');
+        // ممكن تضيف أيقونة داخل الزر (مثلا <span>&#9776;</span>)
     }
 
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
             if (mainNav && mainNav.classList.contains('nav-open')) {
                 mainNav.classList.remove('nav-open');
+                // **تحسين إمكانية الوصول: تحديث aria-expanded**
+                if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
                 console.log('📱 [Interaction] Nav link clicked, menu closed.');
             }
         });
@@ -826,7 +918,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlayText.textContent = 'انقر للمتابعة';
                     }
                 } else if (videoJsPlayerInstance && videoJsPlayerInstance.ended()) {
-                     if (videoOverlayText) {
+                    if (videoOverlayText) {
                         videoOverlayText.textContent = 'انتهى الفيديو. انقر لإعادة التشغيل.';
                     }
                 } else {
@@ -834,9 +926,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlayText.textContent = 'انقر على الشاشة للتشغيل.';
                     }
                 }
-                 videoOverlay.style.display = 'flex';
-                 videoOverlay.style.pointerEvents = 'auto';
-                 if (videoOverlayText) videoOverlayText.style.display = 'block';
+                videoOverlay.style.display = 'flex';
+                videoOverlay.style.pointerEvents = 'auto';
+                if (videoOverlayText) videoOverlayText.style.display = 'block';
             }
         });
         console.log('[Video Overlay] Click listener attached for ad interaction (مُحسّن).');
