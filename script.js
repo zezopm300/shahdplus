@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
-    const moviePlayer = document.getElementById('movie-player'); 
+    const moviePlayer = document.getElementById('movie-player');
     const videoOverlay = document.getElementById('video-overlay');
     const homeLogoLink = document.getElementById('home-logo-link');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('movie-details-description').textContent = movie.description;
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
             document.getElementById('movie-details-release-date').textContent = releaseDate;
-            
+
             document.getElementById('movie-details-genre').textContent = movie.genre || 'غير محدد';
             document.getElementById('movie-details-director').textContent = movie.director || 'غير متوفر';
             document.getElementById('movie-details-cast').textContent = Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast || 'غير متوفر';
@@ -298,10 +298,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     sources: [{
                         src: movie.embed_url, // URL الفيديو الفعلي
                         // يمكنك محاولة تحديد النوع ديناميكياً إذا كان الرابط لا ينتهي بـ .mp4
-                        type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' 
+                        type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
                     }],
                     // خيارات إضافية إذا لزم الأمر
-                    // preferFullWindowOnFullScreenChange: true, 
+                    // preferFullWindowOnFullScreenChange: true,
                 });
 
                 // حدث عندما يكون الفيديو جاهزًا للتشغيل (meta data and current playback position)
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             }
         }
-        
+
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
             oldScript.remove();
@@ -643,7 +643,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY);
             }
         });
-        console.log('[Video Overlay] Click listener attached for ad interaction (with display toggle and cooldown).');
+        console.log('[Video Overlay] Click listener attached for ad interaction (بكل تعديلاتك الجديدة هنا).');
     }
 
     // --- 6. Initial Page Load Logic ---
