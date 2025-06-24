@@ -715,9 +715,6 @@ a:hover {
 .video-js .vjs-remaining-time,
 .video-js .vjs-current-time,
 .video-js .vjs-time-divider {
-    /* إزالة الهوامش الداخلية أو الوضع النسبي */
-    /* margin-top: auto !important; */ 
-    /* margin-bottom: auto !important; */
     align-items: center !important; 
     display: flex !important; 
 }
@@ -1088,6 +1085,11 @@ a:hover {
         margin-bottom: 4vw;
     }
 
+    /* **تعديل هنا:** object-fit للتابلت والموبايل */
+    .video-js {
+        object-fit: cover; /* لملء المساحة بالكامل (مع قص الأطراف العلوية والسفلية إذا لزم الأمر) */
+    }
+
     .movie-info p {
         margin-bottom: 0.9rem;
         font-size: clamp(0.9rem, 1.8vw, 1.05rem);
@@ -1241,6 +1243,11 @@ a:hover {
         height: 180px; /* ارتفاع ثابت للموبايل الصغير */
         margin-bottom: 3.5vw;
     }
+    /* **تعديل هنا:** object-fit للموبايل فقط */
+    .video-js {
+        object-fit: cover; /* لملء المساحة بالكامل (مع قص الأطراف العلوية والسفلية إذا لزم الأمر) */
+    }
+
     .movie-info p {
         font-size: clamp(0.85rem, 2.2vw, 1rem);
         margin-bottom: 0.9rem;
