@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const suggestedMovieGrid = document.getElementById('suggested-movie-grid');
     const suggestedMoviesSection = document.getElementById('suggested-movies-section');
     const backToHomeBtn = document.getElementById('back-to-home-btn');
-    // ** هنا، بدلاً من أخذ المرجع مباشرة، سنأخذ المرجع عندما نحتاجه **
-    // const moviePlayer = document.getElementById('movie-player'); 
+    const videoContainer = document.getElementById('movie-player-container'); // مرجع للعنصر الحاوي
     const videoOverlay = document.getElementById('video-overlay');
     const homeLogoLink = document.getElementById('home-logo-link');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
@@ -31,13 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
 
     // --- 1.1. Critical DOM Element Verification ---
-    // لاحظ أنني أزلت 'movie-player' من هذه القائمة هنا، لأنه سيتم التحقق منه لاحقًا
-    // عند استخدامه بالفعل لتجنب مشاكل التوقيت.
+    // تم تحديث هذه القائمة لتشمل movie-player-container بدلاً من movie-player
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
         '#movie-details-section': movieDetailsSection,
         '#hero-section': heroSection,
+        '#movie-player-container': videoContainer, // Changed
         '#video-overlay': videoOverlay,
         '#suggested-movie-grid': suggestedMovieGrid,
         '#suggested-movies-section': suggestedMoviesSection,
@@ -82,10 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let moviesDataForPagination = [];
     let currentDetailedMovie = null;
 
-    // Global variable to hold the Video.js player instance for clean disposal
     let videoJsPlayerInstance = null;
 
-    // --- 3.1. Fetch Movie Data from JSON ---
     async function fetchMoviesData() {
         try {
             const response = await fetch('movies.json');
@@ -109,8 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
-    // --- 4. Functions ---
 
     function openAdLink(cooldownDuration, type) {
         let lastClickTime;
@@ -259,15 +254,13 @@ document.addEventListener('DOMContentLoaded', () => {
         paginateMovies(moviesDataForPagination, currentPage);
     }
 
-    // *** الجزء المحسن الخاص بمشغل الفيديو باستخدام Video.js ***
-    async function showMovieDetails(movieId) { // جعل الدالة async
+    async function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
         const movie = moviesData.find(m => m.id === movieId);
 
         if (movie) {
             currentDetailedMovie = movie;
 
-            // إخفاء الأقسام الأخرى أولاً
             if (heroSection) heroSection.style.display = 'none';
             if (movieGridSection) movieGridSection.style.display = 'none';
 
@@ -277,15 +270,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoJsPlayerInstance.dispose();
                 videoJsPlayerInstance = null;
             }
+            
+            // ** الجزء الجديد والحاسم: إعادة بناء عنصر الفيديو **
+            if (videoContainer) {
+                videoContainer.innerHTML = ''; // مسح أي محتوى سابق
+                const newVideoElement = document.createElement('video');
+                newVideoElement.id = 'movie-player'; // احتفظ بنفس الـ ID
+                newVideoElement.classList.add('video-js', 'vjs-default-skin');
+                newVideoElement.controls = true; // أضف الضوابط
+                newVideoElement.preload = 'auto'; // مهم للتحميل المسبق
+                newVideoElement.setAttribute('data-setup', '{}');
 
-            // إظهار قسم تفاصيل الفيلم أولاً ليكون عنصر الفيديو في DOM
+                videoContainer.appendChild(newVideoElement);
+                console.log('[Video Player] Recreated movie-player element.');
+            } else {
+                console.error('❌ CRITICAL ERROR: movie-player-container not found. Cannot create video player.');
+                return;
+            }
+            // ** نهاية الجزء الجديد **
+
             if (movieDetailsSection) movieDetailsSection.style.display = 'block';
             if (suggestedMoviesSection) suggestedMoviesSection.style.display = 'block';
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
             console.log('[Routing] Scrolled to top.');
 
-            // تحديث تفاصيل الفيلم
             document.getElementById('movie-details-title').textContent = movie.title || 'غير متوفر';
             document.getElementById('movie-details-description').textContent = movie.description || 'لا يوجد وصف متاح.';
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
@@ -302,26 +311,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
-            // *** نقطة التحسين الرئيسية: تهيئة مشغل الفيديو ***
-            // الحصول على مرجع moviePlayer في اللحظة التي نحتاجها
+            // ** الحصول على مرجع المشغل الجديد **
             const moviePlayerElement = document.getElementById('movie-player');
 
-            if (moviePlayerElement) { // تأكدنا من وجود العنصر أولاً
-                // نستخدم Promise و requestAnimationFrame لضمان أن العنصر في DOM ومرئي
+            if (moviePlayerElement) {
                 await new Promise(resolve => {
                     const checkVisibility = () => {
-                        if (moviePlayerElement.isConnected && moviePlayerElement.offsetParent !== null) {
+                        // isConnected سيكون صحيحا لأنه تم إنشاؤه حديثا و إلحاقه
+                        // offsetParent !== null: للتأكد أنه مرئي وليس display:none من قبل CSS أو الأب
+                        if (moviePlayerElement.offsetParent !== null) { 
                             console.log('[Video Player] moviePlayer is now connected and visible. Resolving promise.');
                             resolve();
                         } else {
                             console.log('[Video Player] moviePlayer not yet visible, retrying...');
-                            requestAnimationFrame(checkVisibility); // حاول مرة أخرى في الإطار التالي
+                            requestAnimationFrame(checkVisibility);
                         }
                     };
-                    requestAnimationFrame(checkVisibility); // ابدأ الفحص
+                    // إعطاء فرصة لـ DOM ليتم تحديثه قبل البدء في الفحص
+                    setTimeout(() => requestAnimationFrame(checkVisibility), 50); 
                 });
 
-                // بعد أن تأكدنا أن moviePlayerElement موجود ومرئي
                 console.log('[Video Player] moviePlayer is ready. Proceeding with Video.js initialization.');
 
                 if (videoLoadingSpinner) {
@@ -337,8 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     videoOverlay.style.pointerEvents = 'none';
                 }
 
-                // تهيئة مشغل الفيديو
-                videoJsPlayerInstance = videojs(moviePlayerElement, { // استخدم moviePlayerElement هنا
+                videoJsPlayerInstance = videojs(moviePlayerElement, {
                     autoplay: true,
                     controls: true,
                     responsive: true,
@@ -347,7 +355,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         src: movie.embed_url,
                         type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
                     }],
-                    // crossOrigin: 'anonymous' // أعد تمكينه إذا كنت تواجه مشكلات CORS
+                    // أعد تمكين هذا إذا استمرت مشكلات CORS، لكنه يتطلب تكوين خادم الفيديو أيضًا
+                    // crossOrigin: 'anonymous' 
                 }, function() {
                     console.log(`[Video.js] Player initialized callback for source: ${movie.embed_url}`);
                     this.play().then(() => {
@@ -379,7 +388,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
 
-                // --- إدارة الأوفرلاي على أحداث الفيديو ---
                 videoJsPlayerInstance.on('play', () => {
                     console.log('[Video.js] Video playing event fired.');
                     if (videoOverlay) {
@@ -632,6 +640,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentDetailedMovie = null;
 
+        // ** مسح محتوى movie-player-container عند العودة للصفحة الرئيسية **
+        if (videoContainer) {
+            videoContainer.innerHTML = '';
+            console.log('[Video Player] Cleared movie-player-container on home page navigation.');
+        }
+        // ** نهاية التغيير **
+
         const newUrl = new URL(window.location.origin);
         history.pushState({ view: 'home' }, 'أفلام عربية - الصفحة الرئيسية', newUrl.toString());
         console.log(`🔗 [URL] URL updated to ${newUrl.toString()}`);
@@ -799,7 +814,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[Video Overlay] Click listener attached for ad interaction (مُحسّن).');
     }
 
-    // --- 6. Initial Page Load Logic ---
     function initialPageLoadLogic() {
         const urlParams = new URLSearchParams(window.location.search);
         const viewParam = urlParams.get('view');
