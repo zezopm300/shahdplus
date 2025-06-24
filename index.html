@@ -8,37 +8,33 @@
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-hls@5.15.0/dist/videojs-contrib-hls.min.js"></script>
 
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.">
     <meta name="keywords" content="شاهد بلس, أفلام, مسلسلات, مشاهدة أونلاين, 4K, أفلام عربية, أفلام أجنبية, مسلسلات حصرية, سينما, ترفيه فاخر, مترجم, دبلجة, أفلام 2025, مسلسلات جديدة, أكشن, دراما, خيال علمي, كوميديا">
     <meta name="author" content="شاهد بلس فريق التطوير">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://shahidplus.online/">
-
-    <meta property="og:type" content="website">
+    <link rel="canonical" href="https://shahidplus.online/"> <meta property="og:type" content="website">
     <meta property="og:url" content="https://shahidplus.online/">
     <meta property="og:title" content="شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K">
     <meta property="og:description" content="شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop">
     <meta property="og:image:alt" content="شاهد بلس | بوابتك للترفيه السينمائي الفاخر">
     <meta property="og:locale" content="ar_AR">
+    <meta property="og:site_name" content="شاهد بلس">
 
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://shahidplus.online/">
     <meta property="twitter:title" content="شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K">
     <meta property="twitter:description" content="شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.">
     <meta property="twitter:image" content="https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop">
-    <meta property="twitter:creator" content="@YourTwitterHandle">
-
-    <title>شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K أونلاين</title>
+    <meta property="twitter:creator" content="@YourTwitterHandle"> <title>شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K أونلاين</title>
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./sytle.css">
+  <link rel="stylesheet" href="./style.css">
 
     <script type="application/ld+json"></script>
 </head>
@@ -52,6 +48,7 @@
                 <span class="logo-text">شاهد بلس</span>
                 <span class="logo-dot">.</span>
             </a>
+            <button class="menu-toggle" aria-controls="main-nav" aria-expanded="false">&#9776;</button> 
             
             <nav id="main-nav" class="main-nav" aria-label="قائمة التنقل الرئيسية للموقع">
                 <ul>
@@ -84,7 +81,6 @@
                 <button id="prev-page-btn" class="btn-page" aria-label="الانتقال إلى الصفحة السابقة">السابق</button>
                 <button id="next-page-btn" class="btn-page" aria-label="الانتقال إلى الصفحة التالية">التالي</button>
             </div>
-
             <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
                 <script type="text/javascript">
                     atOptions = {
@@ -107,11 +103,24 @@
             <div class="video-player-wrapper">
                 <div id="movie-player-container">
                     </div>
-                <div id="video-overlay" class="video-overlay" aria-label="انقر لتشغيل الفيديو">
-                    <p id="video-overlay-text" style="display: none;"></p>
+                <div id="video-overlay" class="video-overlay" aria-label="انقر لتشغيل الفيديو وفتح الإعلان">
                     <div id="video-loading-spinner" class="video-loading-spinner"></div>
-                </div>
+                    </div>
             </div>
+
+            <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '0244edf54baa4e31fc3437c4aebca346',
+                        'format' : 'iframe',
+                        'height' : 60,
+                        'width' : 468,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/0244edf54baa4e31fc3437c4aebca346/invoke.js"></script>
+            </div>
+
             <div class="movie-info">
                 <div id="movie-details-poster-container" style="text-align: center; margin-bottom: 20px;">
                     <img id="movie-details-poster" src="" alt="ملصق الفيلم" loading="lazy" decoding="async">
