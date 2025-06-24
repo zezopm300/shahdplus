@@ -275,9 +275,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVideoElement.id = 'movie-player'; // Keep the same ID for Video.js lookup
                 newVideoElement.classList.add('video-js', 'vjs-default-skin');
                 newVideoElement.controls = true;
-                newVideoElement.preload = 'auto'; // Load video metadata
-                // Note: data-setup='{}' is usually for HTML-based init, but can be left for consistency
-                // newVideoElement.setAttribute('data-setup', '{}'); 
+                // Preload metadata to allow player to determine duration and dimensions early
+                newVideoElement.preload = 'metadata'; 
+                // Enable playsinline for iOS to play video inline rather than fullscreen
+                newVideoElement.setAttribute('playsinline', ''); 
+                // Muted autoplay for better browser compatibility on mobile
+                newVideoElement.muted = true; 
 
                 videoContainer.appendChild(newVideoElement);
                 console.log('[Video Player] Recreated movie-player element.');
@@ -348,19 +351,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Initialize Video.js player
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
-                    autoplay: true, // Attempt autoplay
+                    autoplay: true, // Attempt autoplay (will be muted by default)
                     controls: true,
                     responsive: true,
                     fluid: true,
-                    // Use playbackRates for adaptive streaming if HLS source supports it (optional)
+                    // Enable HTML5 playback for better mobile support
+                    techOrder: ['html5'], 
+                    // Add hls.js plugin for HLS playback if available and needed
+                    html5: {
+                        hls: {
+                            withCredentials: false // Set to true if your HLS segments require credentials
+                        }
+                    },
+                    // Playback rates for adaptive streaming
                     playbackRates: [0.5, 1, 1.5, 2], 
                     sources: [{
                         src: movie.embed_url,
-                        // Automatically detect HLS if .m3u8, otherwise default to MP4
+                        // Prioritize HLS (m3u8) for adaptive streaming
                         type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' 
                     }],
                     // Recommended for CORS issues with external video hosts
-                    // crossOrigin: 'anonymous' 
+                    crossOrigin: 'anonymous' 
                 }, function() {
                     console.log(`[Video.js] Player initialized callback for source: ${movie.embed_url}`);
                     this.play().then(() => {
@@ -381,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             videoOverlay.style.pointerEvents = 'auto';
                             if (videoOverlayText) {
                                 videoOverlayText.style.display = 'block';
-                                videoOverlayText.textContent = 'انقر للتشغيل';
+                                videoOverlayText.textContent = 'انقر للتشغيل (الصوت غير مفعّل تلقائيًا).'; // More specific message
                             }
                             console.log('[Video Overlay] Displayed (autoplay failed), click to play.');
                         }
@@ -410,12 +421,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'block';
                     }
+                    if (videoOverlay) { // Show overlay during buffering
+                        videoOverlay.style.display = 'flex';
+                        videoOverlay.style.pointerEvents = 'none'; // Don't block controls if buffering
+                        if (videoOverlayText) {
+                            videoOverlayText.style.display = 'block';
+                            videoOverlayText.textContent = 'جاري التحميل...';
+                        }
+                    }
                 });
 
                 videoJsPlayerInstance.on('playing', () => {
                     console.log('[Video.js] Video playing (out of waiting state).');
                     if (videoLoadingSpinner) {
                         videoLoadingSpinner.style.display = 'none';
+                    }
+                    if (videoOverlay) { // Hide overlay once playing resumes
+                        videoOverlay.style.display = 'none';
+                        videoOverlay.style.pointerEvents = 'none';
+                        if (videoOverlayText) videoOverlayText.style.display = 'none';
                     }
                 });
 
