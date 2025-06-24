@@ -687,7 +687,7 @@ a:hover {
     top: 0;
     left: 0;
     width: 100% !important;
-    height: 100% !important; 
+    height: 100% !important;    
     margin: 0 !important;
     padding: 0 !important;
     /* object-fit: contain;  **هذه الخاصية سيتم تعديلها في الميديا كويري للموبايل** */
@@ -695,19 +695,19 @@ a:hover {
 
 /* شريط التحكم لضمان دخوله داخل الفيديو وظهوره في الأسفل */
 .video-js .vjs-control-bar {
-    position: absolute !important; 
-    bottom: 0 !important; 
-    left: 0 !important; 
+    position: absolute !important;    
+    bottom: 0 !important;    
+    left: 0 !important;    
     width: 100% !important;
-    height: 40px !important; 
-    margin-bottom: 0 !important; 
-    background-color: rgba(0, 0, 0, 0.7); 
-    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base); 
-    z-index: 10; 
-    opacity: 1; 
-    visibility: visible; 
-    transform: translateY(0) !important; 
-    box-sizing: border-box; 
+    height: 40px !important;    
+    margin-bottom: 0 !important;    
+    background-color: rgba(0, 0, 0, 0.7);    
+    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base);    
+    z-index: 10;    
+    opacity: 1;    
+    visibility: visible;    
+    transform: translateY(0) !important;    
+    box-sizing: border-box;    
 }
 
 /* شريط التقدم والعناصر الطرفية داخل شريط التحكم */
@@ -715,16 +715,16 @@ a:hover {
 .video-js .vjs-remaining-time,
 .video-js .vjs-current-time,
 .video-js .vjs-time-divider {
-    align-items: center !important; 
-    display: flex !important; 
+    align-items: center !important;    
+    display: flex !important;    
 }
 
 
 /* للتأكد من أن زر التشغيل الكبير في المنتصف */
-.video-js .vjs-big-play-button { 
-    top: 50% !important; 
-    left: 50% !important; 
-    transform: translate(-50%, -50%) !important; 
+.video-js .vjs-big-play-button {    
+    top: 50% !important;    
+    left: 50% !important;    
+    transform: translate(-50%, -50%) !important;    
     margin: 0 !important;
 }
 
@@ -1087,7 +1087,7 @@ a:hover {
 
     /* **تعديل هنا:** object-fit للتابلت والموبايل */
     .video-js {
-        object-fit: cover; /* لملء المساحة بالكامل (مع قص الأطراف العلوية والسفلية إذا لزم الأمر) */
+        object-fit: contain; /* لتجنب الحواف السوداء الناتجة عن القص، الفيديو بالكامل سيكون مرئياً */
     }
 
     .movie-info p {
@@ -1245,7 +1245,7 @@ a:hover {
     }
     /* **تعديل هنا:** object-fit للموبايل فقط */
     .video-js {
-        object-fit: cover; /* لملء المساحة بالكامل (مع قص الأطراف العلوية والسفلية إذا لزم الأمر) */
+        object-fit: contain; /* لتجنب الحواف السوداء الناتجة عن القص، الفيديو بالكامل سيكون مرئياً */
     }
 
     .movie-info p {
@@ -1278,3 +1278,4 @@ a:hover {
         font-size: clamp(0.85rem, 2.2vw, 1rem);
     }
 }
+
