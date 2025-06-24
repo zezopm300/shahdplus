@@ -690,10 +690,10 @@ a:hover {
     height: 100% !important; 
     margin: 0 !important;
     padding: 0 !important;
-    object-fit: contain; /* إبقاءها 'contain' للحفاظ على نسبة العرض للارتفاع، أو 'fill' للتشويه ولكن بدون حدود */
+    /* object-fit: contain;  **هذه الخاصية سيتم تعديلها في الميديا كويري للموبايل** */
 }
 
-/* **التعديلات الأساسية لشريط التحكم لضمان دخوله داخل الفيديو وظهوره في الأسفل** */
+/* شريط التحكم لضمان دخوله داخل الفيديو وظهوره في الأسفل */
 .video-js .vjs-control-bar {
     position: absolute !important; 
     bottom: 0 !important; 
@@ -710,18 +710,18 @@ a:hover {
     box-sizing: border-box; 
 }
 
-/* **تعديل هنا: شريط التقدم داخل شريط التحكم** */
-/* هذه الكلاسات هي المسؤولة عن شريط التقدم والعناصر الطرفية */
+/* شريط التقدم والعناصر الطرفية داخل شريط التحكم */
 .video-js .vjs-progress-control,
 .video-js .vjs-remaining-time,
 .video-js .vjs-current-time,
 .video-js .vjs-time-divider {
-    /* ضبط الهوامش الداخلية أو الوضع النسبي */
-    margin-top: auto !important; /* يدفع العناصر للأسفل داخل الشريط */
-    margin-bottom: auto !important; /* يدفع العناصر للأعلى داخل الشريط */
-    align-items: center !important; /* التأكد من محاذاة العناصر عموديا في المنتصف */
-    display: flex !important; /* لجعلهم يستخدمون Flexbox */
+    /* إزالة الهوامش الداخلية أو الوضع النسبي */
+    /* margin-top: auto !important; */ 
+    /* margin-bottom: auto !important; */
+    align-items: center !important; 
+    display: flex !important; 
 }
+
 
 /* للتأكد من أن زر التشغيل الكبير في المنتصف */
 .video-js .vjs-big-play-button { 
