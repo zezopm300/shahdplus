@@ -399,9 +399,26 @@ a:hover {
     color: var(--text-color);
 }
 
-/* Mobile Menu Toggle (Currently hidden and unused) */
+/* Mobile Menu Toggle (يظهر في الموبايل، يُخفى في الديسكتوب) */
 .menu-toggle {
-    display: none !important;
+    display: none; /* مخفي افتراضيا للديسكتوب */
+    font-size: 2rem; /* حجم مناسب للأيقونة */
+    background: none;
+    border: none;
+    color: var(--accent-color); /* لون الأيقونة */
+    cursor: pointer;
+    order: 4; /* ترتيبه في الفليكس بوكس عشان يظهر صح */
+    transition: transform var(--transition-speed) ease;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0; /* يمنع الكبر أو الصغر الزائد */
+}
+
+.menu-toggle:hover {
+    transform: scale(1.1);
+    color: var(--primary-color);
 }
 
 
@@ -538,7 +555,7 @@ a:hover {
     height: clamp(160px, 14vw, 220px);
     object-fit: cover;
     display: block;
-    border-bottom: 1px solid var(--primary-color);
+    border-bottom: 1% solid var(--primary-color);
     transition: transform var(--transition-speed) ease;
     flex-shrink: 0;
 }
@@ -642,23 +659,18 @@ a:hover {
     color: var(--accent-color);
 }
 
-/* Video Player Wrapper and Container - حجم مثالي ومتحكم بشكل نهائي */
+/* Video Player Wrapper - للتحكم في الحجم */
 .video-player-wrapper {
     position: relative;
     width: 100%;
-    max-width: 680px; /* أقصى عرض للفيديو على الكمبيوتر */
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 800px; /* عرض معقول للكمبيوتر */
+    height: 450px; /* ارتفاع ثابت للفيديو على الكمبيوتر */
+    margin: 0 auto 2.5vw auto; /* ضبط الهوامش ليكون في المنتصف وإزالة أي فراغات */
     background-color: #000;
-    margin-bottom: 2.5vw;
     border-radius: var(--border-radius-base);
     overflow: hidden;
     box-shadow: var(--shadow-deep);
     border: 1.5px solid var(--secondary-color);
-    
-    height: 0;
-    padding-top: 56.25%; /* نسبة 16:9 كاملة (9 / 16 = 0.5625) */
-    position: relative;
 }
 
 /* الحاوية الداخلية التي سيتم إنشاء عنصر الفيديو فيها */
@@ -668,8 +680,9 @@ a:hover {
     left: 0;
     width: 100%;
     height: 100%;
+    /* هنا نستخدم display: block أو flex لو المشغل يتطلب ذلك لتخطيط داخلي.
+       لكن الأهم هو التحكم في العناصر داخل video-js */
 }
-
 
 /* قواعد Video.js لضمان التكيف داخل الـ container */
 .video-js {
@@ -678,16 +691,44 @@ a:hover {
     left: 0;
     width: 100% !important;
     height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    /* vertical-align: top; */ /* لم يعد ضرورياً مع absolute positioning */
 }
 
-/* أكواد الإعلانات المتعلقة بالـ overlay في الفيديو */
+/* **التعديلات الأساسية لشريط التحكم لضمان دخوله داخل الفيديو وظهوره في الأسفل** */
+.video-js .vjs-control-bar {
+    position: absolute !important; /* لضمان وضعه بالنسبة للـ video-js */
+    bottom: 0 !important; /* يدفعه لأسفل المشغل */
+    left: 0 !important; /* مهم لضمان عرض 100% */
+    width: 100% !important;
+    margin-bottom: 0 !important; /* إزالة أي margin-bottom */
+    background-color: rgba(0, 0, 0, 0.7); /* خلفية لشريط التحكم لضمان رؤيته */
+    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base); /* لو الـ wrapper ليه border-radius */
+    z-index: 10; /* تأكد إنه فوق الفيديو */
+    opacity: 1; /* تأكيد ظهوره */
+    visibility: visible; /* تأكيد ظهوره */
+    transform: translateY(0) !important; /* إلغاء أي تحويل قد يدفعه لأعلى/أسفل */
+    box-sizing: border-box; /* للتأكد من أن padding و border لا يزيحان الشريط */
+}
+
+/* للتأكد من أن زر التشغيل الكبير في المنتصف */
+.video-js .vjs-big-play-button { 
+    top: 50% !important; 
+    left: 50% !important; 
+    transform: translate(-50%, -50%) !important; 
+    margin: 0 !important;
+}
+
+
+/* أكواد الإعلانات المتعلقة بالـ overlay في الفيديو (لم يتم المساس بها) */
 .video-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* جعلها مرئية أكثر لغرض الاختبار والوظيفة */
+    background-color: rgba(0, 0, 0, 0.4);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -858,10 +899,6 @@ a:hover {
 
 /* Tablet and Larger Mobile Devices */
 @media (max-width: 992px) {
-    /* Removed large font-size adjustments from html/body. clamp() should handle scaling. */
-    /* html { font-size: 15.5px; } */
-    /* body { font-size: 1rem; } */
-
     .main-header {
         padding: 0.4rem 0;
         border-bottom: 1px solid var(--primary-color);
@@ -903,6 +940,7 @@ a:hover {
         padding: 0.3rem 0.9rem;
     }
 
+    /* Nav على التابلت والموبايل */
     .main-nav {
         flex-basis: 100%;
         justify-content: center;
@@ -916,7 +954,18 @@ a:hover {
         width: clamp(240px, 92vw, 380px);
         margin-left: auto;
         margin-right: auto;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
     }
+    .main-nav.nav-open {
+        max-height: 300px; /* ارتفاع كافي ليحتوي كل الروابط */
+        opacity: 1;
+        pointer-events: auto;
+    }
+
     .main-nav ul {
         flex-wrap: wrap;
         justify-content: center;
@@ -942,6 +991,11 @@ a:hover {
     }
     .main-nav ul li a::before {
         display: none;
+    }
+
+    /* إظهار زر التبديل في التابلت والموبايل */
+    .menu-toggle {
+        display: flex;
     }
 
     .hero {
@@ -984,15 +1038,15 @@ a:hover {
         padding-bottom: 0.7rem;
     }
 
-    /* 2 بوستر على التابلت (بدلاً من 3-4 لتجنب التقطيع في العرض) */
+    /* 2 بوستر على التابلت */
     .movie-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Changed to 2 columns on tablet */
-        gap: 3vw; /* Adjusted gap for tablet */
-        padding: 0 3vw; /* Adjusted padding */
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 3vw;
+        padding: 0 3vw;
     }
 
     .movie-card img {
-        height: clamp(140px, 40vw, 200px); /* Adjust height for tablet */
+        height: clamp(140px, 40vw, 200px);
     }
 
     .movie-card h3 {
@@ -1016,10 +1070,10 @@ a:hover {
         font-size: clamp(0.8rem, 1.6vw, 0.95rem);
     }
 
+    /* الفيديو في التابلت */
     .video-player-wrapper {
         max-width: 100%;
-        padding-top: 56.25% !important;
-        max-height: 380px;
+        height: 300px; /* ارتفاع ثابت للتابلت */
         margin-bottom: 4vw;
     }
 
@@ -1061,7 +1115,7 @@ a:hover {
 /* Smaller Mobile Devices (e.g., iPhone SE) */
 @media (max-width: 480px) {
     html {
-        font-size: 14.5px; /* Slightly smaller base font for very small mobiles */
+        font-size: 14.5px;
     }
     body {
         font-size: 1rem;
@@ -1091,10 +1145,21 @@ a:hover {
         padding: 0.25rem 0.8rem;
     }
 
+    /* Nav على الموبايل الصغير */
     .main-nav {
         margin-top: 0.4rem;
         padding: 0.4rem 0;
         width: clamp(190px, 98vw, 360px);
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+    }
+    .main-nav.nav-open {
+        max-height: 300px;
+        opacity: 1;
+        pointer-events: auto;
     }
     .main-nav ul {
         gap: 0.5rem;
@@ -1102,6 +1167,11 @@ a:hover {
     .main-nav ul li a {
         font-size: clamp(0.75rem, 2.4vw, 0.9rem);
         padding: 0.5rem 1rem;
+    }
+
+    /* إظهار زر التبديل في الموبايل الصغير */
+    .menu-toggle {
+        display: flex;
     }
 
     .hero {
@@ -1155,9 +1225,9 @@ a:hover {
         padding: 0.65rem 1.3rem;
         font-size: clamp(0.75rem, 2.4vw, 0.9rem);
     }
+    /* الفيديو في الموبايل الصغير */
     .video-player-wrapper {
-        padding-top: 56.25% !important;
-        max-height: 210px;
+        height: 180px; /* ارتفاع ثابت للموبايل الصغير */
         margin-bottom: 3.5vw;
     }
     .movie-info p {
