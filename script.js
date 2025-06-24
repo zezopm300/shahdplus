@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 2. Adsterra Configuration ---
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes for movie cards
-    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 10 * 1000; // 10 seconds for video overlay/player interactions
+    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 4 * 1000; // 10 seconds for video overlay/player interactions
 
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoInteraction = 0; // Cooldown for video interactions
