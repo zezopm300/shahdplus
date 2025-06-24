@@ -30,18 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
 
     // --- 1.1. Critical DOM Element Verification ---
-    // تم تحديث هذه القائمة لتشمل movie-player-container بدلاً من movie-player
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
         '#movie-details-section': movieDetailsSection,
         '#hero-section': heroSection,
-        '#movie-player-container': videoContainer, // Changed
+        '#movie-player-container': videoContainer,
         '#video-overlay': videoOverlay,
         '#suggested-movie-grid': suggestedMovieGrid,
         '#suggested-movies-section': suggestedMoviesSection,
         '#video-loading-spinner': videoLoadingSpinner,
-        '#movie-details-poster': movieDetailsPoster,
         '#video-overlay-text': videoOverlayText,
         '#movie-details-title': document.getElementById('movie-details-title'),
         '#movie-details-description': document.getElementById('movie-details-description'),
@@ -67,9 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('✅ All critical DOM elements found.');
     }
 
-    // --- 2. Adsterra Configuration (لم يتم المساس بها) ---
+    // --- 2. Adsterra Configuration ---
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
-
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes
     const DIRECT_LINK_COOLDOWN_VIDEO_OVERLAY = 8 * 1000; // 4 seconds
 
@@ -264,22 +261,23 @@ document.addEventListener('DOMContentLoaded', () => {
             if (heroSection) heroSection.style.display = 'none';
             if (movieGridSection) movieGridSection.style.display = 'none';
 
-            // تدمير مشغل Video.js الحالي قبل إظهار التفاصيل الجديدة
+            // Dispose existing Video.js player instance
             if (videoJsPlayerInstance) {
                 console.log('[Video.js] Disposing existing player instance before showing new details.');
                 videoJsPlayerInstance.dispose();
                 videoJsPlayerInstance = null;
             }
             
-            // ** الجزء الجديد والحاسم: إعادة بناء عنصر الفيديو **
+            // Rebuild the video element for a clean state
             if (videoContainer) {
-                videoContainer.innerHTML = ''; // مسح أي محتوى سابق
+                videoContainer.innerHTML = ''; // Clear any previous content
                 const newVideoElement = document.createElement('video');
-                newVideoElement.id = 'movie-player'; // احتفظ بنفس الـ ID
+                newVideoElement.id = 'movie-player'; // Keep the same ID for Video.js lookup
                 newVideoElement.classList.add('video-js', 'vjs-default-skin');
-                newVideoElement.controls = true; // أضف الضوابط
-                newVideoElement.preload = 'auto'; // مهم للتحميل المسبق
-                newVideoElement.setAttribute('data-setup', '{}');
+                newVideoElement.controls = true;
+                newVideoElement.preload = 'auto'; // Load video metadata
+                // Note: data-setup='{}' is usually for HTML-based init, but can be left for consistency
+                // newVideoElement.setAttribute('data-setup', '{}'); 
 
                 videoContainer.appendChild(newVideoElement);
                 console.log('[Video Player] Recreated movie-player element.');
@@ -287,14 +285,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('❌ CRITICAL ERROR: movie-player-container not found. Cannot create video player.');
                 return;
             }
-            // ** نهاية الجزء الجديد **
 
+            // Show movie details sections
             if (movieDetailsSection) movieDetailsSection.style.display = 'block';
             if (suggestedMoviesSection) suggestedMoviesSection.style.display = 'block';
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
             console.log('[Routing] Scrolled to top.');
 
+            // Update movie details
             document.getElementById('movie-details-title').textContent = movie.title || 'غير متوفر';
             document.getElementById('movie-details-description').textContent = movie.description || 'لا يوجد وصف متاح.';
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
@@ -311,15 +310,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
-            // ** الحصول على مرجع المشغل الجديد **
+            // Get reference to the newly created player element
             const moviePlayerElement = document.getElementById('movie-player');
 
             if (moviePlayerElement) {
+                // Wait until the element is connected to DOM and visible
                 await new Promise(resolve => {
                     const checkVisibility = () => {
-                        // isConnected سيكون صحيحا لأنه تم إنشاؤه حديثا و إلحاقه
-                        // offsetParent !== null: للتأكد أنه مرئي وليس display:none من قبل CSS أو الأب
-                        if (moviePlayerElement.offsetParent !== null) { 
+                        if (moviePlayerElement.offsetParent !== null) { // offsetParent ensures it's visible (not display:none)
                             console.log('[Video Player] moviePlayer is now connected and visible. Resolving promise.');
                             resolve();
                         } else {
@@ -327,12 +325,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             requestAnimationFrame(checkVisibility);
                         }
                     };
-                    // إعطاء فرصة لـ DOM ليتم تحديثه قبل البدء في الفحص
+                    // Give DOM a small moment to update before starting check
                     setTimeout(() => requestAnimationFrame(checkVisibility), 50); 
                 });
 
                 console.log('[Video Player] moviePlayer is ready. Proceeding with Video.js initialization.');
 
+                // Show spinner, hide overlay text
                 if (videoLoadingSpinner) {
                     videoLoadingSpinner.style.display = 'block';
                     console.log('[Video Player] Loading spinner shown.');
@@ -341,21 +340,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     videoOverlayText.style.display = 'none';
                     videoOverlayText.textContent = '';
                 }
+                // Hide overlay initially, it will show up on autoplay failure, pause, or end
                 if (videoOverlay) {
                     videoOverlay.style.display = 'none';
                     videoOverlay.style.pointerEvents = 'none';
                 }
-
+                
+                // Initialize Video.js player
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
-                    autoplay: true,
+                    autoplay: true, // Attempt autoplay
                     controls: true,
                     responsive: true,
                     fluid: true,
+                    // Use playbackRates for adaptive streaming if HLS source supports it (optional)
+                    playbackRates: [0.5, 1, 1.5, 2], 
                     sources: [{
                         src: movie.embed_url,
-                        type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
+                        // Automatically detect HLS if .m3u8, otherwise default to MP4
+                        type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' 
                     }],
-                    // أعد تمكين هذا إذا استمرت مشكلات CORS، لكنه يتطلب تكوين خادم الفيديو أيضًا
+                    // Recommended for CORS issues with external video hosts
                     // crossOrigin: 'anonymous' 
                 }, function() {
                     console.log(`[Video.js] Player initialized callback for source: ${movie.embed_url}`);
@@ -388,6 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
 
+                // Add event listeners for player state changes
                 videoJsPlayerInstance.on('play', () => {
                     console.log('[Video.js] Video playing event fired.');
                     if (videoOverlay) {
@@ -440,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     const errorDisplay = videoJsPlayerInstance.el().querySelector('.vjs-error-display');
                     if (errorDisplay) {
-                        errorDisplay.style.display = 'none';
+                        errorDisplay.style.display = 'none'; // Hide default Video.js error message
                     }
                 });
 
@@ -632,7 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (videoLoadingSpinner) {
             videoLoadingSpinner.style.display = 'none';
         }
-        // تدمير مشغل Video.js عند العودة للصفحة الرئيسية
+        // Dispose existing Video.js player instance
         if (videoJsPlayerInstance) {
             console.log('[Video.js] Disposing player on home page navigation.');
             videoJsPlayerInstance.dispose();
@@ -640,12 +645,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentDetailedMovie = null;
 
-        // ** مسح محتوى movie-player-container عند العودة للصفحة الرئيسية **
+        // Clear movie-player-container content on home page navigation
         if (videoContainer) {
             videoContainer.innerHTML = '';
             console.log('[Video Player] Cleared movie-player-container on home page navigation.');
         }
-        // ** نهاية التغيير **
 
         const newUrl = new URL(window.location.origin);
         history.pushState({ view: 'home' }, 'أفلام عربية - الصفحة الرئيسية', newUrl.toString());
