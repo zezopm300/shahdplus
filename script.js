@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🏁 DOM Content Loaded. Script execution started.');
 
     // --- 1. DOM Element References ---
-    const menuToggle = document.getElementById('menu-toggle');
+    // const menuToggle = document.getElementById('menu-toggle'); // Removed as per request
     const mainNav = document.getElementById('main-nav');
     const navLinks = document.querySelectorAll('.main-nav ul li a');
     const heroSection = document.getElementById('hero-section');
@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
         '#suggested-movie-grid': suggestedMovieGrid,
         '#suggested-movies-section': suggestedMoviesSection,
         '#video-loading-spinner': videoLoadingSpinner,
-        // '#video-overlay-text': videoOverlayText, // Removed from required elements
         '#movie-details-title': document.getElementById('movie-details-title'),
         '#movie-details-description': document.getElementById('movie-details-description'),
         '#movie-details-release-date': document.getElementById('movie-details-release-date'),
@@ -68,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 2. Adsterra Configuration ---
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes for movie cards
-    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 4 * 1000; // 10 seconds for video overlay/player interactions
+    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 10 * 1000; // 10 seconds for video overlay/player interactions
 
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoInteraction = 0; // Cooldown for video interactions
@@ -86,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type === 'movieCard' || type === 'movieDetailsPoster') {
             lastClickTime = lastDirectLinkClickTimeMovieCard;
             setLastClickTime = (time) => lastDirectLinkClickTimeMovieCard = time;
-        } else if (type === 'videoOverlay' || type === 'videoSeek' || type === 'videoPause') {
+        } else if (type === 'videoOverlay' || type === 'videoSeek' || type === 'videoPause' || type === 'videoEndedRestart') {
             lastClickTime = lastDirectLinkClickTimeVideoInteraction;
             setLastClickTime = (time) => lastDirectLinkClickTimeVideoInteraction = time;
         } else {
@@ -281,8 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVideoElement.controls = true;
                 newVideoElement.preload = 'auto'; // Load video metadata and some data
                 newVideoElement.setAttribute('playsinline', ''); 
-                // newVideoElement.muted = true; // REMOVED: No autoplay, so no need to force mute
-                // newVideoElement.setAttribute('autoplay', ''); // REMOVED: No autoplay
+                // Autoplay and muted attributes are NOT set here as requested.
 
                 videoContainer.appendChild(newVideoElement);
                 console.log('[Video Player] Recreated movie-player element.');
@@ -345,13 +343,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     html5: {
                         hls: {
                             withCredentials: false, 
-                            // Ensure HLS.js settings are optimized for smooth playback
-                             liveSyncDurationCount: 7, 
-                             enableWorker: true, 
-                             maxBufferLength: 30, 
-                             maxMaxBufferLength: 60 
+                            // Optimized HLS.js configurations for smoother playback
+                            liveSyncDurationCount: 7, 
+                            enableWorker: true, // Use Web Workers if supported for better performance
+                            maxBufferLength: 30, // Max buffer size in seconds
+                            maxMaxBufferLength: 60, // Absolute max buffer size
+                            startLevel: 0 // Start playback at lowest quality to reduce initial load
                         },
-                        nativeControlsForTouch: true 
+                        nativeControlsForTouch: true // Use native controls for touch devices
                     },
                     playbackRates: [0.5, 1, 1.5, 2], 
                     sources: [{
@@ -361,41 +360,47 @@ document.addEventListener('DOMContentLoaded', () => {
                     crossOrigin: 'anonymous' 
                 }, function() {
                     console.log(`[Video.js] Player initialized callback for source: ${movie.embed_url}`);
-                    // Display spinner until video loads enough data to play
-                    if (videoLoadingSpinner) {
+                    // Initially show spinner if video is not ready
+                    if (videoLoadingSpinner && !this.hasStarted() && !this.paused() && !this.ended()) {
                         videoLoadingSpinner.style.display = 'block';
+                    }
+                    // Ensure overlay is active for clicks when player is ready but not playing
+                    if (videoOverlay) {
+                        videoOverlay.style.pointerEvents = 'auto'; // Make it clickable
+                        videoOverlay.classList.remove('hidden'); // Ensure visible (though transparent)
                     }
                 });
 
-                // --- Video Player Event Listeners for Ads ---
-                // Show overlay and spinner when player is waiting (buffering)
+                // --- Video Player Event Listeners for Ads and Overlay ---
+                
+                // Hide spinner and make overlay non-clickable when player is playing
+                videoJsPlayerInstance.on('playing', () => {
+                    console.log('[Video.js] Video playing event fired.');
+                    if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+                    if (videoOverlay) {
+                        videoOverlay.style.pointerEvents = 'none'; // Allow direct player interaction
+                        videoOverlay.classList.add('hidden'); // Fully hide it when playing
+                    }
+                });
+
+                // Show spinner and make overlay clickable when buffering
                 videoJsPlayerInstance.on('waiting', () => {
                     console.log('[Video.js] Video waiting (buffering).');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
                     if (videoOverlay) {
-                        videoOverlay.style.display = 'flex';
-                        videoOverlay.style.pointerEvents = 'none'; // Allow player controls underneath to be clicked
+                        videoOverlay.style.pointerEvents = 'none'; // Keep non-clickable during buffering if spinner is visible
+                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay during buffering
                     }
                 });
 
-                // Hide overlay and spinner when player starts playing
-                videoJsPlayerInstance.on('playing', () => {
-                    console.log('[Video.js] Video playing (out of waiting state).');
-                    if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
-                    if (videoOverlay) {
-                        videoOverlay.style.display = 'none';
-                        videoOverlay.style.pointerEvents = 'none';
-                    }
-                });
-
-                // Open ad on pause, then re-show overlay if not ended
+                // Open ad on pause, and make overlay clickable
                 videoJsPlayerInstance.on('pause', () => {
                     console.log('[Video.js] Video paused.');
                     if (!videoJsPlayerInstance.ended()) { // Do not trigger ad on natural end
                         openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoPause');
                         if (videoOverlay) {
-                            videoOverlay.style.display = 'flex';
                             videoOverlay.style.pointerEvents = 'auto'; // Make overlay clickable again
+                            videoOverlay.classList.remove('hidden'); // Show (transparent) overlay
                         }
                     }
                 });
@@ -404,40 +409,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoJsPlayerInstance.on('seeked', () => {
                     console.log('[Video.js] Video seeked.');
                     openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoSeek');
+                    // No need to show overlay here, user just interacted with controls
                 });
                 
-                // Show overlay and hide spinner on error, with a message
+                // Show transparent overlay and hide spinner on error
                 videoJsPlayerInstance.on('error', (e) => {
                     const error = videoJsPlayerInstance.error();
                     console.error('[Video.js] Player Error:', error ? error.message : 'Unknown error', error);
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     if (videoOverlay) {
-                        videoOverlay.style.display = 'flex';
                         videoOverlay.style.pointerEvents = 'auto'; // Make overlay clickable again
-                        // You can add a text message back here if needed for errors, but you asked to remove "انقر للمتابعة"
-                        // For errors, a different message like "فشل تشغيل الفيديو" might be appropriate.
-                    }
-                    const errorDisplay = videoJsPlayerInstance.el().querySelector('.vjs-error-display');
-                    if (errorDisplay) {
-                        errorDisplay.style.display = 'none'; // Hide default Video.js error message
+                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay
                     }
                 });
 
-                // Show overlay when video ends
+                // When video ends, open ad and make overlay clickable for restart
                 videoJsPlayerInstance.on('ended', () => {
                     console.log('[Video.js] Video ended.');
+                    openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoEndedRestart'); // New type for ended event
                     if (videoOverlay) {
-                        videoOverlay.style.display = 'flex';
-                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.style.pointerEvents = 'auto'; // Make overlay clickable again
+                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay
                     }
+                    // To make it easier to restart, setting current time to 0.
+                    // This will allow a click on the overlay to restart from beginning.
+                    videoJsPlayerInstance.currentTime(0); 
                 });
+
 
             } else {
                 console.warn('⚠️ [Video Player] moviePlayer element not found or not ready after attempts. Skipping Video.js initialization.');
                 if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                 if (videoOverlay) {
-                    videoOverlay.style.display = 'flex';
-                    videoOverlay.style.pointerEvents = 'auto';
+                    videoOverlay.style.display = 'flex'; // Ensure it's visible (though transparent)
+                    videoOverlay.style.pointerEvents = 'auto'; // Ensure it's clickable
+                    videoOverlay.classList.remove('hidden'); 
                 }
             }
 
@@ -638,12 +644,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Ensure video overlay is hidden on home page
         if (videoOverlay) {
-            videoOverlay.style.display = 'none';
             videoOverlay.style.pointerEvents = 'none';
+            videoOverlay.classList.add('hidden'); // Fully hide it on home
+            if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
         }
-        if (videoLoadingSpinner) {
-            videoLoadingSpinner.style.display = 'none';
-        }
+        
         // Dispose existing Video.js player instance
         if (videoJsPlayerInstance) {
             console.log('[Video.js] Disposing player on home page navigation.');
@@ -673,6 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر');
         document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
 
+
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
         document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', 'https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop');
@@ -690,24 +696,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 5. Event Listeners ---
-    if (menuToggle && mainNav) {
-        menuToggle.addEventListener('click', () => {
-            mainNav.classList.toggle('nav-open');
-            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-            console.log('📱 [Interaction] Menu toggle clicked. Nav state:', mainNav.classList.contains('nav-open') ? 'Open' : 'Closed');
-        });
-        menuToggle.setAttribute('aria-label', 'Toggle navigation menu');
-        menuToggle.setAttribute('aria-expanded', 'false');
-    }
+    // Removed menu toggle logic as per request. Navigation is always visible.
+    // if (menuToggle && mainNav) { ... } // Removed
 
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
-            if (mainNav && mainNav.classList.contains('nav-open')) {
-                mainNav.classList.remove('nav-open');
-                if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
-                console.log('📱 [Interaction] Nav link clicked, menu closed.');
-            }
+            // No mobile menu toggle needed here anymore
+            console.log('📱 [Interaction] Nav link clicked.');
         });
     });
 
@@ -783,41 +778,44 @@ document.addEventListener('DOMContentLoaded', () => {
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
 
             if (adOpened) {
-                // If ad opened, attempt to play the video
-                if (videoJsPlayerInstance && (videoJsPlayerInstance.paused() || videoJsPlayerInstance.ended())) {
-                    videoJsPlayerInstance.play().then(() => {
-                        console.log('[Video.js] Player started playing after overlay click.');
-                        // Hide overlay once video successfully plays
-                        videoOverlay.style.display = 'none';
-                        videoOverlay.style.pointerEvents = 'none';
+                // If ad opened, attempt to play the video after a short delay
+                // This delay helps mitigate browser pop-up/autoplay restrictions
+                setTimeout(() => {
+                    if (videoJsPlayerInstance && (videoJsPlayerInstance.paused() || videoJsPlayerInstance.ended())) {
+                        videoJsPlayerInstance.play().then(() => {
+                            console.log('[Video.js] Player started playing after overlay click and ad open.');
+                            if (videoOverlay) {
+                                videoOverlay.style.pointerEvents = 'none';
+                                videoOverlay.classList.add('hidden'); // Hide overlay fully
+                            }
+                            if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+                        }).catch(error => {
+                            console.warn('⚠️ [Video.js] Play failed after ad open (user interaction still required):', error);
+                            // If play fails, keep overlay clickable. No specific text.
+                            if (videoOverlay) {
+                                videoOverlay.style.pointerEvents = 'auto';
+                                videoOverlay.classList.remove('hidden'); // Ensure visible (though transparent)
+                            }
+                            if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+                        });
+                    } else if (videoJsPlayerInstance && videoJsPlayerInstance.isReady_ && !videoJsPlayerInstance.paused() && !videoJsPlayerInstance.ended()){
+                        console.log('[Video.js] Player already playing, just opened ad.');
+                        if (videoOverlay) {
+                            videoOverlay.style.pointerEvents = 'none';
+                            videoOverlay.classList.add('hidden');
+                        }
+                    } else {
+                        console.warn('[Video.js] Player instance not ready or not found when trying to play via overlay click after ad.');
+                        if (videoOverlay) {
+                            videoOverlay.style.pointerEvents = 'auto';
+                            videoOverlay.classList.remove('hidden');
+                        }
                         if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
-                    }).catch(error => {
-                        console.warn('⚠️ [Video.js] Play failed after overlay click:', error);
-                        // If play fails again, keep overlay visible
-                        videoOverlay.style.display = 'flex';
-                        videoOverlay.style.pointerEvents = 'auto';
-                        if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
-                    });
-                } else if (videoJsPlayerInstance && videoJsPlayerInstance.seeking()) {
-                    console.log('[Video.js] Player is seeking, will not attempt to play directly from overlay click.');
-                    // If seeking, just open ad, then let seek complete naturally
-                    videoOverlay.style.display = 'none'; // Hide overlay, as seeking means interaction already happened
-                    videoOverlay.style.pointerEvents = 'none';
-                } else if (videoJsPlayerInstance && videoJsPlayerInstance.isReady_ && !videoJsPlayerInstance.paused() && !videoJsPlayerInstance.ended()){
-                    console.log('[Video.js] Player already playing, just opened ad.');
-                     // Hide overlay if it was shown for some reason (e.g. from pause state)
-                    videoOverlay.style.display = 'none';
-                    videoOverlay.style.pointerEvents = 'none';
-                } else {
-                    console.warn('[Video.js] Player instance not ready or not found when trying to play via overlay click.');
-                    // If player not ready, keep overlay visible
-                    videoOverlay.style.display = 'flex';
-                    videoOverlay.style.pointerEvents = 'auto';
-                    if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none'; // Ensure spinner is off if player failed
-                }
+                    }
+                }, 500); // 500ms delay before attempting to play
             } else {
                 console.log('[Video Overlay] Ad not opened due to cooldown. Overlay remains active.');
-                // If ad not opened due to cooldown, overlay remains to catch next click
+                // If ad not opened due to cooldown, overlay remains transparent and clickable.
             }
             e.stopPropagation(); // Prevent clicks from bubbling to player if we want overlay to handle them first
         });
