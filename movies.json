@@ -10,10 +10,10 @@
     "director": "Storj Uploader",
     "cast": "N/A",
     "video_type": "mp4",
-    "video_source": "https://tg-cloud-dl-x.noyes.in/file/0d8745aa-3b5e-41a5-811c-0c4ea585331d/download",
+  
     "rating": "N/A",
     "duration": "PT0M10S",
-    "embed_url": "https://tg-cloud-dl-x.noyes.in/file/0d8745aa-3b5e-41a5-811c-0c4ea585331d/download"
+    "embed_url": "https://s3.ap-northeast-1.wasabisys.com/video389484/document-59160341627870967461%282%29%282%29.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=KKY60E16VQWVA57YO7SZ%2F20250626%2Fap-northeast-1%2Fs3%2Faws4_request&X-Amz-Date=20250626T034715Z&X-Amz-Expires=7200&X-Amz-Signature=80e351212ae5ffcb2d9fb9711b39a9ad5b21962a1b259187eaf9b906da0209ce&X-Amz-SignedHeaders=host&x-id=GetObject"
   }
 
 ]
