@@ -1064,18 +1064,18 @@ a:hover {
     /* 2 بوستر على التابلت */
     .movie-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 3vw;
+        gap: 3vw; /* حافظ على هذا الـ gap أو قم بتقليله قليلاً إذا كانت الكروت مكدسة */
         padding: 0 3vw;
     }
 
     .movie-card img {
         /* **تعديل هنا** - زيادة الارتفاع على التابلت */
-        height: clamp(160px, 42vw, 220px); /* زيادة الارتفاع أكثر: 150->160 و 210->220 */
+        height: clamp(170px, 44vw, 230px); /* زيادة الارتفاع أكثر لضمان عدم الاقتطاع */
     }
 
     .movie-card h3 {
         /* **تعديل هنا** - زيادة الارتفاع على التابلت وتطبيق سلوك السطرين */
-        min-height: clamp(65px, 7vw, 80px); /* زيادة الارتفاع أكثر: 60->65 و 75->80 */
+        min-height: clamp(70px, 7.5vw, 85px); /* زيادة الارتفاع أكثر */
         white-space: normal;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1216,17 +1216,17 @@ a:hover {
     .movie-grid {
         /* Always 2 columns on small mobile */
         grid-template-columns: repeat(2, 1fr);
-        gap: 3.5vw;
+        gap: 4vw; /* زيادة طفيفة في الـ gap لتباعد أفضل على الموبايل */
         padding: 0 3.5vw;
     }
     .movie-card img {
         /* **تعديل هنا** - زيادة الارتفاع على الموبايل الصغير */
-        height: clamp(155px, 48vw, 195px); /* زيادة الارتفاع أكثر: 145->155 و 185->195 */
+        height: clamp(165px, 50vw, 205px); /* زيادة الارتفاع بشكل ملحوظ لضمان رؤية البوستر كاملاً */
     }
     .movie-card h3 {
         /* **تعديل هنا** - زيادة الارتفاع على الموبايل الصغير وتطبيق سلوك السطرين */
         font-size: clamp(0.8rem, 2.6vw, 0.95rem);
-        min-height: clamp(60px, 7.5vw, 70px); /* زيادة الارتفاع أكثر: 55->60 و 65->70 */
+        min-height: clamp(65px, 8vw, 75px); /* زيادة الارتفاع بشكل ملحوظ */
         padding: 0.6rem;
         white-space: normal;
         overflow: hidden;
