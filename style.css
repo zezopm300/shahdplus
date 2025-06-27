@@ -527,35 +527,68 @@ a:hover {
     border: 1px solid transparent;
     display: flex;
     flex-direction: column;
+
+    /* **جديد: تأثيرات الأشكال والأنيميشن للبوستر** */
+    border: 2px solid transparent; /* بداية شفافة للحدود */
+    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.0), 0 5px 15px rgba(0, 0, 0, 0.4); /* ظل مبدئي */
 }
 
 .movie-card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: var(--shadow-subtle-glow), 0 0 20px var(--primary-color);
-    border-color: var(--accent-color);
+    transform: translateY(-8px) scale(1.03); /* زيادة تأثير الرفع والتكبير */
+    box-shadow: var(--shadow-subtle-glow), 0 0 25px var(--primary-color), 0 0 40px rgba(0, 229, 255, 0.2); /* توهج أقوى */
+    border-color: var(--accent-color); /* لون الحدود عند التحويم */
     z-index: 10;
 }
 
+/* **جديد: تأثير توهج الحدود عند التحويم** */
+.movie-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--secondary-color), var(--primary-color));
+    background-size: 400% 400%;
+    border-radius: var(--border-radius-base);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity var(--transition-speed) ease-in-out;
+    filter: blur(8px); /* تأثير توهج ضبابي */
+}
+
+.movie-card:hover::before {
+    opacity: 1;
+    animation: border-glow 3s linear infinite; /* أنيميشن دوران التوهج */
+}
+
+@keyframes border-glow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
 .movie-card img {
+    /* **تعديل هنا** - زيادة الارتفاع لتقليل الاقتطاع */
     width: 100%;
-    height: clamp(160px, 14vw, 220px);
-    object-fit: cover;
+    height: clamp(180px, 16vw, 250px); /* زيادة الارتفاع أكثر: 170->180 و 230->250 */
+    object-fit: cover; /* يملأ المساحة مع القص إذا لزم الأمر */
     display: block;
     border-bottom: 1px solid var(--primary-color); 
-    transition: transform var(--transition-speed) ease;
+    transition: transform var(--transition-speed) ease, filter var(--transition-speed) ease;
     flex-shrink: 0;
 }
 
 .movie-card:hover img {
-    transform: scale(1.01);
+    transform: scale(1.02); /* زيادة طفيفة في التكبير */
+    filter: brightness(1.05) saturate(1.05); /* إضاءة وتشبع خفيف */
 }
 
 .movie-card h3 {
-    font-size: clamp(0.85rem, 1.1vw, 1rem);
-    padding: 0.6rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* **تعديل هنا** - زيادة min-height والسماح بالنص ليكون سطرين */
+    font-size: clamp(0.9rem, 1.2vw, 1.05rem); /* زيادة طفيفة في حجم الخط */
+    padding: 0.7rem 0.6rem; /* زيادة البادينج */
     color: var(--text-color);
     background-color: rgba(0, 0, 5, 0.8);
     margin-top: -1px;
@@ -565,9 +598,26 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 45px;
-    text-shadow: 0 0 3px rgba(0,0,0,0.5);
+    min-height: clamp(60px, 6.5vw, 75px); /* زيادة الحد الأدنى للارتفاع أكثر: 55->60 و 70->75 */
+    text-shadow: 0 0 5px rgba(0, 229, 255, 0.2), 0 0 10px rgba(0,0,0,0.6); /* ظل نصي أفضل */
+    line-height: 1.3; /* تحسين تباعد الأسطر */
+
+    /* **حل مشكلة النص المقطوع** */
+    white-space: normal; /* السماح للنص بالالتفاف */
+    overflow: hidden; /* إخفاء المحتوى الزائد */
+    text-overflow: ellipsis; /* إضافة "..." */
+    display: -webkit-box; /* تفعيل خاصية تحديد عدد الأسطر */
+    -webkit-line-clamp: 2; /* تحديد أقصى سطرين */
+    -webkit-box-orient: vertical; /* اتجاه الصندوق عمودي */
+    transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
 }
+
+.movie-card:hover h3 {
+    background-color: var(--primary-color); /* تغيير خلفية العنوان عند التحويم */
+    color: var(--dark-color); /* تغيير لون النص عند التحويم */
+    text-shadow: 0 0 5px rgba(0,0,0,0.5); /* ظل نصي أغمق */
+}
+
 
 /* Pagination - تصميم "Galactic Navigation" */
 .pagination {
@@ -674,7 +724,7 @@ a:hover {
     top: 0;
     left: 0;
     width: 100% !important;
-    height: 100% !important;    
+    height: 100% !important; 
     margin: 0 !important;
     padding: 0 !important;
     object-fit: cover; 
@@ -682,19 +732,19 @@ a:hover {
 
 /* شريط التحكم لضمان دخوله داخل الفيديو وظهوره في الأسفل */
 .video-js .vjs-control-bar {
-    position: absolute !important;    
-    bottom: 0 !important;    
-    left: 0 !important;    
+    position: absolute !important; 
+    bottom: 0 !important; 
+    left: 0 !important; 
     width: 100% !important;
-    height: 40px !important;    
-    margin-bottom: 0 !important;    
-    background-color: rgba(0, 0, 0, 0.7);    
-    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base);    
-    z-index: 10;    
-    opacity: 1;    
-    visibility: visible;    
-    transform: translateY(0) !important;    
-    box-sizing: border-box;    
+    height: 40px !important; 
+    margin-bottom: 0 !important; 
+    background-color: rgba(0, 0, 0, 0.7); 
+    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base); 
+    z-index: 10; 
+    opacity: 1; 
+    visibility: visible; 
+    transform: translateY(0) !important; 
+    box-sizing: border-box; 
 }
 
 /* شريط التقدم والعناصر الطرفية داخل شريط التحكم */
@@ -702,16 +752,16 @@ a:hover {
 .video-js .vjs-remaining-time,
 .video-js .vjs-current-time,
 .video-js .vjs-time-divider {
-    align-items: center !important;    
-    display: flex !important;    
+    align-items: center !important; 
+    display: flex !important; 
 }
 
 
 /* للتأكد من أن زر التشغيل الكبير في المنتصف */
-.video-js .vjs-big-play-button {    
-    top: 50% !important;    
-    left: 50% !important;    
-    transform: translate(-50%, -50%) !important;    
+.video-js .vjs-big-play-button { 
+    top: 50% !important; 
+    left: 50% !important; 
+    transform: translate(-50%, -50%) !important; 
     margin: 0 !important;
 }
 
@@ -1019,13 +1069,19 @@ a:hover {
     }
 
     .movie-card img {
-        height: clamp(140px, 40vw, 200px);
+        /* **تعديل هنا** - زيادة الارتفاع على التابلت */
+        height: clamp(160px, 42vw, 220px); /* زيادة الارتفاع أكثر: 150->160 و 210->220 */
     }
 
     .movie-card h3 {
-        font-size: clamp(0.85rem, 2vw, 1.05rem);
-        padding: 0.65rem;
-        min-height: 55px;
+        /* **تعديل هنا** - زيادة الارتفاع على التابلت وتطبيق سلوك السطرين */
+        min-height: clamp(65px, 7vw, 80px); /* زيادة الارتفاع أكثر: 60->65 و 75->80 */
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
     .pagination {
@@ -1164,12 +1220,20 @@ a:hover {
         padding: 0 3.5vw;
     }
     .movie-card img {
-        height: clamp(135px, 45vw, 175px);
+        /* **تعديل هنا** - زيادة الارتفاع على الموبايل الصغير */
+        height: clamp(155px, 48vw, 195px); /* زيادة الارتفاع أكثر: 145->155 و 185->195 */
     }
     .movie-card h3 {
+        /* **تعديل هنا** - زيادة الارتفاع على الموبايل الصغير وتطبيق سلوك السطرين */
         font-size: clamp(0.8rem, 2.6vw, 0.95rem);
-        min-height: 50px;
+        min-height: clamp(60px, 7.5vw, 70px); /* زيادة الارتفاع أكثر: 55->60 و 65->70 */
         padding: 0.6rem;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
     .pagination {
         margin-top: 3.5vw;
@@ -1221,4 +1285,3 @@ a:hover {
         font-size: clamp(0.85rem, 2.2vw, 1rem);
     }
 }
-    
