@@ -572,7 +572,7 @@ a:hover {
 .movie-card img {
     /* **تعديل هنا** - زيادة الارتفاع لتقليل الاقتطاع */
     width: 100%;
-    height: clamp(180px, 16vw, 250px); /* زيادة الارتفاع أكثر: 170->180 و 230->250 */
+    height: clamp(180px, 16vw, 250px); 
     object-fit: cover; /* يملأ المساحة مع القص إذا لزم الأمر */
     display: block;
     border-bottom: 1px solid var(--primary-color); 
@@ -587,8 +587,8 @@ a:hover {
 
 .movie-card h3 {
     /* **تعديل هنا** - زيادة min-height والسماح بالنص ليكون سطرين */
-    font-size: clamp(0.9rem, 1.2vw, 1.05rem); /* زيادة طفيفة في حجم الخط */
-    padding: 0.7rem 0.6rem; /* زيادة البادينج */
+    font-size: clamp(0.9rem, 1.2vw, 1.05rem); 
+    padding: 0.7rem 0.6rem; 
     color: var(--text-color);
     background-color: rgba(0, 0, 5, 0.8);
     margin-top: -1px;
@@ -598,24 +598,24 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: clamp(60px, 6.5vw, 75px); /* زيادة الحد الأدنى للارتفاع أكثر: 55->60 و 70->75 */
-    text-shadow: 0 0 5px rgba(0, 229, 255, 0.2), 0 0 10px rgba(0,0,0,0.6); /* ظل نصي أفضل */
-    line-height: 1.3; /* تحسين تباعد الأسطر */
+    min-height: clamp(60px, 6.5vw, 75px); 
+    text-shadow: 0 0 5px rgba(0, 229, 255, 0.2), 0 0 10px rgba(0,0,0,0.6); 
+    line-height: 1.3; 
 
     /* **حل مشكلة النص المقطوع** */
-    white-space: normal; /* السماح للنص بالالتفاف */
-    overflow: hidden; /* إخفاء المحتوى الزائد */
-    text-overflow: ellipsis; /* إضافة "..." */
-    display: -webkit-box; /* تفعيل خاصية تحديد عدد الأسطر */
-    -webkit-line-clamp: 2; /* تحديد أقصى سطرين */
-    -webkit-box-orient: vertical; /* اتجاه الصندوق عمودي */
+    white-space: normal; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    display: -webkit-box; 
+    -webkit-line-clamp: 2; 
+    -webkit-box-orient: vertical; 
     transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
 }
 
 .movie-card:hover h3 {
-    background-color: var(--primary-color); /* تغيير خلفية العنوان عند التحويم */
-    color: var(--dark-color); /* تغيير لون النص عند التحويم */
-    text-shadow: 0 0 5px rgba(0,0,0,0.5); /* ظل نصي أغمق */
+    background-color: var(--primary-color); 
+    color: var(--dark-color); 
+    text-shadow: 0 0 5px rgba(0,0,0,0.5); 
 }
 
 
@@ -1064,18 +1064,18 @@ a:hover {
     /* 2 بوستر على التابلت */
     .movie-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 3vw; /* حافظ على هذا الـ gap أو قم بتقليله قليلاً إذا كانت الكروت مكدسة */
+        gap: 3vw; 
         padding: 0 3vw;
     }
 
     .movie-card img {
         /* **تعديل هنا** - زيادة الارتفاع على التابلت */
-        height: clamp(170px, 44vw, 230px); /* زيادة الارتفاع أكثر لضمان عدم الاقتطاع */
+        height: clamp(170px, 44vw, 230px); 
     }
 
     .movie-card h3 {
         /* **تعديل هنا** - زيادة الارتفاع على التابلت وتطبيق سلوك السطرين */
-        min-height: clamp(70px, 7.5vw, 85px); /* زيادة الارتفاع أكثر */
+        min-height: clamp(70px, 7.5vw, 85px); 
         white-space: normal;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1216,17 +1216,24 @@ a:hover {
     .movie-grid {
         /* Always 2 columns on small mobile */
         grid-template-columns: repeat(2, 1fr);
-        gap: 4vw; /* زيادة طفيفة في الـ gap لتباعد أفضل على الموبايل */
+        gap: 4vw; 
         padding: 0 3.5vw;
     }
     .movie-card img {
-        /* **تعديل هنا** - زيادة الارتفاع على الموبايل الصغير */
-        height: clamp(165px, 50vw, 205px); /* زيادة الارتفاع بشكل ملحوظ لضمان رؤية البوستر كاملاً */
+        /* **أهم تعديل هنا للموبايل: استخدام object-fit: contain و aspect-ratio** */
+        height: auto; /* السماح بالارتفاع التلقائي */
+        max-height: 55vw; /* تحديد أقصى ارتفاع نسبي لعرض الشاشة */
+        object-fit: contain; /* **ضمان عدم قص الصورة** */
+        aspect-ratio: 2/3; /* تحديد نسبة الأبعاد الشائعة للبوسترات (العرض:الارتفاع).
+                              إذا كانت بوستراتك لها نسبة أبعاد مختلفة، قم بتعديل هذه القيمة.
+                              مثل 9/16 أو 3/4 أو 1/1. إذا لم تكن متأكدًا، قم بإزالتها. */
+        background-color: var(--dark-color); /* لون الخلفية للفراغات عند استخدام contain */
     }
     .movie-card h3 {
-        /* **تعديل هنا** - زيادة الارتفاع على الموبايل الصغير وتطبيق سلوك السطرين */
+        /* **أهم تعديل هنا للموبايل: مرونة أكبر للارتفاع** */
         font-size: clamp(0.8rem, 2.6vw, 0.95rem);
-        min-height: clamp(65px, 8vw, 75px); /* زيادة الارتفاع بشكل ملحوظ */
+        min-height: auto; /* **إزالة الحد الأدنى الثابت للارتفاع للسماح بالمرونة الكاملة** */
+        height: auto; /* التأكد من أن الارتفاع تلقائي */
         padding: 0.6rem;
         white-space: normal;
         overflow: hidden;
