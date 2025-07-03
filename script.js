@@ -634,7 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const otherMovies = moviesData.filter(movie => movie.id !== currentMovieId);
         const shuffled = otherMovies.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 1);
+        const selected = shuffled.slice(0, 24);
 
         if (selected.length === 0) {
             suggestedMovieGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد أفلام مقترحة حالياً.</p>';
