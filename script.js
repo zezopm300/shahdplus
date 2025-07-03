@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🏁 DOM Content Loaded. Script execution started.');
 
     // --- 1. DOM Element References ---
-    // const menuToggle = document.getElementById('menu-toggle'); // Removed as per request
+    const menuToggle = document.getElementById('menu-toggle'); // تم إعادته
     const mainNav = document.getElementById('main-nav');
     const navLinks = document.querySelectorAll('.main-nav ul li a');
     const heroSection = document.getElementById('hero-section');
@@ -278,8 +278,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVideoElement.id = 'movie-player'; // Keep the same ID for Video.js lookup
                 newVideoElement.classList.add('video-js', 'vjs-default-skin');
                 newVideoElement.controls = true;
-                newVideoElement.preload = 'auto'; // Load video metadata and some data
-                newVideoElement.setAttribute('playsinline', ''); 
+                newVideoElement.preload = 'auto'; // مهم جدا لـ MP4 لضمان التحميل المسبق
+                newVideoElement.setAttribute('playsinline', '');
                 // Autoplay and muted attributes are NOT set here as requested.
 
                 videoContainer.appendChild(newVideoElement);
@@ -339,23 +339,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     controls: true,
                     responsive: true,
                     fluid: true,
+                    // *** حذف إعدادات HLS لأنك تستخدم MP4 ***
                     techOrder: ['html5'], 
                     html5: {
-                        hls: {
-                            withCredentials: false, 
-                            // Optimized HLS.js configurations for smoother playback
-                            liveSyncDurationCount: 7, 
-                            enableWorker: true, // Use Web Workers if supported for better performance
-                            maxBufferLength: 30, // Max buffer size in seconds
-                            maxMaxBufferLength: 60, // Absolute max buffer size
-                            startLevel: 0 // Start playback at lowest quality to reduce initial load
-                        },
+                        // For MP4, we can potentially configure buffer more explicitly if needed,
+                        // though 'preload: auto' on the <video> tag is often sufficient.
+                        // Video.js manages MP4 buffering inherently.
                         nativeControlsForTouch: true // Use native controls for touch devices
                     },
                     playbackRates: [0.5, 1, 1.5, 2], 
                     sources: [{
                         src: movie.embed_url,
-                        type: movie.embed_url.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' 
+                        type: 'video/mp4' // *** التأكد من أن النوع هو video/mp4 دائمًا هنا ***
                     }],
                     crossOrigin: 'anonymous' 
                 }, function() {
@@ -557,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "name": "شاهد بلس", 
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "/path/to/your/logo.png", // REMEMBER TO CHANGE THIS TO YOUR ACTUAL LOGO URL
+                    "url": "https://example.com/images/shahed-plus-logo.png", // **تأكد من تغيير هذا المسار لشعار موقعك الفعلي**
                     "width": 200,
                     "height": 50
                 }
@@ -714,13 +709,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 5. Event Listeners ---
-    // Removed menu toggle logic as per request. Navigation is always visible.
-    // if (menuToggle && mainNav) { ... } // Removed
+    // تم إعادة منطق تشغيل/إغلاق القائمة
+    if (menuToggle && mainNav) {
+        menuToggle.addEventListener('click', () => {
+            mainNav.classList.toggle('nav-open');
+            console.log('☰ [Interaction] Menu toggled.');
+        });
+    }
 
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
-            // No mobile menu toggle needed here anymore
-            console.log('📱 [Interaction] Nav link clicked.');
+            // قم بإغلاق القائمة عند النقر على رابط (خاصة في الموبايل)
+            if (mainNav && mainNav.classList.contains('nav-open')) {
+                mainNav.classList.remove('nav-open');
+                console.log('📱 [Interaction] Nav link clicked, menu closed.');
+            } else {
+                console.log('📱 [Interaction] Nav link clicked.');
+            }
         });
     });
 
