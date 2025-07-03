@@ -369,6 +369,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlay.style.pointerEvents = 'auto'; // Make it clickable
                         videoOverlay.classList.remove('hidden'); // Ensure visible (though transparent)
                     }
+
+                    // --- Video.js Plugin to disable download button ---
+                    this.ready(function() {
+                        const player = this;
+                        player.controlBar.addChild('Component', {}, player.controlBar.children_.length - 1); // Add a placeholder
+                        // Find the existing 'Download' button (if it exists from a plugin) and remove it
+                        const downloadButton = player.controlBar.getChild('DownloadButton'); // Adjust if component name is different
+                        if (downloadButton) {
+                            player.controlBar.removeChild(downloadButton);
+                            console.log('[Video.js] Download button removed from control bar.');
+                        }
+                    });
+
+                    // --- Disable right-click on the video element ---
+                    moviePlayerElement.addEventListener('contextmenu', function(e) {
+                        e.preventDefault();
+                        console.log('🚫 [Video Player] Right-click disabled on video.');
+                    });
                 });
 
                 // --- Video Player Event Listeners for Ads and Overlay ---
@@ -616,7 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const otherMovies = moviesData.filter(movie => movie.id !== currentMovieId);
         const shuffled = otherMovies.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 15);
+        const selected = shuffled.slice(0, 1);
 
         if (selected.length === 0) {
             suggestedMovieGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد أفلام مقترحة حالياً.</p>';
