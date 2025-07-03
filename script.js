@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🏁 DOM Content Loaded. Script execution started.');
 
     // --- 1. DOM Element References ---
-    const menuToggle = document.getElementById('menu-toggle'); // تم إعادته
+    const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.getElementById('main-nav');
     const navLinks = document.querySelectorAll('.main-nav ul li a');
     const heroSection = document.getElementById('hero-section');
@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const homeLogoLink = document.getElementById('home-logo-link');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
     const movieDetailsPoster = document.getElementById('movie-details-poster');
-    // const videoOverlayText = document.getElementById('video-overlay-text'); // This element is removed from HTML now
 
     const prevPageBtn = document.getElementById('prev-page-btn');
     const nextPageBtn = document.getElementById('next-page-btn');
@@ -118,6 +117,44 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentDetailedMovie = null;
 
     let videoJsPlayerInstance = null;
+
+    // --- تقنية تشفير الرابط (Base64 Encoding & JavaScript Obfuscation) ---
+    // هذه الدالة ستقوم بفك تشفير سلسلة Base64
+    // تم تصميمها لتكون "مخفية" أو أقل وضوحًا
+    const _decryptVideoUrl = (function() {
+        const _privateKey = "mySecretKey"; // هذا مفتاح بسيط لا يستخدم في التشفير الفعلي لـ Base64، ولكنه جزء من "الإخفاء"
+        const _decoder = function(encodedString) {
+            try {
+                // Buffer.from().toString('utf8') يستخدم في Node.js
+                // في المتصفح نستخدم atob()
+                if (typeof window !== 'undefined' && typeof window.atob === 'function') {
+                    // للتأكد من أنها سلسلة Base64 صالحة
+                    if (!/^[a-zA-Z0-9+/=]*$/.test(encodedString)) {
+                        console.error('🚫 [Decryption] Invalid Base64 string detected.');
+                        return null; // أو إرجاع قيمة افتراضية
+                    }
+                    return window.atob(encodedString);
+                } else {
+                    console.error('🚫 [Decryption] window.atob is not available or not a function.');
+                    return null;
+                }
+            } catch (e) {
+                console.error('🚫 [Decryption] Error decoding Base64 string:', e);
+                return null;
+            }
+        };
+
+        // هنا يمكن إضافة المزيد من التعقيد للدالة لتصعيب فهمها
+        // على سبيل المثال، استخدام Closure، دمجها مع عمليات غير ذات صلة
+        return function(data) {
+            // يمكن استخدام _privateKey هنا لبعض المعالجات الإضافية إذا كان التشفير أكثر تعقيدًا
+            // حاليًا، Base64 بسيط ولا يحتاج مفتاح
+            console.log('🔑 [Decryption] Attempting to decode video URL.');
+            return _decoder(data);
+        };
+    })();
+    // --- نهاية قسم تقنية التشفير ---
+
 
     async function fetchMoviesData() {
         try {
@@ -278,9 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVideoElement.id = 'movie-player'; // Keep the same ID for Video.js lookup
                 newVideoElement.classList.add('video-js', 'vjs-default-skin');
                 newVideoElement.controls = true;
-                newVideoElement.preload = 'auto'; // مهم جدا لـ MP4 لضمان التحميل المسبق
+                newVideoElement.preload = 'auto'; 
                 newVideoElement.setAttribute('playsinline', '');
-                // Autoplay and muted attributes are NOT set here as requested.
 
                 videoContainer.appendChild(newVideoElement);
                 console.log('[Video Player] Recreated movie-player element.');
@@ -317,7 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const moviePlayerElement = document.getElementById('movie-player');
 
             if (moviePlayerElement) {
-                // Wait until the element is connected to DOM and visible
                 await new Promise(resolve => {
                     const checkVisibility = () => {
                         if (moviePlayerElement.offsetParent !== null) { 
@@ -333,129 +368,121 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 console.log('[Video Player] moviePlayer is ready. Proceeding with Video.js initialization.');
 
+                // *** فك تشفير رابط الفيديو هنا قبل استخدامه ***
+                const decodedEmbedUrl = _decryptVideoUrl(movie.embed_url);
+                if (!decodedEmbedUrl) {
+                    console.error('❌ [Video Player] Failed to decode video URL. Cannot initialize player.');
+                    if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+                    if (videoOverlay) {
+                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.classList.remove('hidden');
+                    }
+                    return; // التوقف إذا فشل فك التشفير
+                }
+                console.log(`🔑 [Decryption] Decoded video URL: ${decodedEmbedUrl.substring(0, 50)}...`); // لا تعرض الرابط بالكامل في الكونسول للأمان
+
                 // Initialize Video.js player
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
-                    autoplay: false, // Explicitly false as per request
+                    autoplay: false,
                     controls: true,
                     responsive: true,
                     fluid: true,
-                    // *** حذف إعدادات HLS لأنك تستخدم MP4 ***
                     techOrder: ['html5'], 
                     html5: {
-                        // For MP4, we can potentially configure buffer more explicitly if needed,
-                        // though 'preload: auto' on the <video> tag is often sufficient.
-                        // Video.js manages MP4 buffering inherently.
-                        nativeControlsForTouch: true // Use native controls for touch devices
+                        nativeControlsForTouch: true
                     },
                     playbackRates: [0.5, 1, 1.5, 2], 
                     sources: [{
-                        src: movie.embed_url,
-                        type: 'video/mp4' // *** التأكد من أن النوع هو video/mp4 دائمًا هنا ***
+                        src: decodedEmbedUrl, // *** استخدام الرابط الذي تم فك تشفيره ***
+                        type: 'video/mp4' 
                     }],
                     crossOrigin: 'anonymous' 
                 }, function() {
-                    console.log(`[Video.js] Player initialized callback for source: ${movie.embed_url}`);
-                    // Initially show spinner if video is not ready
+                    console.log(`[Video.js] Player initialized callback for source.`);
                     if (videoLoadingSpinner && !this.hasStarted() && !this.paused() && !this.ended()) {
                         videoLoadingSpinner.style.display = 'block';
                     }
-                    // Ensure overlay is active for clicks when player is ready but not playing
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'auto'; // Make it clickable
-                        videoOverlay.classList.remove('hidden'); // Ensure visible (though transparent)
+                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.classList.remove('hidden');
                     }
 
-                    // --- Video.js Plugin to disable download button ---
                     this.ready(function() {
                         const player = this;
-                        player.controlBar.addChild('Component', {}, player.controlBar.children_.length - 1); // Add a placeholder
-                        // Find the existing 'Download' button (if it exists from a plugin) and remove it
-                        const downloadButton = player.controlBar.getChild('DownloadButton'); // Adjust if component name is different
+                        player.controlBar.addChild('Component', {}, player.controlBar.children_.length - 1);
+                        const downloadButton = player.controlBar.getChild('DownloadButton');
                         if (downloadButton) {
                             player.controlBar.removeChild(downloadButton);
                             console.log('[Video.js] Download button removed from control bar.');
                         }
                     });
 
-                    // --- Disable right-click on the video element ---
                     moviePlayerElement.addEventListener('contextmenu', function(e) {
                         e.preventDefault();
                         console.log('🚫 [Video Player] Right-click disabled on video.');
                     });
                 });
 
-                // --- Video Player Event Listeners for Ads and Overlay ---
-                
-                // Hide spinner and make overlay non-clickable when player is playing
                 videoJsPlayerInstance.on('playing', () => {
                     console.log('[Video.js] Video playing event fired.');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'none'; // Allow direct player interaction
-                        videoOverlay.classList.add('hidden'); // Fully hide it when playing
+                        videoOverlay.style.pointerEvents = 'none';
+                        videoOverlay.classList.add('hidden');
                     }
                 });
 
-                // Show spinner and make overlay clickable when buffering
                 videoJsPlayerInstance.on('waiting', () => {
                     console.log('[Video.js] Video waiting (buffering).');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'none'; // Keep non-clickable during buffering if spinner is visible
-                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay during buffering
+                        videoOverlay.style.pointerEvents = 'none';
+                        videoOverlay.classList.remove('hidden');
                     }
                 });
 
-                // Open ad on pause, and make overlay clickable
                 videoJsPlayerInstance.on('pause', () => {
                     console.log('[Video.js] Video paused.');
-                    if (!videoJsPlayerInstance.ended()) { // Do not trigger ad on natural end
+                    if (!videoJsPlayerInstance.ended()) {
                         openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoPause');
                         if (videoOverlay) {
-                            videoOverlay.style.pointerEvents = 'auto'; // Make overlay clickable again
-                            videoOverlay.classList.remove('hidden'); // Show (transparent) overlay
+                            videoOverlay.style.pointerEvents = 'auto';
+                            videoOverlay.classList.remove('hidden');
                         }
                     }
                 });
 
-                // Open ad when user seeks
                 videoJsPlayerInstance.on('seeked', () => {
                     console.log('[Video.js] Video seeked.');
                     openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoSeek');
-                    // No need to show overlay here, user just interacted with controls
                 });
                 
-                // Show transparent overlay and hide spinner on error
                 videoJsPlayerInstance.on('error', (e) => {
                     const error = videoJsPlayerInstance.error();
                     console.error('[Video.js] Player Error:', error ? error.message : 'Unknown error', error);
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'auto'; // Make overlay clickable again
-                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay
+                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.classList.remove('hidden');
                     }
                 });
 
-                // When video ends, open ad and make overlay clickable for restart
                 videoJsPlayerInstance.on('ended', () => {
                     console.log('[Video.js] Video ended.');
-                    openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoEndedRestart'); // New type for ended event
+                    openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoEndedRestart');
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'auto'; // Make overlay clickable again
-                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay
+                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.classList.remove('hidden');
                     }
-                    // To make it easier to restart, setting current time to 0.
-                    // This will allow a click on the overlay to restart from beginning.
                     videoJsPlayerInstance.currentTime(0); 
                 });
-
 
             } else {
                 console.warn('⚠️ [Video Player] moviePlayer element not found or not ready after attempts. Skipping Video.js initialization.');
                 if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                 if (videoOverlay) {
-                    videoOverlay.style.display = 'flex'; // Ensure it's visible (though transparent)
-                    videoOverlay.style.pointerEvents = 'auto'; // Ensure it's clickable
+                    videoOverlay.style.display = 'flex';
+                    videoOverlay.style.pointerEvents = 'auto';
                     videoOverlay.classList.remove('hidden'); 
                 }
             }
@@ -544,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "description": movie.description,
             "thumbnailUrl": movie.poster,
             "uploadDate": formattedUploadDate,
-            "embedUrl": movie.embed_url,
+            "embedUrl": movie.embed_url, // هنا يفضل أن يكون الرابط مشفرا أيضا
             "duration": movie.duration,
             "contentUrl": movie.embed_url, 
             "publisher": {
@@ -658,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure video overlay is hidden on home page
         if (videoOverlay) {
             videoOverlay.style.pointerEvents = 'none';
-            videoOverlay.classList.add('hidden'); // Fully hide it on home
+            videoOverlay.classList.add('hidden');
             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
         }
         
@@ -709,7 +736,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 5. Event Listeners ---
-    // تم إعادة منطق تشغيل/إغلاق القائمة
     if (menuToggle && mainNav) {
         menuToggle.addEventListener('click', () => {
             mainNav.classList.toggle('nav-open');
@@ -719,7 +745,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
-            // قم بإغلاق القائمة عند النقر على رابط (خاصة في الموبايل)
             if (mainNav && mainNav.classList.contains('nav-open')) {
                 mainNav.classList.remove('nav-open');
                 console.log('📱 [Interaction] Nav link clicked, menu closed.');
@@ -801,23 +826,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
 
             if (adOpened) {
-                // If ad opened, attempt to play the video after a short delay
-                // This delay helps mitigate browser pop-up/autoplay restrictions
                 setTimeout(() => {
                     if (videoJsPlayerInstance && (videoJsPlayerInstance.paused() || videoJsPlayerInstance.ended())) {
                         videoJsPlayerInstance.play().then(() => {
                             console.log('[Video.js] Player started playing after overlay click and ad open.');
                             if (videoOverlay) {
                                 videoOverlay.style.pointerEvents = 'none';
-                                videoOverlay.classList.add('hidden'); // Hide overlay fully
+                                videoOverlay.classList.add('hidden');
                             }
                             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                         }).catch(error => {
                             console.warn('⚠️ [Video.js] Play failed after ad open (user interaction still required):', error);
-                            // If play fails, keep overlay clickable. No specific text.
                             if (videoOverlay) {
                                 videoOverlay.style.pointerEvents = 'auto';
-                                videoOverlay.classList.remove('hidden'); // Ensure visible (though transparent)
+                                videoOverlay.classList.remove('hidden');
                             }
                             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                         });
@@ -835,12 +857,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     }
-                }, 500); // 500ms delay before attempting to play
+                }, 500);
             } else {
                 console.log('[Video Overlay] Ad not opened due to cooldown. Overlay remains active.');
-                // If ad not opened due to cooldown, overlay remains transparent and clickable.
             }
-            e.stopPropagation(); // Prevent clicks from bubbling to player if we want overlay to handle them first
+            e.stopPropagation();
         });
         console.log('[Video Overlay] Click listener attached for ad interaction.');
     }
