@@ -147,12 +147,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('❌ generateSignedUrl: Failed to parse originalUrl with URL constructor:', e);
             return originalUrl; // Fallback if URL is malformed
         }
-        
+
         // Construct the string to be signed.
         // This format MUST exactly match what your Cloudflare Worker expects for signing.
         // Common format: /path/to/video.mp4?expires=1678886400
         const stringToSign = `${path}?expires=${expirationTime}`;
-        console.log(`🔑 https://dictionary.cambridge.org/dictionary/english/signing String to sign: "${stringToSign}"`);
+        console.log(`🔑 String to sign: "${stringToSign}"`);
 
         // Check if CryptoJS is loaded before trying to use it
         if (typeof CryptoJS === 'undefined' || !CryptoJS.HmacSHA256) {
@@ -162,13 +162,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Generate HMAC SHA256 hash
         const hash = CryptoJS.HmacSHA256(stringToSign, URL_SIGNING_SECRET_KEY).toString(CryptoJS.enc.Hex);
-        console.log(`🔑 https://dictionary.cambridge.org/dictionary/english/signing Generated hash: ${hash}`);
+        console.log(`🔑 Generated hash: ${hash}`);
 
         // Append the expires and signature parameters to the original URL
         const separator = originalUrl.includes('?') ? '&' : '?';
         const signedUrl = `${originalUrl}${separator}expires=${expirationTime}&signature=${hash}`;
-        
-        console.log(`✅ https://dictionary.cambridge.org/dictionary/english/signing Generated signed URL: ${signedUrl}`);
+
+        console.log(`✅ Generated signed URL: ${signedUrl}`);
         return signedUrl;
     }
 
@@ -314,10 +314,11 @@ document.addEventListener('DOMContentLoaded', () => {
         moviesDataForPagination = filteredMovies;
         paginateMovies(moviesDataForPagination, currentPage);
     }
-    
+
     async function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
-        const movie = moviesData.find(m => m.id === movieId);
+        // Ensure both IDs are treated as strings for robust comparison
+        const movie = moviesData.find(m => String(m.id) === String(movieId));
 
         if (movie) {
             currentDetailedMovie = movie;
@@ -331,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoJsPlayerInstance.dispose();
                 videoJsPlayerInstance = null;
             }
-            
+
             // Rebuild the video element for a clean state
             if (videoContainer) {
                 videoContainer.innerHTML = ''; // Clear any previous content
@@ -380,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Wait until the element is connected to DOM and visible
                 await new Promise(resolve => {
                     const checkVisibility = () => {
-                        if (moviePlayerElement.offsetParent !== null) { 
+                        if (moviePlayerElement.offsetParent !== null) {
                             console.log('[Video Player] moviePlayer is now connected and visible. Resolving promise.');
                             resolve();
                         } else {
@@ -388,13 +389,29 @@ document.addEventListener('DOMContentLoaded', () => {
                             requestAnimationFrame(checkVisibility);
                         }
                     };
-                    setTimeout(() => requestAnimationFrame(checkVisibility), 50); 
+                    setTimeout(() => requestAnimationFrame(checkVisibility), 50);
                 });
 
                 console.log('[Video Player] moviePlayer is ready. Proceeding with Video.js initialization.');
 
-                // Generate signed URL for the video source before initializing Video.js
-                const signedVideoUrl = generateSignedUrl(movie.embed_url); // *** هذا هو التعديل الجديد ***
+                // --- Video Source Determination (Prioritizes embed_url, falls back to Pixeldrain embed_id) ---
+                const originalUrl = movie.embed_url || `https://pixeldrain.com/api/file/${movie.embed_id}`;
+
+                if (!originalUrl) { // Check if a valid URL was determined
+                    console.error('❌ No video source (embed_url or embed_id) found for this movie. Cannot play video.');
+                    if (videoContainer) {
+                        videoContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); padding: 20px;">عذرًا، لا يتوفر رابط الفيديو لهذا الفيلم حاليًا.</p>';
+                    }
+                    if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+                    if (videoOverlay) {
+                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.classList.remove('hidden');
+                    }
+                    return; // Stop execution if no video source
+                }
+                console.log(`🎥 [Video Source] Determined original URL: ${originalUrl}`);
+
+                const signedVideoUrl = generateSignedUrl(originalUrl); // Now uses the determined originalUrl
 
                 // Initialize Video.js player
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
@@ -402,16 +419,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     controls: true,
                     responsive: true,
                     fluid: true,
-                    techOrder: ['html5'], 
+                    techOrder: ['html5'],
                     html5: {
                         nativeControlsForTouch: true // Use native controls for touch devices
                     },
-                    playbackRates: [0.5, 1, 1.5, 2], 
+                    playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
                         src: signedVideoUrl, // *** استخدم الرابط الموقع هنا ***
                         type: 'video/mp4' // *** التأكد من أن النوع هو video/mp4 دائمًا هنا ***
                     }],
-                    crossOrigin: 'anonymous' 
+                    crossOrigin: 'anonymous'
                 }, function() {
                     console.log(`[Video.js] Player initialized callback for source: ${signedVideoUrl}`);
                     // Initially show spinner if video is not ready
@@ -444,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 // --- Video Player Event Listeners for Ads and Overlay ---
-                
+
                 // Hide spinner and make overlay non-clickable when player is playing
                 videoJsPlayerInstance.on('playing', () => {
                     console.log('[Video.js] Video playing event fired.');
@@ -483,15 +500,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoSeek');
                     // No need to show overlay here, user just interacted with controls
                 });
-                
+
                 // Show transparent overlay and hide spinner on error
                 videoJsPlayerInstance.on('error', (e) => {
                     const error = videoJsPlayerInstance.error();
                     console.error('[Video.js] Player Error:', error ? error.message : 'Unknown error', error);
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'auto'; // Make overlay clickable again
-                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay
+                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.classList.remove('hidden');
                     }
                 });
 
@@ -500,12 +517,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[Video.js] Video ended.');
                     openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoEndedRestart'); // New type for ended event
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'auto'; // Make overlay clickable again
-                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay
+                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.classList.remove('hidden');
                     }
                     // To make it easier to restart, setting current time to 0.
                     // This will allow a click on the overlay to restart from beginning.
-                    videoJsPlayerInstance.currentTime(0); 
+                    videoJsPlayerInstance.currentTime(0);
                 });
 
 
@@ -514,8 +531,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                 if (videoOverlay) {
                     videoOverlay.style.display = 'flex'; // Ensure it's visible (though transparent)
-                    videoOverlay.style.pointerEvents = 'auto'; // Ensure it's clickable
-                    videoOverlay.classList.remove('hidden'); 
+                    videoOverlay.style.pointerEvents = 'auto';
+                    videoOverlay.classList.remove('hidden');
                 }
             }
 
@@ -545,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         canonicalLink.setAttribute('href', window.location.href);
 
-        document.title = `${movie.title} - مشاهدة أونلاين على شاهد بلس`; 
+        document.title = `${movie.title} - مشاهدة أونلاين على شاهد بلس`;
         document.querySelector('meta[name="description"]')?.setAttribute('content', movie.description);
         document.querySelector('meta[property="og:title"]')?.setAttribute('content', movie.title);
         document.querySelector('meta[property="og:description"]')?.setAttribute('content', movie.description);
@@ -553,27 +570,27 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.href);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'video.movie');
         document.querySelector('meta[property="og:locale"]')?.setAttribute('content', 'ar_AR');
-        
+
         let ogSiteName = document.querySelector('meta[property="og:site_name"]');
         if (!ogSiteName) {
             ogSiteName = document.createElement('meta');
             ogSiteName.setAttribute('property', 'og:site_name');
             document.head.appendChild(ogSiteName);
         }
-        ogSiteName.setAttribute('content', 'شاهد بلس'); 
+        ogSiteName.setAttribute('content', 'شاهد بلس');
 
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', movie.title);
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', movie.description);
         document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', movie.poster);
-        
+
         let twitterCard = document.querySelector('meta[name="twitter:card"]');
         if (!twitterCard) {
             twitterCard = document.createElement('meta');
             twitterCard.setAttribute('name', 'twitter:card');
             document.head.appendChild(twitterCard);
         }
-        twitterCard.setAttribute('content', 'summary_large_image'); 
-        
+        twitterCard.setAttribute('content', 'summary_large_image');
+
         console.log('📄 [SEO] Meta tags updated.');
     }
 
@@ -608,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "contentUrl": movie.embed_url, // Keep original contentUrl for schema
             "publisher": {
                 "@type": "Organization",
-                "name": "شاهد بلس", 
+                "name": "شاهد بلس",
                 "logo": {
                     "@type": "ImageObject",
                     "url": "https://example.com/images/shahed-plus-logo.png", // **تأكد من تغيير هذا المسار لشعار موقعك الفعلي**
@@ -662,7 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     "@type": "AggregateRating",
                     "ratingValue": ratingValue.toFixed(1),
                     "bestRating": "10",
-                    "ratingCount": "10000" 
+                    "ratingCount": "10000"
                 };
             }
         }
@@ -711,7 +728,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchInput) searchInput.value = '';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
 
-        moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random()); 
+        moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
         // Ensure video overlay is hidden on home page
@@ -720,7 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
             videoOverlay.classList.add('hidden'); // Fully hide it on home
             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
         }
-        
+
         // Dispose existing Video.js player instance
         if (videoJsPlayerInstance) {
             console.log('[Video.js] Disposing player on home page navigation.');
@@ -736,7 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const newUrl = new URL(window.location.origin);
-        history.pushState({ view: 'home' }, 'شاهد بلس - الصفحة الرئيسية', newUrl.toString()); 
+        history.pushState({ view: 'home' }, 'شاهد بلس - الصفحة الرئيسية', newUrl.toString());
         console.log(`🔗 [URL] URL updated to ${newUrl.toString()}`);
 
         // Reset meta tags to default home page values
@@ -908,14 +925,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const idParam = urlParams.get('id');
 
         if (viewParam === 'details' && idParam) {
-            const movieId = parseInt(idParam);
-            if (!isNaN(movieId)) {
-                console.log(`🚀 [Initial Load] Attempting to load movie details from URL: ID ${movieId}`);
-                showMovieDetails(movieId);
-            } else {
-                console.warn('⚠️ [Initial Load] Invalid movie ID in URL. Showing home page.');
-                showHomePage();
-            }
+            // No need to parse int here, as showMovieDetails now handles string comparison
+            console.log(`🚀 [Initial Load] Attempting to load movie details from URL: ID ${idParam}`);
+            showMovieDetails(idParam);
         } else {
             console.log('🚀 [Initial Load] No specific view in URL. Showing home page.');
             showHomePage();
@@ -932,10 +944,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     fetchMoviesData();
-});function generateToken(id, secret, expirySeconds = 300) {
-  const expiry = Math.floor(Date.now() / 1000) + expirySeconds;
-  const payload = btoa(`${id}:${expiry}`);
-  const signature = CryptoJS.SHA256(payload + secret).toString();
-  return `${payload}.${signature}`;
-}
-
+})
