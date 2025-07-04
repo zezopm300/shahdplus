@@ -142,26 +142,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let path;
         try {
-            path = new URL(originalUrl).pathname; // Get only the path part (e.g., /videos/movie.mp4)
+            // Get the path part (e.g., /play/3iJUgudd)
+            // assuming originalUrl is like "https://yourworker.yourdomain.com/play/3iJUgudd"
+            path = new URL(originalUrl).pathname; 
         } catch (e) {
             console.error('❌ generateSignedUrl: Failed to parse originalUrl with URL constructor:', e);
             return originalUrl; // Fallback if URL is malformed
         }
+        
+        // Extract ID from the path, as per Worker's signature generation logic
+        // The Worker's generateSignature uses "id:expires:SECRET_KEY"
+        const id = path.split("/").pop(); // This matches the ID extraction in your Worker
 
         // Construct the string to be signed.
-        // This format MUST exactly match what your Cloudflare Worker expects for signing.
-        // Common format: /path/to/video.mp4?expires=1678886400
-        const stringToSign = `${path}?expires=${expirationTime}`;
-        console.log(`🔑 String to sign: "${stringToSign}"`);
+        // This format MUST exactly match what your Cloudflare Worker expects for signing: "id:expires:SECRET_KEY"
+        const stringToSign = `${id}:${expirationTime}:${URL_SIGNING_SECRET_KEY}`; // Changed for Worker's signature logic
+        console.log(`🔑 String to sign for Worker: "${stringToSign}"`);
 
         // Check if CryptoJS is loaded before trying to use it
-        if (typeof CryptoJS === 'undefined' || !CryptoJS.HmacSHA256) {
-            console.error('❌ CryptoJS library (HmacSHA256) is not loaded or available. Cannot sign URL. Make sure you included: <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>');
+        if (typeof CryptoJS === 'undefined' || !CryptoJS.SHA256) { // Changed to SHA256 as per Worker's digest algorithm
+            console.error('❌ CryptoJS library (SHA256) is not loaded or available. Cannot sign URL. Make sure you included: <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>');
             return originalUrl; // Fallback to original URL if crypto library is missing
         }
 
-        // Generate HMAC SHA256 hash
-        const hash = CryptoJS.HmacSHA256(stringToSign, URL_SIGNING_SECRET_KEY).toString(CryptoJS.enc.Hex);
+        // Generate SHA256 hash (Worker uses SHA-256 digest, not HMAC SHA256)
+        const hash = CryptoJS.SHA256(stringToSign).toString(CryptoJS.enc.Hex); // Changed to SHA256
         console.log(`🔑 Generated hash: ${hash}`);
 
         // Append the expires and signature parameters to the original URL
@@ -329,6 +334,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Dispose existing Video.js player instance
             if (videoJsPlayerInstance) {
                 console.log('[Video.js] Disposing existing player instance before showing new details.');
+                // 💡 [تحسين التقطيع] تدمير HLS.js instance لو موجودة
+                if (videoJsPlayerInstance.hls) {
+                    videoJsPlayerInstance.hls.destroy();
+                    videoJsPlayerInstance.hls = null;
+                }
                 videoJsPlayerInstance.dispose();
                 videoJsPlayerInstance = null;
             }
@@ -342,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVideoElement.controls = true;
                 newVideoElement.preload = 'auto';
                 newVideoElement.setAttribute('playsinline', '');
-                newVideoElement.setAttribute('crossorigin', 'anonymous'); // 💡 [تحسين التقطيع] تأكيد crossorigin للسماح لـ HLS.js بقراءة الفيديو
+                newVideoElement.setAttribute('crossorigin', 'anonymous'); // مهم جداً للـ CORS و HLS.js
 
                 videoContainer.appendChild(newVideoElement);
                 console.log('[Video Player] Recreated movie-player element.');
@@ -395,10 +405,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 console.log('[Video Player] moviePlayer is ready. Proceeding with Video.js initialization.');
 
-                // --- Video Source Determination (Prioritizes embed_url, falls back to Pixeldrain embed_id) ---
-                const originalUrl = movie.embed_url || `https://pixeldrain.com/api/file/${movie.embed_id}`;
+                // --- Video Source Determination ---
+                // تأكد أن هذا الـ URL يشير إلى الـ Worker بتاعك
+                const baseVideoWorkerUrl = `https://your-worker-domain.your-tld/play/${movie.embed_id}`; 
+                // مثال: `https://shahedplus-worker.yourdomain.com/play/${movie.embed_id}`
+                // لو الـ embed_url موجود، استخدمه هو (لو هو فعلاً رابط للـ Worker أو HLS مباشر)
+                const originalUrl = movie.embed_url || baseVideoWorkerUrl;
 
-                if (!originalUrl) { // Check if a valid URL was determined
+                if (!originalUrl) {
                     console.error('❌ No video source (embed_url or embed_id) found for this movie. Cannot play video.');
                     if (videoContainer) {
                         videoContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); padding: 20px;">عذرًا، لا يتوفر رابط الفيديو لهذا الفيلم حاليًا.</p>';
@@ -408,13 +422,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
                     }
-                    return; // Stop execution if no video source
+                    return;
                 }
                 console.log(`🎥 [Video Source] Determined original URL: ${originalUrl}`);
 
-                const signedVideoUrl = generateSignedUrl(originalUrl); // Now uses the determined originalUrl
-                
+                // توليد الرابط الموقع اللي هيعدي على الـ Worker بتاعك
+                const signedVideoUrl = generateSignedUrl(originalUrl); 
+                console.log(`🎥 [Video Source] Using signed URL: ${signedVideoUrl}`);
+
                 // 💡 [تحسين التقطيع] إعداد خيارات Video.js لاستخدام HLS.js
+                // هنا بنجرب نستخدم HLS.js حتى لو الفيديو MP4 عادي، وده بيحسن الـ buffering
                 const videoOptions = {
                     autoplay: false,
                     controls: true,
@@ -427,9 +444,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
                         src: signedVideoUrl,
-                        // 💡 [تحسين التقطيع] تغيير النوع لـ 'application/x-mpegURL' أو 'application/vnd.apple.mpegurl'
-                        // عشان HLS.js يعرف يتعامل معاه. بالرغم من إن الفيديو MP4، HLS.js بيتعامل معاه كـ HLS.
-                        type: 'application/x-mpegURL' 
+                        // بنقول لـ Video.js إن ده M3U8 (HLS)، عشان يحاول يستخدم HLS.js معاه
+                        // حتى لو كان ملف MP4، HLS.js هيتعامل معاه كـ progressive download بأجزاء
+                        type: 'application/x-mpegURL' // أو 'application/vnd.apple.mpegurl'
                     }],
                     crossOrigin: 'anonymous'
                 };
@@ -444,30 +461,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         hls.attachMedia(moviePlayerElement);
                         hls.on(Hls.Events.MANIFEST_PARSED, function() {
                             console.log('[HLS.js] Manifest parsed. HLS.js is managing playback.');
-                            // this.play(); // ممكن تشغل الفيديو تلقائيًا بعد التحميل لو حابب، لكن الأفضل تركه على autoplay: false
                         });
                         hls.on(Hls.Events.ERROR, function (event, data) {
                             console.error('[HLS.js] Error event detected:', data);
                             if (data.fatal) {
                                 switch(data.type) {
                                     case Hls.ErrorTypes.NETWORK_ERROR:
-                                        console.error('fatal network error encountered, try to recover');
+                                        console.error('fatal network error encountered, trying to recover HLS load.');
                                         hls.startLoad();
                                         break;
                                     case Hls.ErrorTypes.MEDIA_ERROR:
-                                        console.error('fatal media error encountered, try to recover');
+                                        console.error('fatal media error encountered, trying to recover media.');
                                         hls.recoverMediaError();
                                         break;
                                     default:
                                         // cannot recover
                                         hls.destroy();
-                                        console.error('HLS.js fatal error, cannot recover.');
+                                        console.error('HLS.js fatal error, cannot recover. Player destroyed.');
+                                        // يمكن عرض رسالة للمستخدم هنا
                                         break;
                                 }
                             }
                         });
-                        // تخزين HLS instance لو حبيت تتعامل معاها بعدين (اختياري)
-                        videoJsPlayerInstance.hls = hls; 
+                        videoJsPlayerInstance.hls = hls; // تخزين HLS instance لسهولة الوصول إليها وتدميرها
                     } else if (moviePlayerElement.canPlayType('application/vnd.apple.mpegurl')) {
                         // لو المتصفح بيدعم HLS natively (سفاري iOS مثلاً)
                         moviePlayerElement.src = signedVideoUrl;
@@ -476,7 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // لو لا HLS.js ولا المتصفح بيدعموا، نرجع للطريقة التقليدية (MP4)
                         // في هذه الحالة، ممكن يحصل تقطيع لو سرعة النت ضعيفة.
                         moviePlayerElement.src = signedVideoUrl;
-                        moviePlayerElement.type = 'video/mp4';
+                        moviePlayerElement.type = 'video/mp4'; // نرجع النوع لـ video/mp4
                         console.warn('⚠️ Neither HLS.js nor native HLS support. Falling back to direct MP4 playback. Tearing might occur.');
                     }
 
@@ -495,8 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.ready(function() {
                         const player = this;
                         player.controlBar.addChild('Component', {}, player.controlBar.children_.length - 1); // Add a placeholder
-                        // Find the existing 'Download' button (if it exists from a plugin) and remove it
-                        const downloadButton = player.controlBar.getChild('DownloadButton'); // Adjust if component name is different
+                        const downloadButton = player.controlBar.getChild('DownloadButton');
                         if (downloadButton) {
                             player.controlBar.removeChild(downloadButton);
                             console.log('[Video.js] Download button removed from control bar.');
@@ -511,8 +526,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 // --- Video Player Event Listeners for Ads and Overlay ---
-
-                // Hide spinner and make overlay non-clickable when player is playing
                 videoJsPlayerInstance.on('playing', () => {
                     console.log('[Video.js] Video playing event fired.');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
@@ -522,37 +535,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // Show spinner and make overlay clickable when buffering
                 videoJsPlayerInstance.on('waiting', () => {
                     console.log('[Video.js] Video waiting (buffering).');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
                     if (videoOverlay) {
-                        // 💡 [تحسين التقطيع] ممكن نخلي overlay clickable عشان لو المستخدم عايز يتفاعل مع الإعلان وقت الـ buffering
                         videoOverlay.style.pointerEvents = 'auto'; 
-                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay during buffering
+                        videoOverlay.classList.remove('hidden'); 
                     }
                 });
 
-                // Open ad on pause, and make overlay clickable
                 videoJsPlayerInstance.on('pause', () => {
                     console.log('[Video.js] Video paused.');
-                    if (!videoJsPlayerInstance.ended()) { // Do not trigger ad on natural end
+                    if (!videoJsPlayerInstance.ended()) {
                         openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoPause');
                         if (videoOverlay) {
-                            videoOverlay.style.pointerEvents = 'auto'; // Make overlay clickable again
-                            videoOverlay.classList.remove('hidden'); // Show (transparent) overlay
+                            videoOverlay.style.pointerEvents = 'auto';
+                            videoOverlay.classList.remove('hidden');
                         }
                     }
                 });
 
-                // Open ad when user seeks
                 videoJsPlayerInstance.on('seeked', () => {
                     console.log('[Video.js] Video seeked.');
                     openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoSeek');
-                    // No need to show overlay here, user just interacted with controls
                 });
 
-                // Show transparent overlay and hide spinner on error
                 videoJsPlayerInstance.on('error', (e) => {
                     const error = videoJsPlayerInstance.error();
                     console.error('[Video.js] Player Error:', error ? error.message : 'Unknown error', error);
@@ -563,16 +570,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // When video ends, open ad and make overlay clickable for restart
                 videoJsPlayerInstance.on('ended', () => {
                     console.log('[Video.js] Video ended.');
-                    openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoEndedRestart'); // New type for ended event
+                    openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoEndedRestart');
                     if (videoOverlay) {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
                     }
-                    // To make it easier to restart, setting current time to 0.
-                    // This will allow a click on the overlay to restart from beginning.
                     videoJsPlayerInstance.currentTime(0);
                 });
 
@@ -581,7 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn('⚠️ [Video Player] moviePlayer element not found or not ready after attempts. Skipping Video.js initialization.');
                 if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                 if (videoOverlay) {
-                    videoOverlay.style.display = 'flex'; // Ensure it's visible (though transparent)
+                    videoOverlay.style.display = 'flex';
                     videoOverlay.style.pointerEvents = 'auto';
                     videoOverlay.classList.remove('hidden');
                 }
@@ -792,8 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Dispose existing Video.js player instance
         if (videoJsPlayerInstance) {
             console.log('[Video.js] Disposing player on home page navigation.');
-            // 💡 [تحسين التقطيع] تدمير HLS.js instance لو موجودة
-            if (videoJsPlayerInstance.hls) {
+            if (videoJsPlayerInstance.hls) { // 💡 [تحسين التقطيع] تدمير HLS.js instance لو موجودة
                 videoJsPlayerInstance.hls.destroy();
                 videoJsPlayerInstance.hls = null;
             }
@@ -931,23 +934,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
 
             if (adOpened) {
-                // If ad opened, attempt to play the video after a short delay
-                // This delay helps mitigate browser pop-up/autoplay restrictions
                 setTimeout(() => {
                     if (videoJsPlayerInstance && (videoJsPlayerInstance.paused() || videoJsPlayerInstance.ended())) {
                         videoJsPlayerInstance.play().then(() => {
                             console.log('[Video.js] Player started playing after overlay click and ad open.');
                             if (videoOverlay) {
                                 videoOverlay.style.pointerEvents = 'none';
-                                videoOverlay.classList.add('hidden'); // Hide overlay fully
+                                videoOverlay.classList.add('hidden');
                             }
                             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                         }).catch(error => {
                             console.warn('⚠️ [Video.js] Play failed after ad open (user interaction still required):', error);
-                            // If play fails, keep overlay clickable. No specific text.
                             if (videoOverlay) {
                                 videoOverlay.style.pointerEvents = 'auto';
-                                videoOverlay.classList.remove('hidden'); // Ensure visible (though transparent)
+                                videoOverlay.classList.remove('hidden');
                             }
                             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                         });
@@ -965,11 +965,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     }
-                }, 500); // 500ms delay before attempting to play
+                }, 500);
             } else {
                 console.log('[Video Overlay] Ad not opened due to cooldown. Overlay remains active.');
             }
-            e.stopPropagation(); // Prevent clicks from bubbling to player if we want overlay to handle them first
+            e.stopPropagation();
         });
         console.log('[Video Overlay] Click listener attached for ad interaction.');
     }
@@ -981,7 +981,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const idParam = urlParams.get('id');
 
         if (viewParam === 'details' && idParam) {
-            // No need to parse int here, as showMovieDetails now handles string comparison
             console.log(`🚀 [Initial Load] Attempting to load movie details from URL: ID ${idParam}`);
             showMovieDetails(idParam);
         } else {
