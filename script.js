@@ -115,49 +115,49 @@ document.addEventListener('DOMContentLoaded', () => {
     // هام: غير 'YOUR_SUPER_SECRET_KEY_HERE' إلى المفتاح السري المطابق لـ Cloudflare Worker
     const URL_SIGNING_SECRET_KEY = 'shahidplus-2025-superkey'; 
     const TOKEN_VALID_DURATION_SECONDS = 5 * 60; // صلاحية التوكن 5 دقائق
+    // المسار الأساسي لـ Cloudflare Worker الذي سيتعامل مع الروابط الموقعة.
+    // يجب أن يكون هذا هو النطاق الذي تم تعيين العامل عليه، مثل 'https://play.yourdomain.com'
+    const CLOUDFLARE_WORKER_BASE_URL = 'https://play.shahidplus.workers.dev'; 
 
     /**
      * توليد رابط موقع (Signed URL) بتوكن مؤقت لـ Cloudflare Worker.
      * تستخدم هذه الدالة توقيع HMAC SHA256.
-     * @param {string} originalUrl رابط الفيديو الأصلي (مثال: https://yourdomain.com/videos/movie.mp4).
+     * @param {string} originalVideoId - معرّف الفيديو الحقيقي (مثال: 'YOUR_PIXELDRAIN_FILE_ID').
+     * هذا يجب أن يكون الجزء الفريد الذي يميز الفيديو على Pixeldrain.
      * @returns {string} رابط موقع يتضمن معاملي 'expires' و 'signature'.
      */
-    function generateSignedUrl(originalUrl) {
-        if (!originalUrl || typeof originalUrl !== 'string') {
-            console.error('❌ generateSignedUrl: Invalid originalUrl provided.');
-            return originalUrl;
-        }
-
-        if (originalUrl.includes('expires=') && originalUrl.includes('signature=')) {
-            console.warn('⚠️ generateSignedUrl: URL already appears to be signed. Skipping signing.');
-            return originalUrl;
+    function generateSignedUrl(originalVideoId) {
+        if (!originalVideoId || typeof originalVideoId !== 'string') {
+            console.error('❌ generateSignedUrl: Invalid originalVideoId provided.');
+            // يمكنك هنا إرجاع رابط placeholder أو التعامل مع الخطأ بطريقة أخرى
+            return ''; 
         }
 
         const expirationTime = Math.floor(Date.now() / 1000) + TOKEN_VALID_DURATION_SECONDS;
 
-        let path;
-        try {
-            path = new URL(originalUrl).pathname;
-        } catch (e) {
-            console.error('❌ generateSignedUrl: Failed to parse originalUrl with URL constructor:', e);
-            return originalUrl;
-        }
+        // المسار الذي سيتوقعه Cloudflare Worker
+        // على سبيل المثال، إذا كان العامل يتوقع /video/{id}
+        // تأكد أن هذا يطابق المنطق في Cloudflare Worker
+        const path = `/video/${originalVideoId}`; 
         
+        // السلسلة التي سيتم توقيعها هي المسار متبوعاً بمعامل 'expires'
         const stringToSign = `${path}?expires=${expirationTime}`;
-        console.log(`🔑 https://dictionary.cambridge.org/dictionary/english/signing String to sign: "${stringToSign}"`);
+        console.log(`🔑 String to sign for Cloudflare Worker: "${stringToSign}"`);
 
         if (typeof CryptoJS === 'undefined' || !CryptoJS.HmacSHA256) {
             console.error('❌ CryptoJS library (HmacSHA256) is not loaded or available. Cannot sign URL. Make sure you included: <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>');
-            return originalUrl;
+            // في حالة عدم توفر CryptoJS، لا يمكن التوقيع، يجب عليك التعامل مع هذا
+            return ''; 
         }
 
         const hash = CryptoJS.HmacSHA256(stringToSign, URL_SIGNING_SECRET_KEY).toString(CryptoJS.enc.Hex);
-        console.log(`🔑 https://dictionary.cambridge.org/dictionary/english/signing Generated hash: ${hash}`);
+        console.log(`🔑 Generated hash: ${hash}`);
 
-        const separator = originalUrl.includes('?') ? '&' : '?';
-        const signedUrl = `${originalUrl}${separator}expires=${expirationTime}&signature=${hash}`;
+        // بناء الرابط النهائي الذي سيتم إرساله إلى Video.js
+        // يجب أن يشير هذا إلى نقطة نهاية Cloudflare Worker
+        const signedUrl = `${CLOUDFLARE_WORKER_BASE_URL}${path}?expires=${expirationTime}&signature=${hash}`;
         
-        console.log(`✅ https://dictionary.cambridge.org/dictionary/english/signing Generated signed URL: ${signedUrl}`);
+        console.log(`✅ Generated signed URL for player: ${signedUrl}`);
         return signedUrl;
     }
 
@@ -381,8 +381,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 console.log('[Video Player] moviePlayer is ready. Proceeding with Video.js initialization.');
 
-                // توليد الرابط الموقع (Signed URL) للفيديو
-                const signedVideoUrl = generateSignedUrl(movie.embed_url); 
+                // توليد الرابط الموقع (Signed URL) للفيديو باستخدام embed_id
+                const signedVideoUrl = generateSignedUrl(movie.embed_id); 
 
                 // Initialize Video.js player
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
@@ -390,8 +390,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     controls: true,
                     responsive: true,
                     fluid: true,
-                    // بما أن HTML يشير إلى hls.js و videojs-contrib-hls، يجب أن يكون النوع HLS إذا كانت الفيديوهات كذلك.
-                    // إذا كانت MP4 فقط، فـ 'html5' و 'video/mp4' كافيان.
                     techOrder: ['html5', 'hls'], 
                     html5: {
                         nativeControlsForTouch: true 
@@ -580,9 +578,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "description": movie.description,
             "thumbnailUrl": movie.poster,
             "uploadDate": formattedUploadDate,
-            "embedUrl": movie.embed_url, 
+            "embedUrl": `${CLOUDFLARE_WORKER_BASE_URL}/video/${movie.embed_id}`, // رابط الـ Worker
             "duration": movie.duration,
-            "contentUrl": movie.embed_url, 
+            "contentUrl": `${CLOUDFLARE_WORKER_BASE_URL}/video/${movie.embed_id}`, // رابط الـ Worker
             "publisher": {
                 "@type": "Organization",
                 "name": "شاهد بلس", 
@@ -716,7 +714,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.title = 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K أونلاين';
         document.querySelector('meta[name="description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
         document.querySelector('meta[property="og:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
-        document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
+        document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتat بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.origin);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
         document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop'); 
