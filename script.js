@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ## 2.1. URL Signing Configuration (Cloudflare Worker Integration)
 
-    **هام:** هذا المفتاح السري (`URL_SIGNING_SECRET_KEY`) يجب أن يتطابق تماماً مع المفتاح المستخدم في Cloudflare Worker الخاص بك.
+    **هام:** هذا المفتاح السري (`shahidplus-2025-superkey`) يجب أن يتطابق تماماً مع المفتاح المستخدم في Cloudflare Worker الخاص بك.
     **لا يجب كشف هذا المفتاح في الكود على جانب العميل (client-side) في بيئة إنتاج حقيقية.**
     لغرض العرض، هو موجود هنا، ولكن من الناحية المثالية، يجب أن يأتي هذا المفتاح من خادم خلفي آمن أو متغير بيئة.
 
