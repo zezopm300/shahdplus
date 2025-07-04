@@ -340,8 +340,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVideoElement.id = 'movie-player'; // Keep the same ID for Video.js lookup
                 newVideoElement.classList.add('video-js', 'vjs-default-skin');
                 newVideoElement.controls = true;
-                newVideoElement.preload = 'auto'; // مهم جدا لـ MP4 لضمان التحميل المسبق
+                newVideoElement.preload = 'auto';
                 newVideoElement.setAttribute('playsinline', '');
+                newVideoElement.setAttribute('crossorigin', 'anonymous'); // 💡 [تحسين التقطيع] تأكيد crossorigin للسماح لـ HLS.js بقراءة الفيديو
 
                 videoContainer.appendChild(newVideoElement);
                 console.log('[Video Player] Recreated movie-player element.');
@@ -412,25 +413,74 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`🎥 [Video Source] Determined original URL: ${originalUrl}`);
 
                 const signedVideoUrl = generateSignedUrl(originalUrl); // Now uses the determined originalUrl
-
-                // Initialize Video.js player
-                videoJsPlayerInstance = videojs(moviePlayerElement, {
-                    autoplay: false, // Explicitly false as per request
+                
+                // 💡 [تحسين التقطيع] إعداد خيارات Video.js لاستخدام HLS.js
+                const videoOptions = {
+                    autoplay: false,
                     controls: true,
                     responsive: true,
                     fluid: true,
-                    techOrder: ['html5'],
+                    techOrder: ['html5'], // نعتمد على HTML5 video element
                     html5: {
-                        nativeControlsForTouch: true // Use native controls for touch devices
+                        nativeControlsForTouch: true
                     },
                     playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
-                        src: signedVideoUrl, // *** استخدم الرابط الموقع هنا ***
-                        type: 'video/mp4' // *** التأكد من أن النوع هو video/mp4 دائمًا هنا ***
+                        src: signedVideoUrl,
+                        // 💡 [تحسين التقطيع] تغيير النوع لـ 'application/x-mpegURL' أو 'application/vnd.apple.mpegurl'
+                        // عشان HLS.js يعرف يتعامل معاه. بالرغم من إن الفيديو MP4، HLS.js بيتعامل معاه كـ HLS.
+                        type: 'application/x-mpegURL' 
                     }],
                     crossOrigin: 'anonymous'
-                }, function() {
+                };
+
+                videoJsPlayerInstance = videojs(moviePlayerElement, videoOptions, function() {
                     console.log(`[Video.js] Player initialized callback for source: ${signedVideoUrl}`);
+                    
+                    // 💡 [تحسين التقطيع] تهيئة HLS.js إذا كان المتصفح لا يدعمه natively
+                    if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                        const hls = new Hls();
+                        hls.loadSource(signedVideoUrl);
+                        hls.attachMedia(moviePlayerElement);
+                        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                            console.log('[HLS.js] Manifest parsed. HLS.js is managing playback.');
+                            // this.play(); // ممكن تشغل الفيديو تلقائيًا بعد التحميل لو حابب، لكن الأفضل تركه على autoplay: false
+                        });
+                        hls.on(Hls.Events.ERROR, function (event, data) {
+                            console.error('[HLS.js] Error event detected:', data);
+                            if (data.fatal) {
+                                switch(data.type) {
+                                    case Hls.ErrorTypes.NETWORK_ERROR:
+                                        console.error('fatal network error encountered, try to recover');
+                                        hls.startLoad();
+                                        break;
+                                    case Hls.ErrorTypes.MEDIA_ERROR:
+                                        console.error('fatal media error encountered, try to recover');
+                                        hls.recoverMediaError();
+                                        break;
+                                    default:
+                                        // cannot recover
+                                        hls.destroy();
+                                        console.error('HLS.js fatal error, cannot recover.');
+                                        break;
+                                }
+                            }
+                        });
+                        // تخزين HLS instance لو حبيت تتعامل معاها بعدين (اختياري)
+                        videoJsPlayerInstance.hls = hls; 
+                    } else if (moviePlayerElement.canPlayType('application/vnd.apple.mpegurl')) {
+                        // لو المتصفح بيدعم HLS natively (سفاري iOS مثلاً)
+                        moviePlayerElement.src = signedVideoUrl;
+                        console.log('[HLS.js] Browser natively supports HLS. Using native playback.');
+                    } else {
+                        // لو لا HLS.js ولا المتصفح بيدعموا، نرجع للطريقة التقليدية (MP4)
+                        // في هذه الحالة، ممكن يحصل تقطيع لو سرعة النت ضعيفة.
+                        moviePlayerElement.src = signedVideoUrl;
+                        moviePlayerElement.type = 'video/mp4';
+                        console.warn('⚠️ Neither HLS.js nor native HLS support. Falling back to direct MP4 playback. Tearing might occur.');
+                    }
+
+
                     // Initially show spinner if video is not ready
                     if (videoLoadingSpinner && !this.hasStarted() && !this.paused() && !this.ended()) {
                         videoLoadingSpinner.style.display = 'block';
@@ -477,7 +527,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[Video.js] Video waiting (buffering).');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'none'; // Keep non-clickable during buffering if spinner is visible
+                        // 💡 [تحسين التقطيع] ممكن نخلي overlay clickable عشان لو المستخدم عايز يتفاعل مع الإعلان وقت الـ buffering
+                        videoOverlay.style.pointerEvents = 'auto'; 
                         videoOverlay.classList.remove('hidden'); // Show (transparent) overlay during buffering
                     }
                 });
@@ -741,6 +792,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Dispose existing Video.js player instance
         if (videoJsPlayerInstance) {
             console.log('[Video.js] Disposing player on home page navigation.');
+            // 💡 [تحسين التقطيع] تدمير HLS.js instance لو موجودة
+            if (videoJsPlayerInstance.hls) {
+                videoJsPlayerInstance.hls.destroy();
+                videoJsPlayerInstance.hls = null;
+            }
             videoJsPlayerInstance.dispose();
             videoJsPlayerInstance = null;
         }
