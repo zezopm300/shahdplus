@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
 
     // --- 1.1. Critical DOM Element Verification ---
-    // تم الإبقاء على هذا الجزء كما هو، وهو ضروري للتأكد من وجود العناصر الأساسية.
+    // هذا الجزء ضروري للتأكد من وجود العناصر الأساسية في HTML.
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 2. Adsterra Configuration ---
-    // تم الإبقاء على هذا الجزء كما هو، مع التأكد من فعالية الرابط
+    // هذا الجزء الخاص بإعدادات Adsterra لم يتغير.
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes for movie cards
     const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 10 * 1000; // 10 seconds for video overlay/player interactions
@@ -115,23 +115,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Video.js Player Instance ---
     let videoJsPlayerInstance = null;
 
+    // *** هذا هو الجزء الأساسي الذي تم مراجعته وتصحيحه لضمان تحميل movies.json ***
     async function fetchMoviesData() {
         try {
+            console.log('📡 Fetching movie data from movies.json...');
             const response = await fetch('movies.json');
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                // إضافة رسالة خطأ أكثر تفصيلاً إذا فشل التحميل
+                throw new Error(`HTTP error! Status: ${response.status} - Could not load movies.json. Check file path and server configuration.`);
             }
             moviesData = await response.json();
             if (!Array.isArray(moviesData)) {
-                console.error('❌ Fetched data is not an array. Please check movies.json format.');
-                moviesData = [];
+                console.error('❌ Fetched data is not an array. Please check movies.json format. Expected an array of movie objects.');
+                moviesData = []; // إفراغ المصفوفة لمنع الأخطاء اللاحقة
+            } else if (moviesData.length === 0) {
+                console.warn('⚠️ movies.json loaded, but it is empty.');
             }
-            console.log('✅ Movie data loaded successfully from movies.json', moviesData);
-            initialPageLoadLogic();
+            console.log('✅ Movie data loaded successfully from movies.json', moviesData.length, 'movies found.');
+            initialPageLoadLogic(); // استدعاء منطق التحميل الأولي بعد التأكد من تحميل البيانات
         } catch (error) {
-            console.error('❌ Failed to load movie data:', error);
+            console.error('❌ Failed to load movie data:', error.message);
             if (movieGrid) {
-                movieGrid.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 50px;">عذرًا، لم نتمكن من تحميل بيانات الأفلام. يرجى المحاولة مرة أخرى لاحقًا.</p>';
+                movieGrid.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 50px;">عذرًا، لم نتمكن من تحميل بيانات الأفلام. يرجى المحاولة مرة أخرى لاحقًا أو التحقق من ملف movies.json.</p>';
             }
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'خطأ في تحميل الأفلام';
@@ -143,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function createMovieCard(movie) {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
+        // تأكد من أن مسار الصورة في 'movie.poster' صحيح ويمكن الوصول إليه
         movieCard.innerHTML = `
             <img data-src="${movie.poster}" alt="${movie.title}" class="lazyload" width="200" height="300">
             <h3>${movie.title}</h3>
@@ -162,8 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 entries.forEach(function(entry) {
                     if (entry.isIntersecting) {
                         let image = entry.target;
-                        // تأكد من أن الـ src يتم تعيينه فقط إذا لم يكن موجودًا بالفعل
-                        if (!image.src || image.src !== image.dataset.src) {
+                        if (image.dataset.src && (!image.src || image.src !== image.dataset.src)) { // فحص إضافي
                             image.src = image.dataset.src;
                         }
                         image.classList.remove('lazyload');
@@ -181,7 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Fallback for browsers that don't support IntersectionObserver
             let lazyLoadImages = document.querySelectorAll('.lazyload');
             lazyLoadImages.forEach(function(image) {
-                image.src = image.dataset.src;
+                if (image.dataset.src) { // فحص إضافي
+                    image.src = image.dataset.src;
+                }
             });
         }
         console.log('🖼️ [Lazy Load] Initialized IntersectionObserver for images (or fallback).');
@@ -225,6 +232,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`➡️ [Pagination] Displaying page ${page}. Movies from index ${startIndex} to ${Math.min(endIndex, moviesArray.length)-1}.`);
     }
 
+    function updatePaginationButtons(totalMovies) {
+        if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
+        if (nextPageBtn) nextPageBtn.disabled = currentPage * moviesPerPage >= totalMovies;
+        console.log(`🔄 [Pagination] Buttons updated. Current page: ${currentPage}, Total Movies: ${totalMovies}`);
+    }
+
     function performSearch() {
         const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
         let filteredMovies = [];
@@ -250,8 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPage = 1;
         moviesDataForPagination = filteredMovies;
         paginateMovies(moviesDataForPagination, currentPage);
-        // التمرير لأعلى الصفحة بعد البحث
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // التمرير لأعلى الصفحة بعد البحث
     }
 
     // --- تحسينات مشغل الفيديو (Video Player Enhancements) ---
@@ -310,9 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (movieDetailsPoster) {
                 movieDetailsPoster.src = movie.poster;
                 movieDetailsPoster.alt = movie.title;
-                // إضافة width و height للبوستر
-                movieDetailsPoster.setAttribute('width', '300');
-                movieDetailsPoster.setAttribute('height', '450');
+                movieDetailsPoster.setAttribute('width', '300'); // Set explicit width for poster
+                movieDetailsPoster.setAttribute('height', '450'); // Set explicit height for poster
                 console.log(`[Details] Poster set for ${movie.title}`);
             }
 
@@ -344,16 +355,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     techOrder: ['html5'],
                     html5: {
                         nativeControlsForTouch: true,
-                        // إضافة إعدادات التحميل المسبق لـ Video.js نفسه
-                        // (بالإضافة لـ preload='auto' على الـ <video> tag)
                         vhs: {
-                            // هذه الإعدادات خاصة بالـ HLS، لكن يمكن أن تساعد في إدارة الـ buffer بشكل عام لبعض الأنواع
-                            // إذا كنت متأكدًا أنك تستخدم MP4 فقط، يمكن تجاهلها
                             limitRenditionByPlayerDimensions: false,
                             enableLowInitialPlaylist: true,
                             fastQualityChange: true,
-                            maxBufferLength: 60, // Keep 60 seconds of video buffered
-                            maxMaxBufferLength: 120, // Max buffer length
+                            maxBufferLength: 60,
+                            maxMaxBufferLength: 120,
                         }
                     },
                     playbackRates: [0.5, 1, 1.5, 2],
@@ -375,7 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     // --- Video.js Plugin to disable download button ---
                     this.ready(function() {
                         const player = this;
-                        // Attempt to find and remove any download button
                         const downloadButton = player.controlBar.getChild('DownloadButton') || player.controlBar.getChild('DownloadToggle');
                         if (downloadButton) {
                             player.controlBar.removeChild(downloadButton);
@@ -392,17 +398,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 // --- Video Player Event Listeners for Ads and Overlay ---
-                // Show spinner when video is loading data
                 videoJsPlayerInstance.on('loadstart', () => {
                     console.log('[Video.js] Video loadstart event fired.');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'auto'; // Re-enable overlay for initial click
+                        videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
                     }
                 });
 
-                // Hide spinner and make overlay non-clickable when player is playing
                 videoJsPlayerInstance.on('playing', () => {
                     console.log('[Video.js] Video playing event fired.');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
@@ -412,19 +416,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // Show spinner and make overlay clickable when buffering (waiting for data)
                 videoJsPlayerInstance.on('waiting', () => {
                     console.log('[Video.js] Video waiting (buffering).');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
-                    // Keep overlay pointer-events 'none' during buffering to allow spinner to show clearly
-                    // Will be set to 'auto' on 'pause' or 'error'
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'none'; // No interaction during buffer
-                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay during buffering
+                        videoOverlay.style.pointerEvents = 'none';
+                        videoOverlay.classList.remove('hidden');
                     }
                 });
 
-                // Open ad on pause, and make overlay clickable
                 videoJsPlayerInstance.on('pause', () => {
                     console.log('[Video.js] Video paused.');
                     if (!videoJsPlayerInstance.ended()) {
@@ -436,13 +436,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                // Open ad when user seeks
                 videoJsPlayerInstance.on('seeked', () => {
                     console.log('[Video.js] Video seeked.');
                     openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoSeek');
                 });
 
-                // Show transparent overlay and hide spinner on error
                 videoJsPlayerInstance.on('error', (e) => {
                     const error = videoJsPlayerInstance.error();
                     console.error('[Video.js] Player Error:', error ? error.message : 'Unknown error', error);
@@ -451,15 +449,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
                     }
-                    // عرض رسالة خطأ للمستخدم داخل مشغل الفيديو أو حوله
                     const errorDisplay = document.createElement('div');
                     errorDisplay.className = 'vjs-error-display';
-                    errorDisplay.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); color: white; text-align: center; font-size: 1.2em;';
+                    errorDisplay.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); color: white; text-align: center; font-size: 1.2em; z-index: 10;'; // Z-index to ensure it's on top
                     errorDisplay.innerHTML = `<p>حدث خطأ أثناء تشغيل الفيديو: ${error ? error.message : 'خطأ غير معروف'}. يرجى المحاولة لاحقًا.</p>`;
-                    moviePlayerElement.parentNode.appendChild(errorDisplay);
+                    // تأكد أنك تضيفها إلى videoContainer وليس moviePlayerElement.parentNode مباشرة
+                    if (videoContainer && !videoContainer.querySelector('.vjs-error-display')) {
+                        videoContainer.appendChild(errorDisplay);
+                    }
                 });
 
-                // When video ends, open ad and make overlay clickable for restart
                 videoJsPlayerInstance.on('ended', () => {
                     console.log('[Video.js] Video ended.');
                     openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoEndedRestart');
@@ -567,13 +566,14 @@ document.addEventListener('DOMContentLoaded', () => {
             "uploadDate": formattedUploadDate,
             "embedUrl": movie.embed_url,
             "duration": movie.duration,
-            "contentUrl": movie.embed_url, // For direct video file (MP4)
+            "contentUrl": movie.embed_url,
             "publisher": {
                 "@type": "Organization",
                 "name": "شاهد بلس",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://example.com/images/shahed-plus-logo.png", // **تأكد من تغيير هذا المسار لشعار موقعك الفعلي**
+                    // *** لا تنسَ تحديث هذا المسار لشعار موقعك الفعلي ***
+                    "url": "https://example.com/images/shahed-plus-logo.png",
                     "width": 200,
                     "height": 50
                 }
@@ -617,19 +617,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 schema.genre = genreArray;
             }
         }
-        // تعديل هنا: لا تضف aggregateRating إذا لم يكن هناك تقييم صالح
         if (movie.rating && typeof movie.rating === 'string' && movie.rating.includes('/')) {
             const ratingValue = parseFloat(movie.rating.split('/')[0]);
-            if (!isNaN(ratingValue) && ratingValue >= 0 && ratingValue <= 10) { // تأكد من أن التقييم في النطاق الصحيح
+            if (!isNaN(ratingValue) && ratingValue >= 0 && ratingValue <= 10) {
                 schema.aggregateRating = {
                     "@type": "AggregateRating",
                     "ratingValue": ratingValue.toFixed(1),
                     "bestRating": "10",
-                    "ratingCount": "10000" // هذا الرقم افتراضي، لو عندك عدد تقييمات حقيقي استخدمه
+                    "ratingCount": "10000"
                 };
             }
         }
-
 
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
@@ -675,17 +673,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchInput) searchInput.value = '';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
 
-        moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
+        // التأكد من أن moviesData تحتوي على بيانات قبل الترتيب العشوائي
+        moviesDataForPagination = moviesData.length > 0 ? [...moviesData].sort(() => 0.5 - Math.random()) : [];
         paginateMovies(moviesDataForPagination, 1);
 
-        // Ensure video overlay is hidden on home page
         if (videoOverlay) {
             videoOverlay.style.pointerEvents = 'none';
             videoOverlay.classList.add('hidden');
             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
         }
 
-        // Dispose existing Video.js player instance
         if (videoJsPlayerInstance) {
             console.log('[Video.js] Disposing player on home page navigation.');
             videoJsPlayerInstance.dispose();
@@ -693,7 +690,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentDetailedMovie = null;
 
-        // Clear movie-player-container content on home page navigation
         if (videoContainer) {
             videoContainer.innerHTML = '';
             console.log('[Video Player] Cleared movie-player-container on home page navigation.');
@@ -713,7 +709,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop'); // Default hero image
         document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر');
         document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
-
 
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
@@ -784,7 +779,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentPage > 1) {
                 currentPage--;
                 paginateMovies(moviesDataForPagination, currentPage);
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page change
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
             console.log(`⬅️ [Pagination] Previous page clicked. Current page: ${currentPage}`);
         });
@@ -795,7 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentPage < totalPages) {
                 currentPage++;
                 paginateMovies(moviesDataForPagination, currentPage);
-                window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top on page change
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
             console.log(`➡️ [Pagination] Next page clicked. Current page: ${currentPage}`);
         });
@@ -817,14 +812,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[Event] Movie details poster click listener attached.');
     }
 
-    // New logic for video overlay and ad interaction
     if (videoOverlay) {
         videoOverlay.addEventListener('click', (e) => {
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
 
             if (adOpened) {
-                // If ad opened, attempt to play the video after a short delay
                 setTimeout(() => {
                     if (videoJsPlayerInstance && (videoJsPlayerInstance.paused() || videoJsPlayerInstance.ended())) {
                         videoJsPlayerInstance.play().then(() => {
@@ -856,7 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     }
-                }, 500); // 500ms delay before attempting to play
+                }, 500);
             } else {
                 console.log('[Video Overlay] Ad not opened due to cooldown. Overlay remains active.');
             }
@@ -873,11 +866,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (viewParam === 'details' && idParam) {
             const movieId = parseInt(idParam);
-            if (!isNaN(movieId)) {
+            // التأكد من أن moviesData تم تحميلها وأن الفيلم موجود
+            if (!isNaN(movieId) && moviesData.find(m => m.id === movieId)) {
                 console.log(`🚀 [Initial Load] Attempting to load movie details from URL: ID ${movieId}`);
                 showMovieDetails(movieId);
             } else {
-                console.warn('⚠️ [Initial Load] Invalid movie ID in URL. Showing home page.');
+                console.warn('⚠️ [Initial Load] Invalid movie ID in URL or movie not found. Showing home page.');
                 showHomePage();
             }
         } else {
@@ -888,6 +882,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('popstate', (event) => {
         console.log('↩️ [Popstate] Browser history navigation detected.', event.state);
+        // التأكد من أن moviesData متاحة قبل معالجة popstate
+        if (moviesData.length === 0) {
+            // لو البيانات مش متحملة لأي سبب، نعيد تحميلها أو نعرض الصفحة الرئيسية
+            console.warn('[Popstate] Movie data not loaded, attempting to show home page.');
+            showHomePage();
+            return;
+        }
+
         if (event.state && event.state.view === 'details' && event.state.id) {
             showMovieDetails(event.state.id);
         } else {
@@ -895,5 +897,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // تبدأ العملية بتحميل بيانات الأفلام
     fetchMoviesData();
 });
