@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🏁 DOM Content Loaded. Script execution started.');
 
     // --- 1. DOM Element References ---
-    const menuToggle = document.getElementById('menu-toggle'); // تم إعادته
+    const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.getElementById('main-nav');
     const navLinks = document.querySelectorAll('.main-nav ul li a');
     const heroSection = document.getElementById('hero-section');
@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const homeLogoLink = document.getElementById('home-logo-link');
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
     const movieDetailsPoster = document.getElementById('movie-details-poster');
-    // const videoOverlayText = document.getElementById('video-overlay-text'); // This element is removed from HTML now
 
     const prevPageBtn = document.getElementById('prev-page-btn');
     const nextPageBtn = document.getElementById('next-page-btn');
@@ -111,6 +110,68 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
     }
+
+    // --- 2.1. URL Signing Configuration (New section for token-based video protection) ---
+    // IMPORTANT: This secret key MUST match the one used in your Cloudflare Worker.
+    // Replace 'YOUR_SUPER_SECRET_KEY_HERE' with a strong, secret key.
+    // DO NOT expose this in client-side code in a real production environment.
+    // For demonstration, it's here, but ideally, this should come from a secure backend or environment variable.
+    const URL_SIGNING_SECRET_KEY = 'shahidplus-2025-superkey'; // *** غير هذا المفتاح السري! يجب أن يتطابق مع Cloudflare Worker ***
+    const TOKEN_VALID_DURATION_SECONDS = 5 * 60; // Token valid for 5 minutes
+
+    /**
+     * Generates a signed URL with a temporary token for Cloudflare Worker.
+     * This function uses HMAC SHA256 for signing.
+     * @param {string} originalUrl The original video URL (e.g., https://yourdomain.com/videos/movie.mp4).
+     * @returns {string} The signed URL with 'expires' and 'signature' query parameters.
+     */
+    function generateSignedUrl(originalUrl) {
+        if (!originalUrl || typeof originalUrl !== 'string') {
+            console.error('❌ generateSignedUrl: Invalid originalUrl provided.');
+            return originalUrl; // Return original if invalid
+        }
+
+        // Prevent re-signing if URL already contains 'expires' or 'signature'
+        if (originalUrl.includes('expires=') && originalUrl.includes('signature=')) {
+            console.warn('⚠️ generateSignedUrl: URL already appears to be signed. Skipping signing.');
+            return originalUrl;
+        }
+
+        // Get the current time in Unix timestamp (seconds) and add the duration
+        const expirationTime = Math.floor(Date.now() / 1000) + TOKEN_VALID_DURATION_SECONDS;
+
+        let path;
+        try {
+            path = new URL(originalUrl).pathname; // Get only the path part (e.g., /videos/movie.mp4)
+        } catch (e) {
+            console.error('❌ generateSignedUrl: Failed to parse originalUrl with URL constructor:', e);
+            return originalUrl; // Fallback if URL is malformed
+        }
+        
+        // Construct the string to be signed.
+        // This format MUST exactly match what your Cloudflare Worker expects for signing.
+        // Common format: /path/to/video.mp4?expires=1678886400
+        const stringToSign = `${path}?expires=${expirationTime}`;
+        console.log(`🔑 https://dictionary.cambridge.org/dictionary/english/signing String to sign: "${stringToSign}"`);
+
+        // Check if CryptoJS is loaded before trying to use it
+        if (typeof CryptoJS === 'undefined' || !CryptoJS.HmacSHA256) {
+            console.error('❌ CryptoJS library (HmacSHA256) is not loaded or available. Cannot sign URL. Make sure you included: <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>');
+            return originalUrl; // Fallback to original URL if crypto library is missing
+        }
+
+        // Generate HMAC SHA256 hash
+        const hash = CryptoJS.HmacSHA256(stringToSign, URL_SIGNING_SECRET_KEY).toString(CryptoJS.enc.Hex);
+        console.log(`🔑 https://dictionary.cambridge.org/dictionary/english/signing Generated hash: ${hash}`);
+
+        // Append the expires and signature parameters to the original URL
+        const separator = originalUrl.includes('?') ? '&' : '?';
+        const signedUrl = `${originalUrl}${separator}expires=${expirationTime}&signature=${hash}`;
+        
+        console.log(`✅ https://dictionary.cambridge.org/dictionary/english/signing Generated signed URL: ${signedUrl}`);
+        return signedUrl;
+    }
+
 
     // --- 3. Movie Data ---
     let moviesData = [];
@@ -280,7 +341,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVideoElement.controls = true;
                 newVideoElement.preload = 'auto'; // مهم جدا لـ MP4 لضمان التحميل المسبق
                 newVideoElement.setAttribute('playsinline', '');
-                // Autoplay and muted attributes are NOT set here as requested.
 
                 videoContainer.appendChild(newVideoElement);
                 console.log('[Video Player] Recreated movie-player element.');
@@ -333,28 +393,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 console.log('[Video Player] moviePlayer is ready. Proceeding with Video.js initialization.');
 
+                // Generate signed URL for the video source before initializing Video.js
+                const signedVideoUrl = generateSignedUrl(movie.embed_url); // *** هذا هو التعديل الجديد ***
+
                 // Initialize Video.js player
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
                     autoplay: false, // Explicitly false as per request
                     controls: true,
                     responsive: true,
                     fluid: true,
-                    // *** حذف إعدادات HLS لأنك تستخدم MP4 ***
                     techOrder: ['html5'], 
                     html5: {
-                        // For MP4, we can potentially configure buffer more explicitly if needed,
-                        // though 'preload: auto' on the <video> tag is often sufficient.
-                        // Video.js manages MP4 buffering inherently.
                         nativeControlsForTouch: true // Use native controls for touch devices
                     },
                     playbackRates: [0.5, 1, 1.5, 2], 
                     sources: [{
-                        src: movie.embed_url,
+                        src: signedVideoUrl, // *** استخدم الرابط الموقع هنا ***
                         type: 'video/mp4' // *** التأكد من أن النوع هو video/mp4 دائمًا هنا ***
                     }],
                     crossOrigin: 'anonymous' 
                 }, function() {
-                    console.log(`[Video.js] Player initialized callback for source: ${movie.embed_url}`);
+                    console.log(`[Video.js] Player initialized callback for source: ${signedVideoUrl}`);
                     // Initially show spinner if video is not ready
                     if (videoLoadingSpinner && !this.hasStarted() && !this.paused() && !this.ended()) {
                         videoLoadingSpinner.style.display = 'block';
@@ -544,9 +603,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "description": movie.description,
             "thumbnailUrl": movie.poster,
             "uploadDate": formattedUploadDate,
-            "embedUrl": movie.embed_url,
+            "embedUrl": movie.embed_url, // Keep original embed_url for schema, as the signed one changes
             "duration": movie.duration,
-            "contentUrl": movie.embed_url, 
+            "contentUrl": movie.embed_url, // Keep original contentUrl for schema
             "publisher": {
                 "@type": "Organization",
                 "name": "شاهد بلس", 
@@ -709,7 +768,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 5. Event Listeners ---
-    // تم إعادة منطق تشغيل/إغلاق القائمة
     if (menuToggle && mainNav) {
         menuToggle.addEventListener('click', () => {
             mainNav.classList.toggle('nav-open');
@@ -719,7 +777,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
-            // قم بإغلاق القائمة عند النقر على رابط (خاصة في الموبايل)
             if (mainNav && mainNav.classList.contains('nav-open')) {
                 mainNav.classList.remove('nav-open');
                 console.log('📱 [Interaction] Nav link clicked, menu closed.');
@@ -838,7 +895,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 500); // 500ms delay before attempting to play
             } else {
                 console.log('[Video Overlay] Ad not opened due to cooldown. Overlay remains active.');
-                // If ad not opened due to cooldown, overlay remains transparent and clickable.
             }
             e.stopPropagation(); // Prevent clicks from bubbling to player if we want overlay to handle them first
         });
