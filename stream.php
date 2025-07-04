@@ -1,3 +1,3 @@
-delete stream.php to avoid file download issue
+remove content of stream.php
 
 
