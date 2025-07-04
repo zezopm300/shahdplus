@@ -932,4 +932,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     fetchMoviesData();
-});
+});function generateToken(id, secret, expirySeconds = 300) {
+  const expiry = Math.floor(Date.now() / 1000) + expirySeconds;
+  const payload = btoa(`${id}:${expiry}`);
+  const signature = CryptoJS.SHA256(payload + secret).toString();
+  return `${payload}.${signature}`;
+}
+
