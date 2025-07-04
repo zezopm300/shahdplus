@@ -117,7 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const TOKEN_VALID_DURATION_SECONDS = 5 * 60; // صلاحية التوكن 5 دقائق
     // المسار الأساسي لـ Cloudflare Worker الذي سيتعامل مع الروابط الموقعة.
     // يجب أن يكون هذا هو النطاق الذي تم تعيين العامل عليه، مثل 'https://play.yourdomain.com'
-    const CLOUDFLARE_WORKER_BASE_URL = 'https://play.shahidplus.workers.dev'; 
+  const CLOUDFLARE_WORKER_BASE_URL = 'https://proxy-player.z27514821.workers.dev';
+
 
     /**
      * توليد رابط موقع (Signed URL) بتوكن مؤقت لـ Cloudflare Worker.
