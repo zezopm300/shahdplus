@@ -178,8 +178,8 @@
   "video_type": "mp4",
   "rating": "5.3",
   "duration": "PT1H30M",
- "embed_Url": "https://proxy-player.z27514821.workers.dev/stream/3iJUgudd?expires=...&signature=..."
 
+"embed_url": "https://proxy-player.z27514821.workers.dev/stream/3iJUgudd?expires=...&signature=..."
 
 
 
