@@ -111,56 +111,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- URL Signing Configuration (خاص بحماية روابط الفيديو) ---
-    // هام: غير 'YOUR_SUPER_SECRET_KEY_HERE' إلى المفتاح السري المطابق لـ Cloudflare Worker
-    const URL_SIGNING_SECRET_KEY = 'shahidplus-2025-superkey'; 
-    const TOKEN_VALID_DURATION_SECONDS = 5 * 60; // صلاحية التوكن 5 دقائق
-    // المسار الأساسي لـ Cloudflare Worker الذي سيتعامل مع الروابط الموقعة.
-    // يجب أن يكون هذا هو النطاق الذي تم تعيين العامل عليه، مثل 'https://play.yourdomain.com'
-  const CLOUDFLARE_WORKER_BASE_URL = 'https://proxy-player.z27514821.workers.dev';
-
+    // --- 2.1. URL Signing Configuration (New section for token-based video protection) ---
+    // IMPORTANT: This secret key MUST match the one used in your Cloudflare Worker.
+    // Replace 'YOUR_SUPER_SECRET_KEY_HERE' with a strong, secret key.
+    // DO NOT expose this in client-side code in a real production environment.
+    // For demonstration, it's here, but ideally, this should come from a secure backend or environment variable.
+    const URL_SIGNING_SECRET_KEY = 'shahidplus-2025-superkey'; // *** غير هذا المفتاح السري! يجب أن يتطابق مع Cloudflare Worker ***
+    const TOKEN_VALID_DURATION_SECONDS = 5 * 60; // Token valid for 5 minutes
 
     /**
-     * توليد رابط موقع (Signed URL) بتوكن مؤقت لـ Cloudflare Worker.
-     * تستخدم هذه الدالة توقيع HMAC SHA256.
-     * @param {string} originalVideoId - معرّف الفيديو الحقيقي (مثال: 'YOUR_PIXELDRAIN_FILE_ID').
-     * هذا يجب أن يكون الجزء الفريد الذي يميز الفيديو على Pixeldrain.
-     * @returns {string} رابط موقع يتضمن معاملي 'expires' و 'signature'.
+     * Generates a signed URL with a temporary token for Cloudflare Worker.
+     * This function uses HMAC SHA256 for signing.
+     * @param {string} originalUrl The original video URL (e.g., https://yourdomain.com/videos/movie.mp4).
+     * @returns {string} The signed URL with 'expires' and 'signature' query parameters.
      */
-    function generateSignedUrl(originalVideoId) {
-        if (!originalVideoId || typeof originalVideoId !== 'string') {
-            console.error('❌ generateSignedUrl: Invalid originalVideoId provided.');
-            // يمكنك هنا إرجاع رابط placeholder أو التعامل مع الخطأ بطريقة أخرى
-            return ''; 
+    function generateSignedUrl(originalUrl) {
+        if (!originalUrl || typeof originalUrl !== 'string') {
+            console.error('❌ generateSignedUrl: Invalid originalUrl provided.');
+            return originalUrl; // Return original if invalid
         }
 
+        // Prevent re-signing if URL already contains 'expires' or 'signature'
+        if (originalUrl.includes('expires=') && originalUrl.includes('signature=')) {
+            console.warn('⚠️ generateSignedUrl: URL already appears to be signed. Skipping signing.');
+            return originalUrl;
+        }
+
+        // Get the current time in Unix timestamp (seconds) and add the duration
         const expirationTime = Math.floor(Date.now() / 1000) + TOKEN_VALID_DURATION_SECONDS;
 
-        // المسار الذي سيتوقعه Cloudflare Worker
-        // على سبيل المثال، إذا كان العامل يتوقع /video/{id}
-        // تأكد أن هذا يطابق المنطق في Cloudflare Worker
-        const path = `/video/${originalVideoId}`; 
-        
-        // السلسلة التي سيتم توقيعها هي المسار متبوعاً بمعامل 'expires'
-        const stringToSign = `${path}?expires=${expirationTime}`;
-        console.log(`🔑 String to sign for Cloudflare Worker: "${stringToSign}"`);
-
-        if (typeof CryptoJS === 'undefined' || !CryptoJS.HmacSHA256) {
-            console.error('❌ CryptoJS library (HmacSHA256) is not loaded or available. Cannot sign URL. Make sure you included: <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>');
-            // في حالة عدم توفر CryptoJS، لا يمكن التوقيع، يجب عليك التعامل مع هذا
-            return ''; 
+        let path;
+        try {
+            path = new URL(originalUrl).pathname; // Get only the path part (e.g., /videos/movie.mp4)
+        } catch (e) {
+            console.error('❌ generateSignedUrl: Failed to parse originalUrl with URL constructor:', e);
+            return originalUrl; // Fallback if URL is malformed
         }
 
+        // Construct the string to be signed.
+        // This format MUST exactly match what your Cloudflare Worker expects for signing.
+        // Common format: /path/to/video.mp4?expires=1678886400
+        const stringToSign = `${path}?expires=${expirationTime}`;
+        console.log(`🔑 String to sign: "${stringToSign}"`);
+
+        // Check if CryptoJS is loaded before trying to use it
+        if (typeof CryptoJS === 'undefined' || !CryptoJS.HmacSHA256) {
+            console.error('❌ CryptoJS library (HmacSHA256) is not loaded or available. Cannot sign URL. Make sure you included: <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>');
+            return originalUrl; // Fallback to original URL if crypto library is missing
+        }
+
+        // Generate HMAC SHA256 hash
         const hash = CryptoJS.HmacSHA256(stringToSign, URL_SIGNING_SECRET_KEY).toString(CryptoJS.enc.Hex);
         console.log(`🔑 Generated hash: ${hash}`);
 
-        // بناء الرابط النهائي الذي سيتم إرساله إلى Video.js
-        // يجب أن يشير هذا إلى نقطة نهاية Cloudflare Worker
-        const signedUrl = `${CLOUDFLARE_WORKER_BASE_URL}${path}?expires=${expirationTime}&signature=${hash}`;
-        
-        console.log(`✅ Generated signed URL for player: ${signedUrl}`);
+        // Append the expires and signature parameters to the original URL
+        const separator = originalUrl.includes('?') ? '&' : '?';
+        const signedUrl = `${originalUrl}${separator}expires=${expirationTime}&signature=${hash}`;
+
+        console.log(`✅ Generated signed URL: ${signedUrl}`);
         return signedUrl;
     }
+
 
     // --- 3. Movie Data ---
     let moviesData = [];
@@ -303,10 +314,11 @@ document.addEventListener('DOMContentLoaded', () => {
         moviesDataForPagination = filteredMovies;
         paginateMovies(moviesDataForPagination, currentPage);
     }
-    
+
     async function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
-        const movie = moviesData.find(m => m.id === movieId);
+        // Ensure both IDs are treated as strings for robust comparison
+        const movie = moviesData.find(m => String(m.id) === String(movieId));
 
         if (movie) {
             currentDetailedMovie = movie;
@@ -320,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoJsPlayerInstance.dispose();
                 videoJsPlayerInstance = null;
             }
-            
+
             // Rebuild the video element for a clean state
             if (videoContainer) {
                 videoContainer.innerHTML = ''; // Clear any previous content
@@ -328,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVideoElement.id = 'movie-player'; // Keep the same ID for Video.js lookup
                 newVideoElement.classList.add('video-js', 'vjs-default-skin');
                 newVideoElement.controls = true;
-                newVideoElement.preload = 'auto'; 
+                newVideoElement.preload = 'auto'; // مهم جدا لـ MP4 لضمان التحميل المسبق
                 newVideoElement.setAttribute('playsinline', '');
 
                 videoContainer.appendChild(newVideoElement);
@@ -369,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Wait until the element is connected to DOM and visible
                 await new Promise(resolve => {
                     const checkVisibility = () => {
-                        if (moviePlayerElement.offsetParent !== null) { 
+                        if (moviePlayerElement.offsetParent !== null) {
                             console.log('[Video Player] moviePlayer is now connected and visible. Resolving promise.');
                             resolve();
                         } else {
@@ -377,46 +389,64 @@ document.addEventListener('DOMContentLoaded', () => {
                             requestAnimationFrame(checkVisibility);
                         }
                     };
-                    setTimeout(() => requestAnimationFrame(checkVisibility), 50); 
+                    setTimeout(() => requestAnimationFrame(checkVisibility), 50);
                 });
 
                 console.log('[Video Player] moviePlayer is ready. Proceeding with Video.js initialization.');
 
-                // توليد الرابط الموقع (Signed URL) للفيديو باستخدام embed_id
-                const signedVideoUrl = generateSignedUrl(movie.embed_id); 
+                // --- Video Source Determination (Prioritizes embed_url, falls back to Pixeldrain embed_id) ---
+                const originalUrl = movie.embed_url || `https://pixeldrain.com/api/file/${movie.embed_id}`;
+
+                if (!originalUrl) { // Check if a valid URL was determined
+                    console.error('❌ No video source (embed_url or embed_id) found for this movie. Cannot play video.');
+                    if (videoContainer) {
+                        videoContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); padding: 20px;">عذرًا، لا يتوفر رابط الفيديو لهذا الفيلم حاليًا.</p>';
+                    }
+                    if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+                    if (videoOverlay) {
+                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.classList.remove('hidden');
+                    }
+                    return; // Stop execution if no video source
+                }
+                console.log(`🎥 [Video Source] Determined original URL: ${originalUrl}`);
+
+                const signedVideoUrl = generateSignedUrl(originalUrl); // Now uses the determined originalUrl
 
                 // Initialize Video.js player
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
-                    autoplay: false, 
+                    autoplay: false, // Explicitly false as per request
                     controls: true,
                     responsive: true,
                     fluid: true,
-                    techOrder: ['html5', 'hls'], 
+                    techOrder: ['html5'],
                     html5: {
-                        nativeControlsForTouch: true 
+                        nativeControlsForTouch: true // Use native controls for touch devices
                     },
-                    playbackRates: [0.5, 1, 1.5, 2], 
+                    playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
-                        src: signedVideoUrl, 
-                        // قم بتغيير هذا إلى 'application/x-mpegURL' إذا كانت فيديوهاتك HLS
-                        // أو اتركه 'video/mp4' إذا كانت MP4 فقط.
-                        type: 'video/mp4' 
+                        src: signedVideoUrl, // *** استخدم الرابط الموقع هنا ***
+                        type: 'video/mp4' // *** التأكد من أن النوع هو video/mp4 دائمًا هنا ***
                     }],
-                    crossOrigin: 'anonymous' 
+                    crossOrigin: 'anonymous'
                 }, function() {
                     console.log(`[Video.js] Player initialized callback for source: ${signedVideoUrl}`);
+                    // Initially show spinner if video is not ready
                     if (videoLoadingSpinner && !this.hasStarted() && !this.paused() && !this.ended()) {
                         videoLoadingSpinner.style.display = 'block';
                     }
+                    // Ensure overlay is active for clicks when player is ready but not playing
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'auto'; 
-                        videoOverlay.classList.remove('hidden'); 
+                        videoOverlay.style.pointerEvents = 'auto'; // Make it clickable
+                        videoOverlay.classList.remove('hidden'); // Ensure visible (though transparent)
                     }
 
                     // --- Video.js Plugin to disable download button ---
                     this.ready(function() {
                         const player = this;
-                        const downloadButton = player.controlBar.getChild('DownloadButton');
+                        player.controlBar.addChild('Component', {}, player.controlBar.children_.length - 1); // Add a placeholder
+                        // Find the existing 'Download' button (if it exists from a plugin) and remove it
+                        const downloadButton = player.controlBar.getChild('DownloadButton'); // Adjust if component name is different
                         if (downloadButton) {
                             player.controlBar.removeChild(downloadButton);
                             console.log('[Video.js] Download button removed from control bar.');
@@ -431,40 +461,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 // --- Video Player Event Listeners for Ads and Overlay ---
+
+                // Hide spinner and make overlay non-clickable when player is playing
                 videoJsPlayerInstance.on('playing', () => {
                     console.log('[Video.js] Video playing event fired.');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'none'; 
-                        videoOverlay.classList.add('hidden'); 
+                        videoOverlay.style.pointerEvents = 'none'; // Allow direct player interaction
+                        videoOverlay.classList.add('hidden'); // Fully hide it when playing
                     }
                 });
 
+                // Show spinner and make overlay clickable when buffering
                 videoJsPlayerInstance.on('waiting', () => {
                     console.log('[Video.js] Video waiting (buffering).');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'none'; 
-                        videoOverlay.classList.remove('hidden'); 
+                        videoOverlay.style.pointerEvents = 'none'; // Keep non-clickable during buffering if spinner is visible
+                        videoOverlay.classList.remove('hidden'); // Show (transparent) overlay during buffering
                     }
                 });
 
+                // Open ad on pause, and make overlay clickable
                 videoJsPlayerInstance.on('pause', () => {
                     console.log('[Video.js] Video paused.');
-                    if (!videoJsPlayerInstance.ended()) { 
+                    if (!videoJsPlayerInstance.ended()) { // Do not trigger ad on natural end
                         openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoPause');
                         if (videoOverlay) {
-                            videoOverlay.style.pointerEvents = 'auto';
-                            videoOverlay.classList.remove('hidden');
+                            videoOverlay.style.pointerEvents = 'auto'; // Make overlay clickable again
+                            videoOverlay.classList.remove('hidden'); // Show (transparent) overlay
                         }
                     }
                 });
 
+                // Open ad when user seeks
                 videoJsPlayerInstance.on('seeked', () => {
                     console.log('[Video.js] Video seeked.');
                     openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoSeek');
+                    // No need to show overlay here, user just interacted with controls
                 });
-                
+
+                // Show transparent overlay and hide spinner on error
                 videoJsPlayerInstance.on('error', (e) => {
                     const error = videoJsPlayerInstance.error();
                     console.error('[Video.js] Player Error:', error ? error.message : 'Unknown error', error);
@@ -475,23 +512,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
+                // When video ends, open ad and make overlay clickable for restart
                 videoJsPlayerInstance.on('ended', () => {
                     console.log('[Video.js] Video ended.');
-                    openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoEndedRestart');
+                    openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoEndedRestart'); // New type for ended event
                     if (videoOverlay) {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
                     }
-                    videoJsPlayerInstance.currentTime(0); 
+                    // To make it easier to restart, setting current time to 0.
+                    // This will allow a click on the overlay to restart from beginning.
+                    videoJsPlayerInstance.currentTime(0);
                 });
+
 
             } else {
                 console.warn('⚠️ [Video Player] moviePlayer element not found or not ready after attempts. Skipping Video.js initialization.');
                 if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                 if (videoOverlay) {
-                    videoOverlay.style.display = 'flex'; 
-                    videoOverlay.style.pointerEvents = 'auto'; 
-                    videoOverlay.classList.remove('hidden'); 
+                    videoOverlay.style.display = 'flex'; // Ensure it's visible (though transparent)
+                    videoOverlay.style.pointerEvents = 'auto';
+                    videoOverlay.classList.remove('hidden');
                 }
             }
 
@@ -521,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         canonicalLink.setAttribute('href', window.location.href);
 
-        document.title = `${movie.title} - مشاهدة أونلاين على شاهد بلس`; 
+        document.title = `${movie.title} - مشاهدة أونلاين على شاهد بلس`;
         document.querySelector('meta[name="description"]')?.setAttribute('content', movie.description);
         document.querySelector('meta[property="og:title"]')?.setAttribute('content', movie.title);
         document.querySelector('meta[property="og:description"]')?.setAttribute('content', movie.description);
@@ -529,27 +570,27 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.href);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'video.movie');
         document.querySelector('meta[property="og:locale"]')?.setAttribute('content', 'ar_AR');
-        
+
         let ogSiteName = document.querySelector('meta[property="og:site_name"]');
         if (!ogSiteName) {
             ogSiteName = document.createElement('meta');
             ogSiteName.setAttribute('property', 'og:site_name');
             document.head.appendChild(ogSiteName);
         }
-        ogSiteName.setAttribute('content', 'شاهد بلس'); 
+        ogSiteName.setAttribute('content', 'شاهد بلس');
 
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', movie.title);
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', movie.description);
         document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', movie.poster);
-        
+
         let twitterCard = document.querySelector('meta[name="twitter:card"]');
         if (!twitterCard) {
             twitterCard = document.createElement('meta');
             twitterCard.setAttribute('name', 'twitter:card');
             document.head.appendChild(twitterCard);
         }
-        twitterCard.setAttribute('content', 'summary_large_image'); 
-        
+        twitterCard.setAttribute('content', 'summary_large_image');
+
         console.log('📄 [SEO] Meta tags updated.');
     }
 
@@ -579,15 +620,15 @@ document.addEventListener('DOMContentLoaded', () => {
             "description": movie.description,
             "thumbnailUrl": movie.poster,
             "uploadDate": formattedUploadDate,
-            "embedUrl": `${CLOUDFLARE_WORKER_BASE_URL}/video/${movie.embed_id}`, // رابط الـ Worker
+            "embedUrl": movie.embed_url, // Keep original embed_url for schema, as the signed one changes
             "duration": movie.duration,
-            "contentUrl": `${CLOUDFLARE_WORKER_BASE_URL}/video/${movie.embed_id}`, // رابط الـ Worker
+            "contentUrl": movie.embed_url, // Keep original contentUrl for schema
             "publisher": {
                 "@type": "Organization",
-                "name": "شاهد بلس", 
+                "name": "شاهد بلس",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://example.com/images/shahed-plus-logo.png", 
+                    "url": "https://example.com/images/shahed-plus-logo.png", // **تأكد من تغيير هذا المسار لشعار موقعك الفعلي**
                     "width": 200,
                     "height": 50
                 }
@@ -638,7 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     "@type": "AggregateRating",
                     "ratingValue": ratingValue.toFixed(1),
                     "bestRating": "10",
-                    "ratingCount": "10000" 
+                    "ratingCount": "10000"
                 };
             }
         }
@@ -687,15 +728,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchInput) searchInput.value = '';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
 
-        moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random()); 
+        moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
         paginateMovies(moviesDataForPagination, 1);
 
+        // Ensure video overlay is hidden on home page
         if (videoOverlay) {
             videoOverlay.style.pointerEvents = 'none';
-            videoOverlay.classList.add('hidden'); 
+            videoOverlay.classList.add('hidden'); // Fully hide it on home
             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
         }
-        
+
+        // Dispose existing Video.js player instance
         if (videoJsPlayerInstance) {
             console.log('[Video.js] Disposing player on home page navigation.');
             videoJsPlayerInstance.dispose();
@@ -703,24 +746,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentDetailedMovie = null;
 
+        // Clear movie-player-container content on home page navigation
         if (videoContainer) {
             videoContainer.innerHTML = '';
             console.log('[Video Player] Cleared movie-player-container on home page navigation.');
         }
 
         const newUrl = new URL(window.location.origin);
-        history.pushState({ view: 'home' }, 'شاهد بلس - الصفحة الرئيسية', newUrl.toString()); 
+        history.pushState({ view: 'home' }, 'شاهد بلس - الصفحة الرئيسية', newUrl.toString());
         console.log(`🔗 [URL] URL updated to ${newUrl.toString()}`);
 
+        // Reset meta tags to default home page values
         document.title = 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K أونلاين';
         document.querySelector('meta[name="description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
         document.querySelector('meta[property="og:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
-        document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتat بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
+        document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.origin);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
-        document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop'); 
+        document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop'); // Default hero image
         document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر');
         document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
+
 
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
@@ -822,26 +868,30 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[Event] Movie details poster click listener attached.');
     }
 
+    // New logic for video overlay and ad interaction
     if (videoOverlay) {
         videoOverlay.addEventListener('click', (e) => {
             console.log('⏯️ [Ad Click] Video overlay clicked. Attempting to open Direct Link.');
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
 
             if (adOpened) {
+                // If ad opened, attempt to play the video after a short delay
+                // This delay helps mitigate browser pop-up/autoplay restrictions
                 setTimeout(() => {
                     if (videoJsPlayerInstance && (videoJsPlayerInstance.paused() || videoJsPlayerInstance.ended())) {
                         videoJsPlayerInstance.play().then(() => {
                             console.log('[Video.js] Player started playing after overlay click and ad open.');
                             if (videoOverlay) {
                                 videoOverlay.style.pointerEvents = 'none';
-                                videoOverlay.classList.add('hidden'); 
+                                videoOverlay.classList.add('hidden'); // Hide overlay fully
                             }
                             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                         }).catch(error => {
                             console.warn('⚠️ [Video.js] Play failed after ad open (user interaction still required):', error);
+                            // If play fails, keep overlay clickable. No specific text.
                             if (videoOverlay) {
                                 videoOverlay.style.pointerEvents = 'auto';
-                                videoOverlay.classList.remove('hidden'); 
+                                videoOverlay.classList.remove('hidden'); // Ensure visible (though transparent)
                             }
                             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                         });
@@ -859,11 +909,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     }
-                }, 500); 
+                }, 500); // 500ms delay before attempting to play
             } else {
                 console.log('[Video Overlay] Ad not opened due to cooldown. Overlay remains active.');
             }
-            e.stopPropagation(); 
+            e.stopPropagation(); // Prevent clicks from bubbling to player if we want overlay to handle them first
         });
         console.log('[Video Overlay] Click listener attached for ad interaction.');
     }
@@ -875,14 +925,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const idParam = urlParams.get('id');
 
         if (viewParam === 'details' && idParam) {
-            const movieId = parseInt(idParam);
-            if (!isNaN(movieId)) {
-                console.log(`🚀 [Initial Load] Attempting to load movie details from URL: ID ${movieId}`);
-                showMovieDetails(movieId);
-            } else {
-                console.warn('⚠️ [Initial Load] Invalid movie ID in URL. Showing home page.');
-                showHomePage();
-            }
+            // No need to parse int here, as showMovieDetails now handles string comparison
+            console.log(`🚀 [Initial Load] Attempting to load movie details from URL: ID ${idParam}`);
+            showMovieDetails(idParam);
         } else {
             console.log('🚀 [Initial Load] No specific view in URL. Showing home page.');
             showHomePage();
