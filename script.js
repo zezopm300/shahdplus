@@ -111,67 +111,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 2.1. URL Signing Configuration (New section for token-based video protection) ---
-    // IMPORTANT: This secret key MUST match the one used in your Cloudflare Worker.
-    // Replace 'YOUR_SUPER_SECRET_KEY_HERE' with a strong, secret key.
-    // DO NOT expose this in client-side code in a real production environment.
-    // For demonstration, it's here, but ideally, this should come from a secure backend or environment variable.
+    ---
+
+    ## 2.1. URL Signing Configuration (Cloudflare Worker Integration)
+
+    **هام:** هذا المفتاح السري (`URL_SIGNING_SECRET_KEY`) يجب أن يتطابق تماماً مع المفتاح المستخدم في Cloudflare Worker الخاص بك.
+    **لا يجب كشف هذا المفتاح في الكود على جانب العميل (client-side) في بيئة إنتاج حقيقية.**
+    لغرض العرض، هو موجود هنا، ولكن من الناحية المثالية، يجب أن يأتي هذا المفتاح من خادم خلفي آمن أو متغير بيئة.
+
+    ```javascript
     const URL_SIGNING_SECRET_KEY = 'shahidplus-2025-superkey'; // *** غير هذا المفتاح السري! يجب أن يتطابق مع Cloudflare Worker ***
     const TOKEN_VALID_DURATION_SECONDS = 5 * 60; // Token valid for 5 minutes
 
     /**
      * Generates a signed URL with a temporary token for Cloudflare Worker.
      * This function uses HMAC SHA256 for signing.
-     * @param {string} originalUrl The original video URL (e.g., https://yourdomain.com/videos/movie.mp4).
-     * @returns {string} The signed URL with 'expires' and 'signature' query parameters.
+     * The generated URL will be in the format:
+     * [https://yourdomain.com/video-stream?id=](https://yourdomain.com/video-stream?id=){embed_id}&expires={timestamp}&signature={hmac_hash}
+     *
+     * @param {string} videoId The actual Pixeldrain embed_id (or other unique ID for your video).
+     * @returns {string} The signed URL that your Cloudflare Worker will process.
      */
-    function generateSignedUrl(originalUrl) {
-        if (!originalUrl || typeof originalUrl !== 'string') {
-            console.error('❌ generateSignedUrl: Invalid originalUrl provided.');
-            return originalUrl; // Return original if invalid
+    function generateSignedUrl(videoId) {
+        if (!videoId || typeof videoId !== 'string') {
+            console.error('❌ generateSignedUrl: Invalid videoId provided.');
+            return ''; // Return empty string if invalid
         }
 
-        // Prevent re-signing if URL already contains 'expires' or 'signature'
-        if (originalUrl.includes('expires=') && originalUrl.includes('signature=')) {
-            console.warn('⚠️ generateSignedUrl: URL already appears to be signed. Skipping signing.');
-            return originalUrl;
-        }
-
-        // Get the current time in Unix timestamp (seconds) and add the duration
         const expirationTime = Math.floor(Date.now() / 1000) + TOKEN_VALID_DURATION_SECONDS;
 
-        let path;
-        try {
-            path = new URL(originalUrl).pathname; // Get only the path part (e.g., /videos/movie.mp4)
-        } catch (e) {
-            console.error('❌ generateSignedUrl: Failed to parse originalUrl with URL constructor:', e);
-            return originalUrl; // Fallback if URL is malformed
-        }
+        // Path that your Cloudflare Worker will intercept.
+        // This should be a consistent path on your domain, e.g., '/video-stream'
+        const workerInterceptPath = '/video-stream';
 
-        // Construct the string to be signed.
-        // This format MUST exactly match what your Cloudflare Worker expects for signing.
-        // Common format: /path/to/video.mp4?expires=1678886400
-        const stringToSign = `${path}?expires=${expirationTime}`;
-        console.log(`🔑 String to sign: "${stringToSign}"`);
+        // The string to sign MUST exactly match what your Cloudflare Worker expects.
+        // It typically includes the path and any parameters the Worker uses to identify the video.
+        // Here, we include 'id' (the embed_id) and 'expires' in the string to sign.
+        const stringToSign = `${workerInterceptPath}?id=${videoId}&expires=${expirationTime}`;
+        console.log(`🔑 String to sign for HMAC: "${stringToSign}"`);
 
         // Check if CryptoJS is loaded before trying to use it
         if (typeof CryptoJS === 'undefined' || !CryptoJS.HmacSHA256) {
-            console.error('❌ CryptoJS library (HmacSHA256) is not loaded or available. Cannot sign URL. Make sure you included: <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>');
-            return originalUrl; // Fallback to original URL if crypto library is missing
+            console.error('❌ CryptoJS library (HmacSHA256) is not loaded or available. Cannot sign URL. Make sure you included: <script src="[https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js](https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js)"></script>');
+            return ''; // Fallback to empty URL if crypto library is missing
         }
 
         // Generate HMAC SHA256 hash
         const hash = CryptoJS.HmacSHA256(stringToSign, URL_SIGNING_SECRET_KEY).toString(CryptoJS.enc.Hex);
-        console.log(`🔑 Generated hash: ${hash}`);
+        console.log(`🔑 Generated HMAC hash: ${hash}`);
 
-        // Append the expires and signature parameters to the original URL
-        const separator = originalUrl.includes('?') ? '&' : '?';
-        const signedUrl = `${originalUrl}${separator}expires=${expirationTime}&signature=${hash}`;
+        // Construct the final URL for the player.
+        // This URL will be on your domain and include the video ID, expiration, and signature.
+        // Your Cloudflare Worker will receive this URL, verify it, and then redirect to the Pixeldrain link.
+        const signedUrl = `${window.location.origin}${workerInterceptPath}?id=${videoId}&expires=${expirationTime}&signature=${hash}`;
 
-        console.log(`✅ Generated signed URL: ${signedUrl}`);
+        console.log(`✅ Generated signed URL for Cloudflare Worker: ${signedUrl}`);
         return signedUrl;
     }
 
+    ---
 
     // --- 3. Movie Data ---
     let moviesData = [];
@@ -394,11 +392,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 console.log('[Video Player] moviePlayer is ready. Proceeding with Video.js initialization.');
 
-                // --- Video Source Determination (Prioritizes embed_url, falls back to Pixeldrain embed_id) ---
-                const originalUrl = movie.embed_url || `https://pixeldrain.com/api/file/${movie.embed_id}`;
-
-                if (!originalUrl) { // Check if a valid URL was determined
-                    console.error('❌ No video source (embed_url or embed_id) found for this movie. Cannot play video.');
+                let videoSourceId = '';
+                // الأولوية لـ embed_url، ولكن بما أننا سنشفر دائماً عبر Cloudflare Worker
+                // يجب أن نرسل للـ Worker الـ embed_id أو جزء تعريف الفيديو.
+                // هنا نعتمد على وجود embed_id لتحديد الفيديو الذي سيتم تشغيله.
+                if (movie.embed_id) {
+                    videoSourceId = movie.embed_id;
+                    console.log(`🎥 [Video Source] Using embed_id for Cloudflare Worker: ${videoSourceId}`);
+                } else {
+                    console.error('❌ No embed_id found for this movie. Cannot generate signed URL for Cloudflare Worker.');
                     if (videoContainer) {
                         videoContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); padding: 20px;">عذرًا، لا يتوفر رابط الفيديو لهذا الفيلم حاليًا.</p>';
                     }
@@ -407,11 +409,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
                     }
-                    return; // Stop execution if no video source
+                    return; // Stop execution if no video ID
                 }
-                console.log(`🎥 [Video Source] Determined original URL: ${originalUrl}`);
 
-                const signedVideoUrl = generateSignedUrl(originalUrl); // Now uses the determined originalUrl
+                // نمرر الـ embed_id مباشرةً لدالة generateSignedUrl
+                // هذه الدالة ستقوم بإنشاء رابط موقّع على النحو:
+                // [https://yourdomain.com/video-stream?id=YOUR_EMBED_ID&expires=TIMESTAMP&signature=HMAC_HASH](https://yourdomain.com/video-stream?id=YOUR_EMBED_ID&expires=TIMESTAMP&signature=HMAC_HASH)
+                const signedVideoUrl = generateSignedUrl(videoSourceId);
 
                 // Initialize Video.js player
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
@@ -425,8 +429,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
-                        src: signedVideoUrl, // *** استخدم الرابط الموقع هنا ***
-                        type: 'video/mp4' // *** التأكد من أن النوع هو video/mp4 دائمًا هنا ***
+                        src: signedVideoUrl, // هنا يتم استخدام الرابط الموقّع من Cloudflare Worker
+                        type: 'video/mp4' // يجب أن يكون هذا النوع صحيحاً للفيديو الذي يوفره Worker
                     }],
                     crossOrigin: 'anonymous'
                 }, function() {
@@ -614,21 +618,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const schema = {
-            "@context": "http://schema.org",
+            "@context": "[http://schema.org](http://schema.org)",
             "@type": "VideoObject",
             "name": movie.title,
             "description": movie.description,
             "thumbnailUrl": movie.poster,
             "uploadDate": formattedUploadDate,
-            "embedUrl": movie.embed_url, // Keep original embed_url for schema, as the signed one changes
+            // هنا لم نعد نستخدم movie.embed_url أو movie.embed_id مباشرة في الـ schema
+            // لأن الرابط المباشر أصبح مخفياً ووراء Cloudflare Worker
+            // يمكنك تعيين embedUrl لعنوان الـ Cloudflare Worker الذي سيخدم الفيديو، أو تركه فارغاً إذا كان الـ Worker يقوم بإعادة التوجيه 302
+            // For example, if your Worker serves at '[https://yourdomain.com/video-stream?id=YOUR_EMBED_ID](https://yourdomain.com/video-stream?id=YOUR_EMBED_ID)'
+            "embedUrl": `${window.location.origin}/video-stream?id=${movie.embed_id || ''}`, // استخدام مسار الـ Worker + الـ ID
             "duration": movie.duration,
-            "contentUrl": movie.embed_url, // Keep original contentUrl for schema
+            "contentUrl": `${window.location.origin}/video-stream?id=${movie.embed_id || ''}`, // نفس الشيء لـ contentUrl
             "publisher": {
                 "@type": "Organization",
                 "name": "شاهد بلس",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://example.com/images/shahed-plus-logo.png", // **تأكد من تغيير هذا المسار لشعار موقعك الفعلي**
+                    "url": "[https://example.com/images/shahed-plus-logo.png](https://example.com/images/shahed-plus-logo.png)", // **تأكد من تغيير هذا المسار لشعار موقعك الفعلي**
                     "width": 200,
                     "height": 50
                 }
@@ -640,8 +648,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     "urlTemplate": window.location.href,
                     "inLanguage": "ar",
                     "actionPlatform": [
-                        "http://schema.org/DesktopWebPlatform",
-                        "http://schema.org/MobileWebPlatform"
+                        "[http://schema.org/DesktopWebPlatform](http://schema.org/DesktopWebPlatform)",
+                        "[http://schema.org/MobileWebPlatform](http://schema.org/MobileWebPlatform)"
                     ]
                 },
                 "expectsAcceptanceOf": {
@@ -763,14 +771,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.origin);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
-        document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop'); // Default hero image
+        document.querySelector('meta[property="og:image"]')?.setAttribute('content', '[https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop](https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop)'); // Default hero image
         document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر');
         document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
 
 
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
-        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', 'https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop');
+        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', '[https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop](https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop)');
 
         let canonicalLink = document.querySelector('link[rel="canonical"]');
         if (canonicalLink) {
@@ -944,4 +952,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     fetchMoviesData();
-})
+});
