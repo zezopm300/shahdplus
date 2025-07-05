@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function createMovieCard(movie) {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
-        // تحسين: استخدام <picture> لدعم WebP لتحسين السرعة
+        // تحسين: استخدام <picture> لدعم WebP لتحسين السرعة وتحميل الموبايل
         movieCard.innerHTML = `
             <picture>
                 <source srcset="${movie.poster.replace(/\.(png|jpe?g)/i, '.webp')}" type="image/webp">
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 newVideoElement.classList.add('video-js', 'vjs-default-skin');
                 newVideoElement.controls = true;
                 newVideoElement.preload = 'auto'; // Keep preload auto
-                newVideoElement.setAttribute('playsinline', ''); // مهم لتشغيل الفيديو تلقائيا على iOS
+                newVideoElement.setAttribute('playsinline', ''); // **مهم جداً للموبايل**: يسمح بالتشغيل داخل الصفحة
                 newVideoElement.setAttribute('poster', movie.poster);
                 videoContainer.appendChild(newVideoElement);
                 console.log('[Video Player] Recreated movie-player element.');
@@ -386,28 +386,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     controls: true,
                     responsive: true,
                     fluid: true,
-                    techOrder: ['html5'],
+                    techOrder: ['html5'], // التأكد من استخدام HTML5
                     html5: {
-                        nativeControlsForTouch: true,
+                        nativeControlsForTouch: true, // مهم للموبايل: يستخدم ضوابط التشغيل الأصلية للجوال
                         vhs: {
                             limitRenditionByPlayerDimensions: false,
-                            enableLowInitialPlaylist: true,
+                            enableLowInitialPlaylist: true, // يبدأ بأقل جودة لأسرع بدء تشغيل
                             fastQualityChange: true,
-                            // قيم الـ Buffer أقل لتحسين سرعة البدء وتقليل استهلاك النطاق الترددي
-                            maxBufferLength: 10,  // تحميل مسبق أقل عند التوقف
-                            maxMaxBufferLength: 30, // أقصى حجم للـ buffer أثناء التشغيل
+                            // **تحسين تقطيع الفيديو**: قيم الـ Buffer أقل لتحسين سرعة البدء وتقليل استهلاك النطاق الترددي
+                            maxBufferLength: 10,  // التحميل المسبق الأقصى عندما يكون المشغل متوقفًا
+                            maxMaxBufferLength: 30, // أقصى حجم للـ buffer أثناء التشغيل المستمر
                         },
                     },
                     playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
                         src: decodedVideoUrl,
-                        // تحسين: تحديد النوع بشكل صحيح لدعم HLS/DASH إذا كنت تستخدمهم
-                        // إذا كان الرابط هو ملف MP4 مباشر، استخدم 'video/mp4'
-                        // إذا كان HLS (.m3u8)، استخدم 'application/x-mpegURL' أو 'application/vnd.apple.mpegurl'
-                        // إذا كان DASH (.mpd)، استخدم 'application/dash+xml'
-                        type: 'video/mp4' // افتراضيًا، قم بتغييره إذا كان HLS/DASH
+                        // **أهم سطر لحل التقطيع**: غيّر هذا النوع بناءً على كيفية استضافتك للفيديوهات
+                        // 1. إذا حولت فيديوهاتك لـ HLS (موصى به جدًا):
+                        //    type: 'application/x-mpegURL'
+                        // 2. إذا حولت فيديوهاتك لـ DASH:
+                        //    type: 'application/dash+xml'
+                        // 3. إذا ما زلت تستخدم MP4 مباشر (لن يحل التقطيع تماماً):
+                        //    type: 'video/mp4'
+                        type: 'video/mp4' // <-- **غيّر هذا السطر بعد تحويل فيديوهاتك لـ HLS/DASH**
                     }],
-                    crossOrigin: 'anonymous'
+                    crossOrigin: 'anonymous' // مهم إذا كانت الفيديوهات على نطاق مختلف عن موقعك (CDN)
                 }, function() {
                     console.log(`[Video.js] Player initialized callback for source: ${decodedVideoUrl}`);
                     if (videoLoadingSpinner && !this.hasStarted() && !this.paused() && !this.ended()) {
@@ -602,7 +605,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 "name": "شاهد بلس",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://yourdomain.com/images/shahed-plus-logo.png", // *** هام جداً: غيّر هذا الرابط إلى رابط شعار موقعك الفعلي ***
+                    // **هام جداً لـ SEO**: غيّر هذا الرابط إلى رابط شعار موقعك الفعلي على CDN
+                    "url": "https://yourdomain.com/images/shahed-plus-logo.png",
                     "width": 200,
                     "height": 50
                 }
@@ -754,14 +758,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.origin);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
-        // تحسين: استخدم شعار موقعك هنا وليس صورة عشوائية
-        document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://yourdomain.com/images/your-logo-for-og.png'); // *** هام: غيّر هذا الرابط ***
+        // **هام لـ SEO/الانتشار**: استخدم شعار موقعك هنا وليس صورة عشوائية
+        document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://yourdomain.com/images/your-logo-for-og.png'); // **غيّر هذا الرابط**
         document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر');
         document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
 
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
-        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', 'https://yourdomain.com/images/your-logo-for-twitter.png'); // *** هام: غيّر هذا الرابط ***
+        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', 'https://yourdomain.com/images/your-logo-for-twitter.png'); // **غيّر هذا الرابط**
         document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
 
         let canonicalLink = document.querySelector('link[rel="canonical"]');
