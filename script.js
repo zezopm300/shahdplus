@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. DOM Element References ---
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.getElementById('main-nav');
+    // Updated ID for home nav link for consistency with HTML
     const homeNavLink = document.getElementById('home-nav-link-actual'); 
     const navLinks = document.querySelectorAll('.main-nav ul li a'); 
     const heroSection = document.getElementById('hero-section');
@@ -46,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '#movie-details-cast': document.getElementById('movie-details-cast'),
         '#movie-details-duration': document.getElementById('movie-details-duration'),
         '#movie-details-rating': document.getElementById('movie-details-rating'),
-        '#home-nav-link-actual': homeNavLink 
+        '#home-nav-link-actual': homeNavLink // Added this for consistency with HTML
     };
 
     let criticalError = false;
@@ -66,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('✅ تم العثور على جميع عناصر DOM الأساسية.');
     }
 
-    // --- 2. Adsterra Configuration ---
+    // --- 2. Adsterra Configuration (لا يوجد أي تغيير) ---
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; 
     const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 10 * 1000; 
@@ -113,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let moviesDataForPagination = [];
     let currentDetailedMovie = null;
     let videoJsPlayerInstance = null;
+    let videoJsScriptsLoaded = false; // Flag to track dynamic script loading
 
     function decodeBase64(encodedString) {
         try {
@@ -124,6 +126,68 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {
             console.error('خطأ في فك تشفير سلسلة Base64:', e);
             return '';
+        }
+    }
+
+    // Function to dynamically load Video.js and HLS.js
+    async function loadVideoJsAndHls() {
+        if (videoJsScriptsLoaded) {
+            console.log("Video.js and HLS.js already loaded, skipping dynamic load.");
+            return;
+        }
+
+        console.log("Loading Video.js and HLS.js dynamically...");
+        const head = document.getElementsByTagName('head')[0];
+
+        const loadScript = (src, async = true) => {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.async = async;
+                script.onload = () => {
+                    console.log(`Script loaded: ${src}`);
+                    resolve();
+                };
+                script.onerror = () => {
+                    console.error(`Failed to load script: ${src}`);
+                    reject(new Error(`Failed to load script: ${src}`));
+                };
+                head.appendChild(script);
+            });
+        };
+
+        const loadLink = (href) => {
+            return new Promise((resolve, reject) => {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = href;
+                link.onload = () => {
+                    console.log(`Stylesheet loaded: ${href}`);
+                    resolve();
+                };
+                link.onerror = () => {
+                    console.error(`Failed to load stylesheet: ${href}`);
+                    reject(new Error(`Failed to load stylesheet: ${href}`));
+                };
+                head.appendChild(link);
+            });
+        };
+
+        try {
+            await loadLink('https://vjs.zencdn.net/8.10.0/video-js.css');
+            // Using Promise.all to load scripts concurrently
+            await Promise.all([
+                loadScript('https://cdn.jsdelivr.net/npm/hls.js@latest'),
+                loadScript('https://vjs.zencdn.net/8.10.0/video.min.js')
+            ]);
+            // Load videojs-contrib-hls after video.min.js and hls.js are available
+            await loadScript('https://cdn.jsdelivr.net/npm/videojs-contrib-hls@5.15.0/dist/videojs-contrib-hls.min.js');
+            
+            videoJsScriptsLoaded = true;
+            console.log("All Video.js related scripts and stylesheets loaded successfully.");
+        } catch (error) {
+            console.error("Error loading video player assets:", error);
+            // Optionally, show a message to the user that video player failed to load
         }
     }
 
@@ -158,7 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
         // تم تعديل هذا الجزء لضمان عرض البوستر دائماً
-        // الـ <source> للـ WebP هيكون اختياري. لو مش موجود أو فيه مشكلة، الـ <img> الأساسي هيظهر
         const webpSource = movie.poster.replace(/\.(png|jpe?g)/i, '.webp');
         movieCard.innerHTML = `
             <picture>
@@ -237,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
         moviesToDisplay.forEach(movie => {
             targetGridElement.appendChild(createMovieCard(movie));
         });
-        console.log(`🎬 [عرض] تم عرض ${moviesToDisplay.length} فيلمًا في ${targetGridElement.id}.`);
+        console.log(`🎬 [عرض] تم عرض ${moviesToplay.length} فيلمًا في ${targetGridElement.id}.`);
         initializeLazyLoad(); 
     }
 
@@ -301,12 +364,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (heroSection) heroSection.style.display = 'none';
             if (movieGridSection) movieGridSection.style.display = 'none';
 
+            // Dispose previous player instance if it exists
             if (videoJsPlayerInstance) {
                 console.log('[Video.js] التخلص من مثيل المشغل الحالي قبل عرض تفاصيل جديدة.');
                 videoJsPlayerInstance.dispose();
                 videoJsPlayerInstance = null;
             }
 
+            // Load Video.js and HLS.js dynamically BEFORE creating the player
+            await loadVideoJsAndHls(); 
+            
+            // Rebuild video element for a clean state
             if (videoContainer) {
                 videoContainer.innerHTML = ''; 
                 const newVideoElement = document.createElement('video');
@@ -358,7 +426,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            if (moviePlayerElement) {
+            // Ensure video.js is actually loaded before initializing
+            if (window.videojs) {
                 await new Promise(resolve => {
                     const checkVisibility = () => {
                         if (moviePlayerElement.offsetParent !== null) {
@@ -392,7 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     playbackRates: [0.5, 1, 1.5, 2], 
                     sources: [{
                         src: decodedVideoUrl,
-                        type: 'video/mp4' 
+                        type: 'video/mp4' // **غيّر هذا السطر بعد تحويل فيديوهاتك لـ HLS/DASH ورفعها على CDN**
                     }],
                     crossOrigin: 'anonymous' 
                 }, function() {
@@ -492,7 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
             } else {
-                console.warn('⚠️ [مشغل الفيديو] عنصر moviePlayer غير موجود أو غير جاهز بعد المحاولات. سيتم تخطي تهيئة Video.js.');
+                 console.warn('⚠️ [مشغل الفيديو] Video.js لم يتم تحميله بعد. لا يمكن تهيئة المشغل.');
                 if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                 if (videoOverlay) {
                     videoOverlay.style.display = 'flex';
@@ -520,44 +589,103 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- دالات الـ SEO (محسنة) ---
-    function updateMetaTags(movie) {
+    function updateMetaTags(movie = null) { // Added default null for homepage call
         let canonicalLink = document.querySelector('link[rel="canonical"]');
         if (!canonicalLink) {
             canonicalLink = document.createElement('link');
             canonicalLink.setAttribute('rel', 'canonical');
             document.head.appendChild(canonicalLink);
         }
-        canonicalLink.setAttribute('href', window.location.href);
-
-        document.title = `${movie.title} - مشاهدة أونلاين على شاهد بلس بجودة عالية`;
-        document.querySelector('meta[name="description"]')?.setAttribute('content', `شاهد فيلم ${movie.title} أونلاين بجودة عالية. ${movie.description || 'استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح.'}`);
         
-        const movieKeywords = [
-            movie.title, 
-            String(movie.genre || '').split(',').map(s => s.trim()).filter(Boolean).join(', '), 
-            movie.director, 
-            (Array.isArray(movie.cast) ? movie.cast.join(', ') : String(movie.cast || '')), 
-            'شاهد بلس', 'مشاهدة أونلاين', 'فيلم', 'بجودة عالية'
-        ].filter(Boolean).join(', '); 
-        document.querySelector('meta[name="keywords"]')?.setAttribute('content', movieKeywords);
+        let pageTitle, pageDescription, pageKeywords, ogUrl, ogTitle, ogDescription, ogImage, ogType;
+        let twitterTitle, twitterDescription, twitterImage;
 
-        document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${movie.title} - مشاهدة أونلاين على شاهد بلس`);
-        document.querySelector('meta[property="og:description"]')?.setAttribute('content', `شاهد فيلم ${movie.title} أونلاين بجودة عالية. ${movie.description || 'استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح.'}`);
-        document.querySelector('meta[property="og:image"]')?.setAttribute('content', movie.poster);
-        document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.href);
-        document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'video.movie');
+        if (movie) {
+            const movieUrl = window.location.href; // Use current URL which is already updated by pushState
+            canonicalLink.setAttribute('href', movieUrl);
+            pageTitle = `${movie.title} - مشاهدة أونلاين على شاهد بلس بجودة عالية`;
+            pageDescription = movie.description || `شاهد فيلم ${movie.title} أونلاين بجودة عالية. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح.`;
+            // Ensure proper handling for movie.genre and movie.cast
+            const movieGenres = Array.isArray(movie.genre) ? movie.genre.join(', ') : String(movie.genre || '').trim();
+            const movieCast = Array.isArray(movie.cast) ? movie.cast.join(', ') : String(movie.cast || '').trim();
+            pageKeywords = [
+                movie.title, 
+                movieGenres, 
+                movie.director, 
+                movieCast, 
+                'شاهد بلس', 'مشاهدة أونلاين', 'فيلم', 'بجودة عالية'
+            ].filter(Boolean).join(', '); // Filter out any empty strings before joining
+
+            ogUrl = movieUrl;
+            ogTitle = `${movie.title} - مشاهدة أونلاين على شاهد بلس`;
+            ogDescription = pageDescription;
+            ogImage = movie.poster; // Use movie poster for OG image
+            ogType = "video.movie";
+
+            twitterTitle = ogTitle;
+            twitterDescription = ogDescription;
+            twitterImage = ogImage;
+
+        } else {
+            // Home page default values
+            pageTitle = 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K أونلاين';
+            pageDescription = 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.';
+            pageKeywords = 'شاهد بلس، أفلام، مسلسلات، مشاهدة أونلاين، 4K، أفلام عربية، أفلام أجنبية، مسلسلات حصرية، سينما، ترفيه فاخر، مترجم، دبلجة، أفلام 2025، مسلسلات جديدة، أكشن، دراما، خيال علمي، كوميديا';
+            
+            ogUrl = window.location.origin;
+            canonicalLink.setAttribute('href', ogUrl + '/'); // Ensure trailing slash for consistency
+            ogTitle = 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K';
+            ogDescription = pageDescription;
+            // **هام لـ SEO/الانتشار**: استخدم شعار موقعك هنا وليس صورة عشوائية
+            ogImage = 'https://shahidplus.online/images/your-site-logo-for-og.png'; 
+            ogType = 'website';
+
+            twitterTitle = ogTitle;
+            twitterDescription = ogDescription;
+            twitterImage = ogImage;
+        }
+
+        document.title = pageTitle;
+        document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
+        document.querySelector('meta[name="keywords"]')?.setAttribute('content', pageKeywords);
+
+        document.querySelector('meta[property="og:title"]')?.setAttribute('content', ogTitle);
+        document.querySelector('meta[property="og:description"]')?.setAttribute('content', ogDescription);
+        document.querySelector('meta[property="og:image"]')?.setAttribute('content', ogImage);
+        document.querySelector('meta[property="og:url"]')?.setAttribute('content', ogUrl);
+        document.querySelector('meta[property="og:type"]')?.setAttribute('content', ogType);
         document.querySelector('meta[property="og:locale"]')?.setAttribute('content', 'ar_AR');
         document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
+        document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', ogTitle); // Using ogTitle for alt text
 
-        document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', `${movie.title} - مشاهدة أونلاين على شاهد بلس`);
-        document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', `شاهد فيلم ${movie.title} أونلاين بجودة عالية. ${movie.description || 'استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح.'}`);
-        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', movie.poster);
+        document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', twitterTitle);
+        document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', twitterDescription);
+        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', twitterImage);
         document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
+        // Ensure twitter creator exists and is updated
+        let twitterCreator = document.querySelector('meta[name="twitter:creator"]');
+        if (!twitterCreator) {
+            twitterCreator = document.createElement('meta');
+            twitterCreator.name = 'twitter:creator';
+            document.head.appendChild(twitterCreator);
+        }
+        twitterCreator.setAttribute('content', '@YourTwitterHandle'); // Remember to change this!
 
-        console.log('📄 [SEO] تم تحديث الميتا تاجز لتفاصيل الفيلم.');
+        console.log('📄 [SEO] تم تحديث الميتا تاجز.');
     }
 
-    function addJsonLdSchema(movie) {
+    function addJsonLdSchema(movie = null) { // Added default null for homepage call
+        let oldScript = document.querySelector('script[type="application/ld+json"]');
+        if (oldScript) {
+            oldScript.remove();
+            console.log('📄 [SEO] تم إزالة مخطط JSON-LD القديم.');
+        }
+
+        if (!movie) { // No schema for homepage
+            console.log('📄 [SEO] لا يوجد مخطط JSON-LD للصفحة الرئيسية.');
+            return;
+        }
+
         let formattedUploadDate;
         if (movie.release_date) {
             try {
@@ -586,7 +714,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "thumbnailUrl": movie.poster,
             "uploadDate": formattedUploadDate,
             "embedUrl": decodeBase64(movie.embed_url_encoded),
-            "duration": movie.duration || "PT1H30M", 
+            "duration": movie.duration || "PT1H30M", // ISO 8601 format, e.g., PT1H30M (1 hour 30 minutes)
             "contentUrl": decodeBase64(movie.embed_url_encoded), 
             "inLanguage": "ar",
             "publisher": {
@@ -594,6 +722,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "name": "شاهد بلس",
                 "logo": {
                     "@type": "ImageObject",
+                    // **هام جداً لـ SEO**: غيّر هذا الرابط إلى رابط شعار موقعك الفعلي على CDN
                     "url": "https://shahidplus.online/images/shahed-plus-logo.png", 
                     "width": 200,
                     "height": 50
@@ -640,12 +769,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     "ratingCount": "10000" 
                 };
             }
-        }
-
-        let oldScript = document.querySelector('script[type="application/ld+json"]');
-        if (oldScript) {
-            oldScript.remove();
-            console.log('📄 [SEO] تم إزالة مخطط JSON-LD القديم.');
         }
 
         let script = document.createElement('script');
@@ -733,34 +856,14 @@ document.addEventListener('DOMContentLoaded', () => {
         history.pushState({ view: 'home' }, 'شاهد بلس - الصفحة الرئيسية', newUrl.toString()); 
         console.log(`🔗 [URL] تم تحديث URL إلى ${newUrl.toString()}`);
 
-        document.title = 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K أونلاين';
-        document.querySelector('meta[name="description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
-        
-        document.querySelector('meta[name="keywords"]')?.setAttribute('content', 'شاهد بلس، أفلام، مسلسلات، مشاهدة أونلاين، 4K، أفلام عربية، أفلام أجنبية، مسلسلات حصرية، سينما، ترفيه فاخر، مترجم، دبلجة، أفلام 2025، مسلسلات جديدة، أكشن، دراما، خيال علمي، كوميديا');
+        updateMetaTags(); // Reset meta tags for home page
+        addJsonLdSchema(); // Remove JSON-LD for home page
 
-        document.querySelector('meta[property="og:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
-        document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
-        document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.origin);
-        document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
-        document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://shahidplus.online/images/your-site-logo-for-og.png'); 
-        document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر');
-        document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
+        // Re-ensure default meta tags after clearing previous ones
+        document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر'); // Default for home page
+        let twitterCreator = document.querySelector('meta[name="twitter:creator"]');
+        if (twitterCreator) twitterCreator.setAttribute('content', '@YourTwitterHandle'); // Reset to default
 
-        document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
-        document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
-        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', 'https://shahidplus.online/images/your-site-logo-for-twitter.png'); 
-        document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
-
-        let canonicalLink = document.querySelector('link[rel="canonical"]');
-        if (canonicalLink) {
-            canonicalLink.setAttribute('href', window.location.origin + '/'); 
-        }
-
-        let script = document.querySelector('script[type="application/ld+json"]');
-        if (script) {
-            script.remove();
-            console.log('📄 [SEO] تم إزالة مخطط JSON-LD عند الصفحة الرئيسية.');
-        }
     }
 
     // --- 5. Event Listeners ---
@@ -783,7 +886,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     navLinks.forEach(link => {
-        // Exclude the specific home nav link to avoid double events
         if (link.id !== 'home-nav-link-actual') { 
             link.addEventListener('click', () => {
                 if (mainNav && mainNav.classList.contains('nav-open')) {
