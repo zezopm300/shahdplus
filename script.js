@@ -604,7 +604,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "logo": {
                     "@type": "ImageObject",
                     // **هام جداً لـ SEO**: غيّر هذا الرابط إلى رابط شعار موقعك الفعلي على CDN
-                    "url": "https://yourdomain.com/images/shahed-plus-logo.png", // غيّر هذا الرابط
+                    "url": "https://shahidplus.online//images/shahed-plus-logo.png", // غيّر هذا الرابط
                     "width": 200,
                     "height": 50
                 }
@@ -754,13 +754,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.origin);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
         // **هام لـ SEO/الانتشار**: استخدم شعار موقعك هنا وليس صورة عشوائية
-        document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://yourdomain.com/images/your-logo-for-og.png'); // **غيّر هذا الرابط**
+        document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://shahidplus.online//images/your-logo-for-og.png'); // **غيّر هذا الرابط**
         document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر');
         document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
 
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
-        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', 'https://yourdomain.com/images/your-logo-for-twitter.png'); // **غيّر هذا الرابط**
+        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', 'https://shahidplus.online//images/your-logo-for-twitter.png'); // **غيّر هذا الرابط**
         document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
 
         let canonicalLink = document.querySelector('link[rel="canonical"]');
@@ -862,43 +862,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (videoOverlay) {
-        videoOverlay.addEventListener('click', (e) => {
+        videoOverlay.addEventListener('click', async (e) => { // استخدم async هنا
             console.log('⏯️ [نقر إعلان] تم النقر على غطاء الفيديو. محاولة فتح الرابط المباشر.');
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
 
             if (adOpened) {
-                setTimeout(() => {
-                    if (videoJsPlayerInstance && (videoJsPlayerInstance.paused() || videoJsPlayerInstance.ended())) {
-                        videoJsPlayerInstance.play().then(() => {
-                            console.log('[Video.js] بدأ المشغل في التشغيل بعد النقر على الغطاء وفتح الإعلان.');
-                            if (videoOverlay) {
-                                videoOverlay.style.pointerEvents = 'none';
-                                videoOverlay.classList.add('hidden');
-                            }
-                            if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
-                        }).catch(error => {
-                            console.warn('⚠️ [Video.js] فشل التشغيل بعد فتح الإعلان (لا يزال يتطلب تفاعل المستخدم):', error);
-                            if (videoOverlay) {
-                                videoOverlay.style.pointerEvents = 'auto';
-                                videoOverlay.classList.remove('hidden');
-                            }
-                            if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
-                        });
-                    } else if (videoJsPlayerInstance && videoJsPlayerInstance.isReady_ && !videoJsPlayerInstance.paused() && !videoJsPlayerInstance.ended()){
-                        console.log('[Video.js] المشغل يعمل بالفعل، تم فتح الإعلان فقط.');
+                // نمنح المتصفح لحظة لمعالجة فتح التاب الجديدة
+                await new Promise(resolve => setTimeout(resolve, 500)); 
+
+                if (videoJsPlayerInstance && videoJsPlayerInstance.isReady_) {
+                    try {
+                        // حاول تشغيل الفيديو
+                        await videoJsPlayerInstance.play();
+                        console.log('[Video.js] بدأ المشغل في التشغيل بعد النقر على الغطاء وفتح الإعلان.');
                         if (videoOverlay) {
                             videoOverlay.style.pointerEvents = 'none';
                             videoOverlay.classList.add('hidden');
                         }
-                    } else {
-                        console.warn('[Video.js] مثيل المشغل غير جاهز أو غير موجود عند محاولة التشغيل عبر النقر على الغطاء بعد الإعلان. سيظل الغطاء نشطًا.');
+                        if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+                    } catch (error) {
+                        console.warn('⚠️ [Video.js] فشل التشغيل التلقائي بعد فتح الإعلان، قد يتطلب تفاعل المستخدم (مثل نقرة أخرى):', error);
+                        // إذا فشل التشغيل التلقائي، نترك الغطاء نشطًا
                         if (videoOverlay) {
                             videoOverlay.style.pointerEvents = 'auto';
                             videoOverlay.classList.remove('hidden');
                         }
                         if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     }
-                }, 500); // تأخير بسيط للسماح بفتح/تركيز علامة تبويب الإعلان
+                } else {
+                    console.warn('[Video.js] مثيل المشغل غير جاهز أو غير موجود عند محاولة التشغيل عبر النقر على الغطاء بعد الإعلان. سيظل الغطاء نشطًا.');
+                    if (videoOverlay) {
+                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.classList.remove('hidden');
+                    }
+                    if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+                }
             } else {
                 console.log('[غطاء الفيديو] الإعلان لم يفتح بسبب التهدئة. سيظل الغطاء نشطًا.');
             }
@@ -906,6 +904,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         console.log('[غطاء الفيديو] تم إرفاق مستمع النقر لتفاعل الإعلان.');
     }
+
 
     // --- حماية أدوات المطور وتعطيل اختصارات لوحة المفاتيح والنقر الأيمن ---
     // تعطيل النقر الأيمن
