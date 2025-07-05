@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
 
     // --- 1.1. Critical DOM Element Verification ---
-    // هذا الجزء ضروري للتأكد من وجود العناصر الأساسية في HTML.
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
@@ -58,14 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (criticalError) {
         console.error('🛑 Script will not execute fully due to missing critical DOM elements. Fix your HTML!');
         document.body.innerHTML = '<div style="text-align: center; margin-top: 100px; color: #f44336; font-size: 20px;">' +
-                                  'عذرًا، حدث خطأ فني. يرجى تحديث الصفحة أو المحاولة لاحقًا.' +
-                                  '<p style="font-size: 14px; color: #ccc;">(Missing page elements)</p></div>';
+                                    'عذرًا، حدث خطأ فني. يرجى تحديث الصفحة أو المحاولة لاحقًا.' +
+                                    '<p style="font-size: 14px; color: #ccc;">(Missing page elements)</p></div>';
         return;
     } else {
         console.log('✅ All critical DOM elements found.');
     }
 
-    // --- 2. Adsterra Configuration ---
+    // --- 2. Adsterra Configuration (unchanged - as per request not to touch ads) ---
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes for movie cards
     const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 10 * 1000; // 10 seconds for video overlay/player interactions
@@ -111,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let moviesData = [];
     let moviesDataForPagination = [];
     let currentDetailedMovie = null;
-    // Video.js Player Instance
     let videoJsPlayerInstance = null;
 
     // Function to decode Base64 strings (for video URLs)
@@ -120,10 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!encodedString || typeof encodedString !== 'string') {
                 console.warn('Attempted to decode an invalid Base64 string:', encodedString);
                 return '';
-            }
-            // Add padding if missing, as atob requires valid Base64
-            while (encodedString.length % 4 !== 0) {
-                encodedString += '=';
             }
             return atob(encodedString);
         } catch (e) {
@@ -159,20 +153,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Updated createMovieCard for responsive images (requires HTML setup)
     function createMovieCard(movie) {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
-        // For responsive images, you'd typically define srcset in HTML
-        // Example:
-        // <img data-src="${movie.poster_default}"
-        //      data-srcset="${movie.poster_small} 480w, ${movie.poster_medium} 800w, ${movie.poster_large} 1200w"
-        //      sizes="(max-width: 600px) 480px, (max-width: 1200px) 800px, 1200px"
-        //      alt="${movie.title}" class="lazyload" width="200" height="300">
-        // For simplicity and compatibility with existing JSON, we keep data-src for lazyload.
-        // You can add srcset/sizes attributes if your JSON provides multiple poster URLs.
+        // تحسين: استخدام <picture> لدعم WebP لتحسين السرعة
         movieCard.innerHTML = `
-            <img data-src="${movie.poster}" alt="${movie.title}" class="lazyload" width="200" height="300">
+            <picture>
+                <source srcset="${movie.poster.replace(/\.(png|jpe?g)/i, '.webp')}" type="image/webp">
+                <img data-src="${movie.poster}" alt="${movie.title}" class="lazyload" width="200" height="300">
+            </picture>
             <h3>${movie.title}</h3>
         `;
         movieCard.addEventListener('click', () => {
@@ -192,9 +181,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         let image = entry.target;
                         if (image.dataset.src && (!image.src || image.src !== image.dataset.src)) {
                             image.src = image.dataset.src;
-                            // If using srcset/sizes with lazyload, you'd also transfer data-srcset to srcset here
-                            if (image.dataset.srcset) {
-                                image.srcset = image.dataset.srcset;
+                            // إذا كان هناك عنصر <source> (لـ WebP)، تأكد من تحديثه أيضًا إذا لزم الأمر
+                            const pictureParent = image.closest('picture');
+                            if (pictureParent) {
+                                const sourceElement = pictureParent.querySelector('source');
+                                if (sourceElement && sourceElement.dataset.srcset) {
+                                    sourceElement.srcset = sourceElement.dataset.srcset;
+                                }
                             }
                         }
                         image.classList.remove('lazyload');
@@ -202,20 +195,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }, {
-                rootMargin: '0px 0px 100px 0px' // Load images 100px before they enter viewport
+                rootMargin: '0px 0px 100px 0px' // تحميل الصور قبل دخولها الشاشة بـ 100 بكسل
             });
 
             lazyLoadImages.forEach(function(image) {
                 imageObserver.observe(image);
             });
         } else {
-            // Fallback for browsers that don't support IntersectionObserver
+            // Fallback for browsers without IntersectionObserver
             let lazyLoadImages = document.querySelectorAll('.lazyload');
             lazyLoadImages.forEach(function(image) {
                 if (image.dataset.src) {
                     image.src = image.dataset.src;
-                    if (image.dataset.srcset) {
-                        image.srcset = image.dataset.srcset;
+                    const pictureParent = image.closest('picture');
+                    if (pictureParent) {
+                        const sourceElement = pictureParent.querySelector('source');
+                        if (sourceElement && sourceElement.dataset.srcset) {
+                            sourceElement.srcset = sourceElement.dataset.srcset;
+                        }
                     }
                 }
             });
@@ -240,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
             targetGridElement.appendChild(createMovieCard(movie));
         });
         console.log(`🎬 [Display] Displayed ${moviesToDisplay.length} movies in ${targetGridElement.id}.`);
-        initializeLazyLoad();
+        initializeLazyLoad(); // إعادة تهيئة Lazy Load بعد إضافة عناصر جديدة
     }
 
     function paginateMovies(moviesArray, page) {
@@ -280,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             console.log(`🔍 [Search] Performed search for "${query}". Found ${filteredMovies.length} results.`);
         } else {
-            filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
+            filteredMovies = [...moviesData].sort(() => 0.5 - Math.random()); // عشوائي إذا كان البحث فارغا
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
             }
@@ -292,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- Video Player Enhancements & URL Decoding (HLS/DASH Support) ---
+    // --- Video Player Enhancements & URL Decoding ---
     async function showMovieDetails(movieId) {
         console.log(`🔍 [Routing] Showing movie details for ID: ${movieId}`);
         const movie = moviesData.find(m => m.id === movieId);
@@ -312,13 +309,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Rebuild the video element for a clean state
             if (videoContainer) {
-                videoContainer.innerHTML = '';
+                videoContainer.innerHTML = ''; // مسح أي محتوى سابق
                 const newVideoElement = document.createElement('video');
                 newVideoElement.id = 'movie-player';
                 newVideoElement.classList.add('video-js', 'vjs-default-skin');
                 newVideoElement.controls = true;
-                newVideoElement.preload = 'auto';
-                newVideoElement.setAttribute('playsinline', '');
+                newVideoElement.preload = 'auto'; // Keep preload auto
+                newVideoElement.setAttribute('playsinline', ''); // مهم لتشغيل الفيديو تلقائيا على iOS
                 newVideoElement.setAttribute('poster', movie.poster);
                 videoContainer.appendChild(newVideoElement);
                 console.log('[Video Player] Recreated movie-player element.');
@@ -357,12 +354,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const moviePlayerElement = document.getElementById('movie-player');
 
             // Decode the video URL from Base64
-            const decodedVideoUrl = decodeBase64(movie.embed_url_encoded); // Assumed to be HLS/DASH or MP4
+            const decodedVideoUrl = decodeBase64(movie.embed_url_encoded); // Assuming 'embed_url_encoded' in movies.json
 
             if (!decodedVideoUrl) {
                 console.error(`❌ Failed to get decoded video URL for movie ID: ${movieId}. Cannot initialize player.`);
+                // Display error to user in player area
                 if (videoContainer) {
-                    videoContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 20px;">عذرًا، لا يمكن تشغيل الفيديو حاليًا (خطأ في فك التشفير).</p>';
+                    videoContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 20px;">عذرًا، لا يمكن تشغيل الفيديو حاليًا (خطأ في فك التشفير أو الرابط غير صالح).</p>';
                 }
                 return;
             }
@@ -377,43 +375,41 @@ document.addEventListener('DOMContentLoaded', () => {
                             requestAnimationFrame(checkVisibility);
                         }
                     };
+                    // تأخير بسيط لضمان أن DOM قد تم تحديثه تمامًا قبل التحقق
                     setTimeout(() => requestAnimationFrame(checkVisibility), 50);
                 });
 
                 console.log('[Video Player] moviePlayer is ready. Proceeding with Video.js initialization.');
-
-                // Determine video type (HLS, DASH, or MP4)
-                let videoType = 'video/mp4'; // Default to MP4
-                if (decodedVideoUrl.includes('.m3u8')) {
-                    videoType = 'application/x-mpegURL'; // HLS
-                } else if (decodedVideoUrl.includes('.mpd')) {
-                    videoType = 'application/dash+xml'; // DASH
-                }
 
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
                     autoplay: false,
                     controls: true,
                     responsive: true,
                     fluid: true,
-                    techOrder: ['html5'], // Prioritize native HTML5 video
+                    techOrder: ['html5'],
                     html5: {
-                        nativeControlsForTouch: true, // Use native controls on touch devices for better compatibility
-                        vhs: { // Video.js HTTP Streaming (for HLS/DASH)
+                        nativeControlsForTouch: true,
+                        vhs: {
                             limitRenditionByPlayerDimensions: false,
-                            enableLowInitialPlaylist: true, // Start with lower quality to reduce initial buffer
-                            fastQualityChange: true, // Allow quick quality switching
-                            maxBufferLength: 60, // Max buffer in seconds
-                            maxMaxBufferLength: 120, // Max buffer when idle
-                        }
+                            enableLowInitialPlaylist: true,
+                            fastQualityChange: true,
+                            // قيم الـ Buffer أقل لتحسين سرعة البدء وتقليل استهلاك النطاق الترددي
+                            maxBufferLength: 10,  // تحميل مسبق أقل عند التوقف
+                            maxMaxBufferLength: 30, // أقصى حجم للـ buffer أثناء التشغيل
+                        },
                     },
                     playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
                         src: decodedVideoUrl,
-                        type: videoType // Dynamically set based on URL extension
+                        // تحسين: تحديد النوع بشكل صحيح لدعم HLS/DASH إذا كنت تستخدمهم
+                        // إذا كان الرابط هو ملف MP4 مباشر، استخدم 'video/mp4'
+                        // إذا كان HLS (.m3u8)، استخدم 'application/x-mpegURL' أو 'application/vnd.apple.mpegurl'
+                        // إذا كان DASH (.mpd)، استخدم 'application/dash+xml'
+                        type: 'video/mp4' // افتراضيًا، قم بتغييره إذا كان HLS/DASH
                     }],
-                    crossOrigin: 'anonymous' // Important for CDN/cross-domain video
+                    crossOrigin: 'anonymous'
                 }, function() {
-                    console.log(`[Video.js] Player initialized callback for source: ${decodedVideoUrl} (Type: ${videoType})`);
+                    console.log(`[Video.js] Player initialized callback for source: ${decodedVideoUrl}`);
                     if (videoLoadingSpinner && !this.hasStarted() && !this.paused() && !this.ended()) {
                         videoLoadingSpinner.style.display = 'block';
                     }
@@ -424,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     this.ready(function() {
                         const player = this;
-                        // Prevent download button if exists
+                        // Prevent download button if exists (Video.js often adds it for native controls)
                         const downloadButton = player.controlBar.getChild('DownloadButton') || player.controlBar.getChild('DownloadToggle');
                         if (downloadButton) {
                             player.controlBar.removeChild(downloadButton);
@@ -462,6 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoJsPlayerInstance.on('waiting', () => {
                     console.log('[Video.js] Video waiting (buffering).');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
+                    // Keep overlay active during buffering (optional, can be 'none' if desired)
                     if (videoOverlay) {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
@@ -508,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
                     }
-                    videoJsPlayerInstance.currentTime(0);
+                    videoJsPlayerInstance.currentTime(0); // إعادة الفيديو للبداية بعد الانتهاء
                 });
 
             } else {
@@ -539,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- SEO Functions (Enhanced for maximum impact) ---
+    // --- SEO Functions (Enhanced) ---
     function updateMetaTags(movie) {
         let canonicalLink = document.querySelector('link[rel="canonical"]');
         if (!canonicalLink) {
@@ -549,19 +546,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         canonicalLink.setAttribute('href', window.location.href);
 
-        document.title = `${movie.title} - مشاهدة أونلاين على شاهد بلس بجودة عالية 4K`;
-        document.querySelector('meta[name="description"]')?.setAttribute('content', `شاهد فيلم ${movie.title} أونلاين بجودة عالية ${movie.rating ? `تقييم ${movie.rating}` : ''}. ${movie.description || 'استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح على شاهد بلس.'} اكتشف المزيد من الأفلام في تصنيف ${movie.genre || 'متنوع'}.`);
+        document.title = `${movie.title} - مشاهدة أونلاين على شاهد بلس بجودة عالية`;
+        document.querySelector('meta[name="description"]')?.setAttribute('content', `شاهد فيلم ${movie.title} أونلاين بجودة عالية. ${movie.description || 'استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح.'}`);
 
         document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${movie.title} - مشاهدة أونلاين على شاهد بلس`);
-        document.querySelector('meta[property="og:description"]')?.setAttribute('content', `شاهد فيلم ${movie.title} أونلاين بجودة عالية ${movie.rating ? `تقييم ${movie.rating}` : ''}. ${movie.description || 'استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح على شاهد بلس.'}`);
+        document.querySelector('meta[property="og:description"]')?.setAttribute('content', `شاهد فيلم ${movie.title} أونلاين بجودة عالية. ${movie.description || 'استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح.'}`);
         document.querySelector('meta[property="og:image"]')?.setAttribute('content', movie.poster);
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.href);
-        document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'video.movie');
+        document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'video.movie'); // يمكن استخدام "Movie" لـ Schema.org
         document.querySelector('meta[property="og:locale"]')?.setAttribute('content', 'ar_AR');
         document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
 
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', `${movie.title} - مشاهدة أونلاين على شاهد بلس`);
-        document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', `شاهد فيلم ${movie.title} أونلاين بجودة عالية ${movie.rating ? `تقييم ${movie.rating}` : ''}. ${movie.description || 'استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح على شاهد بلس.'}`);
+        document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', `شاهد فيلم ${movie.title} أونلاين بجودة عالية. ${movie.description || 'استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح.'}`);
         document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', movie.poster);
         document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
 
@@ -576,7 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!isNaN(date.getTime())) {
                     formattedUploadDate = date.toISOString();
                 } else {
-                    formattedUploadDate = new Date().toISOString();
+                    formattedUploadDate = new Date().toISOString(); // تاريخ اليوم إذا كان غير صالح
                 }
             } catch (e) {
                 formattedUploadDate = new Date().toISOString();
@@ -585,32 +582,27 @@ document.addEventListener('DOMContentLoaded', () => {
             formattedUploadDate = new Date().toISOString();
         }
 
-        // Determine video type for JSON-LD contentUrl
-        let contentUrlType = 'video/mp4';
-        const decodedVideoUrl = decodeBase64(movie.embed_url_encoded);
-        if (decodedVideoUrl.includes('.m3u8')) {
-            contentUrlType = 'application/x-mpegURL';
-        } else if (decodedVideoUrl.includes('.mpd')) {
-            contentUrlType = 'application/dash+xml';
-        }
+        const castArray = Array.isArray(movie.cast) ? movie.cast : String(movie.cast || '').split(',').map(s => s.trim()).filter(s => s !== '');
+        const genreArray = Array.isArray(movie.genre) ? movie.genre : String(movie.genre || '').split(',').map(s => s.trim()).filter(s => s !== '');
 
         const schema = {
             "@context": "http://schema.org",
-            "@type": "VideoObject",
+            "@type": "Movie", // تغيير من VideoObject إلى Movie (أكثر تحديداً)
             "name": movie.title,
-            "description": movie.description || `مشاهدة وتحميل فيلم ${movie.title} بجودة عالية على شاهد بلس.`,
+            "description": movie.description || `مشاهدة وتحميل فيلم ${movie.title} بجودة عالية على شاهد بلس. استمتع بمشاهدة أحدث الأفلام والمسلسلات الحصرية.`, // وصف أكثر تفصيلاً
+            "image": movie.poster, // إضافة image بشكل منفصل
             "thumbnailUrl": movie.poster,
-            "uploadDate": formattedUploadDate,
-            "embedUrl": decodedVideoUrl,
-            "duration": movie.duration || "PT1H30M", // Default duration if not provided
-            "contentUrl": decodedVideoUrl, // Use decoded URL here
-            "encodingFormat": contentUrlType, // Specify the format
+            "uploadDate": formattedUploadDate, // يفضل datePublished للفيلم إذا كان تاريخ الإصدار
+            "embedUrl": decodeBase64(movie.embed_url_encoded),
+            "duration": movie.duration || "PT1H30M", // Default duration if not provided (e.g., PT1H30M for 1 hour 30 minutes)
+            "contentUrl": decodeBase64(movie.embed_url_encoded),
+            "inLanguage": "ar", // تحديد اللغة
             "publisher": {
                 "@type": "Organization",
                 "name": "شاهد بلس",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://example.com/images/shahed-plus-logo.png", // *** UPDATE THIS TO YOUR ACTUAL LOGO URL ***
+                    "url": "https://yourdomain.com/images/shahed-plus-logo.png", // *** هام جداً: غيّر هذا الرابط إلى رابط شعار موقعك الفعلي ***
                     "width": 200,
                     "height": 50
                 }
@@ -628,7 +620,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 "expectsAcceptanceOf": {
                     "@type": "Offer",
-                    "name": "مشاهدة الفيلم"
+                    "name": "مشاهدة الفيلم",
+                    "price": "0", // إذا كان مجانياً
+                    "priceCurrency": "USD", // أو EGP
+                    "availability": "http://schema.org/InStock", // ليدل على أنه متاح
+                    "url": window.location.href
                 }
             }
         };
@@ -636,17 +632,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (movie.director && typeof movie.director === 'string' && movie.director.trim() !== '') {
             schema.director = { "@type": "Person", "name": movie.director.trim() };
         }
-        if (movie.cast) {
-            const castArray = Array.isArray(movie.cast) ? movie.cast : String(movie.cast).split(',').map(s => s.trim()).filter(s => s !== '');
-            if (castArray.length > 0) {
-                schema.actor = castArray.map(actor => ({ "@type": "Person", "name": actor }));
-            }
+        if (castArray.length > 0) {
+            schema.actor = castArray.map(actor => ({ "@type": "Person", "name": actor }));
         }
-        if (movie.genre) {
-            const genreArray = Array.isArray(movie.genre) ? movie.genre : String(movie.genre).split(',').map(s => s.trim()).filter(s => s !== '');
-            if (genreArray.length > 0) {
-                schema.genre = genreArray;
-            }
+        if (genreArray.length > 0) {
+            schema.genre = genreArray;
         }
         if (movie.rating && typeof movie.rating === 'string' && movie.rating.includes('/')) {
             const ratingValue = parseFloat(movie.rating.split('/')[0]);
@@ -655,7 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     "@type": "AggregateRating",
                     "ratingValue": ratingValue.toFixed(1),
                     "bestRating": "10",
-                    "ratingCount": "10000" // Placeholder, ideally this comes from data
+                    "ratingCount": "10000" // Placeholder, يفضل أن يكون ديناميكياً من بياناتك
                 };
             }
         }
@@ -673,25 +663,53 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('📄 [SEO] New JSON-LD schema added/updated.');
     }
 
+    // تحسين: التوصيات تعتمد على النوع أولاً، ثم العشوائية
     function displaySuggestedMovies(currentMovieId) {
-        if (!suggestedMovieGrid) {
-            console.error('❌ displaySuggestedMovies: suggestedMovieGrid element not found. Cannot display suggested movies.');
+        if (!suggestedMovieGrid || !currentDetailedMovie) {
+            console.error('❌ displaySuggestedMovies: suggestedMovieGrid or currentDetailedMovie not found. Cannot display suggested movies.');
             return;
         }
 
-        const otherMovies = moviesData.filter(movie => movie.id !== currentMovieId);
-        const shuffled = otherMovies.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 24);
+        const currentMovieGenre = currentDetailedMovie.genre;
+        let suggested = [];
 
-        if (selected.length === 0) {
+        // محاولة العثور على أفلام من نفس النوع أولاً
+        if (currentMovieGenre) {
+            // التعامل مع genre كـ String أو Array
+            const currentMovieGenresArray = Array.isArray(currentMovieGenre) ? currentMovieGenre.map(g => g.toLowerCase().trim()) : [currentMovieGenre.toLowerCase().trim()];
+
+            suggested = moviesData.filter(movie =>
+                movie.id !== currentMovieId &&
+                (Array.isArray(movie.genre)
+                    ? movie.genre.some(g => currentMovieGenresArray.includes(g.toLowerCase().trim()))
+                    : currentMovieGenresArray.includes(String(movie.genre || '').toLowerCase().trim())
+                )
+            );
+            // خلط الأفلام المقترحة من نفس النوع
+            suggested = suggested.sort(() => 0.5 - Math.random());
+        }
+
+        // إذا لم يتم العثور على ما يكفي من الأفلام المقترحة، أضف أفلامًا عشوائية
+        if (suggested.length < 24) {
+            const otherMovies = moviesData.filter(movie => movie.id !== currentMovieId && !suggested.includes(movie));
+            const shuffledOthers = otherMovies.sort(() => 0.5 - Math.random());
+            const needed = 24 - suggested.length;
+            suggested = [...suggested, ...shuffledOthers.slice(0, needed)];
+        }
+
+        // قص القائمة لـ 24 فقط
+        const finalSuggested = suggested.slice(0, 24);
+
+        if (finalSuggested.length === 0) {
             suggestedMovieGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد أفلام مقترحة حالياً.</p>';
             console.log('✨ [Suggestions] No suggested movies available after filtering.');
             return;
         }
 
-        displayMovies(selected, suggestedMovieGrid);
-        console.log(`✨ [Suggestions] Displayed ${selected.length} suggested movies in ${suggestedMovieGrid.id}.`);
+        displayMovies(finalSuggested, suggestedMovieGrid);
+        console.log(`✨ [Suggestions] Displayed ${finalSuggested.length} suggested movies in ${suggestedMovieGrid.id}.`);
     }
+
 
     function showHomePage() {
         console.log('🏠 [Routing] Showing home page.');
@@ -729,20 +747,22 @@ document.addEventListener('DOMContentLoaded', () => {
         history.pushState({ view: 'home' }, 'شاهد بلس - الصفحة الرئيسية', newUrl.toString());
         console.log(`🔗 [URL] URL updated to ${newUrl.toString()}`);
 
-        // Reset meta tags to default home page values for SEO
+        // Reset meta tags to default home page values
         document.title = 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K أونلاين';
         document.querySelector('meta[name="description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
         document.querySelector('meta[property="og:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
         document.querySelector('meta[property="og:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', window.location.origin);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
-        document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop'); // Default hero image URL
+        // تحسين: استخدم شعار موقعك هنا وليس صورة عشوائية
+        document.querySelector('meta[property="og:image"]')?.setAttribute('content', 'https://yourdomain.com/images/your-logo-for-og.png'); // *** هام: غيّر هذا الرابط ***
         document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر');
         document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
 
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K');
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.');
-        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', 'https://images.unsplash.com/photo-1542204165-f938d2279b33?q=80&w=2670&auto=format&fit=crop');
+        document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', 'https://yourdomain.com/images/your-logo-for-twitter.png'); // *** هام: غيّر هذا الرابط ***
+        document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
 
         let canonicalLink = document.querySelector('link[rel="canonical"]');
         if (canonicalLink) {
@@ -798,7 +818,7 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 performSearch();
-                searchInput.blur();
+                searchInput.blur(); // إخفاء لوحة المفاتيح في الجوال
             }
         });
         console.log('🔍 [Event] Search input keypress listener attached.');
@@ -859,6 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                         }).catch(error => {
                             console.warn('⚠️ [Video.js] Play failed after ad open (user interaction still required):', error);
+                            // Keep overlay active if play failed, to allow re-attempt
                             if (videoOverlay) {
                                 videoOverlay.style.pointerEvents = 'auto';
                                 videoOverlay.classList.remove('hidden');
@@ -867,12 +888,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     } else if (videoJsPlayerInstance && videoJsPlayerInstance.isReady_ && !videoJsPlayerInstance.paused() && !videoJsPlayerInstance.ended()){
                         console.log('[Video.js] Player already playing, just opened ad.');
+                        // If already playing, just hide the overlay
                         if (videoOverlay) {
                             videoOverlay.style.pointerEvents = 'none';
                             videoOverlay.classList.add('hidden');
                         }
                     } else {
-                        console.warn('[Video.js] Player instance not ready or not found when trying to play via overlay click after ad.');
+                        console.warn('[Video.js] Player instance not ready or not found when trying to play via overlay click after ad. Keeping overlay.');
                         if (videoOverlay) {
                             videoOverlay.style.pointerEvents = 'auto';
                             videoOverlay.classList.remove('hidden');
@@ -888,7 +910,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[Video Overlay] Click listener attached for ad interaction.');
     }
 
-    // --- DevTools Protection & Right Click/Keyboard Shortcuts Disabler (Optimized for SEO) ---
+    // --- DevTools Protection & Right Click/Keyboard Shortcuts Disabler (Modified) ---
     // Disable Right Click
     document.addEventListener('contextmenu', e => {
         e.preventDefault();
@@ -906,27 +928,29 @@ document.addEventListener('DOMContentLoaded', () => {
         ) {
             e.preventDefault();
             console.warn(`🚫 [Security] Keyboard shortcut for DevTools/Source prevented: ${e.key}`);
-            // You can optionally show a small, unobtrusive message to the user here
-            // e.g., using a custom toast notification that appears and fades
+            // Optional: You can show an alert here, but it's often intrusive.
+            // alert('هذا الإجراء غير مسموح به.');
         }
     });
 
-    // DevTools Detection (No page emptying - SEO friendly)
+    // DevTools Detection (No page emptying)
+    // This detection logs to console and can alert the user, but will NOT clear the page.
     const devtoolsDetector = (() => {
         const threshold = 160; // Approximate height/width of DevTools panel in console
 
         let isOpen = false;
         const checkDevTools = () => {
-            // Check for common DevTools window sizes or open state
+            // Using a simple check that shouldn't affect Googlebots
             const widthThreshold = window.outerWidth - window.innerWidth > threshold;
             const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-            const isConsoleOpen = console.firebug || (console.profiles && console.profiles.length) || (console.clear && !!console.log.toString().match(/\[native code\]/)) || false; // Basic console check
 
-            if (widthThreshold || heightThreshold || isConsoleOpen) {
+            if (widthThreshold || heightThreshold) {
                 if (!isOpen) {
                     isOpen = true;
-                    console.warn('🚨 [Security] Developer tools detected! This action is not encouraged on this site.');
-                    // Consider showing a very subtle, temporary message on screen (not an alert)
+                    console.warn('🚨 [Security] Developer tools detected! This action is not encouraged.');
+                    // You can optionally display a small, non-intrusive message to the user
+                    // For example, a small overlay that disappears after a few seconds
+                    // or a toast notification.
                 }
             } else {
                 if (isOpen) {
@@ -938,6 +962,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Run checks periodically and on resize
         window.addEventListener('resize', checkDevTools);
+        // Using setInterval for continuous checks, but be mindful of performance impact
         setInterval(checkDevTools, 1000); // Check every 1 second
         checkDevTools(); // Initial check on load
     })();
@@ -981,11 +1006,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Start the process by fetching movie data
     fetchMoviesData();
 
-    // --- REMINDER FOR OBUSCATION (Crucial for strong client-side protection) ---
-    // بعد الانتهاء من تطوير الكود واختباره بشكل كامل، و قبل الرفع على السيرفر:
-    // 1. قم بتصغير (minify) الكود لتقليل حجمه وتحسين سرعة التحميل (يمكن لأدوات مثل UglifyJS القيام بذلك).
-    // 2. قم بتشويش (Obfuscate) الكود لجعله غير مقروء تمامًا ويصعب على أي شخص معرفة كيفية عمله أو الوصول للروابط بسهولة.
-    //    استخدم أدوات احترافية مثل: https://obfuscator.io/ (باستخدام إعدادات قوية).
-    // هذا سيجعل مهمة فك الشفرة صعبة للغاية حتى على المتخصصين.
-    console.log('%c[Obfuscation Reminder] Remember to MINIFY and OBUSCATE this script before deployment!', 'color: red; font-weight: bold; font-size: 16px;');
+    // --- REMINDER FOR OBUSCATION ---
+    // بعد الانتهاء من تطوير الكود واختباره، قم بتشويشه (Obfuscate) قبل الرفع على السيرفر.
+    // هذا سيجعل الكود غير مقروء ويصعب على أي شخص معرفة كيفية عمله أو الوصول للروابط.
+    // استخدم أدوات مثل: https://obfuscator.io/ أو UglifyJS
+    // ملاحظة: التشويش يجعل الكود أثقل قليلاً وأصعب في Debugging.
+    console.log('%c[Obfuscation Hint] Remember to obfuscate this script before deployment!', 'color: orange; font-weight: bold;');
 });
