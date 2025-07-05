@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 2. Adsterra Configuration (كما هي بناءً على طلبك بعدم المساس بالإعلانات) ---
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
     const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 دقائق لبطاقات الأفلام
-    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 4 * 1000; // 10 ثوانٍ لتفاعلات الفيديو
+    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 10 * 1000; // 10 ثوانٍ لتفاعلات الفيديو
 
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoInteraction = 0;
@@ -862,41 +862,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (videoOverlay) {
-        videoOverlay.addEventListener('click', async (e) => { // استخدم async هنا
+        videoOverlay.addEventListener('click', (e) => {
             console.log('⏯️ [نقر إعلان] تم النقر على غطاء الفيديو. محاولة فتح الرابط المباشر.');
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
 
             if (adOpened) {
-                // نمنح المتصفح لحظة لمعالجة فتح التاب الجديدة
-                await new Promise(resolve => setTimeout(resolve, 500)); 
-
-                if (videoJsPlayerInstance && videoJsPlayerInstance.isReady_) {
-                    try {
-                        // حاول تشغيل الفيديو
-                        await videoJsPlayerInstance.play();
-                        console.log('[Video.js] بدأ المشغل في التشغيل بعد النقر على الغطاء وفتح الإعلان.');
+                setTimeout(() => {
+                    if (videoJsPlayerInstance && (videoJsPlayerInstance.paused() || videoJsPlayerInstance.ended())) {
+                        videoJsPlayerInstance.play().then(() => {
+                            console.log('[Video.js] بدأ المشغل في التشغيل بعد النقر على الغطاء وفتح الإعلان.');
+                            if (videoOverlay) {
+                                videoOverlay.style.pointerEvents = 'none';
+                                videoOverlay.classList.add('hidden');
+                            }
+                            if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+                        }).catch(error => {
+                            console.warn('⚠️ [Video.js] فشل التشغيل بعد فتح الإعلان (لا يزال يتطلب تفاعل المستخدم):', error);
+                            if (videoOverlay) {
+                                videoOverlay.style.pointerEvents = 'auto';
+                                videoOverlay.classList.remove('hidden');
+                            }
+                            if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+                        });
+                    } else if (videoJsPlayerInstance && videoJsPlayerInstance.isReady_ && !videoJsPlayerInstance.paused() && !videoJsPlayerInstance.ended()){
+                        console.log('[Video.js] المشغل يعمل بالفعل، تم فتح الإعلان فقط.');
                         if (videoOverlay) {
                             videoOverlay.style.pointerEvents = 'none';
                             videoOverlay.classList.add('hidden');
                         }
-                        if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
-                    } catch (error) {
-                        console.warn('⚠️ [Video.js] فشل التشغيل التلقائي بعد فتح الإعلان، قد يتطلب تفاعل المستخدم (مثل نقرة أخرى):', error);
-                        // إذا فشل التشغيل التلقائي، نترك الغطاء نشطًا
+                    } else {
+                        console.warn('[Video.js] مثيل المشغل غير جاهز أو غير موجود عند محاولة التشغيل عبر النقر على الغطاء بعد الإعلان. سيظل الغطاء نشطًا.');
                         if (videoOverlay) {
                             videoOverlay.style.pointerEvents = 'auto';
                             videoOverlay.classList.remove('hidden');
                         }
                         if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     }
-                } else {
-                    console.warn('[Video.js] مثيل المشغل غير جاهز أو غير موجود عند محاولة التشغيل عبر النقر على الغطاء بعد الإعلان. سيظل الغطاء نشطًا.');
-                    if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'auto';
-                        videoOverlay.classList.remove('hidden');
-                    }
-                    if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
-                }
+                }, 500); // تأخير بسيط للسماح بفتح/تركيز علامة تبويب الإعلان
             } else {
                 console.log('[غطاء الفيديو] الإعلان لم يفتح بسبب التهدئة. سيظل الغطاء نشطًا.');
             }
@@ -904,7 +906,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         console.log('[غطاء الفيديو] تم إرفاق مستمع النقر لتفاعل الإعلان.');
     }
-
 
     // --- حماية أدوات المطور وتعطيل اختصارات لوحة المفاتيح والنقر الأيمن ---
     // تعطيل النقر الأيمن
