@@ -1,11 +1,13 @@
+// script.js - هذا الكود محسن وواضح لمحركات البحث والمطورين
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🏁 DOM Content Loaded. Script execution started.');
 
     // --- 1. DOM Element References ---
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.getElementById('main-nav');
-    const homeNavLink = document.getElementById('home-nav-link-actual'); 
-    const navLinks = document.querySelectorAll('.main-nav ul li a'); 
+    const homeNavLink = document.getElementById('home-nav-link-actual');
+    const navLinks = document.querySelectorAll('.main-nav ul li a');
     const heroSection = document.getElementById('hero-section');
     const watchNowBtn = document.getElementById('watch-now-btn');
     const movieGridSection = document.getElementById('movie-grid-section');
@@ -28,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
 
     // --- 1.1. Critical DOM Element Verification ---
+    // التحقق من وجود العناصر الأساسية في DOM لضمان عمل السكريبت بشكل سليم
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
@@ -46,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '#movie-details-cast': document.getElementById('movie-details-cast'),
         '#movie-details-duration': document.getElementById('movie-details-duration'),
         '#movie-details-rating': document.getElementById('movie-details-rating'),
-        '#home-nav-link-actual': homeNavLink 
+        '#home-nav-link-actual': homeNavLink
     };
 
     let criticalError = false;
@@ -58,18 +61,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (criticalError) {
         console.error('🛑 لن يتم تنفيذ السكريبت بالكامل بسبب عناصر DOM الأساسية المفقودة. قم بإصلاح HTML الخاص بك!');
+        // عرض رسالة خطأ واضحة للمستخدم
         document.body.innerHTML = '<div style="text-align: center; margin-top: 100px; color: #f44336; font-size: 20px;">' +
                                     'عذرًا، حدث خطأ فني. يرجى تحديث الصفحة أو المحاولة لاحقًا.' +
                                     '<p style="font-size: 14px; color: #ccc;">(عناصر الصفحة الرئيسية مفقودة)</p></div>';
-        return; 
+        return; // توقف تنفيذ السكريبت
     } else {
         console.log('✅ تم العثور على جميع عناصر DOM الأساسية.');
     }
 
-    // --- 2. Adsterra Configuration (لا يوجد أي تغيير) ---
+    // --- 2. Adsterra Configuration (تم تركها كما هي بناءً على طلبك) ---
+    // لا يوجد أي تغيير في هذا القسم.
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
-    const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; 
-    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 10 * 1000; 
+    const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000;
+    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 10 * 1000;
 
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoInteraction = 0;
@@ -121,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn('تمت محاولة فك تشفير سلسلة Base64 غير صالحة:', encodedString);
                 return '';
             }
-            return atob(encodedString);
+            return atob(encodedString); // atob هي دالة قياسية لفك تشفير Base64
         } catch (e) {
             console.error('خطأ في فك تشفير سلسلة Base64:', e);
             return '';
@@ -179,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadScript('https://vjs.zencdn.net/8.10.0/video.min.js')
             ]);
             await loadScript('https://cdn.jsdelivr.net/npm/videojs-contrib-hls@5.15.0/dist/videojs-contrib-hls.min.js');
-            
+
             videoJsScriptsLoaded = true;
             console.log("All Video.js related scripts and stylesheets loaded successfully.");
         } catch (error) {
@@ -202,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn('⚠️ تم تحميل movies.json، ولكنه فارغ.');
             }
             console.log('✅ تم تحميل بيانات الأفلام بنجاح من movies.json', moviesData.length, 'فيلمًا تم العثور عليهم.');
-            initialPageLoadLogic();
+            initialPageLoadLogic(); // استدعاء منطق التحميل الأولي بعد جلب البيانات
         } catch (error) {
             console.error('❌ فشل تحميل بيانات الأفلام:', error.message);
             if (movieGrid) {
@@ -220,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const webpSource = movie.poster.replace(/\.(png|jpe?g)/i, '.webp');
         movieCard.innerHTML = `
             <picture>
-                <source srcset="${webpSource}" type="image/webp" onerror="this.remove()"> 
+                <source srcset="${webpSource}" type="image/webp" onerror="this.remove()">
                 <img data-src="${movie.poster}" src="${movie.poster}" alt="${movie.title}" class="lazyload" width="200" height="300">
             </picture>
             <h3>${movie.title}</h3>
@@ -255,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }, {
-                rootMargin: '0px 0px 100px 0px' 
+                rootMargin: '0px 0px 100px 0px'
             });
 
             lazyLoadImages.forEach(function(image) {
@@ -291,13 +296,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`🎬 [عرض] لا توجد أفلام للعرض في ${targetGridElement.id}.`);
             return;
         }
-        
-        console.log(`🎬 [عرض] جاري عرض ${moviesToDisplay.length} فيلم في ${targetGridElement.id}.`); // Debugging line
+
+        console.log(`🎬 [عرض] جاري عرض ${moviesToDisplay.length} فيلم في ${targetGridElement.id}.`);
         moviesToDisplay.forEach(movie => {
             targetGridElement.appendChild(createMovieCard(movie));
         });
-        console.log(`🎬 [عرض] تم عرض ${moviesToDisplay.length} فيلمًا في ${targetGridElement.id}.`); // CORRECTED TYPO HERE
-        initializeLazyLoad(); 
+        console.log(`🎬 [عرض] تم عرض ${moviesToDisplay.length} فيلمًا في ${targetGridElement.id}.`);
+        initializeLazyLoad();
     }
 
     function paginateMovies(moviesArray, page) {
@@ -337,47 +342,51 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             console.log(`🔍 [بحث] تم إجراء بحث عن "${query}". تم العثور على ${filteredMovies.length} نتيجة.`);
         } else {
-            filteredMovies = [...moviesData].sort(() => 0.5 - Math.random()); 
+            // إذا كان حقل البحث فارغاً، اعرض الأفلام بترتيب عشوائي (أو حسب تفضيلك)
+            filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
             }
             console.log('🔍 [بحث] استعلام البحث فارغ، يتم عرض جميع الأفلام (عشوائياً).');
         }
-        currentPage = 1;
+        currentPage = 1; // إعادة تعيين الصفحة إلى الأولى عند كل بحث جديد
         moviesDataForPagination = filteredMovies;
         paginateMovies(moviesDataForPagination, currentPage);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // التمرير لأعلى الصفحة
     }
 
     // --- Video Player Enhancements & URL Decoding ---
     async function showMovieDetails(movieId) {
         console.log(`🔍 [توجيه] عرض تفاصيل الفيلم للمعّرف: ${movieId}`);
-        const movie = moviesData.find(m => m.id === movieId);
+        const movie = moviesData.find(m => m.id === movieId); // البحث عن الفيلم المطلوب
 
         if (movie) {
-            currentDetailedMovie = movie;
+            currentDetailedMovie = movie; // تخزين بيانات الفيلم المعروض حالياً
 
+            // إخفاء الأقسام الأخرى وإظهار قسم تفاصيل الفيلم
             if (heroSection) heroSection.style.display = 'none';
             if (movieGridSection) movieGridSection.style.display = 'none';
 
+            // التخلص من مثيل مشغل الفيديو السابق إذا كان موجوداً
             if (videoJsPlayerInstance) {
                 console.log('[Video.js] التخلص من مثيل المشغل الحالي قبل عرض تفاصيل جديدة.');
                 videoJsPlayerInstance.dispose();
                 videoJsPlayerInstance = null;
             }
 
-            // Load Video.js and HLS.js dynamically BEFORE creating the player
-            await loadVideoJsAndHls(); 
-            
+            // تحميل سكربتات Video.js و HLS.js ديناميكياً قبل إنشاء المشغل
+            await loadVideoJsAndHls();
+
+            // إعادة إنشاء عنصر الفيديو وتهيئته
             if (videoContainer) {
-                videoContainer.innerHTML = ''; 
+                videoContainer.innerHTML = ''; // مسح أي محتوى سابق
                 const newVideoElement = document.createElement('video');
                 newVideoElement.id = 'movie-player';
                 newVideoElement.classList.add('video-js', 'vjs-default-skin');
                 newVideoElement.controls = true;
                 newVideoElement.preload = 'auto';
-                newVideoElement.setAttribute('playsinline', ''); 
-                newVideoElement.setAttribute('poster', movie.poster); 
+                newVideoElement.setAttribute('playsinline', ''); // مهم لتشغيل الفيديو في iOS بدون وضع ملء الشاشة
+                newVideoElement.setAttribute('poster', movie.poster); // تعيين بوستر الفيديو
                 videoContainer.appendChild(newVideoElement);
                 console.log('[مشغل الفيديو] تم إعادة إنشاء عنصر movie-player.');
             } else {
@@ -385,12 +394,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // إظهار أقسام تفاصيل الفيلم والأفلام المقترحة
             if (movieDetailsSection) movieDetailsSection.style.display = 'block';
             if (suggestedMoviesSection) suggestedMoviesSection.style.display = 'block';
 
+            // التمرير لأعلى الصفحة لضمان رؤية المحتوى الجديد
             window.scrollTo({ top: 0, behavior: 'smooth' });
             console.log('[توجيه] تم التمرير للأعلى.');
 
+            // تعبئة تفاصيل الفيلم في عناصر الـ DOM
             document.getElementById('movie-details-title').textContent = movie.title || 'غير متوفر';
             document.getElementById('movie-details-description').textContent = movie.description || 'لا يوجد وصف متاح.';
             const releaseDate = movie.release_date ? new Date(movie.release_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'غير متوفر';
@@ -401,6 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('movie-details-duration').textContent = movie.duration || 'غير متوفر';
             document.getElementById('movie-details-rating').textContent = movie.rating || 'N/A';
 
+            // تعيين بوستر تفاصيل الفيلم
             if (movieDetailsPoster) {
                 movieDetailsPoster.src = movie.poster;
                 movieDetailsPoster.alt = movie.title;
@@ -410,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const moviePlayerElement = document.getElementById('movie-player');
-            const decodedVideoUrl = decodeBase64(movie.embed_url_encoded); 
+            const decodedVideoUrl = decodeBase64(movie.embed_url_encoded); // فك تشفير رابط الفيديو
 
             if (!decodedVideoUrl) {
                 console.error(`❌ فشل الحصول على رابط الفيديو مفكوك الشفرة لمعّرف الفيلم: ${movieId}. لا يمكن تهيئة المشغل.`);
@@ -420,55 +433,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            if (window.videojs) { // Check if videojs is available after dynamic load
+            // تهيئة مشغل Video.js
+            if (window.videojs) { // التحقق إذا كان Video.js متاحاً بعد التحميل الديناميكي
+                // الانتظار حتى يصبح عنصر المشغل مرئياً ومتصلاً بالـ DOM
                 await new Promise(resolve => {
                     const checkVisibility = () => {
                         if (moviePlayerElement.offsetParent !== null) {
                             console.log('[مشغل الفيديو] عنصر moviePlayer متصل ومرئي الآن. حل الوعد.');
                             resolve();
                         } else {
-                            requestAnimationFrame(checkVisibility); 
+                            requestAnimationFrame(checkVisibility); // حاول مرة أخرى في الإطار التالي
                         }
                     };
-                    setTimeout(() => requestAnimationFrame(checkVisibility), 50); 
+                    setTimeout(() => requestAnimationFrame(checkVisibility), 50); // ابدأ التحقق بعد تأخير بسيط
                 });
 
                 console.log('[مشغل الفيديو] moviePlayer جاهز. المتابعة بتهيئة Video.js.');
 
                 videoJsPlayerInstance = videojs(moviePlayerElement, {
-                    autoplay: false, 
+                    autoplay: false,
                     controls: true,
                     responsive: true,
-                    fluid: true, 
-                    techOrder: ['html5'], 
+                    fluid: true,
+                    techOrder: ['html5'], // استخدام HTML5 أولاً
                     html5: {
-                        nativeControlsForTouch: true, 
-                        vhs: { 
+                        nativeControlsForTouch: true,
+                        vhs: { // إعدادات HLS.js
                             limitRenditionByPlayerDimensions: false,
-                            enableLowInitialPlaylist: true, 
+                            enableLowInitialPlaylist: true,
                             fastQualityChange: true,
-                            maxBufferLength: 10,  
-                            maxMaxBufferLength: 30, 
+                            maxBufferLength: 10,
+                            maxMaxBufferLength: 30,
                         },
                     },
-                    playbackRates: [0.5, 1, 1.5, 2], 
+                    playbackRates: [0.5, 1, 1.5, 2], // سرعات التشغيل
                     sources: [{
                         src: decodedVideoUrl,
-                        type: 'video/mp4' 
+                        type: 'video/mp4' // يمكنك تعديل هذا النوع إذا كان HLS (application/x-mpegURL)
                     }],
-                    crossOrigin: 'anonymous' 
+                    crossOrigin: 'anonymous' // مهم لمصادر الفيديو عبر نطاقات مختلفة
                 }, function() {
                     console.log(`[Video.js] تم تهيئة المشغل بنجاح للمصدر: ${decodedVideoUrl}`);
+                    // إظهار/إخفاء Spinner وغطاء الفيديو عند بدء التحميل
                     if (videoLoadingSpinner && !this.hasStarted() && !this.paused() && !this.ended()) {
                         videoLoadingSpinner.style.display = 'block';
                     }
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'auto';
+                        videoOverlay.style.pointerEvents = 'auto'; // السماح بالتفاعل مع الغطاء
                         videoOverlay.classList.remove('hidden');
                     }
 
                     this.ready(function() {
                         const player = this;
+                        // إزالة زر التنزيل الافتراضي (إذا وجد)
                         const downloadButton = player.controlBar.getChild('DownloadButton') || player.controlBar.getChild('DownloadToggle');
                         if (downloadButton) {
                             player.controlBar.removeChild(downloadButton);
@@ -476,6 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             console.log('[Video.js] لم يتم العثور على زر تنزيل افتراضي لإزالته.');
                         }
+                        // تعطيل النقر بالزر الأيمن على عنصر الفيديو لمنع التحميل
                         player.tech_.el_.addEventListener('contextmenu', function(e) {
                             e.preventDefault();
                             console.log('🚫 [مشغل الفيديو] تم تعطيل النقر بالزر الأيمن على عنصر الفيديو.');
@@ -483,6 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
 
+                // معالجة أحداث المشغل (تحميل، تشغيل، انتظار، إيقاف مؤقت، بحث، خطأ، انتهاء)
                 videoJsPlayerInstance.on('loadstart', () => {
                     console.log('[Video.js] حدث بدء تحميل الفيديو.');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
@@ -496,7 +515,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('[Video.js] حدث تشغيل الفيديو.');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                     if (videoOverlay) {
-                        videoOverlay.style.pointerEvents = 'none';
+                        videoOverlay.style.pointerEvents = 'none'; // تعطيل التفاعل مع الغطاء أثناء التشغيل
                         videoOverlay.classList.add('hidden');
                     }
                 });
@@ -504,7 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoJsPlayerInstance.on('waiting', () => {
                     console.log('[Video.js] الفيديو في وضع الانتظار (تخزين مؤقت).');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
-                    if (videoOverlay) { 
+                    if (videoOverlay) {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
                     }
@@ -512,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 videoJsPlayerInstance.on('pause', () => {
                     console.log('[Video.js] تم إيقاف الفيديو مؤقتًا.');
-                    if (!videoJsPlayerInstance.ended()) { 
+                    if (!videoJsPlayerInstance.ended()) { // لا تفتح إعلان إذا انتهى الفيديو
                         openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoPause');
                         if (videoOverlay) {
                             videoOverlay.style.pointerEvents = 'auto';
@@ -550,11 +569,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
                     }
-                    videoJsPlayerInstance.currentTime(0); 
+                    videoJsPlayerInstance.currentTime(0); // إعادة الفيديو للبداية
                 });
 
             } else {
-                 console.warn('⚠️ [مشغل الفيديو] Video.js لم يتم تحميله بعد. لا يمكن تهيئة المشغل.');
+                console.warn('⚠️ [مشغل الفيديو] Video.js لم يتم تحميله بعد. لا يمكن تهيئة المشغل.');
                 if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
                 if (videoOverlay) {
                     videoOverlay.style.display = 'flex';
@@ -563,78 +582,99 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            // --- تحديث URL والـ SEO ---
+            // --- تحديث URL والـ SEO (هذا الجزء هو جوهر الحل من جانب العميل) ---
+            const movieSlug = movie.title.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF\s-]/g, '').replace(/\s+/g, '-');
             const newUrl = new URL(window.location.origin);
             newUrl.searchParams.set('view', 'details');
             newUrl.searchParams.set('id', movieId);
-            history.pushState({ view: 'details', id: movieId }, movie.title, newUrl.toString()); 
+            // إضافة عنوان الفيلم إلى الـ URL كبارامتر لتحسين الـ SEO (ليس مساراً حقيقياً لكنه يساعد)
+            newUrl.searchParams.set('title', movieSlug);
+
+            // استخدام history.pushState لتغيير الـ URL دون إعادة تحميل الصفحة
+            history.pushState({ view: 'details', id: movieId }, movie.title, newUrl.toString());
             console.log(`🔗 [URL] تم تحديث URL إلى ${newUrl.toString()}`);
 
+            // ****** استدعاء دوال تحديث الـ Meta Tags والـ JSON-LD هنا ******
+            // هذا يضمن تحديث معلومات الـ SEO في DOM بمجرد تحميل بيانات الفيلم
             updateMetaTags(movie);
             addJsonLdSchema(movie);
+            // *******************************************************
+
             displaySuggestedMovies(movieId);
             console.log(`✨ [اقتراحات] استدعاء displaySuggestedMovies للمعّرف: ${movieId}`);
 
         } else {
             console.error('❌ [توجيه] الفيلم غير موجود للمعّرف:', movieId, 'يتم إعادة التوجيه إلى الصفحة الرئيسية.');
-            showHomePage();
+            showHomePage(); // العودة للصفحة الرئيسية إذا لم يتم العثور على الفيلم
         }
     }
 
-    // --- دالات الـ SEO (محسنة) ---
-    function updateMetaTags(movie = null) { 
+    // --- دالات الـ SEO (تم تحسينها لتكون واضحة ودقيقة) ---
+    function updateMetaTags(movie = null) {
+        // التأكد من وجود canonical link، وإنشائه إذا لم يكن موجوداً
         let canonicalLink = document.querySelector('link[rel="canonical"]');
         if (!canonicalLink) {
             canonicalLink = document.createElement('link');
             canonicalLink.setAttribute('rel', 'canonical');
             document.head.appendChild(canonicalLink);
         }
-        
+
         let pageTitle, pageDescription, pageKeywords, ogUrl, ogTitle, ogDescription, ogImage, ogType;
         let twitterTitle, twitterDescription, twitterImage;
 
-        if (movie) {
-            const movieUrl = window.location.href; 
-            canonicalLink.setAttribute('href', movieUrl);
+        if (movie) { // إذا تم تمرير بيانات فيلم، فسنستخدمها لتخصيص الـ Meta Tags
+            const movieUrl = window.location.href; // الحصول على URL الحالي للصفحة
+            canonicalLink.setAttribute('href', movieUrl); // تعيين Canonical URL ليتطابق مع URL الحالي
+
+            // تخصيص العنوان
             pageTitle = `${movie.title} - مشاهدة أونلاين على شاهد بلس بجودة عالية`;
-            pageDescription = movie.description || `شاهد فيلم ${movie.title} أونلاين بجودة عالية. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح.`;
+            
+            // تخصيص الوصف (وقصه ليتناسب مع الحد الأقصى الموصى به لـ meta description)
+            const shortDescription = (movie.description || `شاهد فيلم ${movie.title} أونلاين بجودة عالية. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح.`).substring(0, 155);
+            pageDescription = shortDescription + (movie.description && movie.description.length > 155 ? '...' : '');
+
+            // توليد الكلمات المفتاحية
             const movieGenres = Array.isArray(movie.genre) ? movie.genre.join(', ') : String(movie.genre || '').trim();
             const movieCast = Array.isArray(movie.cast) ? movie.cast.join(', ') : String(movie.cast || '').trim();
             pageKeywords = [
-                movie.title, 
-                movieGenres, 
-                movie.director, 
-                movieCast, 
-                'شاهد بلس', 'مشاهدة أونلاين', 'فيلم', 'بجودة عالية'
-            ].filter(Boolean).join(', '); 
+                movie.title,
+                movieGenres,
+                movie.director,
+                movieCast,
+                'شاهد بلس', 'مشاهدة أونلاين', 'فيلم', 'بجودة عالية',
+                'أفلام عربية', 'أفلام أجنبية', 'مسلسلات حصرية', 'أفلام 4K'
+            ].filter(Boolean).join(', '); // تصفية أي قيم فارغة
 
+            // تخصيص Open Graph Tags (لمشاركة وسائل التواصل الاجتماعي)
             ogUrl = movieUrl;
             ogTitle = `${movie.title} - مشاهدة أونلاين على شاهد بلس`;
-            ogDescription = pageDescription;
-            ogImage = movie.poster; 
-            ogType = "video.movie";
+            ogDescription = pageDescription; // استخدام الوصف المقتطع
+            ogImage = movie.poster;
+            ogType = "video.movie"; // تحديد نوع المحتوى كفيلم فيديو
 
+            // تخصيص Twitter Card Tags (لمشاركة تويتر)
             twitterTitle = ogTitle;
             twitterDescription = ogDescription;
             twitterImage = ogImage;
 
-        } else {
+        } else { // إذا لم يتم تمرير بيانات فيلم (أي الصفحة الرئيسية أو عامة)، نستخدم Meta Tags الافتراضية
             pageTitle = 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K أونلاين';
             pageDescription = 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.';
             pageKeywords = 'شاهد بلس، أفلام، مسلسلات، مشاهدة أونلاين، 4K، أفلام عربية، أفلام أجنبية، مسلسلات حصرية، سينما، ترفيه فاخر، مترجم، دبلجة، أفلام 2025، مسلسلات جديدة، أكشن، دراما، خيال علمي، كوميديا';
-            
-            ogUrl = window.location.origin;
-            canonicalLink.setAttribute('href', ogUrl + '/'); 
+
+            ogUrl = window.location.origin; // رابط الصفحة الرئيسية
+            canonicalLink.setAttribute('href', ogUrl + '/'); // Canonical للصفحة الرئيسية
             ogTitle = 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K';
             ogDescription = pageDescription;
-            ogImage = 'https://shahidplus.online/images/your-site-logo-for-og.png'; 
-            ogType = 'website';
+            ogImage = 'https://shahidplus.online/images/your-site-logo-for-og.png';
+            ogType = 'website'; // نوع المحتوى كصفحة ويب عادية
 
             twitterTitle = ogTitle;
             twitterDescription = ogDescription;
             twitterImage = ogImage;
         }
 
+        // تحديث جميع علامات الـ Meta في الـ DOM
         document.title = pageTitle;
         document.querySelector('meta[name="description"]')?.setAttribute('content', pageDescription);
         document.querySelector('meta[name="keywords"]')?.setAttribute('content', pageKeywords);
@@ -646,35 +686,39 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', ogType);
         document.querySelector('meta[property="og:locale"]')?.setAttribute('content', 'ar_AR');
         document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
-        document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', ogTitle); 
+        document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', ogTitle);
 
         document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', twitterTitle);
         document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', twitterDescription);
         document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', twitterImage);
         document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
+        // التأكد من وجود meta twitter:creator أو إنشائها
         let twitterCreator = document.querySelector('meta[name="twitter:creator"]');
         if (!twitterCreator) {
             twitterCreator = document.createElement('meta');
             twitterCreator.name = 'twitter:creator';
             document.head.appendChild(twitterCreator);
         }
-        twitterCreator.setAttribute('content', '@YourTwitterHandle'); 
+        twitterCreator.setAttribute('content', '@YourTwitterHandle'); // تأكد من استبدال هذا بمعرف تويتر الخاص بك
 
         console.log('📄 [SEO] تم تحديث الميتا تاجز.');
     }
 
-    function addJsonLdSchema(movie = null) { 
+    // دالة لتحديث أو إزالة مخطط JSON-LD
+    function addJsonLdSchema(movie = null) {
+        // إزالة أي مخطط JSON-LD موجود مسبقاً
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
             oldScript.remove();
             console.log('📄 [SEO] تم إزالة مخطط JSON-LD القديم.');
         }
 
-        if (!movie) { 
+        if (!movie) { // إذا لم يتم تمرير بيانات فيلم، فلا يوجد مخطط JSON-LD خاص بفيلم
             console.log('📄 [SEO] لا يوجد مخطط JSON-LD للصفحة الرئيسية.');
             return;
         }
 
+        // تحديد تاريخ الرفع/النشر
         let formattedUploadDate;
         if (movie.release_date) {
             try {
@@ -682,52 +726,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!isNaN(date.getTime())) {
                     formattedUploadDate = date.toISOString();
                 } else {
-                    formattedUploadDate = new Date().toISOString(); 
+                    formattedUploadDate = new Date().toISOString(); // تاريخ اليوم إذا كان تاريخ الإصدار غير صالح
                 }
             } catch (e) {
-                formattedUploadDate = new Date().toISOString(); 
+                formattedUploadDate = new Date().toISOString(); // تاريخ اليوم في حالة حدوث خطأ
             }
         } else {
-            formattedUploadDate = new Date().toISOString(); 
+            formattedUploadDate = new Date().toISOString(); // تاريخ اليوم إذا لم يكن هناك تاريخ إصدار
         }
 
+        // تحويل الممثلين والأنواع إلى مصفوفات إذا لم تكن كذلك
         const castArray = Array.isArray(movie.cast) ? movie.cast : String(movie.cast || '').split(',').map(s => s.trim()).filter(s => s !== '');
         const genreArray = Array.isArray(movie.genre) ? movie.genre : String(movie.genre || '').split(',').map(s => s.trim()).filter(s => s !== '');
 
+        // بناء كائن Schema.org للفيلم
         const schema = {
             "@context": "http://schema.org",
-            "@type": "Movie", 
+            "@type": "Movie",
             "name": movie.title,
             "description": movie.description || `مشاهدة وتحميل فيلم ${movie.title} بجودة عالية على شاهد بلس. استمتع بمشاهدة أحدث الأفلام والمسلسلات الحصرية.`,
             "image": movie.poster,
-            "thumbnailUrl": movie.poster,
+            "thumbnailUrl": movie.thumbnailUrl || movie.poster,
             "uploadDate": formattedUploadDate,
-            "embedUrl": decodeBase64(movie.embed_url_encoded),
-            "duration": movie.duration || "PT1H30M", 
-            "contentUrl": decodeBase64(movie.embed_url_encoded), 
-            "inLanguage": "ar",
-            "publisher": {
+            "embedUrl": decodeBase64(movie.embed_url_encoded), // رابط الفيديو المضمن
+            "duration": movie.duration || "PT1H30M", // مدة الفيلم (بتنسيق ISO 8601)
+            "contentUrl": decodeBase64(movie.embed_url_encoded), // رابط المحتوى
+            "inLanguage": "ar", // لغة المحتوى
+            "publisher": { // معلومات الناشر/الموقع
                 "@type": "Organization",
                 "name": "شاهد بلس",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://shahidplus.online/images/shahed-plus-logo.png", 
+                    "url": "https://shahidplus.online/images/shahed-plus-logo.png",
                     "width": 200,
                     "height": 50
                 }
             },
-            "potentialAction": {
+            "potentialAction": { // إجراء محتمل (مثل المشاهدة)
                 "@type": "WatchAction",
                 "target": {
                     "@type": "EntryPoint",
-                    "urlTemplate": window.location.href,
+                    "urlTemplate": window.location.href, // رابط الصفحة الحالي
                     "inLanguage": "ar",
                     "actionPlatform": [
                         "http://schema.org/DesktopWebPlatform",
                         "http://schema.org/MobileWebPlatform"
                     ]
                 },
-                "expectsAcceptanceOf": {
+                "expectsAcceptanceOf": { // تفاصيل العرض (مجاني)
                     "@type": "Offer",
                     "name": "مشاهدة الفيلم",
                     "price": "0",
@@ -738,6 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
+        // إضافة المخرج، الممثلين، والأنواع إذا كانت متوفرة
         if (movie.director && typeof movie.director === 'string' && movie.director.trim() !== '') {
             schema.director = { "@type": "Person", "name": movie.director.trim() };
         }
@@ -747,6 +794,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (genreArray.length > 0) {
             schema.genre = genreArray;
         }
+        // إضافة التقييم التجميعي إذا كان متوفراً وصالحاً
         if (movie.rating && typeof movie.rating === 'string' && movie.rating.includes('/')) {
             const ratingValue = parseFloat(movie.rating.split('/')[0]);
             if (!isNaN(ratingValue) && ratingValue >= 0 && ratingValue <= 10) {
@@ -754,11 +802,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     "@type": "AggregateRating",
                     "ratingValue": ratingValue.toFixed(1),
                     "bestRating": "10",
-                    "ratingCount": "10000" 
+                    "ratingCount": "10000" // عدد تقييمات افتراضي
+                };
+            }
+        } else if (movie.rating && !isNaN(parseFloat(movie.rating))) {
+             const ratingValue = parseFloat(movie.rating);
+             if (!isNaN(ratingValue) && ratingValue >= 0 && ratingValue <= 10) {
+                schema.aggregateRating = {
+                    "@type": "AggregateRating",
+                    "ratingValue": ratingValue.toFixed(1),
+                    "bestRating": "10",
+                    "ratingCount": "10000"
                 };
             }
         }
 
+        // إنشاء عنصر سكربت جديد وإضافته إلى الـ head
         let script = document.createElement('script');
         script.type = 'application/ld+json';
         script.textContent = JSON.stringify(schema);
@@ -766,6 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('📄 [SEO] تم إضافة/تحديث مخطط JSON-LD الجديد.');
     }
 
+    // دالة لعرض الأفلام المقترحة (لا يوجد تغيير)
     function displaySuggestedMovies(currentMovieId) {
         if (!suggestedMovieGrid || !currentDetailedMovie) {
             console.error('❌ displaySuggestedMovies: suggestedMovieGrid أو currentDetailedMovie غير موجودين. لا يمكن عرض الأفلام المقترحة.');
@@ -785,7 +845,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     : currentMovieGenresArray.includes(String(movie.genre || '').toLowerCase().trim())
                 )
             );
-            suggested = suggested.sort(() => 0.5 - Math.random()); 
+            suggested = suggested.sort(() => 0.5 - Math.random());
         }
 
         if (suggested.length < 24) {
@@ -807,53 +867,64 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`✨ [اقتراحات] تم عرض ${finalSuggested.length} فيلمًا مقترحًا في ${suggestedMovieGrid.id}.`);
     }
 
+    // دالة للعودة إلى الصفحة الرئيسية (لا يوجد تغيير)
     function showHomePage() {
         console.log('🏠 [توجيه] عرض الصفحة الرئيسية.');
+        // إخفاء أقسام تفاصيل الفيلم وإظهار الأقسام الرئيسية
         if (movieDetailsSection) movieDetailsSection.style.display = 'none';
         if (suggestedMoviesSection) suggestedMoviesSection.style.display = 'none';
 
         if (heroSection) heroSection.style.display = 'flex';
         if (movieGridSection) movieGridSection.style.display = 'block';
 
+        // إعادة ضبط حقل البحث وعنوان القسم
         if (searchInput) searchInput.value = '';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
 
+        // إعادة ترقيم الصفحات للأفلام
         moviesDataForPagination = moviesData.length > 0 ? [...moviesData].sort(() => 0.5 - Math.random()) : [];
-        currentPage = 1; 
+        currentPage = 1;
         paginateMovies(moviesDataForPagination, currentPage);
 
+        // إخفاء غطاء الفيديو والـ spinner
         if (videoOverlay) {
             videoOverlay.style.pointerEvents = 'none';
             videoOverlay.classList.add('hidden');
             if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
         }
 
+        // التخلص من مشغل الفيديو إذا كان موجوداً
         if (videoJsPlayerInstance) {
             console.log('[Video.js] التخلص من المشغل عند الانتقال للصفحة الرئيسية.');
             videoJsPlayerInstance.dispose();
             videoJsPlayerInstance = null;
         }
-        currentDetailedMovie = null;
+        currentDetailedMovie = null; // إعادة تعيين الفيلم المفصل حالياً
 
+        // مسح محتوى حاوية الفيديو
         if (videoContainer) {
             videoContainer.innerHTML = '';
             console.log('[مشغل الفيديو] تم مسح movie-player-container عند الانتقال للصفحة الرئيسية.');
         }
 
+        // تحديث URL إلى الصفحة الرئيسية
         const newUrl = new URL(window.location.origin);
-        history.pushState({ view: 'home' }, 'شاهد بلس - الصفحة الرئيسية', newUrl.toString()); 
+        history.pushState({ view: 'home' }, 'شاهد بلس - الصفحة الرئيسية', newUrl.toString());
         console.log(`🔗 [URL] تم تحديث URL إلى ${newUrl.toString()}`);
 
-        updateMetaTags(); // Reset meta tags for home page
-        addJsonLdSchema(); // Remove JSON-LD for home page
+        // إعادة ضبط Meta Tags و JSON-LD للصفحة الرئيسية
+        updateMetaTags(); // استدعاء الدالة بدون بيانات فيلم لإعادة تعيينها للقيم الافتراضية
+        addJsonLdSchema(); // استدعاء الدالة بدون بيانات فيلم لإزالة مخطط الفيلم
 
-        document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر'); 
+        // تحديث Alt text لشعار OG ومقبض Twitter Creator
+        document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر');
         let twitterCreator = document.querySelector('meta[name="twitter:creator"]');
-        if (twitterCreator) twitterCreator.setAttribute('content', '@YourTwitterHandle'); 
+        if (twitterCreator) twitterCreator.setAttribute('content', '@YourTwitterHandle');
 
     }
 
     // --- 5. Event Listeners ---
+    // (جميع مستمعي الأحداث هنا تم تركهم كما هم، لا تغييرات متعلقة بالتشويش أو الإعلانات)
     if (menuToggle && mainNav) {
         menuToggle.addEventListener('click', () => {
             mainNav.classList.toggle('nav-open');
@@ -867,13 +938,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('🏠 [تفاعل] تم النقر على رابط الرئيسية في قائمة التنقل.');
             showHomePage();
             if (mainNav && mainNav.classList.contains('nav-open')) {
-                mainNav.classList.remove('nav-open'); 
+                mainNav.classList.remove('nav-open');
             }
         });
     }
 
     navLinks.forEach(link => {
-        if (link.id !== 'home-nav-link-actual') { 
+        if (link.id !== 'home-nav-link-actual') {
             link.addEventListener('click', () => {
                 if (mainNav && mainNav.classList.contains('nav-open')) {
                     mainNav.classList.remove('nav-open');
@@ -908,7 +979,7 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 performSearch();
-                searchInput.blur(); 
+                searchInput.blur();
             }
         });
         console.log('🔍 [حدث] تم إرفاق مستمع ضغط مفتاح البحث.');
@@ -953,12 +1024,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (videoOverlay) {
-        videoOverlay.addEventListener('click', async (e) => { 
+        videoOverlay.addEventListener('click', async (e) => {
             console.log('⏯️ [نقر إعلان] تم النقر على غطاء الفيديو. محاولة فتح الرابط المباشر.');
             const adOpened = openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
 
             if (adOpened) {
-                await new Promise(resolve => setTimeout(resolve, 500)); 
+                await new Promise(resolve => setTimeout(resolve, 500));
 
                 if (videoJsPlayerInstance && videoJsPlayerInstance.isReady_) {
                     try {
@@ -988,12 +1059,13 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.log('[غطاء الفيديو] الإعلان لم يفتح بسبب التهدئة. سيظل الغطاء نشطًا.');
             }
-            e.stopPropagation(); 
+            e.stopPropagation();
         });
         console.log('[غطاء الفيديو] تم إرفاق مستمع النقر لتفاعل الإعلان.');
     }
 
-    // --- حماية أدوات المطور وتعطيل اختصارات لوحة المفاتيح والنقر الأيمن ---
+    // --- حماية أدوات المطور وتعطيل اختصارات لوحة المفاتيح والنقر الأيمن (لا يوجد تغيير) ---
+    // هذه الأجزاء من الكود لا علاقة لها بالـ SEO أو التشويش الذي يؤثر على محركات البحث.
     document.addEventListener('contextmenu', e => {
         e.preventDefault();
         console.warn('🚫 [أمان] تم تعطيل النقر بالزر الأيمن.');
@@ -1004,7 +1076,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.key === 'F12' ||
             (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
             (e.ctrlKey && e.key === 'u') ||
-            (e.metaKey && e.altKey && e.key === 'I') 
+            (e.metaKey && e.altKey && e.key === 'I')
         ) {
             e.preventDefault();
             console.warn(`🚫 [أمان] تم منع اختصار لوحة المفاتيح لأدوات المطور/المصدر: ${e.key}`);
@@ -1033,9 +1105,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.addEventListener('resize', checkDevTools);
         setInterval(checkDevTools, 1000);
-        checkDevTools(); 
+        checkDevTools();
     })();
 
+    // هذه الدالة تتحقق من الـ URL عند تحميل الصفحة الأولية
+    // وتقوم بتحديث الـ Meta Tags بناءً على الفيلم المحدد في الـ URL
     function initialPageLoadLogic() {
         const urlParams = new URLSearchParams(window.location.search);
         const viewParam = urlParams.get('view');
@@ -1043,8 +1117,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (viewParam === 'details' && idParam) {
             const movieId = parseInt(idParam);
-            if (!isNaN(movieId) && moviesData.find(m => m.id === movieId)) {
+            const movie = moviesData.find(m => m.id === movieId); // ابحث عن الفيلم هنا
+
+            if (!isNaN(movieId) && movie) { // تأكد أن الفيلم موجود قبل المتابعة
                 console.log(`🚀 [تحميل أولي] محاولة تحميل تفاصيل الفيلم من URL: المعّرف ${movieId}`);
+                // تحديث الـ Meta Tags والـ JSON-LD فورًا مع بيانات الفيلم
+                updateMetaTags(movie);
+                addJsonLdSchema(movie);
+                // ثم عرض تفاصيل الفيلم (محتوى الـ DOM)
                 showMovieDetails(movieId);
             } else {
                 console.warn('⚠️ [تحميل أولي] معّرف الفيلم غير صالح في URL أو الفيلم غير موجود. يتم عرض الصفحة الرئيسية.');
@@ -1056,31 +1136,52 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // هذا يستمع لتغيرات سجل المتصفح (مثل أزرار الرجوع/الأمام)
+    // ويقوم بتحديث الصفحة والـ Meta Tags بناءً على الحالة الجديدة
     window.addEventListener('popstate', (event) => {
         console.log('↩️ [Popstate] تم اكتشاف تصفح سجل المتصفح.', event.state);
+        // إذا لم يتم تحميل بيانات الأفلام بعد، حاول جلبها ثم قم بتحديث الصفحة
         if (moviesData.length === 0) {
             console.warn('[Popstate] لم يتم تحميل بيانات الفيلم، محاولة جلب البيانات وعرض الصفحة بناءً على الحالة.');
             fetchMoviesData().then(() => {
                 if (event.state && event.state.view === 'details' && event.state.id) {
-                    showMovieDetails(event.state.id);
+                    const movie = moviesData.find(m => m.id === event.state.id); // ابحث عن الفيلم هنا
+                    if (movie) {
+                        updateMetaTags(movie); // تحديث الميتا تاجز هنا
+                        addJsonLdSchema(movie); // تحديث JSON-LD هنا
+                        showMovieDetails(event.state.id);
+                    } else {
+                         console.warn('[Popstate] الفيلم غير موجود عند popstate. يتم عرض الصفحة الرئيسية.');
+                         showHomePage();
+                    }
                 } else {
                     showHomePage();
                 }
             }).catch(err => {
                 console.error('[Popstate] فشل جلب بيانات الأفلام عند popstate:', err);
-                showHomePage(); 
+                showHomePage(); // العودة للصفحة الرئيسية في حالة فشل جلب البيانات
             });
             return;
         }
 
+        // إذا كانت بيانات الأفلام موجودة، قم بتحديث الصفحة بناءً على حالة popstate
         if (event.state && event.state.view === 'details' && event.state.id) {
-            showMovieDetails(event.state.id);
+            const movie = moviesData.find(m => m.id === event.state.id);
+            if (movie) {
+                updateMetaTags(movie); // تحديث الميتا تاجز هنا
+                addJsonLdSchema(movie); // تحديث JSON-LD هنا
+                showMovieDetails(event.state.id);
+            } else {
+                console.warn('[Popstate] الفيلم غير موجود عند popstate. يتم عرض الصفحة الرئيسية.');
+                showHomePage();
+            }
         } else {
             showHomePage();
         }
     });
 
+    // جلب بيانات الأفلام عند تحميل الصفحة
     fetchMoviesData();
 
-    console.log('%c[تذكير بالتشويش] تذكر تشويش هذا السكريبت قبل النشر!', 'color: orange; font-weight: bold;');
+    // تم إزالة تعليق التشويش: 'console.log('%c[تذكير بالتشويش] تذكر تشويش هذا السكريبت قبل النشر!', 'color: orange; font-weight: bold;');'
 });
