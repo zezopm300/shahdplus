@@ -1,3 +1,5 @@
+
+
 // script.js - هذا الكود محسن وواضح لمحركات البحث والمطورين
 // تم التركيز على أفضل أداء ممكن من جانب العميل مع الحفاظ على الوظائف والإعلانات
 // والتأكد من إزالة أي عناصر قد تؤثر سلباً على الفهم من قبل محركات البحث
@@ -124,19 +126,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let videoJsPlayerInstance = null;
     let videoJsScriptsLoaded = false;
 
-    // تم إزالة وظيفة decodeBase64 لأن الفيديوهات ستعمل بشكل مباشر
-    // function decodeBase64(encodedString) {
-    //     try {
-    //         if (!encodedString || typeof encodedString !== 'string') {
-    //             console.warn('تمت محاولة فك تشفير سلسلة Base64 غير صالحة:', encodedString);
-    //             return '';
-    //         }
-    //         return atob(encodedString);
-    //     } catch (e) {
-    //         console.error('خطأ في فك تشفير سلسلة Base64:', e);
-    //         return '';
-    //     }
-    // }
+    function decodeBase64(encodedString) {
+        try {
+            if (!encodedString || typeof encodedString !== 'string') {
+                console.warn('تمت محاولة فك تشفير سلسلة Base64 غير صالحة:', encodedString);
+                return '';
+            }
+            return atob(encodedString);
+        } catch (e) {
+            console.error('خطأ في فك تشفير سلسلة Base64:', e);
+            return '';
+        }
+    }
 
     async function loadVideoJsAndHls() {
         if (videoJsScriptsLoaded) {
@@ -418,13 +419,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const moviePlayerElement = document.getElementById('movie-player');
-            // استخدام الرابط المباشر بدلاً من فك تشفير Base64
-            const videoUrl = movie.embed_url; // نفترض أن movies.json يحتوي الآن على 'embed_url' مباشر
+            const decodedVideoUrl = decodeBase64(movie.embed_url_encoded);
 
-            if (!videoUrl) {
-                console.error(`❌ فشل الحصول على رابط الفيديو لمعّرف الفيلم: ${movieId}. لا يمكن تهيئة المشغل.`);
+            if (!decodedVideoUrl) {
+                console.error(`❌ فشل الحصول على رابط الفيديو مفكوك الشفرة لمعّرف الفيلم: ${movieId}. لا يمكن تهيئة المشغل.`);
                 if (videoContainer) {
-                    videoContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 20px;">عذرًا، لا يمكن تشغيل الفيديو حاليًا (الرابط غير صالح).</p>';
+                    videoContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 20px;">عذرًا، لا يمكن تشغيل الفيديو حاليًا (خطأ في فك التشفير أو الرابط غير صالح).</p>';
                 }
                 return;
             }
@@ -462,12 +462,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
-                        src: videoUrl, // استخدام الرابط المباشر هنا
-                        type: 'video/mp4' // افترض أن معظم الروابط المباشرة ستكون mp4
+                        src: decodedVideoUrl,
+                        type: 'video/mp4'
                     }],
                     crossOrigin: 'anonymous'
                 }, function() {
-                    console.log(`[Video.js] تم تهيئة المشغل بنجاح للمصدر: ${videoUrl}`);
+                    console.log(`[Video.js] تم تهيئة المشغل بنجاح للمصدر: ${decodedVideoUrl}`);
                     if (videoLoadingSpinner && !this.hasStarted() && !this.paused() && !this.ended()) {
                         videoLoadingSpinner.style.display = 'block';
                     }
@@ -478,19 +478,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     this.ready(function() {
                         const player = this;
-                        // تم حذف إزالة زر التنزيل لأن الطلب كان تعطيل حماية Base64 فقط وليس زر التنزيل
-                        // const downloadButton = player.controlBar.getChild('DownloadButton') || player.controlBar.getChild('DownloadToggle');
-                        // if (downloadButton) {
-                        //     player.controlBar.removeChild(downloadButton);
-                        //     console.log('[Video.js] تمت إزالة زر التنزيل من شريط التحكم.');
-                        // } else {
-                        //     console.log('[Video.js] لم يتم العثور على زر تنزيل افتراضي لإزالته.');
-                        // }
-                        // تم تعطيل تعطيل النقر بالزر الأيمن على عنصر الفيديو
-                        // player.tech_.el_.addEventListener('contextmenu', function(e) {
-                        //     e.preventDefault();
-                        //     console.log('🚫 [مشغل الفيديو] تم تعطيل النقر بالزر الأيمن على عنصر الفيديو.');
-                        // });
+                        const downloadButton = player.controlBar.getChild('DownloadButton') || player.controlBar.getChild('DownloadToggle');
+                        if (downloadButton) {
+                            player.controlBar.removeChild(downloadButton);
+                            console.log('[Video.js] تمت إزالة زر التنزيل من شريط التحكم.');
+                        } else {
+                            console.log('[Video.js] لم يتم العثور على زر تنزيل افتراضي لإزالته.');
+                        }
+                        player.tech_.el_.addEventListener('contextmenu', function(e) {
+                            e.preventDefault();
+                            console.log('🚫 [مشغل الفيديو] تم تعطيل النقر بالزر الأيمن على عنصر الفيديو.');
+                        });
                     });
                 });
 
@@ -719,9 +717,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "image": movie.poster,
             "thumbnailUrl": movie.thumbnailUrl || movie.poster,
             "uploadDate": formattedUploadDate,
-            "embedUrl": movie.embed_url, // استخدام الرابط المباشر
+            "embedUrl": decodeBase64(movie.embed_url_encoded),
             "duration": movie.duration || "PT1H30M",
-            "contentUrl": movie.embed_url, // استخدام الرابط المباشر
+            "contentUrl": decodeBase64(movie.embed_url_encoded),
             "inLanguage": "ar",
             "publisher": {
                 "@type": "Organization",
@@ -1020,50 +1018,47 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('[غطاء الفيديو] تم إرفاق مستمع النقر لتفاعل الإعلان.');
     }
 
-    // تم تعطيل تعطيل النقر بالزر الأيمن على مستوى المستند
-    // document.addEventListener('contextmenu', e => {
-    //     e.preventDefault();
-    //     console.warn('🚫 [أمان] تم تعطيل النقر بالزر الأيمن.');
-    // });
+    document.addEventListener('contextmenu', e => {
+        e.preventDefault();
+        console.warn('🚫 [أمان] تم تعطيل النقر بالزر الأيمن.');
+    });
 
-    // تم تعطيل تعطيل اختصارات أدوات المطور
-    // document.addEventListener('keydown', e => {
-    //     if (
-    //         e.key === 'F12' ||
-    //         (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-    //         (e.ctrlKey && e.key === 'u') ||
-    //         (e.metaKey && e.altKey && e.key === 'I')
-    //     ) {
-    //         e.preventDefault();
-    //         console.warn(`🚫 [أمان] تم منع اختصار لوحة المفاتيح لأدوات المطور/المصدر: ${e.key}`);
-    //     }
-    // });
+    document.addEventListener('keydown', e => {
+        if (
+            e.key === 'F12' ||
+            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+            (e.ctrlKey && e.key === 'u') ||
+            (e.metaKey && e.altKey && e.key === 'I')
+        ) {
+            e.preventDefault();
+            console.warn(`🚫 [أمان] تم منع اختصار لوحة المفاتيح لأدوات المطور/المصدر: ${e.key}`);
+        }
+    });
 
-    // تم تعطيل كاشف أدوات المطور
-    // const devtoolsDetector = (() => {
-    //     const threshold = 160;
-    //     let isOpen = false;
-    //     const checkDevTools = () => {
-    //         const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-    //         const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+    const devtoolsDetector = (() => {
+        const threshold = 160;
+        let isOpen = false;
+        const checkDevTools = () => {
+            const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+            const heightThreshold = window.outerHeight - window.innerHeight > threshold;
 
-    //         if (widthThreshold || heightThreshold) {
-    //             if (!isOpen) {
-    //                 isOpen = true;
-    //                 console.warn('🚨 [أمان] تم اكتشاف أدوات المطور! هذا الإجراء غير مشجع.');
-    //             }
-    //         } else {
-    //             if (isOpen) {
-    //                 isOpen = false;
-    //                 console.log('✅ [أمان] تم إغلاق أدوات المطور.');
-    //             }
-    //         }
-    //     };
+            if (widthThreshold || heightThreshold) {
+                if (!isOpen) {
+                    isOpen = true;
+                    console.warn('🚨 [أمان] تم اكتشاف أدوات المطور! هذا الإجراء غير مشجع.');
+                }
+            } else {
+                if (isOpen) {
+                    isOpen = false;
+                    console.log('✅ [أمان] تم إغلاق أدوات المطور.');
+                }
+            }
+        };
 
-    //     window.addEventListener('resize', checkDevTools);
-    //     setInterval(checkDevTools, 1000);
-    //     checkDevTools();
-    // })();
+        window.addEventListener('resize', checkDevTools);
+        setInterval(checkDevTools, 1000);
+        checkDevTools();
+    })();
 
     function initialPageLoadLogic() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -1101,8 +1096,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         addJsonLdSchema(movie);
                         showMovieDetails(event.state.id);
                     } else {
-                           console.warn('[Popstate] الفيلم غير موجود عند popstate. يتم عرض الصفحة الرئيسية.');
-                           showHomePage();
+                         console.warn('[Popstate] الفيلم غير موجود عند popstate. يتم عرض الصفحة الرئيسية.');
+                         showHomePage();
                     }
                 } else {
                     showHomePage();
