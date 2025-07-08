@@ -1,5 +1,3 @@
-
-
 // script.js - هذا الكود محسن وواضح لمحركات البحث والمطورين
 // تم التركيز على أفضل أداء ممكن من جانب العميل مع الحفاظ على الوظائف والإعلانات
 // والتأكد من إزالة أي عناصر قد تؤثر سلباً على الفهم من قبل محركات البحث
@@ -126,6 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let videoJsPlayerInstance = null;
     let videoJsScriptsLoaded = false;
 
+    // تم إزالة دالة decodeBase64 لأننا لن نستخدمها لروابط الفيديو
+    // ولكن لن يتم حذفها بالكامل تحسباً لاستخدامها في مكان آخر (لن أغير شيئاً آخر!)
     function decodeBase64(encodedString) {
         try {
             if (!encodedString || typeof encodedString !== 'string') {
@@ -419,12 +419,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const moviePlayerElement = document.getElementById('movie-player');
-            const decodedVideoUrl = decodeBase64(movie.embed_url_encoded);
+            // التعديل هنا: استخدام movie.embed_url مباشرة بدلاً من movie.embed_url_encoded وفك تشفيرها
+            const videoUrl = movie.embed_url; 
 
-            if (!decodedVideoUrl) {
-                console.error(`❌ فشل الحصول على رابط الفيديو مفكوك الشفرة لمعّرف الفيلم: ${movieId}. لا يمكن تهيئة المشغل.`);
+            if (!videoUrl) {
+                console.error(`❌ فشل الحصول على رابط الفيديو لمعّرف الفيلم: ${movieId}. لا يمكن تهيئة المشغل.`);
                 if (videoContainer) {
-                    videoContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 20px;">عذرًا، لا يمكن تشغيل الفيديو حاليًا (خطأ في فك التشفير أو الرابط غير صالح).</p>';
+                    videoContainer.innerHTML = '<p style="text-align: center; color: var(--text-color); margin-top: 20px;">عذرًا، لا يمكن تشغيل الفيديو حاليًا (الرابط غير صالح).</p>';
                 }
                 return;
             }
@@ -462,12 +463,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
-                        src: decodedVideoUrl,
-                        type: 'video/mp4'
+                        src: videoUrl, // هنا تم استخدام videoUrl مباشرة
+                        type: 'video/mp4' // افتراضي، قد تحتاج للتغيير إذا كان نوع الفيديو مختلفاً
                     }],
                     crossOrigin: 'anonymous'
                 }, function() {
-                    console.log(`[Video.js] تم تهيئة المشغل بنجاح للمصدر: ${decodedVideoUrl}`);
+                    console.log(`[Video.js] تم تهيئة المشغل بنجاح للمصدر: ${videoUrl}`);
                     if (videoLoadingSpinner && !this.hasStarted() && !this.paused() && !this.ended()) {
                         videoLoadingSpinner.style.display = 'block';
                     }
@@ -717,9 +718,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "image": movie.poster,
             "thumbnailUrl": movie.thumbnailUrl || movie.poster,
             "uploadDate": formattedUploadDate,
-            "embedUrl": decodeBase64(movie.embed_url_encoded),
+            "embedUrl": movie.embed_url, // هنا تم استخدام movie.embed_url مباشرة
             "duration": movie.duration || "PT1H30M",
-            "contentUrl": decodeBase64(movie.embed_url_encoded),
+            "contentUrl": movie.embed_url, // وهنا أيضاً
             "inLanguage": "ar",
             "publisher": {
                 "@type": "Organization",
@@ -1096,8 +1097,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         addJsonLdSchema(movie);
                         showMovieDetails(event.state.id);
                     } else {
-                         console.warn('[Popstate] الفيلم غير موجود عند popstate. يتم عرض الصفحة الرئيسية.');
-                         showHomePage();
+                        console.warn('[Popstate] الفيلم غير موجود عند popstate. يتم عرض الصفحة الرئيسية.');
+                        showHomePage();
                     }
                 } else {
                     showHomePage();
