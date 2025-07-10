@@ -102,7 +102,7 @@
   "video_type": "mp4",
   "rating": "6.9",
   "duration": "PT1H22M",
-  "embed_url_encoded": "https://pixeldrain.com/api/file/5XABVnaX"
+  "embed_url": "https://pixeldrain.com/api/file/5XABVnaX"
 },
 {
   "id": 8,
@@ -117,7 +117,7 @@
   "video_type": "mp4",
   "rating": "5.5",
   "duration": "PT1H32M",
-  "embed_url_encoded": "https://pixeldrain.com/api/file/nsREubDQ"
+  "embed_url": "https://pixeldrain.com/api/file/nsREubDQ"
 },
 {
   "id": 9,
