@@ -117,14 +117,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 3. Movie Data & Video URL Decoding ---
+    // --- 3. Movie Data & Video URL Handling ---
     let moviesData = [];
     let moviesDataForPagination = [];
     let currentDetailedMovie = null;
     let videoJsPlayerInstance = null;
     let videoJsScriptsLoaded = false;
 
-    // دالة فك تشفير Base64 (مطلوبة لفك تشفير embed_url_encoded)
+    // دالة فك تشفير Base64 لم تعد مستخدمة لروابط الفيديو المباشرة
+    // ولكن تبقى هنا إذا كانت تستخدم لأغراض أخرى
     function decodeBase64(encodedString) {
         try {
             if (!encodedString || typeof encodedString !== 'string') {
@@ -221,14 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (moviesData.length === 0) {
                 console.warn('⚠️ تم تحميل movies.json، ولكنه فارغ.');
             }
-            // فك تشفير روابط الفيديو مرة واحدة بعد الجلب
-            moviesData.forEach(movie => {
-                if (movie.embed_url_encoded) {
-                    movie.embed_url = decodeBase64(movie.embed_url_encoded);
-                } else {
-                    movie.embed_url = ''; // تأكد من أن الخاصية موجودة حتى لو فارغة
-                }
-            });
+            // تم إزالة جزء فك تشفير Base64 من هنا
+            // لأننا نفترض أن "embed_url" في JSON سيكون الرابط المباشر بالفعل
             console.log('✅ تم تحميل بيانات الأفلام بنجاح من movies.json', moviesData.length, 'فيلمًا تم العثور عليهم.');
             initialPageLoadLogic();
         } catch (error) {
@@ -437,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const moviePlayerElement = document.getElementById('movie-player');
-            // تم التعديل هنا: استخدام movie.embed_url المفكوك مباشرةً لتشغيل الفيديو
+            // التعديل هنا: استخدام movie.embed_url مباشرةً (الذي يفترض أنه الرابط المباشر الآن)
             const videoUrl = movie.embed_url; 
 
             if (!videoUrl) {
@@ -481,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
-                        src: videoUrl, // هنا تم استخدام videoUrl المفكوك التشفير مباشرةً
+                        src: videoUrl, // هنا تم استخدام videoUrl مباشرةً
                         type: 'video/mp4' // افتراضي، قد تحتاج للتغيير إذا كان نوع الفيديو مختلفاً
                     }],
                     crossOrigin: 'anonymous'
@@ -740,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const castArray = Array.isArray(movie.cast) ? movie.cast : String(movie.cast || '').split(',').map(s => s.trim()).filter(s => s !== '');
         const genreArray = Array.isArray(movie.genre) ? movie.genre : String(movie.genre || '').split(',').map(s => s.trim()).filter(s => s !== '');
         
-        // استخدام movie.embed_url (الرابط المفكوك التشفير من ملف JSON) مباشرةً
+        // هنا نستخدم movie.embed_url مباشرةً، والذي يفترض أنه الرابط المباشر في JSON
         const videoSourceUrl = movie.embed_url; 
 
         const schema = {
@@ -763,7 +758,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "thumbnailUrl": movie.thumbnailUrl || movie.poster,
                 "uploadDate": formattedUploadDate,
                 "duration": movie.duration || "PT1H30M", // تأكد من وجود المدة
-                "contentUrl": videoSourceUrl, // رابط الفيديو الفعلي (الرابط الأصلي المفكوك التشفير)
+                "contentUrl": videoSourceUrl, // رابط الفيديو الفعلي (الرابط الأصلي المباشر)
                 "embedUrl": videoSourceUrl, // نفس الرابط إذا كان هو نفسه الذي يتم تضمينه
                 "interactionCount": "100000", // يمكنك استخدام عدد مشاهدات تقديري أو حقيقي
                 "publisher": {
