@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const moviePlayerElement = document.getElementById('movie-player');
-            // هنا نستخدم movie.embed_url الذي أصبح مفكوك التشفير بعد تحميل البيانات
+            // تم التعديل هنا: استخدام movie.embed_url المفكوك مباشرةً لتشغيل الفيديو
             const videoUrl = movie.embed_url; 
 
             if (!videoUrl) {
@@ -481,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     playbackRates: [0.5, 1, 1.5, 2],
                     sources: [{
-                        src: videoUrl, // هنا تم استخدام videoUrl المفكوك التشفير
+                        src: videoUrl, // هنا تم استخدام videoUrl المفكوك التشفير مباشرةً
                         type: 'video/mp4' // افتراضي، قد تحتاج للتغيير إذا كان نوع الفيديو مختلفاً
                     }],
                     crossOrigin: 'anonymous'
@@ -626,6 +626,8 @@ document.addEventListener('DOMContentLoaded', () => {
         let twitterTitle, twitterDescription, twitterImage, twitterCard;
 
         if (movie) {
+            // استخدام رابط الـ Proxy Server هنا عند استخدام الرابط في البيانات الوصفية لـ Google ووسوم OG/Twitter
+            // إذا لم يتم تنفيذ الـ Proxy Server، فسيظل هذا هو الرابط الأصلي المفكوك التشفير (وهو ما طلبته حاليا)
             const movieUrl = `${window.location.origin}/view/?details&id=${movie.id}&title=${movie.title.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF\s-]/g, '').replace(/\s+/g, '-')}`;
             canonicalLink.setAttribute('href', movieUrl);
 
@@ -716,6 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // استخدام رابط الصفحة الحالي لـ Movie URL
         const movieUrl = `${window.location.origin}/view/?details&id=${movie.id}&title=${movie.title.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF\s-]/g, '').replace(/\s+/g, '-')}`;
 
         let formattedUploadDate;
@@ -737,8 +740,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const castArray = Array.isArray(movie.cast) ? movie.cast : String(movie.cast || '').split(',').map(s => s.trim()).filter(s => s !== '');
         const genreArray = Array.isArray(movie.genre) ? movie.genre : String(movie.genre || '').split(',').map(s => s.trim()).filter(s => s !== '');
         
-        // استخدام رابط الـ proxy server هنا (أو الرابط المفكوك من Base64 مؤقتًا)
-        const videoSourceUrl = movie.embed_url; // هذا يجب أن يكون رابط الـ Proxy Server بمجرد تنفيذه
+        // استخدام movie.embed_url (الرابط المفكوك التشفير من ملف JSON) مباشرةً
+        const videoSourceUrl = movie.embed_url; 
 
         const schema = {
             "@context": "https://schema.org",
@@ -760,7 +763,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "thumbnailUrl": movie.thumbnailUrl || movie.poster,
                 "uploadDate": formattedUploadDate,
                 "duration": movie.duration || "PT1H30M", // تأكد من وجود المدة
-                "contentUrl": videoSourceUrl, // رابط الفيديو الفعلي (من خلال الـ Proxy Server)
+                "contentUrl": videoSourceUrl, // رابط الفيديو الفعلي (الرابط الأصلي المفكوك التشفير)
                 "embedUrl": videoSourceUrl, // نفس الرابط إذا كان هو نفسه الذي يتم تضمينه
                 "interactionCount": "100000", // يمكنك استخدام عدد مشاهدات تقديري أو حقيقي
                 "publisher": {
