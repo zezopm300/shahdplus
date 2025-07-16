@@ -1,6 +1,44 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <script>
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  fetch('movies.json') // أو مسار JSON
+    .then(res => res.json())
+    .then(data => {
+      const movie = data.find(item => item.id === id);
+      if (!movie) return;
+
+      // توليد كود Structured Data ديناميكيًا
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        "name": movie.title,
+        "description": movie.description,
+        "thumbnailUrl": movie.poster,
+        "uploadDate": "2025-07-15T10:00:00+00:00",
+        "duration": "PT1H30M",
+        "contentUrl": movie.video_url,
+        "embedUrl": location.href,
+        "publisher": {
+          "@type": "Organization",
+          "name": "ShahidPlus",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://shahidplus.online/logo.png"
+          }
+        }
+      };
+
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(structuredData);
+      document.head.appendChild(script);
+    });
+</script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -156,7 +194,6 @@
     <script async="async" data-cfasync="false" src="//pl26877662.profitableratecpm.com/e106700efc7a857b58a04a6abb040494/invoke.js"></script>
     <div id="container-e106700efc7a857b58a04a6abb040494"></div>
     
-   <script src="./script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
-
