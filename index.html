@@ -1,53 +1,199 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>مشاهدة فيلم Our Times (2025) مترجم</title>
-  <meta name="description" content="فيلم Our Times (2025) مترجم بجودة عالية على موقع شاهد بلس. تابع القصة الرومانسية والخيال العلمي بين نورا وهيكتور عبر الزمن.">
-  <link rel="canonical" href="https://shahidplus.online/watch.html?id=our-times-2025" />
-  <meta property="og:image" content="https://i.ibb.co/bMYfN3rH/12.jpg" />
-  
-  <!-- Structured Data for Google Video Indexing -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "VideoObject",
-    "name": "Our Times (2025) – فيلم رومانسي خيال علمي",
-    "description": "فيلم Our Times (2025) يتبع قصة نورا وهيكتور، عالمان في الفيزياء ينتقلان بالخطأ من عام 1966 إلى 2025.",
-    "thumbnailUrl": "https://i.ibb.co/bMYfN3rH/12.jpg",
-    "uploadDate": "2025-07-15T10:00:00+00:00",
-    "duration": "PT1H30M",
-    "contentUrl": "https://pixeldrain.com/api/file/9uBPdXso",
-    "embedUrl": "https://shahidplus.online/watch.html?id=our-times-2025",
-    "publisher": {
-      "@type": "Organization",
-      "name": "ShahidPlus",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://shahidplus.online/logo.png"
-      }
-    }
-  }
-  </script>
+  <script>
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
 
-  <style>
-    body { font-family: Arial; margin: 20px; background: #111; color: #fff; }
-    .video-container { max-width: 800px; margin: auto; }
-    video { width: 100%; border-radius: 12px; }
-    h1 { font-size: 24px; margin-bottom: 10px; }
-    p.description { font-size: 16px; color: #ccc; }
-  </style>
-</head>
-<body>
-  <div class="video-container">
-    <h1>Our Times (2025) – مترجم</h1>
-    <p class="description">يتبع فيلم Our Times (2025) قصة نورا وهيكتور، عالمان فيزيائيان يسافران عبر الزمن بالخطأ من عام 1966 إلى 2025 في مغامرة خيالية رومانسية.</p>
+  fetch('movies.json') // أو مسار JSON
+    .then(res => res.json())
+    .then(data => {
+      const movie = data.find(item => item.id === id);
+      if (!movie) return;
+
+      // توليد كود Structured Data ديناميكيًا
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        "name": movie.title,
+        "description": movie.description,
+        "thumbnailUrl": movie.poster,
+        "uploadDate": "2025-07-15T10:00:00+00:00",
+        "duration": "PT1H30M",
+        "contentUrl": movie.video_url,
+        "embedUrl": location.href,
+        "publisher": {
+          "@type": "Organization",
+          "name": "ShahidPlus",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://shahidplus.online/logo.png"
+          }
+        }
+      };
+
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(structuredData);
+      document.head.appendChild(script);
+    });
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.">
+    <meta name="keywords" content="شاهد بلس، أفلام عربية، أفلام أجنبية، مسلسلات حصرية، مشاهدة أونلاين، أفلام 4K، مسلسلات 4K، أكشن، دراما، كوميديا، خيال علمي، أفلام جديدة، مسلسلات جديدة، بجودة عالية، شاهد مجاناً، أفلام مترجمة، أفلام مدبلجة">
+    <meta name="author" content="شاهد بلس فريق التطوير">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://shahidplus.online/">
+    <meta property="og:title" content="شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K">
+    <meta property="og:description" content="شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.">
+    <meta property="og:image" content="https://shahidplus.online/images/your-site-logo-for-og.png"> 
+    <meta property="og:image:alt" content="شاهد بلس | بوابتك للترفيه السينمائي الفاخر">
+    <meta property="og:locale" content="ar_AR">
+    <meta property="og:site_name" content="شاهد بلس">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://shahidplus.online/">
+    <meta property="twitter:title" content="شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K">
+    <meta property="twitter:description" content="شاهد بلس: بوابتك الفاخرة للترفيه السينمائي. استمتع بأحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة الوضوح، مترجمة ومدبلجة، مع تجربة مشاهدة احترافية لا مثيل لها. اكتشف عالمًا من المحتوى الحصري والمتجدد.">
+    <meta property="twitter:image" content="https://shahidplus.online/images/your-site-logo-for-twitter.png"> 
+    <meta property="twitter:creator" content="@YourTwitterHandle"> 
     
-    <video controls poster="https://i.ibb.co/bMYfN3rH/12.jpg">
-      <source src="https://pixeldrain.com/api/file/9uBPdXso" type="video/mp4">
-      المتصفح لا يدعم تشغيل الفيديو.
-    </video>
-  </div>
+    <title>شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K أونلاين</title>
+    
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="./style.css">
+
+    </head>
+<body>
+    <script type='text/javascript' src='//pl26877663.profitableratecpm.com/75/c8/81/75c8819f64c2df144a5ddf1eabd34e6f.js'></script>
+    <script type='text/javascript' src='//pl26877671.profitableratecpm.com/7f/c2/f9/7fc2f9f201b6ffe0f5e3ed54d7bae23c.js'></script>
+
+    <header class="main-header">
+        <div class="container">
+            <a href="#" id="home-logo-link" class="logo" aria-label="شاهد بلس - الصفحة الرئيسية">
+                <span class="logo-text">شاهد بلس</span>
+                <span class="logo-dot">.</span>
+            </a>
+            
+            <nav id="main-nav" class="main-nav" aria-label="قائمة التنقل الرئيسية للموقع">
+                <ul>
+                    <li><a href="#" id="home-nav-link-actual">الرئيسية</a></li> 
+                    <li><a href="#">أفلام</a></li>
+                    <li><a href="#">مسلسلات</a></li>
+                </ul>
+            </nav>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="ابحث عن فيلم أو مسلسل..." aria-label="حقل البحث عن الأفلام والمسلسلات">
+                <button id="search-button" aria-label="تفعيل البحث">بحث</button>
+            </div>
+        </div>
+    </header>
+
+    <section id="hero-section" class="hero">
+        <div class="container">
+            <h1>استكشف عالمًا من الترفيه السينمائي الفاخر</h1>
+            <p>انغمس في أحدث الأفلام والمسلسلات العربية والأجنبية بجودة 4K فائقة وتجربة مشاهدة لا تُضاهى.</p>
+            <a href="#movie-grid-section" id="watch-now-btn" class="btn">ابدأ المشاهدة الآن</a>
+        </div>
+    </section>
+
+    <section id="movie-grid-section" class="movie-grid-section">
+        <div class="container">
+            <h2 id="section-title">الأكثر مشاهدة</h2>
+            <div id="movie-grid" class="movie-grid">
+                </div>
+            <div class="pagination">
+                <button id="prev-page-btn" class="btn-page" aria-label="الانتقال إلى الصفحة السابقة">السابق</button>
+                <button id="next-page-btn" class="btn-page" aria-label="الانتقال إلى الصفحة التالية">التالي</button>
+            </div>
+            <div class="banner-ad-container" style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '0244edf54baa4e31fc3437c4aebca346',
+                        'format' : 'iframe',
+                        'height' : 60,
+                        'width' : 468,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/0244edf54baa4e31fc3437c4aebca346/invoke.js"></script>
+            </div>
+        </div>
+    </section>
+
+    <section id="movie-details-section" class="movie-details-section" style="display: none;">
+        <div class="container">
+            <button id="back-to-home-btn" class="back-btn" aria-label="العودة إلى الرئيسية">العودة إلى الرئيسية</button>
+            <h1 id="movie-details-title"></h1>
+            <div class="video-player-wrapper">
+                <div id="movie-player-container">
+                    </div>
+                <div id="video-overlay" class="video-overlay" aria-label="انقر للتشغيل وفتح الإعلان">
+                    <div id="video-loading-spinner" class="video-loading-spinner"></div>
+                </div>
+            </div>
+
+            <div class="banner-ad-container" style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '0244edf54baa4e31fc3437c4aebca346',
+                        'format' : 'iframe',
+                        'height' : 60,
+                        'width' : 468,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/0244edf54baa4e31fc3437c4aebca346/invoke.js"></script>
+            </div>
+
+            <div class="movie-info">
+                <div id="movie-details-poster-container" style="text-align: center; margin-bottom: 20px;">
+                    <img id="movie-details-poster" src="" alt="ملصق الفيلم" loading="lazy" decoding="async">
+                </div>
+                <p><strong>الوصف:</strong> <span id="movie-details-description"></span></p>
+                <p><strong>تاريخ الإصدار:</strong> <span id="movie-details-release-date"></span></p>
+                <p><strong>النوع:</strong> <span id="movie-details-genre"></span></p>
+                <p><strong>المخرج:</strong> <span id="movie-details-director"></span></p>
+                <p><strong>الممثلون:</strong> <span id="movie-details-cast"></span></p>
+                <p><strong>المدة:</strong> <span id="movie-details-duration"></span></p>
+                <p><strong>التقييم:</strong> <span id="movie-details-rating"></span></p>
+            </div>
+        </div>
+    </section>
+
+    <section id="suggested-movies-section" class="suggested-movies-section" style="display: none;">
+        <div class="container">
+            <h2>أفلام قد تعجبك</h2>
+            <div id="suggested-movie-grid" class="movie-grid">
+                </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 شاهد بلس. جميع الحقوق محفوظة.</p>
+            <div class="footer-links">
+                <a href="https://t.me/sahidplu" target="_blank" rel="noopener noreferrer">قناة شاهد بلس</a>
+                <a href="https://t.me/shshidaflim" target="_blank" rel="noopener noreferrer">قناة المسلسلات</a>
+                <a href="https://t.me/shshidplus" target="_blank" rel="noopener noreferrer">قناة الأفلام</a>
+                <a href="privacy.html" rel="privacy-policy">سياسة الخصوصية</a>
+            </div>
+        </div>
+    </footer>
+
+    <script async="async" data-cfasync="false" src="//pl26877662.profitableratecpm.com/e106700efc7a857b58a04a6abb040494/invoke.js"></script>
+    <div id="container-e106700efc7a857b58a04a6abb040494"></div>
+    
+    <script src="script.js"></script>
 </body>
 </html>
