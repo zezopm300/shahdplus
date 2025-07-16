@@ -1,35 +1,53 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>مشاهدة الفيلم</title>
-  <link rel="stylesheet" href="/assets/css/style.css">
-  <link href="https://vjs.zencdn.net/8.9.0/video-js.css" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>مشاهدة فيلم Our Times (2025) مترجم</title>
+  <meta name="description" content="فيلم Our Times (2025) مترجم بجودة عالية على موقع شاهد بلس. تابع القصة الرومانسية والخيال العلمي بين نورا وهيكتور عبر الزمن.">
+  <link rel="canonical" href="https://shahidplus.online/watch.html?id=our-times-2025" />
+  <meta property="og:image" content="https://i.ibb.co/bMYfN3rH/12.jpg" />
+  
+  <!-- Structured Data for Google Video Indexing -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": "Our Times (2025) – فيلم رومانسي خيال علمي",
+    "description": "فيلم Our Times (2025) يتبع قصة نورا وهيكتور، عالمان في الفيزياء ينتقلان بالخطأ من عام 1966 إلى 2025.",
+    "thumbnailUrl": "https://i.ibb.co/bMYfN3rH/12.jpg",
+    "uploadDate": "2025-07-15T10:00:00+00:00",
+    "duration": "PT1H30M",
+    "contentUrl": "https://pixeldrain.com/api/file/9uBPdXso",
+    "embedUrl": "https://shahidplus.online/watch.html?id=our-times-2025",
+    "publisher": {
+      "@type": "Organization",
+      "name": "ShahidPlus",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://shahidplus.online/logo.png"
+      }
+    }
+  }
+  </script>
+
+  <style>
+    body { font-family: Arial; margin: 20px; background: #111; color: #fff; }
+    .video-container { max-width: 800px; margin: auto; }
+    video { width: 100%; border-radius: 12px; }
+    h1 { font-size: 24px; margin-bottom: 10px; }
+    p.description { font-size: 16px; color: #ccc; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1 id="movie-title"></h1>
-    <p id="movie-description"></p>
-    <video id="video-player" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360"></video>
+  <div class="video-container">
+    <h1>Our Times (2025) – مترجم</h1>
+    <p class="description">يتبع فيلم Our Times (2025) قصة نورا وهيكتور، عالمان فيزيائيان يسافران عبر الزمن بالخطأ من عام 1966 إلى 2025 في مغامرة خيالية رومانسية.</p>
+    
+    <video controls poster="https://i.ibb.co/bMYfN3rH/12.jpg">
+      <source src="https://pixeldrain.com/api/file/9uBPdXso" type="video/mp4">
+      المتصفح لا يدعم تشغيل الفيديو.
+    </video>
   </div>
-
-  <script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const movieId = params.get("id");
-
-    fetch("moviesjson.json")
-      .then((res) => res.json())
-      .then((movies) => {
-        const movie = movies.find((m) => m.id == movieId);
-        if (!movie) return document.body.innerHTML = "فيلم غير موجود.";
-
-        document.getElementById("movie-title").textContent = movie.title;
-        document.getElementById("movie-description").textContent = movie.description;
-
-        const player = videojs("video-player");
-        player.src({ src: movie.video_url, type: "video/mp4" });
-      });
-  </script>
 </body>
 </html>
