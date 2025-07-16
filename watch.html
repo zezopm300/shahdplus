@@ -1,106 +1,47 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
- <link rel="stylesheet" href="./style.css">
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>مشاهدة فيلم Our Times (2025) مترجم اون لاين</title>
+  <title>مشاهدة الفيلم</title>
 
-  <!-- ✅ وصف -->
-  <meta name="description" content="شاهد فيلم Our Times (2025) مترجم اون لاين بجودة عالية على موقع شاهد بلس، فيلم خيال علمي رومانسي مكسيكي يدور حول السفر عبر الزمن.">
+  <!-- CSS الأساسي لموقعك -->
+  <link rel="stylesheet" href="assets/css/style.css" />
 
-  <!-- ✅ صورة عند المشاركة -->
-  <meta property="og:image" content="https://i.postimg.cc/8C97BvW9/our-times-poster.jpg" />
-  <meta property="og:title" content="Our Times (2025) – فيلم مترجم" />
-  <meta property="og:description" content="شاهد فيلم خيال علمي رومانسي حول السفر عبر الزمن، من بطولة لوسيانا ومانويل." />
-  <meta property="og:type" content="video.movie" />
-  <meta property="og:url" content="https://shahidplus.online/watch.html?movie=our-times-2025" />
+  <!-- CSS لمشغل الفيديو -->
+  <link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet" />
 
-  <!-- ✅ Structured Data JSON-LD -->
+  <!-- بيانات منظمة SEO -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Movie",
-    "name": "Our Times (2025)",
-    "image": "https://i.postimg.cc/8C97BvW9/our-times-poster.jpg",
-    "description": "فيلم خيال علمي رومانسي عن فيزيائيين يسافرون بالزمن من عام 1966 إلى 2025.",
-    "datePublished": "2025-01-10",
-    "director": {
-      "@type": "Person",
-      "name": "Chava Cartas"
-    },
-    "actor": [
-      {
-        "@type": "Person",
-        "name": "Luciana Silveyra"
-      },
-      {
-        "@type": "Person",
-        "name": "Manuel Balbi"
-      }
-    ],
-    "genre": ["Romance", "Sci-Fi"],
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "7.5",
-      "ratingCount": "250"
-    }
+    "name": "اسم الفيلم هنا",
+    "description": "وصف الفيلم...",
+    "thumbnailUrl": "رابط الصورة",
+    "actor": [{ "@type": "Person", "name": "ممثل" }],
+    "director": { "@type": "Person", "name": "المخرج" },
+    "datePublished": "2025-07-01"
   }
   </script>
-
-  <!-- ✅ video.js -->
-  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
-  <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-
-  <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      margin: 0;
-      font-family: "Cairo", sans-serif;
-    }
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-    }
-    .title {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    .description {
-      font-size: 16px;
-      color: #ccc;
-      margin-bottom: 20px;
-    }
-    video {
-      border-radius: 10px;
-      overflow: hidden;
-    }
-  </style>
 </head>
 <body>
 
+  <!-- صفحة عرض الفيلم -->
   <div class="container">
-    <div class="title">Our Times (2025) – فيلم مترجم</div>
-    <div class="description">فيلم خيال علمي رومانسي يدور حول فيزيائيين يسافرون عبر الزمن من 1966 إلى 2025.</div>
-
-    <!-- ✅ مشغل الفيديو -->
-    <video
-      id="my-video"
-      class="video-js vjs-big-play-centered"
-      controls
-      preload="auto"
-      width="100%"
-      height="auto"
-      poster="https://i.postimg.cc/8C97BvW9/our-times-poster.jpg"
-      data-setup='{}'
-    >
-      <source src="https://pixeldrain.com/api/file/FVAM2cz2?download" type="video/mp4" />
-      عذرًا، لا يمكن تشغيل هذا الفيديو.
-    </video>
+    <h1 class="title">اسم الفيلم</h1>
+    <div class="video-container">
+      <video id="my-video" class="video-js" controls preload="auto" width="100%" height="auto" poster="رابط الصورة">
+        <source src="https://site.com/proxy/video.mp4" type="video/mp4" />
+        <!-- أو من pixeldrain -->
+        <!-- <source src="https://shahidplus.glitch.me/FVAM2cz2" type="application/x-mpegURL" /> -->
+        عذراً، متصفحك لا يدعم تشغيل الفيديو.
+      </video>
+    </div>
+    <p class="description">هنا وصف الفيلم باختصار...</p>
   </div>
 
+  <!-- JS لمشغل الفيديو -->
+  <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>
 </body>
 </html>
