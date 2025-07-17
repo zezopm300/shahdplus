@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn('⚠️ تم تحميل movies.json، ولكنه فارغ.');
             }
             console.log('✅ تم تحميل بيانات الأفلام بنجاح من movies.json', moviesData.length, 'فيلمًا تم العثور عليهم.');
-            initialPageLoadLogic();
+            initialPageLoadLogic(); // استدعاء منطق التحميل الأولي بعد جلب البيانات
         } catch (error) {
             console.error('❌ فشل تحميل بيانات الأفلام:', error.message);
             if (movieGrid) {
@@ -429,15 +429,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (window.videojs) {
                 await new Promise(resolve => {
                     const checkVisibility = () => {
-                        if (moviePlayerElement.offsetParent !== null) {
+                        // استخدام requestAnimationFrame لضمان أن العنصر مرئي وملحق بالـ DOM
+                        if (moviePlayerElement && moviePlayerElement.offsetParent !== null) {
                             console.log('[مشغل الفيديو] عنصر moviePlayer متصل ومرئي الآن. حل الوعد.');
                             resolve();
                         } else {
                             requestAnimationFrame(checkVisibility);
                         }
                     };
+                    // إعطاء فرصة قصيرة للـ DOM للتحديث قبل بدء التحقق
                     setTimeout(() => requestAnimationFrame(checkVisibility), 50);
                 });
+
 
                 console.log('[مشغل الفيديو] moviePlayer جاهز. المتابعة بتهيئة Video.js.');
 
@@ -638,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ogUrl = window.location.origin;
             canonicalLink.setAttribute('href', ogUrl + '/');
             ogTitle = 'شاهد بلس - بوابتك الفاخرة للترفيه السينمائي | أفلام ومسلسلات 4K';
-            ogImage = 'https://shahidplus.online/images/your-site-logo-for-og.png'; // تأكد من وجود هذا المسار للصورة الافتراضية
+            ogImage = 'https://shahidplus.online/images/your-site-logo-for-og.png';
             ogType = 'website';
 
             twitterTitle = ogTitle;
@@ -674,6 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('📄 [SEO] تم تحديث الميتا تاجز.');
     }
 
+    // هذه هي الدالة التي تم تعديلها فقط
     function addJsonLdSchema(movie = null) {
         let oldScript = document.querySelector('script[type="application/ld+json"]');
         if (oldScript) {
@@ -713,9 +717,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "image": movie.poster,
             "thumbnailUrl": movie.thumbnailUrl || movie.poster,
             "uploadDate": formattedUploadDate,
-            "embedUrl": movie.embed_url, // هنا تم استخدام movie.embed_url مباشرة
+            "embedUrl": movie.embed_url,
             "duration": movie.duration || "PT1H30M",
-            "contentUrl": movie.embed_url, // وهنا أيضاً
+            "contentUrl": movie.embed_url,
             "inLanguage": "ar",
             "publisher": {
                 "@type": "Organization",
@@ -747,17 +751,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     "url": window.location.href
                 }
             },
-            // *** الإضافة الجديدة لتحسين أرشفة الفيديو نفسه ***
+            // *** هذا هو الجزء الذي تم إضافته لـ VideoObject ***
             "video": {
                 "@type": "VideoObject",
                 "name": movie.title,
                 "description": movie.description || `مشاهدة وتحميل فيلم ${movie.title} بجودة عالية على شاهد بلس.`,
                 "uploadDate": formattedUploadDate,
-                "thumbnailUrl": movie.poster, // يمكن أن يكون نفس بوستر الفيلم
-                "contentUrl": movie.embed_url, // الرابط المباشر لملف الفيديو (MP4, M3U8, إلخ.)
-                "embedUrl": movie.embed_url, // الرابط الذي يتم تضمينه في المشغل
-                "duration": movie.duration || "PT1H30M", // مثال: "PT1H30M" لساعة و30 دقيقة
-                "interactionCount": "100000" // تقدير لعدد مرات المشاهدة
+                "thumbnailUrl": movie.poster,
+                "contentUrl": movie.embed_url,
+                "embedUrl": movie.embed_url,
+                "duration": movie.duration || "PT1H30M",
+                "interactionCount": "100000" // هذا رقم تقديري
             }
         };
 
@@ -797,6 +801,101 @@ document.addEventListener('DOMContentLoaded', () => {
         script.textContent = JSON.stringify(schema);
         document.head.appendChild(script);
         console.log('📄 [SEO] تم إضافة/تحديث مخطط JSON-LD الجديد.');
+    }
+
+    function showHomePage() {
+        console.log('🏠 [توجيه] عرض الصفحة الرئيسية.');
+        if (movieDetailsSection) movieDetailsSection.style.display = 'none';
+        if (suggestedMoviesSection) suggestedMoviesSection.style.display = 'none';
+
+        if (heroSection) heroSection.style.display = 'flex';
+        if (movieGridSection) movieGridSection.style.display = 'block';
+
+        if (searchInput) searchInput.value = '';
+        if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
+
+        // التأكد من أن moviesData محملة قبل فرزها وعرضها
+        if (moviesData.length > 0) {
+            moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
+        } else {
+            // إذا لم تكن البيانات محملة بعد، حاول جلبها
+            console.warn('⚠️ [الصفحة الرئيسية] بيانات الأفلام ليست محملة، سيتم الانتظار لتحميلها.');
+            // هذا السيناريو يجب أن يُعالج بواسطة initialPageLoadLogic
+        }
+
+        currentPage = 1;
+        paginateMovies(moviesDataForPagination, currentPage);
+
+        if (videoOverlay) {
+            videoOverlay.style.pointerEvents = 'none';
+            videoOverlay.classList.add('hidden');
+            if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'none';
+        }
+
+        if (videoJsPlayerInstance) {
+            console.log('[Video.js] التخلص من المشغل عند الانتقال للصفحة الرئيسية.');
+            videoJsPlayerInstance.dispose();
+            videoJsPlayerInstance = null;
+        }
+        currentDetailedMovie = null;
+
+        if (videoContainer) {
+            videoContainer.innerHTML = '';
+            console.log('[مشغل الفيديو] تم مسح movie-player-container عند الانتقال للصفحة الرئيسية.');
+        }
+
+        const newUrl = new URL(window.location.origin);
+        history.pushState({ view: 'home' }, 'شاهد بلس - الصفحة الرئيسية', newUrl.toString());
+        console.log(`🔗 [URL] تم تحديث URL إلى ${newUrl.toString()}`);
+
+        updateMetaTags();
+        addJsonLdSchema(); // تم استدعاء هذه الدالة لتهيئة بيانات الصفحة الرئيسية (ستكون خالية من بيانات الفيلم)
+
+        document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', 'شاهد بلس | بوابتك للترفيه السينمائي الفاخر');
+        let twitterCreator = document.querySelector('meta[name="twitter:creator"]');
+        if (twitterCreator) twitterCreator.setAttribute('content', '@YourTwitterHandle');
+    }
+
+
+    function displaySuggestedMovies(currentMovieId) {
+        if (!suggestedMovieGrid || !currentDetailedMovie) {
+            console.error('❌ displaySuggestedMovies: suggestedMovieGrid أو currentDetailedMovie غير موجودين. لا يمكن عرض الأفلام المقترحة.');
+            return;
+        }
+
+        const currentMovieGenre = currentDetailedMovie.genre;
+        let suggested = [];
+
+        if (currentMovieGenre) {
+            const currentMovieGenresArray = Array.isArray(currentMovieGenre) ? currentMovieGenre.map(g => String(g).toLowerCase().trim()) : [String(currentMovieGenre).toLowerCase().trim()];
+
+            suggested = moviesData.filter(movie =>
+                movie.id !== currentMovieId &&
+                (Array.isArray(movie.genre)
+                    ? movie.genre.some(g => currentMovieGenresArray.includes(String(g).toLowerCase().trim()))
+                    : currentMovieGenresArray.includes(String(movie.genre || '').toLowerCase().trim())
+                )
+            );
+            suggested = suggested.sort(() => 0.5 - Math.random());
+        }
+
+        if (suggested.length < 24) {
+            const otherMovies = moviesData.filter(movie => movie.id !== currentMovieId && !suggested.includes(movie));
+            const shuffledOthers = otherMovies.sort(() => 0.5 - Math.random());
+            const needed = 24 - suggested.length;
+            suggested = [...suggested, ...shuffledOthers.slice(0, needed)];
+        }
+
+        const finalSuggested = suggested.slice(0, 24);
+
+        if (finalSuggested.length === 0) {
+            suggestedMovieGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد أفلام مقترحة حالياً.</p>';
+            console.log('✨ [اقتراحات] لا توجد أفلام مقترحة متاحة بعد التصفية.');
+            return;
+        }
+
+        displayMovies(finalSuggested, suggestedMovieGrid);
+        console.log(`✨ [اقتراحات] تم عرض ${finalSuggested.length} فيلمًا مقترحًا في ${suggestedMovieGrid.id}.`);
     }
 
     // --- 5. Event Listeners (لم يتم لمسها) ---
@@ -1007,6 +1106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('popstate', (event) => {
         console.log('↩️ [Popstate] تم اكتشاف تصفح سجل المتصفح.', event.state);
+        // هذا الجزء مهم لضمان تحميل البيانات قبل محاولة عرض أي شيء
         if (moviesData.length === 0) {
             console.warn('[Popstate] لم يتم تحميل بيانات الفيلم، محاولة جلب البيانات وعرض الصفحة بناءً على الحالة.');
             fetchMoviesData().then(() => {
@@ -1025,11 +1125,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }).catch(err => {
                 console.error('[Popstate] فشل جلب بيانات الأفلام عند popstate:', err);
-                showHomePage();
+                showHomePage(); // العودة للصفحة الرئيسية عند الفشل التام
             });
-            return;
+            return; // توقف هنا وانتظر جلب البيانات
         }
 
+        // إذا كانت البيانات محملة بالفعل، تابع منطق popstate
         if (event.state && event.state.view === 'details' && event.state.id) {
             const movie = moviesData.find(m => m.id === event.state.id);
             if (movie) {
@@ -1045,5 +1146,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // تبدأ العملية بجلب بيانات الأفلام
     fetchMoviesData();
 });
