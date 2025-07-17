@@ -165,6 +165,22 @@
   "embed_url": "https://pixeldrain.com/api/file/gB5UiiXU"
 },
 {
+  "id": 12,
+  "title": "A Breed Apart (2025) – Horror Comedy About Influencers Trapped on a Dog-Infested Island",
+  "description": "A Breed Apart (2025) is a wild horror-comedy where a group of social media influencers are lured to a private island under false pretenses—and soon find themselves hunted by a pack of vicious, man-eating dogs. Starring Grace Caroline Currey, Virginia Gardner, and Hayden Panettiere, the film blends satire of influencer culture with intense survival terror.",
+  "poster": "https://i.ibb.co/bMYfN3rH/12.jpg",
+  "thumbnailUrl": "https://i.ibb.co/bMYfN3rH/12.jpg",
+  "release_date": "2025-05-16",
+  "genre": "Horror, Comedy, Thriller, Survival",
+  "director": "Griff Furst, Nathan Furst",
+  "cast": "Grace Caroline Currey, Virginia Gardner, Hayden Panettiere, Riele Downs, Page Kennedy, Joey Bragg, Troy Gentile",
+  "video_type": "mp4",
+  "rating": "2.6",
+  "duration": "PT1H39M",
+  "embed_url": "https://pixeldrain.com/api/file/9uBPdXso"
+},
+
+{
   "id": 13,
   "title": "Our Times (2025) – Mexican Sci‑Fi Romance Time‑Loop on Netflix",
   "description": "Our Times (2025), a Mexican sci‑fi romance directed by Chava Cartas, follows physicists Nora and Héctor as they accidentally travel from 1966 to 2025. Starring Lucero and Benny Ibarra, this Netflix hit combines time‑travel charm, gender dynamics, and emotional depth, ranking in the U.S. top 10—stream it now!",
@@ -178,7 +194,249 @@
   "rating": "5.3",
   "duration": "PT1H30M",
 "embed_url":"https://pixeldrain.com/api/file/3iJUgudd"
+
+},
+{
+  "id": 14,
+  "title": "Kill Shot",
+  "description": "دليلة ومجموعة من الإرهابيين يتنكرون كصيادين ويبحثون عن حقيبة تحتوي على 100 مليون دولار من المال المسروق، ويجدها دليل صيد سابق في البحرية الأمريكية وعميلته خلال رحلة صيد في جبال مونتانا، فيتحوّل الأمر إلى صراع للبقاء على قيد الحياة.",
+  "poster": "https://i.ibb.co/SwX7g1Vp/14.jpg",
+  "thumbnailUrl": "https://i.ibb.co/SwX7g1Vp/14.jpg",
+  "release_date": "2023-08-15",
+  "genre": "أكشن, تشويق",
+  "director": "Ari Novak",
+  "cast": "Rib Hillis, Rachel Cook, Bobby Maximus, Mara Ohara, Xian Mikol",
+  "video_type": "mp4",
+  "rating": "5.1",
+  "duration": "PT1H33M",
+  "embed_url": "https://pixeldrain.com/api/file/Mtq45KPv"
+},
+{
+  "id": 15,
+  "title": "6 Underground",
+  "description": "بعد أن زيف موته، يجمع ملياردير تقني فريقًا من العملاء الدوليين يعملون كجواسيس سرّيين خارج الدولة لمحاربة دكتاتور ظالم وتنفيذ عمليات جريئة وعنيفة حول العالم.",
+  "poster": "https://i.ibb.co/2Yc2WPRr/15.jpg",
+  "thumbnailUrl": "https://i.ibb.co/2Yc2WPRr/15.jpg",
+  "release_date": "2019-12-13",
+  "genre": "أكشن, مغامرة, إثارة",
+  "director": "Michael Bay",
+  "cast": "Ryan Reynolds, Mélanie Laurent, Corey Hawkins, Dave Franco, Adria Arjona, Manuel Garcia‑Rulfo, Ben Hardy",
+  "video_type": "mp4",
+  "rating": "6.1 IMDb / 36% RT",
+  "duration": "PT2H08M",
+  "embed_url": ""
+},
+{
+  "id": 16,
+  "title": "Virgin Territory",
+  "description": "في القرن الرابع عشر في فلورنسا أثناء الطاعون الأسود، يعتزل عشرة شباب فلورنسيون المدينة ويخوضون مغامرات جريئة مليئة بالرومانسية والمواقف الساخرة والجنسيات والقتال.",
+  "poster": "https://i.ibb.co/39z8XTvs/16.jpg",
+  "thumbnailUrl": "https://i.ibb.co/39z8XTvs/16.jpg",
+  "release_date": "2007-12-12",
+  "genre": "رومانسية, كوميديا, دراما",
+  "director": "David Leland",
+  "cast": "Hayden Christensen, Mischa Barton, Tim Roth, Rosalind Halstead, Kate Groombridge, Christopher Egan",
+  "video_type": "mp4",
+  "rating": "4.7 IMDb / 24% RT",
+  "duration": "PT1H37M",
+  "embed_url": "https://pixeldrain.com/api/file/1b3UWQh9"
+},
+{
+  "id": 17,
+  "title": "wir/us",
+  "description": "تعود عائلة ويلسون إلى بيتهم الصيفي على الشاطئ، لكن يقابلهم بتار يُشبّههم تمامًا – نسخه المضادة، ويبدأ الصراع مع عائلة تظهر فجأة ليلاً، لينقلب عطلتهم إلى كابوس مرعب.",
+  "poster": "https://i.ibb.co/SHdQ85G/17.jpg",
+  "thumbnailUrl": "https://i.ibb.co/SHdQ85G/17.jpg",
+  "release_date": "2019-03-22",
+  "genre": "رعب نفسي, إثارة",
+  "director": "Jordan Peele",
+  "cast": "Lupita Nyong'o, Winston Duke, Elisabeth Moss, Shahadi Wright Joseph, Evan Alex, Tim Heidecker",
+  "video_type": "mp4",
+  "rating": "6.8 IMDb / 93% RT",
+  "duration": "PT1H56M",
+  "embed_url": "https://pixeldrain.com/api/file/Lno6z8j4"
+},
+
+{
+  "id": 18,
+  "title": "Criminal",
+  "description": "يحصل مجرم مدان على عملية لزراعة ذاكرة عميل CIA ميت لإكمال مهمة سرية، فيتحول من قاتل بلا مشاعر إلى رجل يحاول حماية عائلة العميل قبل انتهاء مفعول العملية.",
+  "poster": "https://i.ibb.co/Jw6ZddvH/18.jpg",
+  "thumbnailUrl": "https://i.ibb.co/Jw6ZddvH/18.jpg",
+  "release_date": "2016-04-15",
+  "genre": "أكشن, إثارة, خيال علمي",
+  "director": "Ariel Vromen",
+  "cast": "Kevin Costner, Gary Oldman, Tommy Lee Jones, Gal Gadot, Ryan Reynolds, Alice Eve, Michael Pitt",
+  "video_type": "mp4",
+  "rating": "6.3 IMDb / ~29–36% RT",
+  "duration": "PT1H53M",
+  "embed_url": "https://pixeldrain.com/api/file/xiyCaDvH"
+},
+{
+  "id": 19,
+  "title": "1 Million Followers",
+  "description": "تدعى كاريسا، فتاة من ولاية أيداهو، تُدعى للانضمام إلى مجموعة مؤثرين اجتماعيين في قصر فاخر بتايلاند، بهدف بناء قاعدة متابعين تصل إلى مليون. لكن الأمور تنقلب إلى كابوس مع كشف هوية الراعي الحقيقي للحدث.",
+  "poster": "https://i.ibb.co/MDz96HKm/19.jpg",
+  "thumbnailUrl": "https://i.ibb.co/MDz96HKm/19.jpg",
+  "release_date": "2024-10-25",
+  "genre": "Thriller",
+  "director": "Harvey Lowry",
+  "cast": "Shelley Q, Evan Williams, Henry Ian Cusick, Ryan Jamaal Swain, Jade Ma, Constanza Palavecino, Patrick Atchison, Skye Ladell",
+  "video_type": "mp4",
+  "rating": "4.6 IMDb / 0% RT",
+  "duration": "PT1H41M",
+  "embed_url": "https://pixeldrain.com/api/file/zQsgayJX"
+},
+{
+  "id": 20,
+  "title": "Demise",
+  "description": "في هذا الثريلر العاطفي المعاصر، يقع رجل متزوج في حبّ نجمة أزياء صاعدة، فتبدأ زوجته بخطة انتقامية عندما تصبح حاملاً منه، ويأخذ الفيلم منحى مظلم مليء بالتقلبات والخيانة.",
+  "poster": "https://i.ibb.co/ptS0g3D/20.jpg",
+  "thumbnailUrl": "https://i.ibb.co/ptS0g3D/20.jpg",
+  "release_date": "2024-02-27",
+  "genre": "Mystery, Thriller, Drama",
+  "director": "Yara Estrada Lowe",
+  "cast": "Carlo Mendez, Liz Fenning, Crystal Hernandez, Morris Jude Martinez, Richard Rivera, Lucy Serrano",
+  "video_type": "mp4",
+  "rating": "67% RT / IMDb (غير متوفر بدقة)",
+  "duration": "PT1H56M",
+  "embed_url": "https://pixeldrain.com/api/file/miNEo5Zs"
+},
+{
+  "id": 21,
+  "title": "One Night Stand",
+  "description": "رجل شاب يحضر جنازة وزفافًا في نفس اليوم، يلتقي بامرأة تغير مسار حياته، ليبدأ رحلة اكتشاف الذات بعد اللقاء العرضي.",
+  "poster": "https://i.ibb.co/Y46kBL7h/21.jpg",
+  "thumbnailUrl": "https://i.ibb.co/Y46kBL7h/21.jpg",
+  "release_date": "2021-??-??",
+  "genre": "دراما, رومانسية",
+  "director": "Adriyanto Dewo",
+  "cast": "Jourdy Pranata, Putri Marino, Tegar Satrya, Elang El Gibran, Ruth Marini, Eduwart Manalu, Agnes Naomi",
+  "video_type": "mp4",
+  "rating": "6.1 IMDb",
+  "duration": "PT1H20M",
+  "embed_url": "https://pixeldrain.com/api/file/nmSPDTjF"
+},
+
+
+{
+  "id": 22,
+  "title": "Dry Martina",
+  "description": "مغنية أرجنتينية شهيرة تفقد القدرة على الحب والجنس بعد الانفصال، وتتقابل فجأة مع معجبة تشكّ بأنها أختها وترافقها إلى تشيلي، حيث تتحول رحلتها إلى استعادة الهوية والرغبة.",
+  "poster": "https://i.ibb.co/qYh9DYmT/22.jpg",
+  "thumbnailUrl": "https://i.ibb.co/qYh9DYmT/22.jpg",
+  "release_date": "2018-04-17",
+  "genre": "كوميديا – دراما",
+  "director": "Che Sandoval",
+  "cast": "Antonella Costa, Patricio Contreras, Dindi Jane, Pedro Campos",
+  "video_type": "mp4",
+  "rating": "5.8 IMDb / 57% RT",
+  "duration": "PT1H35M",
+  "embed_url": "https://pixeldrain.com/api/file/cocv4d2i"
+},
+{
+  "id": 23,
+  "title": "Four to Dinner",
+  "description": "At a dinner hosted by a married couple, four single friends explore different soulmate possibilities through parallel storylines that reveal the impact of choice and timing.",
+  "poster": "https://i.ibb.co/ccQvqj3B/23.jpg",
+  "thumbnailUrl": "https://i.ibb.co/ccQvqj3B/23.jpg",
+  "release_date": "2022-01-05",
+  "genre": "Romance, Comedy",
+  "director": "Alessio Maria Federici",
+  "cast": "Matilde Gioli, Giuseppe Maggio, Ilenia Pastorelli, Matteo Martari, Marta Gastini, Tommaso Basili",
+  "video_type": "mp4",
+  "rating": "6.1 IMDb / 39% RT",
+  "duration": "PT1H45M",
+  "embed_url": "https://pixeldrain.com/api/file/BP8iCiaB"
+},
+{
+  "id": 24,
+  "title": "Il medico... la studentessa",
+  "description": "Claudia, an 18‑year‑old student, plans a trip to London but is blocked by her stepmother. She discovers her stepmom is having an affair with Dr. Filippo, and Claudia blackmails them through a comedic chain of antics involving disguises, jealousy, and a disrupted wedding.",
+  "poster": "https://i.ibb.co/TJMTVgC/24.jpg",
+  "thumbnailUrl": "https://i.ibb.co/TJMTVgC/24.jpg",
+  "release_date": "1976-06-08",
+  "genre": "Comedy, Erotic Comedy",
+  "director": "Silvio Amadio",
+  "cast": "Gloria Guida, Jacques Dufilho, Pino Colizzi, Susan Scott, Ric, Enrico Beruschi",
+  "video_type": "mp4",
+  "rating": "4.4 IMDb",
+  "duration": "PT1H35M",
+  "embed_url": "https://pixeldrain.com/api/file/JpcgY765"
+},
+{
+  "id": 25,
+  "title": "The Little Hours",
+  "description": "In 14th‑century Tuscany, a young servant fleeing his master takes refuge at a convent of nuns, pretending to be deaf‑mute—and chaos ensues when the nuns become obsessed with him.",
+  "poster": "https://i.ibb.co/Psc7N9sZ/25.jpg",
+  "thumbnailUrl": "https://i.ibb.co/Psc7N9sZ/25.jpg",
+  "release_date": "2017-06-30",
+  "genre": "Comedy, Romance",
+  "director": "Jeff Baena",
+  "cast": "Alison Brie, Aubrey Plaza, Dave Franco, Kate Micucci, Molly Shannon, John C. Reilly, Fred Armisen",
+  "video_type": "mp4",
+  "rating": "5.8 IMDb / 78% RT",
+  "duration": "PT1H30M",
+  "embed_url": "https://pixeldrain.com/api/file/xo5Jfr3x"
+},
+{
+  "id": 26,
+  "title": "Lolita",
+  "description": "A middle‑aged literature professor becomes dangerously obsessed with his landlady’s young daughter, leading to a disturbing journey through forbidden love, manipulation, and tragedy.",
+  "poster": "https://i.ibb.co/Y7CwfvT9/26.jpg",
+  "thumbnailUrl": "https://i.ibb.co/Y7CwfvT9/26.jpg",
+  "release_date": "1997-01-14",
+  "genre": "Drama, Romance",
+  "director": "Adrian Lyne",
+  "cast": "Jeremy Irons, Dominique Swain, Melanie Griffith, Frank Langella, Ben Silverstone",
+  "video_type": "mp4",
+  "rating": "6.9 IMDb / 68% RT",
+  "duration": "PT2H17M",
+  "embed_url": "https://pixeldrain.com/api/file/T9G9NPxf"
+},
+{
+  "id": 27,
+  "title": "The Loft",
+  "description": "Five married men share a penthouse loft in secret to pursue extramarital affairs. But when the body of a young woman is found in the loft, trust fractures and suspicion builds, unraveling secrets through flashbacks and investigation.",
+  "poster": "https://i.ibb.co/xqtH4P5M/27.jpg",
+  "thumbnailUrl": "https://i.ibb.co/xqtH4P5M/27.jpg",
+  "release_date": "2014-01-30",
+  "genre": "Thriller, Mystery, Erotic Thriller",
+  "director": "Erik Van Looy",
+  "cast": "Karl Urban, James Marsden, Wentworth Miller, Eric Stonestreet, Matthias Schoenaerts, Isabel Lucas, Rachael Taylor",
+  "video_type": "mp4",
+  "rating": "6.3 IMDb / 14% RT",
+  "duration": "PT1H43M",
+  "embed_url": "https://pixeldrain.com/api/file/KzLnJs4a"
+},
+{
+  "id": 28,
+  "title": "The Way Back",
+  "description": "After being unjustly imprisoned in a Siberian gulag during WWII, a Polish officer escapes with fellow inmates and undertakes a nearly 4,000‑mile trek across Siberia, Mongolia, the Gobi Desert and the Himalayas to reach freedom in India.",
+  "poster": "https://i.ibb.co/R4Zypv67/28.jpg",
+  "thumbnailUrl": "https://i.ibb.co/R4Zypv67/28.jpg",
+  "release_date": "2010-12-26",
+  "genre": "Drama, Adventure, History",
+  "director": "Peter Weir",
+  "cast": "Jim Sturgess, Ed Harris, Colin Farrell, Saoirse Ronan, Mark Strong",
+  "video_type": "mp4",
+  "rating": "7.4 IMDb / 74% RT",
+  "duration": "PT2H13M",
+  "embed_url": "https://pixeldrain.com/api/file/3AHTiFj3"
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
