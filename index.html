@@ -1,44 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta name="yandex-verification" content="872d8413e07dde17" />
-    <script>
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
-
-  fetch('movies.json') // أو مسار JSON
-    .then(res => res.json())
-    .then(data => {
-      const movie = data.find(item => item.id === id);
-      if (!movie) return;
-
-      // توليد كود Structured Data ديناميكيًا
-      const structuredData = {
-        "@context": "https://schema.org",
-        "@type": "VideoObject",
-        "name": movie.title,
-        "description": movie.description,
-        "thumbnailUrl": movie.poster,
-        "uploadDate": "2025-07-15T10:00:00+00:00",
-        "duration": "PT1H30M",
-        "contentUrl": movie.video_url,
-        "embedUrl": location.href,
-        "publisher": {
-          "@type": "Organization",
-          "name": "ShahidPlus",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://shahidplus.online/logo.png"
-          }
-        }
-      };
-
-      const script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.textContent = JSON.stringify(structuredData);
-      document.head.appendChild(script);
-    });
-</script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -195,6 +157,87 @@
     <script async="async" data-cfasync="false" src="//pl26877662.profitableratecpm.com/e106700efc7a857b58a04a6abb040494/invoke.js"></script>
     <div id="container-e106700efc7a857b58a04a6abb040494"></div>
     
-    <script src="script.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (!id) return;
+
+  fetch("movies.json")
+    .then(res => res.json())
+    .then(data => {
+      const movie = data.find(item => item.id == id);
+      if (!movie) return;
+
+      // --- عرض الفيديو ---
+      const videoContainer = document.getElementById("movie-player-container");
+      if (videoContainer) {
+        videoContainer.innerHTML = `
+          <video controls poster="${movie.poster}" preload="auto" style="width: 100%;" playsinline>
+            <source src="${movie.embed_url}" type="video/mp4">
+            متصفحك لا يدعم تشغيل الفيديو.
+          </video>
+        `;
+      }
+
+      // --- عرض التفاصيل ---
+      document.getElementById("movie-details-title").textContent = movie.title || "";
+      document.getElementById("movie-details-poster").src = movie.poster || "";
+      document.getElementById("movie-details-description").textContent = movie.description || "";
+      document.getElementById("movie-details-release-date").textContent = movie.release_date || "";
+      document.getElementById("movie-details-genre").textContent = movie.genre || "";
+      document.getElementById("movie-details-director").textContent = movie.director || "";
+      document.getElementById("movie-details-cast").textContent = movie.cast || "";
+      document.getElementById("movie-details-duration").textContent = movie.duration.replace("PT", "").toLowerCase() || "";
+      document.getElementById("movie-details-rating").textContent = movie.rating || "";
+
+      // --- إظهار القسم الصحيح ---
+      document.getElementById("movie-details-section").style.display = "block";
+      document.getElementById("hero-section").style.display = "none";
+      document.getElementById("movie-grid-section").style.display = "none";
+
+      // --- Structured Data (VideoObject) ---
+      const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "VideoObject",
+        "name": movie.title,
+        "description": movie.description,
+        "thumbnailUrl": movie.poster,
+        "uploadDate": "2025-07-20T10:00:00+00:00", // يمكن توليدها تلقائيًا إذا أردت
+        "duration": movie.duration,
+        "contentUrl": movie.embed_url,
+        "embedUrl": window.location.href,
+        "publisher": {
+          "@type": "Organization",
+          "name": "ShahidPlus",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://shahidplus.online/logo.png"
+          }
+        }
+      };
+
+      const ldScript = document.createElement("script");
+      ldScript.type = "application/ld+json";
+      ldScript.textContent = JSON.stringify(structuredData);
+      document.head.appendChild(ldScript);
+
+      // --- Canonical URL ---
+      const existingCanonical = document.querySelector('link[rel="canonical"]');
+      if (!existingCanonical) {
+        const canonicalLink = document.createElement("link");
+        canonicalLink.rel = "canonical";
+        canonicalLink.href = window.location.href;
+        document.head.appendChild(canonicalLink);
+      }
+    })
+    .catch(err => console.error("فشل تحميل بيانات الفيلم:", err));
+});
+</script>
+
+
+ <script src="script.js"></script>
+
 </body>
 </html>
