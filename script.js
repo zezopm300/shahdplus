@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🏁 DOM Content Loaded. Script execution started.');
 
     // --- 1. DOM Element References ---
+    // Efficiently cache all necessary DOM elements at script start.
     const menuToggle = document.getElementById('menu-toggle');
     const mainNav = document.getElementById('main-nav');
     const homeNavLink = document.getElementById('home-nav-link-actual');
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevPageBtn = document.getElementById('prev-page-btn');
     const nextPageBtn = document.getElementById('next-page-btn');
 
-    const moviesPerPage = 30; // القيمة الموصى بها لأداء أفضل على الموبايل
+    const moviesPerPage = 30; // Recommended value for better mobile performance
 
     let currentPage = 1;
     const searchInput = document.getElementById('search-input');
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
 
     // --- 1.1. Critical DOM Element Verification ---
+    // Ensure all essential DOM elements are present for the script to function.
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
@@ -55,24 +57,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let criticalError = false;
     for (const [id, element] of Object.entries(requiredElements)) {
         if (!element) {
-            console.error(`❌ خطأ فادح: العنصر بالمعرّف "${id}" غير موجود. يرجى التحقق من ملف HTML الخاص بك.`);
+            console.error(`❌ Critical Error: DOM element with ID "${id}" not found. Please check your HTML file.`);
             criticalError = true;
         }
     }
     if (criticalError) {
-        console.error('🛑 لن يتم تنفيذ السكريبت بالكامل بسبب عناصر DOM الأساسية المفقودة. قم بإصلاح HTML الخاص بك!');
+        console.error('🛑 Script execution halted due to missing essential DOM elements. Please fix your HTML!');
         document.body.innerHTML = '<div style="text-align: center; margin-top: 100px; color: #f44336; font-size: 20px;">' +
-                                    'عذرًا، حدث خطأ فني. يرجى تحديث الصفحة أو المحاولة لاحقًا.' +
-                                    '<p style="font-size: 14px; color: #ccc;">(عناصر الصفحة الرئيسية مفقودة)</p></div>';
+                                    'Sorry, a technical error occurred. Please refresh the page or try again later.' +
+                                    '<p style="font-size: 14px; color: #ccc;">(Missing core page elements)</p></div>';
         return;
     } else {
-        console.log('✅ تم العثور على جميع عناصر DOM الأساسية.');
+        console.log('✅ All essential DOM elements found.');
     }
 
     // --- 2. Adsterra Configuration ---
+    // Note: Third-party ad scripts significantly impact performance.
+    // Consider strategies to load them asynchronously or defer them if not critical for initial load.
     const ADSTERRA_DIRECT_LINK_URL = 'https://www.profitableratecpm.com/spqbhmyax?key=2469b039d4e7c471764bd04c57824cf2';
-    const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000;
-    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 10 * 1000;
+    const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 3 * 60 * 1000; // 3 minutes
+    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 10 * 1000; // 10 seconds
 
     let lastDirectLinkClickTimeMovieCard = 0;
     let lastDirectLinkClickTimeVideoInteraction = 0;
@@ -88,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             lastClickTime = lastDirectLinkClickTimeVideoInteraction;
             setLastClickTime = (time) => lastDirectLinkClickTimeVideoInteraction = time;
         } else {
-            console.error('نوع إعلان غير صالح لـ openAdLink:', type);
+            console.error('Invalid ad type for openAdLink:', type);
             return false;
         }
 
@@ -98,15 +102,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (newWindow) {
                 newWindow.focus();
                 setLastClickTime(currentTime);
-                console.log(`💰 [نقر إعلان - ${type}] تم فتح الرابط المباشر بنجاح.`);
+                console.log(`💰 [Ad Click - ${type}] Direct link opened successfully.`);
                 return true;
             } else {
-                console.warn(`⚠️ [نقر إعلان - ${type}] تم حظر النافذة المنبثقة أو فشل فتح الرابط المباشر. تأكد من السماح بالنوافذ المنبثقة.`);
+                console.warn(`⚠️ [Ad Click - ${type}] Popup blocked or failed to open direct link. Ensure popups are allowed.`);
                 return false;
             }
         } else {
             const timeLeft = (cooldownDuration - (currentTime - lastClickTime)) / 1000;
-            console.log(`⏳ [نقر إعلان - ${type}] التهدئة للرابط المباشر نشطة. لن يتم فتح علامة تبويب جديدة. الوقت المتبقي: ${timeLeft.toFixed(1)}ثانية`);
+            console.log(`⏳ [Ad Click - ${type}] Direct link cooldown active. New tab will not open. Time left: ${timeLeft.toFixed(1)}s`);
             return false;
         }
     }
@@ -118,6 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let videoJsPlayerInstance = null;
     let videoJsScriptsLoaded = false;
 
+    // Dynamically loads Video.js and HLS.js libraries.
+    // Ensure these files are hosted locally on your server in the specified paths.
     async function loadVideoJsAndHls() {
         if (videoJsScriptsLoaded) {
             console.log("Video.js and HLS.js already loaded, skipping dynamic load.");
@@ -163,12 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Load Video.js assets from local paths
-            await loadLink('/assets/css/video-js.css'); // Assuming /assets/css/ for local CSS
+            await loadLink('/assets/css/video-js.css'); 
             await Promise.all([
                 loadScript('/assets/js/hls.min.js'), // Corrected: Load hls.min.js
-                loadScript('/assets/js/video.min.js') // Assuming /assets/js/ for local JS
+                loadScript('/assets/js/video.min.js')
             ]);
-            await loadScript('/assets/js/videojs-contrib-hls.min.js'); // Assuming /assets/js/ for local JS
+            await loadScript('/assets/js/videojs-contrib-hls.min.js');
 
             videoJsScriptsLoaded = true;
             console.log("All Video.js related scripts and stylesheets loaded successfully from local assets.");
@@ -180,6 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Fetches movie data from movies.json.
+    // Consider optimizing movies.json size if it becomes very large.
     async function fetchMoviesData() {
         try {
             console.log('📡 جلب بيانات الأفلام من movies.json...');
@@ -207,6 +215,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Creates a single movie card element.
+    // Images are loaded directly (no lazyload class/data-src) for initial SEO visibility.
     function createMovieCard(movie) {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
@@ -227,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return movieCard;
     }
 
+    // Displays movie cards in the target grid element.
     function displayMovies(moviesToDisplay, targetGridElement) {
         if (!targetGridElement) {
             console.error('❌ displayMovies: العنصر المستهدف للشبكة فارغ أو غير معرّف.');
@@ -245,6 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`🎬 [عرض] تم عرض ${moviesToDisplay.length} فيلمًا في ${targetGridElement.id}.`);
     }
 
+    // Handles pagination of movie results.
     function paginateMovies(moviesArray, page) {
         if (!Array.isArray(moviesArray) || moviesArray.length === 0) {
             displayMovies([], movieGrid);
@@ -259,12 +271,14 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`➡️ [ترقيم الصفحات] يتم عرض الصفحة ${page}. الأفلام من الفهرس ${startIndex} إلى ${Math.min(endIndex, moviesArray.length)-1}.`);
     }
 
+    // Updates pagination button states (disabled/enabled).
     function updatePaginationButtons(totalMovies) {
         if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
         if (nextPageBtn) nextPageBtn.disabled = currentPage * moviesPerPage >= totalMovies;
         console.log(`🔄 [ترقيم الصفحات] تم تحديث الأزرار. الصفحة الحالية: ${currentPage}, إجمالي الأفلام: ${totalMovies}`);
     }
 
+    // Performs search functionality based on user input.
     function performSearch() {
         const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
         let filteredMovies = [];
@@ -292,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // Displays detailed information for a specific movie.
     async function showMovieDetails(movieId) {
         console.log(`🔍 [توجيه] عرض تفاصيل الفيلم للمعّرف: ${movieId}`);
         const movie = moviesData.find(m => m.id === movieId);
@@ -600,7 +615,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('meta[property="og:url"]')?.setAttribute('content', ogUrl);
         document.querySelector('meta[property="og:type"]')?.setAttribute('content', ogType);
         document.querySelector('meta[property="og:locale"]')?.setAttribute('content', 'ar_AR');
-        document.querySelector('meta[property="og:site:name"]')?.setAttribute('content', 'شاهد بلس');
+        document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'شاهد بلس');
         document.querySelector('meta[property="og:image:alt"]')?.setAttribute('content', ogTitle);
         
         let ogVideoMeta = document.querySelector('meta[property="og:video"]');
@@ -655,7 +670,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 "@context": "http://schema.org",
                 "@type": "Movie",
                 "name": movie.title,
-                "description": movie.description || `مشاهدة وتحميل فيلم ${movie.title} بجودة عالية على شاهد بلس. استمتع بأحدث الأفلام والمسلسلات الحصرية.`,
+                "description": movie.description || `مشاهدة وتحميل فيلم ${movie.title} بجودة عالية على شاهد بلس. استمتع بمشاهدة أحدث الأفلام والمسلسلات الحصرية.`,
                 "image": movie.poster,
                 "url": window.location.href,
                 "uploadDate": formattedUploadDate,
@@ -962,7 +977,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
                     }
-                    if (videoLoadingSpinner) videoLoadingSpinner.style.алетdisplay = 'none';
+                    if (videoLoadingSpinner) videoLoadingSpinner.алетdisplay = 'none';
                 }
             } else {
                 console.log('[غطاء الفيديو] الإعلان لم يفتح بسبب التهدئة. سيظل الغطاء نشطًا.');
