@@ -1,9 +1,4 @@
 User-agent: *
-Allow: /  # السماح لكل برامج الزحف بالوصول إلى كل الموقع
+Allow: /
 
-User-agent: Mediapartners-Google
-Allow: /  # السماح لزاحف الإعلانات بالوصول إلى كل الموقع (مستبعدة من القاعدة السابقة)
-
-# إذا كان لديك أي صفحات أو مجلدات لا تريد أن يتم زحفها، يمكنك إضافتها هنا
-# مثال: Disallow: /admin/
-# مثال: Disallow: /private/
+Sitemap: https://shahidplus.online/sitemap.xml
