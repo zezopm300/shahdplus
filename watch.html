@@ -1,77 +1,67 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
+  <title>مشاهدة الفيلم</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="page-title">شاهد بلس - مشاهدة فيلم</title>
-  <meta name="description" content="شاهد الفيلم بجودة عالية على شاهد بلس.">
-  <meta name="robots" content="index, follow">
-
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <style>
+    body { font-family: Arial, sans-serif; direction: rtl; background: #111; color: #fff; padding: 20px; }
+    .container { max-width: 800px; margin: auto; }
+    video { width: 100%; margin-top: 20px; border-radius: 10px; }
+    .poster { max-width: 100%; border-radius: 10px; }
+    h1 { margin-top: 20px; font-size: 24px; }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1 id="movie-title">تحميل...</h1>
-    <video id="movie-video" controls width="100%" poster="">
-      <source id="video-source" src="" type="video/mp4">
-      متصفحك لا يدعم تشغيل الفيديو.
-    </video>
-
-    <div class="movie-info">
-      <img id="movie-poster" src="" alt="ملصق الفيلم" width="250" style="margin-top: 20px;">
-      <p><strong>الوصف:</strong> <span id="movie-description"></span></p>
-      <p><strong>تاريخ الإصدار:</strong> <span id="movie-release"></span></p>
-      <p><strong>النوع:</strong> <span id="movie-genre"></span></p>
-      <p><strong>المخرج:</strong> <span id="movie-director"></span></p>
-      <p><strong>الممثلون:</strong> <span id="movie-cast"></span></p>
-      <p><strong>المدة:</strong> <span id="movie-duration"></span></p>
-      <p><strong>التقييم:</strong> <span id="movie-rating"></span></p>
-    </div>
+    <div id="movie-container">جاري تحميل الفيلم...</div>
   </div>
 
-  <!-- ✅ سكربت جلب البيانات + توليد Structured Data -->
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const movieId = urlParams.get("id");
+    const movieId = new URLSearchParams(window.location.search).get('id');
+    if (!movieId) {
+      document.getElementById('movie-container').innerText = "لم يتم تحديد الفيلم.";
+      throw new Error("ID غير موجود في الرابط");
+    }
 
     fetch('movies.json')
       .then(res => res.json())
       .then(movies => {
-        const movie = movies.find(m => m.id === movieId);
+        const movie = movies.find(m => m.id == movieId);
         if (!movie) {
-          document.body.innerHTML = "<h2>الفيلم غير موجود</h2>";
+          document.getElementById('movie-container').innerText = "الفيلم غير موجود.";
           return;
         }
 
-        document.getElementById("page-title").textContent = `شاهد بلس - ${movie.title}`;
-        document.getElementById("movie-title").textContent = movie.title;
-        document.getElementById("video-source").src = movie.video_url;
-        document.getElementById("movie-video").poster = movie.poster;
-        document.getElementById("movie-video").load();
+        const container = document.getElementById('movie-container');
+        container.innerHTML = `
+          <h1>${movie.title}</h1>
+          <img src="${movie.poster}" alt="${movie.title}" class="poster">
+          <p><strong>الوصف:</strong> ${movie.description}</p>
+          <p><strong>النوع:</strong> ${movie.genre}</p>
+          <p><strong>الإخراج:</strong> ${movie.director}</p>
+          <p><strong>الأبطال:</strong> ${movie.cast}</p>
+          <p><strong>تقييم:</strong> ${movie.rating}</p>
+          <video controls poster="${movie.poster}">
+            <source src="${movie.embed_url}" type="video/${movie.video_type}">
+            متصفحك لا يدعم تشغيل الفيديو.
+          </video>
+        `;
 
-        document.getElementById("movie-description").textContent = movie.description;
-        document.getElementById("movie-release").textContent = movie.release_date;
-        document.getElementById("movie-genre").textContent = movie.genre;
-        document.getElementById("movie-director").textContent = movie.director;
-        document.getElementById("movie-cast").textContent = movie.cast;
-        document.getElementById("movie-duration").textContent = movie.duration;
-        document.getElementById("movie-rating").textContent = movie.rating;
-        document.getElementById("movie-poster").src = movie.poster;
-
-        // ✅ إنشاء Structured Data VideoObject تلقائياً
-        const videoData = {
+        // ✅ Inject structured data
+        const structuredData = {
           "@context": "https://schema.org",
           "@type": "VideoObject",
           "name": movie.title,
           "description": movie.description,
-          "thumbnailUrl": movie.poster,
-          "uploadDate": movie.release_date + "T12:00:00+03:00",
-          "contentUrl": movie.video_url,
+          "thumbnailUrl": movie.thumbnailUrl,
+          "uploadDate": movie.release_date,
+          "contentUrl": movie.embed_url,
           "embedUrl": window.location.href,
+          "duration": movie.duration || "PT1H30M",
           "publisher": {
             "@type": "Organization",
-            "name": "شاهد بلس",
+            "name": "ShahidPlus",
             "logo": {
               "@type": "ImageObject",
               "url": "https://shahidplus.online/images/logo.png"
@@ -79,10 +69,14 @@
           }
         };
 
-        const scriptTag = document.createElement('script');
-        scriptTag.type = 'application/ld+json';
-        scriptTag.textContent = JSON.stringify(videoData);
-        document.head.appendChild(scriptTag);
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(structuredData);
+        document.head.appendChild(script);
+      })
+      .catch(err => {
+        document.getElementById('movie-container').innerText = "حدث خطأ في تحميل الفيلم.";
+        console.error(err);
       });
   </script>
 </body>
