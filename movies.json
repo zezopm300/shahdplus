@@ -423,7 +423,53 @@
   "rating": "7.4 IMDb / 74% RT",
   "duration": "PT2H13M",
   "embed_url": "https://pixeldrain.com/api/file/3AHTiFj3"
+},
+  {
+  "id": 29,
+  "title": "Gladiator (2000)",
+  "description": "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery. Maximus rises as a gladiator, seeking justice through blood and honor.",
+  "poster": "https://i.postimg.cc/BnVDG5vk/29.jpg",
+  "thumbnailUrl": "https://i.postimg.cc/BnVDG5vk/29.jpg",
+  "release_date": "2000-05-05",
+  "genre": "Action, Drama, Adventure",
+  "director": "Ridley Scott",
+  "cast": "Russell Crowe, Joaquin Phoenix, Connie Nielsen, Oliver Reed, Richard Harris",
+  "video_type": "mp4",
+  "rating": "8.5 IMDb / 77% RT",
+  "duration": "PT2H35M",
+  "embed_url": "https://pixeldrain.com/api/file/kdVUYAkY"
+},
+{
+  "id": 30,
+  "title": "Stealing Beauty (1996)",
+  "description": "After her mother’s death, a 19-year-old American travels to the lush countryside of Italy to reconnect with friends of her mother and uncover the identity of her father, while experiencing love, art, and self-discovery.",
+  "poster": "https://i.postimg.cc/d0QqngvK/30.jpg",
+  "thumbnailUrl": "https://i.postimg.cc/d0QqngvK/30.jpg",
+  "release_date": "1996-06-14",
+  "genre": "Drama, Romance",
+  "director": "Bernardo Bertolucci",
+  "cast": "Liv Tyler, Jeremy Irons, Rachel Weisz, Joseph Fiennes, Sinéad Cusack",
+  "video_type": "mp4",
+  "rating": "6.6 IMDb",
+  "duration": "PT1H58M",
+  "embed_url": "https://pixeldrain.com/api/file/kdVUYAkY"
+},
+{
+  "id": 31,
+  "title": "MaXXXine (2024)",
+  "description": "بعد أحداث فيلمي 'X' و 'Pearl'، تسعى ماكسين مينكس وراء حلم الشهرة في لوس أنجلوس خلال ثمانينات القرن الماضي. وبينما يهدد قاتل متسلسل يُعرف باسم 'المُطارد الليلي' المدينة، تعود ماضٍ مظلم يهدد بكشف أسرارها وتدمير مستقبلها.",
+  "poster": "https://i.postimg.cc/v8rNHTf3/31.jpg",
+  "thumbnailUrl": "https://i.postimg.cc/v8rNHTf3/31.jpg",
+  "release_date": "2024-07-05",
+  "genre": "رعب، إثارة",
+  "director": "Ti West",
+  "cast": "Mia Goth، Elizabeth Debicki، Moses Sumney، Michelle Monaghan، Bobby Cannavale، Kevin Bacon",
+  "video_type": "mp4",
+  "rating": "7.2 IMDb (تقييم مبدأي)",
+  "duration": "PT1H44M",
+  "embed_url": "https://pixeldrain.com/api/file/9XaNx8o2"
 }
+
 
 
 
