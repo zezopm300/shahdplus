@@ -62,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (criticalError) {
         console.error('🛑 لن يتم تنفيذ السكريبت بالكامل بسبب عناصر DOM الأساسية المفقودة. قم بإصلاح HTML الخاص بك!');
         document.body.innerHTML = '<div style="text-align: center; margin-top: 100px; color: #f44336; font-size: 20px;">' +
-                                    'عذرًا، حدث خطأ فني. يرجى تحديث الصفحة أو المحاولة لاحقًا.' +
-                                    '<p style="font-size: 14px; color: #ccc;">(عناصر الصفحة الرئيسية مفقودة)</p></div>';
+                                   'عذرًا، حدث خطأ فني. يرجى تحديث الصفحة أو المحاولة لاحقًا.' +
+                                   '<p style="font-size: 14px; color: #ccc;">(عناصر الصفحة الرئيسية مفقودة)</p></div>';
         return;
     } else {
         console.log('✅ تم العثور على جميع عناصر DOM الأساسية.');
@@ -279,34 +279,52 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`🔄 [ترقيم الصفحات] تم تحديث الأزرار. الصفحة الحالية: ${currentPage}, إجمالي الأفلام: ${totalMovies}`);
     }
 
+    /**
+     * [تعديل] دالة بحث احترافية.
+     * تبحث عن الكلمات الأساسية في عنوان الفيلم، المخرج، الممثلين، والنوع.
+     * الكلمات يمكن أن تكون جزئية أو بترتيب مختلف.
+     */
     function performSearch() {
         const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
         let filteredMovies = [];
+
         if (query) {
-            filteredMovies = moviesData.filter(movie =>
-                movie.title.toLowerCase().includes(query) ||
-                (movie.director && movie.director.toLowerCase().includes(query)) ||
-                (Array.isArray(movie.cast) ? movie.cast.some(actor => actor.toLowerCase().includes(query)) : (movie.cast && String(movie.cast).toLowerCase().includes(query))) ||
-                (movie.genre && String(movie.genre).toLowerCase().includes(query))
-            );
+            const searchWords = query.split(/\s+/).filter(word => word.length > 1); // تقسيم الكلمات وتجاهل الحروف الفردية
+
+            filteredMovies = moviesData.filter(movie => {
+                const movieTitle = movie.title.toLowerCase();
+                const movieDirector = movie.director ? movie.director.toLowerCase() : '';
+                const movieCast = Array.isArray(movie.cast) ? movie.cast.map(c => c.toLowerCase()) : String(movie.cast || '').toLowerCase();
+                const movieGenre = Array.isArray(movie.genre) ? movie.genre.map(g => g.toLowerCase()) : String(movie.genre || '').toLowerCase();
+
+                // التحقق من أن كل كلمة من كلمات البحث موجودة في أي من حقول الفيلم
+                return searchWords.every(word =>
+                    movieTitle.includes(word) ||
+                    movieDirector.includes(word) ||
+                    (Array.isArray(movieCast) && movieCast.some(actor => actor.includes(word))) ||
+                    (Array.isArray(movieGenre) && movieGenre.some(genre => genre.includes(word)))
+                );
+            });
+
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = `نتائج البحث عن "${query}"`;
             }
             console.log(`🔍 [بحث] تم إجراء بحث عن "${query}". تم العثور على ${filteredMovies.length} نتيجة.`);
         } else {
-            // عند البحث الفارغ، اعرض الأفلام بترتيب عشوائي (أو بترتيب معين إذا أردت)
+            // عند البحث الفارغ، اعرض الأفلام بترتيب عشوائي
             filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
             }
             console.log('🔍 [بحث] استعلام البحث فارغ، يتم عرض جميع الأفلام (عشوائياً).');
         }
+
         currentPage = 1;
         moviesDataForPagination = filteredMovies;
         paginateMovies(moviesDataForPagination, currentPage);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
+    
     async function showMovieDetails(movieId) {
         console.log(`🔍 [توجيه] عرض تفاصيل الفيلم للمعّرف: ${movieId}`);
         const movie = moviesData.find(m => m.id === movieId);
@@ -1147,4 +1165,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // تبدأ العملية بجلب بيانات الأفلام عند تحميل DOM
     fetchMoviesData();
 });
-
