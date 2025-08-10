@@ -468,6 +468,36 @@
   "rating": "7.2 IMDb (تقييم مبدأي)",
   "duration": "PT1H44M",
   "embed_url": "https://pixeldrain.com/api/file/9XaNx8o2"
+},
+  {
+  "id": 32,
+  "title": "The Duchess (2008)",
+  "description": "تتبع قصة حياة جورجيانا، دوقة ديفونشير في أواخر القرن الثامن عشر، الشخصية المؤثرة سياسياً واجتماعياً التي واجهت زواجاً قمعياً وتداعياته، بينما تركت بصمة في عالم الأزياء والموضة.",
+  "poster": "https://i.ibb.co/WWDKBBG9/32.jpg",
+  "thumbnailUrl": "https://i.ibb.co/WWDKBBG9/32.jpg",
+  "release_date": "2008-09-05",
+  "genre": "دراما تاريخية، رومانسية، سيرة ذاتية",
+  "director": "Saul Dibb",
+  "cast": "Keira Knightley، Ralph Fiennes، Charlotte Rampling، Dominic Cooper، Hayley Atwell",
+  "video_type": "mp4",
+  "rating": "IMDb 6.9/10",
+  "duration": "PT1H50M",
+  "embed_url": "https://pixeldrain.com/api/file/ncrqegq4"
+},
+{
+  "id": 33,
+  "title": "Burning Betrayal (2023)",
+  "description": "بعد اكتشاف خيانة خطيبها، تنطلق ‘بابي’ في مغامرة مكثفة في عالم الإثارة والخطر، حيث تلتقي بالقاضي الغامض ماركو في علاقة مشحونة بالجنس والغموض.",
+  "poster": "https://i.ibb.co/Ld9pxwMy/33.jpg",
+  "thumbnailUrl": "https://i.ibb.co/Ld9pxwMy/33.jpg",
+  "release_date": "2023-10-25",
+  "genre": "دراما، إثارة، رومانسي",
+  "director": "Diego Freitas",
+  "cast": "Giovanna Lancellotti، Leandro Lima، Camilla de Lucas، Bruno Montaleone، Micael Borges",
+  "video_type": "mp4",
+  "rating": "– (لا توجد درجة رسمية IMDb حتى الآن)",
+  "duration": "PT1H39M",
+  "embed_url": "https://pixeldrain.com/api/file/p55S3G41"
 }
 
 
@@ -494,3 +524,4 @@
 
   
 ]
+
