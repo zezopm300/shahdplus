@@ -498,6 +498,36 @@
   "rating": "– (لا توجد درجة رسمية IMDb حتى الآن)",
   "duration": "PT1H39M",
   "embed_url": "https://pixeldrain.com/api/file/p55S3G41"
+},
+  {
+  "id": 34,
+  "title": "مشروع إكس (2025)",
+  "description": "تدور أحداث الفيلم حول ضابط شرطة يخوض صراعًا مع عصابة لتهريب الآثار، وتتقاطع طريقه مع فتاة غواصة من الجونة، ليخوضا معًا مغامرة مليئة بالإثارة والمخاطر.",
+  "poster": "https://i.ibb.co/215ZT53f/34.jpg",
+  "thumbnailUrl": "https://i.ibb.co/215ZT53f/34.jpg",
+  "release_date": "2025-05-21",
+  "genre": "أكشن، مغامرة، إثارة",
+  "director": "بيتر ميمي",
+  "cast": "كريم عبد العزيز، ياسمين صبري، إياد نصار، أحمد غزّي، هنا الزاهد، مريم الجندي، عصام السقا",
+  "video_type": "mp4",
+  "rating": "5.3 (IMDb)",
+  "duration": "PT1H49M",
+  "embed_url": "https://pixeldrain.com/api/file/H4JNkzD3"
+},
+{
+  "id": 35,
+  "title": "The Preppie Connection (2015)",
+  "description": "Based on a true story, the film follows a working-class student at an elite prep school who starts smuggling cocaine to gain social acceptance, leading him into a dangerous world tied to Colombian cartels.",
+  "poster": "https://i.ibb.co/YF0xxMFN/35.jpg",
+  "thumbnailUrl": "https://i.ibb.co/YF0xxMFN/35.jpg",
+  "release_date": "2015-10-10",
+  "genre": "Drama, Crime",
+  "director": "Joseph Castelo",
+  "cast": "Thomas Mann, Lucy Fry, Logan Huffman, Sam Page, Jessica Rothe, Bill Sage",
+  "video_type": "mp4",
+  "rating": "11% (Rotten Tomatoes)",
+  "duration": "PT1H35M",
+  "embed_url":"https://pixeldrain.com/api/file/sF4TfmQF"
 }
 
 
@@ -524,4 +554,5 @@
 
   
 ]
+
 
