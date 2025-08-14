@@ -528,6 +528,36 @@
   "rating": "11% (Rotten Tomatoes)",
   "duration": "PT1H35M",
   "embed_url":"https://pixeldrain.com/api/file/sF4TfmQF"
+},
+  {
+  "id": 36,
+  "title": "ريستارت (2025)",
+  "description": "محمد، فني هواتف طموح، يسعى للزواج من عفاف، مؤثرة على السوشيال ميديا. يواجهان تحديات مالية فيتحالفان مع العائلتين لتحقيق الشهرة، لكن سعيهما وراء التريند يضع علاقتهما وقيمهما في اختبار صعب، وسط مواقف كوميدية وإثارة اجتماعية.",
+  "poster": "https://i.ibb.co/qY7zSJKN/36.jpg",
+  "thumbnailUrl": "https://i.ibb.co/qY7zSJKN/36.jpg",
+  "release_date": "2025-05-29",
+  "genre": "كوميدي، رومانسي",
+  "director": "سارة وفيق",
+  "cast": "تامر حسني، هنا الزاهد، باسم سمرة، محمد ثروت، عصام السقا، ميمي جمال، إلهام شاهين (ضيفة شرف)، محمد رجب (ضيف شرف)",
+  "video_type": "mp4",
+  "rating": "4.2/10 (elCinema)",
+  "duration": "PT1H45M",
+  "embed_url": "https://pixeldrain.com/api/file/KE5xnNKQ"
+},
+{
+  "id": 37,
+  "title": "Kingdom of the Planet of the Apes (2024)",
+  "description": "بعد مرور 300 عام على أحداث 'War for the Planet of the Apes'، يعيش القردة في حضارة مزدهرة بينما تراجعت البشرية إلى حالة بدائية. ينطلق الشمبانزي الشاب نوا في رحلة لإنقاذ عشيرته من القائد المتعصب Proximus Caesar، مكتشفًا أسرارًا عن ماضي القردة والبشر ستغير مستقبل الكوكب.",
+  "poster": "https://i.ibb.co/zWfWKvS5/37.jpg",
+  "thumbnailUrl": "https://i.ibb.co/zWfWKvS5/37.jpg",
+  "release_date": "2024-05-10",
+  "genre": "خيال علمي، مغامرة، أكشن",
+  "director": "Wes Ball",
+  "cast": "Owen Teague، Freya Allan، Kevin Durand، Peter Macon، William H. Macy",
+  "video_type": "mp4",
+  "rating": "80% (Rotten Tomatoes)",
+  "duration": "PT2H25M",
+  "embed_url": "https://pixeldrain.com/api/file/pWUbUUeR"
 }
 
 
@@ -554,5 +584,6 @@
 
   
 ]
+
 
 
