@@ -272,24 +272,46 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`🔄 [ترقيم الصفحات] تم تحديث الأزرار. الصفحة الحالية: ${currentPage}, إجمالي الأفلام: ${totalMovies}`);
     }
 
-// --- دالة البحث الجديدة والمعدلة مع نظام النقاط (Scoring) ---
+// --- دالة البحث المتقدمة مع نظام النقاط والأولويات ---
     function performSearch() {
         const query = searchInput.value.toLowerCase().trim();
         let filteredMovies = [];
 
         if (query) {
             hideSuggestions(); // إخفاء الاقتراحات عند إجراء البحث النهائي
-            const searchWords = query.split(/\s+/).filter(word => word.length > 1);
+            
+            // تهيئة استعلام البحث ليناسب المحتوى العربي
+            const normalizedQuery = query.replace(/[ي]/g, 'ى').replace(/[أإآ]/g, 'ا');
+            const searchWords = normalizedQuery.split(/\s+/).filter(word => word.length > 1);
 
             if (searchWords.length > 0) {
-                // فلترة الأفلام بناءً على مدى تطابق الكلمات
                 let scoredMovies = moviesData.map(movie => {
                     let score = 0;
-                    const searchableText = `${movie.title.toLowerCase()} ${String(movie.director || '').toLowerCase()} ${Array.isArray(movie.cast) ? movie.cast.join(' ').toLowerCase() : String(movie.cast || '').toLowerCase()} ${Array.isArray(movie.genre) ? movie.genre.join(' ').toLowerCase() : String(movie.genre || '').toLowerCase()}`;
                     
+                    // جمع كل النصوص القابلة للبحث في متغير واحد
+                    const searchableText = {
+                        title: (movie.title || '').toLowerCase(),
+                        description: (movie.description || '').toLowerCase(),
+                        director: (movie.director || '').toLowerCase(),
+                        cast: (Array.isArray(movie.cast) ? movie.cast.join(' ') : (movie.cast || '')).toLowerCase(),
+                        genre: (Array.isArray(movie.genre) ? movie.genre.join(' ') : (movie.genre || '')).toLowerCase(),
+                    };
+
+                    // حساب النقاط بناءً على أهمية الحقل
                     searchWords.forEach(word => {
-                        if (searchableText.includes(word)) {
-                            score++;
+                        const regex = new RegExp(word.replace(/[ي]/g, 'ى').replace(/[أإآ]/g, 'ا'), 'i');
+                        
+                        // نقاط لتطابق العنوان (أعلى أولوية)
+                        if (regex.test(searchableText.title)) {
+                            score += 5;
+                        }
+                        // نقاط لتطابق المخرج أو الممثلين
+                        if (regex.test(searchableText.director) || regex.test(searchableText.cast)) {
+                            score += 3;
+                        }
+                        // نقاط لتطابق النوع أو الوصف
+                        if (regex.test(searchableText.genre) || regex.test(searchableText.description)) {
+                            score += 1;
                         }
                     });
 
@@ -301,14 +323,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 filteredMovies = scoredMovies.map(item => item.movie);
 
+                if (sectionTitleElement) {
+                    sectionTitleElement.textContent = `نتائج البحث عن "${query}" (${filteredMovies.length})`;
+                }
+
             } else {
-                 // إذا كانت كلمات البحث قصيرة جدًا، أظهر كل شيء أو لا شيء
-                 filteredMovies = moviesData;
+                 // إذا كان الاستعلام فارغًا أو قصيرًا جدًا، اعرض جميع الأفلام
+                 filteredMovies = [...moviesData];
+                 if (sectionTitleElement) {
+                    sectionTitleElement.textContent = 'أحدث الأفلام';
+                }
             }
 
-            if (sectionTitleElement) {
-                sectionTitleElement.textContent = `نتائج البحث عن "${query}"`;
-            }
             console.log(`🔍 [بحث احترافي] تم إجراء بحث عن "${query}". تم العثور على ${filteredMovies.length} نتيجة.`);
 
         } else {
