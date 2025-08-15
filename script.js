@@ -272,84 +272,105 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`🔄 [ترقيم الصفحات] تم تحديث الأزرار. الصفحة الحالية: ${currentPage}, إجمالي الأفلام: ${totalMovies}`);
     }
 
-// --- دالة البحث المتقدمة مع نظام النقاط والأولويات ---
+// --- دالة البحث الفائقة باستخدام خوارزمية تطابق الأحرف المتقاربة (Fuzzy Search) ---
     function performSearch() {
         const query = searchInput.value.toLowerCase().trim();
         let filteredMovies = [];
 
-        if (query) {
-            hideSuggestions(); // إخفاء الاقتراحات عند إجراء البحث النهائي
-            
-            // تهيئة استعلام البحث ليناسب المحتوى العربي
-            const normalizedQuery = query.replace(/[ي]/g, 'ى').replace(/[أإآ]/g, 'ا');
-            const searchWords = normalizedQuery.split(/\s+/).filter(word => word.length > 1);
+        if (query.length > 1) { // ابدأ البحث الاحترافي من حرفين
+            hideSuggestions(); 
+            const searchWords = query.split(/\s+/).filter(word => word.length > 0);
 
-            if (searchWords.length > 0) {
-                let scoredMovies = moviesData.map(movie => {
-                    let score = 0;
+            let scoredMovies = moviesData.map(movie => {
+                let score = 0;
+                
+                // جمع كل النصوص القابلة للبحث في متغير واحد
+                const searchableText = {
+                    title: (movie.title || '').toLowerCase(),
+                    description: (movie.description || '').toLowerCase(),
+                    director: (movie.director || '').toLowerCase(),
+                    cast: (Array.isArray(movie.cast) ? movie.cast.join(' ') : (movie.cast || '')).toLowerCase(),
+                };
+                
+                // حساب النقاط بناءً على تطابق الكلمات وتطابقها الجزئي
+                searchWords.forEach(word => {
+                    const wordNormalized = word.replace(/[ي]/g, 'ى').replace(/[أإآ]/g, 'ا');
+
+                    // تطابق كامل في العنوان (أعلى نقطة ممكنة)
+                    if (searchableText.title.includes(wordNormalized)) {
+                        score += 20;
+                    }
                     
-                    // جمع كل النصوص القابلة للبحث في متغير واحد
-                    const searchableText = {
-                        title: (movie.title || '').toLowerCase(),
-                        description: (movie.description || '').toLowerCase(),
-                        director: (movie.director || '').toLowerCase(),
-                        cast: (Array.isArray(movie.cast) ? movie.cast.join(' ') : (movie.cast || '')).toLowerCase(),
-                        genre: (Array.isArray(movie.genre) ? movie.genre.join(' ') : (movie.genre || '')).toLowerCase(),
-                    };
+                    // تطابق كامل في باقي الحقول
+                    if (searchableText.description.includes(wordNormalized) || 
+                        searchableText.director.includes(wordNormalized) || 
+                        searchableText.cast.includes(wordNormalized)) {
+                        score += 5;
+                    }
 
-                    // حساب النقاط بناءً على أهمية الحقل
-                    searchWords.forEach(word => {
-                        const regex = new RegExp(word.replace(/[ي]/g, 'ى').replace(/[أإآ]/g, 'ا'), 'i');
-                        
-                        // نقاط لتطابق العنوان (أعلى أولوية)
-                        if (regex.test(searchableText.title)) {
-                            score += 5;
-                        }
-                        // نقاط لتطابق المخرج أو الممثلين
-                        if (regex.test(searchableText.director) || regex.test(searchableText.cast)) {
-                            score += 3;
-                        }
-                        // نقاط لتطابق النوع أو الوصف
-                        if (regex.test(searchableText.genre) || regex.test(searchableText.description)) {
-                            score += 1;
+                    // نقاط إضافية للتطابق الجزئي أو المتقارب (Fuzzy Matching)
+                    const titleWords = searchableText.title.split(/\s+/);
+                    titleWords.forEach(tWord => {
+                        const tWordNormalized = tWord.replace(/[ي]/g, 'ى').replace(/[أإآ]/g, 'ا');
+                        if (levenshteinDistance(wordNormalized, tWordNormalized) <= 2) {
+                            score += 10;
                         }
                     });
+                });
 
-                    return { movie, score };
-                }).filter(item => item.score > 0); // الاحتفاظ بالأفلام التي حصلت على نقطة واحدة على الأقل
-                
-                // ترتيب الأفلام بناءً على النقاط (الأعلى أولاً)
-                scoredMovies.sort((a, b) => b.score - a.score);
+                return { movie, score };
+            }).filter(item => item.score > 0); // الاحتفاظ بالأفلام التي حصلت على نقاط
 
-                filteredMovies = scoredMovies.map(item => item.movie);
+            // ترتيب الأفلام بناءً على النقاط (الأعلى أولاً)
+            scoredMovies.sort((a, b) => b.score - a.score);
 
-                if (sectionTitleElement) {
-                    sectionTitleElement.textContent = `نتائج البحث عن "${query}" (${filteredMovies.length})`;
-                }
+            filteredMovies = scoredMovies.map(item => item.movie);
 
-            } else {
-                 // إذا كان الاستعلام فارغًا أو قصيرًا جدًا، اعرض جميع الأفلام
-                 filteredMovies = [...moviesData];
-                 if (sectionTitleElement) {
-                    sectionTitleElement.textContent = 'أحدث الأفلام';
-                }
+            if (sectionTitleElement) {
+                sectionTitleElement.textContent = `نتائج البحث عن "${query}" (${filteredMovies.length})`;
             }
-
-            console.log(`🔍 [بحث احترافي] تم إجراء بحث عن "${query}". تم العثور على ${filteredMovies.length} نتيجة.`);
+            console.log(`🔍 [بحث فائق] تم العثور على ${filteredMovies.length} نتيجة لـ "${query}".`);
 
         } else {
-            // عند البحث الفارغ، اعرض الأفلام بترتيب عشوائي
+            // إذا كان الاستعلام حرف واحد أو فارغ، أظهر الأفلام عشوائياً
             filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
             }
-            console.log('🔍 [بحث] استعلام البحث فارغ، يتم عرض جميع الأفلام (عشوائياً).');
+            console.log('🔍 [بحث] استعلام قصير جداً أو فارغ، يتم عرض جميع الأفلام عشوائياً.');
         }
 
         currentPage = 1;
         moviesDataForPagination = filteredMovies;
         paginateMovies(moviesDataForPagination, currentPage);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- خوارزمية المسافة بين سلسلتين (Levenshtein Distance) ---
+    // هذه الدالة تقيس مدى تشابه كلمتين. كلما كانت القيمة أصغر، كان التشابه أكبر.
+    function levenshteinDistance(s1, s2) {
+        s1 = s1.toLowerCase();
+        s2 = s2.toLowerCase();
+        const costs = [];
+        for (let i = 0; i <= s1.length; i++) {
+            let lastValue = i;
+            for (let j = 0; j <= s2.length; j++) {
+                if (i === 0) {
+                    costs[j] = j;
+                } else if (j > 0) {
+                    let newValue = costs[j - 1];
+                    if (s1.charAt(i - 1) !== s2.charAt(j - 1)) {
+                        newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                    }
+                    costs[j - 1] = lastValue;
+                    lastValue = newValue;
+                }
+            }
+            if (i > 0) {
+                costs[s2.length] = lastValue;
+            }
+        }
+        return costs[s2.length];
     }
 
     // --- وظائف الاقتراحات (Autosuggest) الجديدة ---
