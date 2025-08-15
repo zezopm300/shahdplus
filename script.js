@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
     const movieDetailsPoster = document.getElementById('movie-details-poster');
     const prevPageBtn = document.getElementById('prev-page-btn');
-    const nextPageBtn = document = document.getElementById('next-page-btn');
+    const nextPageBtn = document.getElementById('next-page-btn');
 
     const moviesPerPage = 30;
 
@@ -73,10 +73,24 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('✅ تم العثور على جميع عناصر DOM الأساسية.');
     }
 
+    // --- أكواد الإعلانات التي تم إرجاعها
+    // إعادة الدالة التي تفتح الإعلانات
+    const DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION = 3000; // 3 seconds
+    const DIRECT_LINK_COOLDOWN_MOVIE_CARD = 5000; // 5 seconds
+    let lastAdClickTime = 0;
+
     function openAdLink(cooldownDuration, type) {
-        console.log(`🚫 [نقر إعلان - ${type}] تم تعطيل وظيفة فتح الإعلانات.`);
+        const currentTime = Date.now();
+        if (currentTime - lastAdClickTime > cooldownDuration) {
+            console.log(`✅ [نقر إعلان - ${type}] فتح إعلان جديد.`);
+            window.open('//pl26877671.profitableratecpm.com/7f/c2/f9/7fc2f9f201b6ffe0f5e3ed54d7bae23c.js', '_blank');
+            lastAdClickTime = currentTime;
+        } else {
+            console.log(`🚫 [نقر إعلان - ${type}] تم منع الفتح. في فترة التبريد.`);
+        }
         return false;
     }
+    // --- نهاية أكواد الإعلانات التي تم إرجاعها
 
     // --- 3. Movie Data & Video URL Handling ---
     let moviesData = [];
@@ -188,6 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
         movieCard.querySelector('img').onerror = function() { this.src = movie.poster; };
         movieCard.addEventListener('click', () => {
             console.log(`⚡ [تفاعل] تم النقر على بطاقة الفيلم للمعّرف: ${movie.id}`);
+            // تمت إعادة استدعاء openAdLink هنا
+            openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'movieCard');
             showMovieDetails(movie.id);
         });
         return movieCard;
@@ -434,9 +450,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[تفاصيل] تم تعيين البوستر لـ ${movie.title}`);
             }
 
+            // تمت إعادة معالج الحدث لفتح الإعلان عند النقر على البوستر
             if (movieDetailsPoster) {
                 movieDetailsPoster.addEventListener('click', () => {
-                    // تمت إزالة openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'movieDetailsPoster');
+                    openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'movieDetailsPoster');
                 });
             }
 
@@ -515,6 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
 
+                // تمت إعادة معالجات الأحداث الخاصة بالإعلانات على مشغل الفيديو
                 videoJsPlayerInstance.on('loadstart', () => {
                     console.log('[Video.js] حدث بدء تحميل الفيديو.');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
@@ -545,6 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoJsPlayerInstance.on('pause', () => {
                     console.log('[Video.js] تم إيقاف الفيديو مؤقتًا.');
                     if (!videoJsPlayerInstance.ended()) {
+                        openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoPause');
                         if (videoOverlay) {
                             videoOverlay.style.pointerEvents = 'auto';
                             videoOverlay.classList.remove('hidden');
@@ -554,6 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 videoJsPlayerInstance.on('seeked', () => {
                     console.log('[Video.js] تم البحث في الفيديو.');
+                    openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoSeeked');
                 });
 
                 videoJsPlayerInstance.on('error', (e) => {
@@ -575,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 videoJsPlayerInstance.on('ended', () => {
                     console.log('[Video.js] انتهى الفيديو.');
+                    openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoEnded');
                     if (videoOverlay) {
                         videoOverlay.style.pointerEvents = 'auto';
                         videoOverlay.classList.remove('hidden');
@@ -828,6 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
         backToHomeBtn.addEventListener('click', showHomePage);
     }
 
+    // لم يتم إعادة معالج الحدث الخاص بالطبقة الشفافة
     if (videoOverlay) {
         videoOverlay.addEventListener('click', (e) => {
             console.log('🎬 [مشغل الفيديو] تم النقر على الطبقة الشفافة.');
