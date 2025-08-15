@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoLoadingSpinner = document.getElementById('video-loading-spinner');
     const movieDetailsPoster = document.getElementById('movie-details-poster');
     const prevPageBtn = document.getElementById('prev-page-btn');
-    const nextPageBtn = document.getElementById('next-page-btn');
+    const nextPageBtn = document = document.getElementById('next-page-btn');
 
     const moviesPerPage = 30;
 
@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('✅ تم العثور على جميع عناصر DOM الأساسية.');
     }
 
-    // --- تم إزالة جميع أكواد Adsterra ---
     function openAdLink(cooldownDuration, type) {
         console.log(`🚫 [نقر إعلان - ${type}] تم تعطيل وظيفة فتح الإعلانات.`);
         return false;
@@ -174,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- تحسينات أداء تحميل الصور
     function createMovieCard(movie) {
         const movieCard = document.createElement('div');
         movieCard.classList.add('movie-card');
@@ -181,14 +181,13 @@ document.addEventListener('DOMContentLoaded', () => {
         movieCard.innerHTML = `
             <picture>
                 <source srcset="${webpSource}" type="image/webp">
-                <img src="${movie.poster}" alt="${movie.title}" width="200" height="300">
+                <img src="${movie.poster}" alt="${movie.title}" width="200" height="300" loading="lazy">
             </picture>
             <h3>${movie.title}</h3>
         `;
-        movieCard.querySelector('source').onerror = function() { this.remove(); };
+        movieCard.querySelector('img').onerror = function() { this.src = movie.poster; };
         movieCard.addEventListener('click', () => {
             console.log(`⚡ [تفاعل] تم النقر على بطاقة الفيلم للمعّرف: ${movie.id}`);
-            // تمت إزالة openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'movieCard');
             showMovieDetails(movie.id);
         });
         return movieCard;
@@ -207,10 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const fragment = document.createDocumentFragment();
         console.log(`🎬 [عرض] جاري عرض ${moviesToDisplay.length} فيلم في ${targetGridElement.id}.`);
         moviesToDisplay.forEach(movie => {
-            targetGridElement.appendChild(createMovieCard(movie));
+            fragment.appendChild(createMovieCard(movie));
         });
+        targetGridElement.appendChild(fragment);
         console.log(`🎬 [عرض] تم عرض ${moviesToDisplay.length} فيلمًا في ${targetGridElement.id}.`);
     }
 
@@ -433,7 +434,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[تفاصيل] تم تعيين البوستر لـ ${movie.title}`);
             }
 
-            // تمت إزالة openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'movieDetailsPoster');
             if (movieDetailsPoster) {
                 movieDetailsPoster.addEventListener('click', () => {
                     // تمت إزالة openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'movieDetailsPoster');
@@ -515,7 +515,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
 
-                // تمت إزالة جميع معالجات الأحداث التي تفتح إعلانات
                 videoJsPlayerInstance.on('loadstart', () => {
                     console.log('[Video.js] حدث بدء تحميل الفيديو.');
                     if (videoLoadingSpinner) videoLoadingSpinner.style.display = 'block';
@@ -629,8 +628,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let twitterTitle, twitterDescription, twitterImage;
 
         if (movie) {
-            // ... (بقية منطق SEO الذي لم يتم تقديمه)
-            // بما أن هذا الجزء لم يكن موجودًا في الكود الأصلي، سيظل فارغًا
             pageTitle = movie.title;
             pageDescription = movie.description;
             pageKeywords = (movie.genre || []).concat(movie.cast || []).concat(movie.director || []).join(', ');
@@ -645,13 +642,12 @@ document.addEventListener('DOMContentLoaded', () => {
             twitterDescription = movie.description;
             twitterImage = movie.poster;
         } else {
-            // ... (بقية منطق SEO للصفحة الرئيسية)
             pageTitle = 'شاهد بلس';
             pageDescription = 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي.';
             pageKeywords = 'أفلام، مسلسلات، مشاهدة أونلاين';
             ogUrl = 'https://shahidplus.online/';
             ogTitle = 'شاهد بلس';
-            ogDescription = 'شاهد بلس: بوابتك الفاخرة للترفيه السينمائي.';
+            ogDescription = 'شاهد بوابتك الفاخرة للترفيه السينمائي.';
             ogImage = 'https://shahidplus.online/images/your-site-logo-for-og.png';
             ogType = 'website';
             ogVideoUrl = '';
@@ -763,7 +759,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (suggestedMoviesSection) suggestedMoviesSection.style.display = 'none';
         if (sectionTitleElement) sectionTitleElement.textContent = 'أحدث الأفلام';
 
-        // التخلص من مشغل الفيديو عند العودة إلى الصفحة الرئيسية
         if (videoJsPlayerInstance) {
             videoJsPlayerInstance.dispose();
             videoJsPlayerInstance = null;
@@ -833,11 +828,9 @@ document.addEventListener('DOMContentLoaded', () => {
         backToHomeBtn.addEventListener('click', showHomePage);
     }
 
-    // تم تعطيل وظيفة openAdLink عند النقر على الفيديو
     if (videoOverlay) {
         videoOverlay.addEventListener('click', (e) => {
             console.log('🎬 [مشغل الفيديو] تم النقر على الطبقة الشفافة.');
-            // openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
             if (videoJsPlayerInstance) {
                 videoJsPlayerInstance.play();
                 videoOverlay.classList.add('hidden');
@@ -856,14 +849,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 performSearch();
             }
         });
+        // استخدام Debounce لتحسين الأداء
+        let debounceTimer;
         searchInput.addEventListener('input', () => {
-            const query = searchInput.value.toLowerCase().trim();
-            if (query.length > 1) {
-                const suggestions = moviesData.filter(movie => movie.title.toLowerCase().includes(query));
-                showSuggestions(suggestions);
-            } else {
-                hideSuggestions();
-            }
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const query = searchInput.value.toLowerCase().trim();
+                if (query.length > 1) {
+                    const suggestions = moviesData.filter(movie => movie.title.toLowerCase().includes(query) || (Array.isArray(movie.cast) && movie.cast.some(actor => actor.toLowerCase().includes(query))));
+                    showSuggestions(suggestions);
+                } else {
+                    hideSuggestions();
+                }
+            }, 300); // تأخير 300 مللي ثانية
         });
         document.addEventListener('click', (e) => {
             if (searchContainer && !searchContainer.contains(e.target)) {
@@ -908,5 +906,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    fetchMoviesData();
+    // --- 8. Lazy Loading of Images ---
+    const observerOptions = {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.1
+    };
+
+    const lazyLoadObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                const src = img.getAttribute('data-src');
+                if (src) {
+                    img.src = src;
+                    img.removeAttribute('data-src');
+                    img.classList.remove('lazy-img');
+                    observer.unobserve(img);
+                }
+            }
+        });
+    }, observerOptions);
+
+    function observeLazyImages() {
+        document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+            const src = img.src;
+            if (src) {
+                img.setAttribute('data-src', src);
+                img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300"%3E%3C/svg%3E';
+                img.classList.add('lazy-img');
+                lazyLoadObserver.observe(img);
+            }
+        });
+    }
+    
+    // --- Initial fetch and load ---
+    fetchMoviesData().then(() => {
+        // Run after movies data is loaded and displayed for the first time
+        observeLazyImages();
+    });
 });
