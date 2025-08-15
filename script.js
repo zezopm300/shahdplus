@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainNav = document.getElementById('main-nav');
     const homeNavLink = document.getElementById('home-nav-link-actual');
     const navLinks = document.querySelectorAll('.main-nav ul li a');
+    const heroSection = document.getElementById('hero-section');
+    const watchNowBtn = document.getElementById('watch-now-btn');
     const movieGridSection = document.getElementById('movie-grid-section');
     const movieDetailsSection = document.getElementById('movie-details-section');
     const movieGrid = document.getElementById('movie-grid');
@@ -20,21 +22,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevPageBtn = document.getElementById('prev-page-btn');
     const nextPageBtn = document.getElementById('next-page-btn');
 
-    // ** تم حذف مرجع `heroSection` و `watchNowBtn` لأن السكشن بالكامل سيتم حذفه من الـ HTML. **
-    const heroSection = document.getElementById('hero-section');
-
-    const moviesPerPage = 30;
+    const moviesPerPage = 30;  // Increased for better pagination on larger screens
 
     let currentPage = 1;
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
     const sectionTitleElement = movieGridSection ? movieGridSection.querySelector('h2') : null;
 
+    const searchContainer = searchInput ? searchInput.parentElement : null;
+    let suggestionsList = null;
+
     // --- 1.1. Critical DOM Element Verification ---
     const requiredElements = {
         '#movie-grid': movieGrid,
         '#movie-grid-section': movieGridSection,
         '#movie-details-section': movieDetailsSection,
+        '#hero-section': heroSection,
         '#movie-player-container': videoContainer,
         '#video-overlay': videoOverlay,
         '#suggested-movie-grid': suggestedMovieGrid,
@@ -62,8 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (criticalError) {
         console.error('🛑 لن يتم تنفيذ السكريبت بالكامل بسبب عناصر DOM الأساسية المفقودة. قم بإصلاح HTML الخاص بك!');
         document.body.innerHTML = '<div style="text-align: center; margin-top: 100px; color: #f44336; font-size: 20px;">' +
-            'عذرًا، حدث خطأ فني. يرجى تحديث الصفحة أو المحاولة لاحقًا.' +
-            '<p style="font-size: 14px; color: #ccc;">(عناصر الصفحة الرئيسية مفقودة)</p></div>';
+                                   'عذرًا، حدث خطأ فني. يرجى تحديث الصفحة أو المحاولة لاحقًا.' +
+                                   '<p style="font-size: 14px; color: #ccc;">(عناصر الصفحة الرئيسية مفقودة)</p></div>';
         return;
     } else {
         console.log('✅ تم العثور على جميع عناصر DOM الأساسية.');
@@ -78,6 +81,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastDirectLinkClickTimeVideoInteraction = 0;
 
     function openAdLink(cooldownDuration, type) {
+        // Exclude search-related clicks from triggering ads
+        if (type === 'search') {
+            return false;
+        }
+        
         let lastClickTime;
         let setLastClickTime;
 
@@ -268,56 +276,174 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(`🔄 [ترقيم الصفحات] تم تحديث الأزرار. الصفحة الحالية: ${currentPage}, إجمالي الأفلام: ${totalMovies}`);
     }
 
-    // ** تم تعديل دالة البحث لتصبح أكثر قوة ودقة **
+    // --- New and improved search function with fuzzy matching and scoring ---
     function performSearch() {
         const query = searchInput.value.toLowerCase().trim();
         let filteredMovies = [];
-    
-        if (query) {
-            const searchWords = query.split(/\s+/).filter(word => word.length > 1);
-    
-            if (searchWords.length > 0) {
-                let scoredMovies = moviesData.map(movie => {
-                    let score = 0;
-                    const searchableText = `${movie.title.toLowerCase()} ${String(movie.director || '').toLowerCase()} ${Array.isArray(movie.cast) ? movie.cast.join(' ').toLowerCase() : String(movie.cast || '').toLowerCase()} ${Array.isArray(movie.genre) ? movie.genre.join(' ').toLowerCase() : String(movie.genre || '').toLowerCase()}`;
-    
-                    searchWords.forEach(word => {
-                        if (searchableText.includes(word)) {
-                            score++;
-                        }
-                    });
-    
-                    return { movie, score };
-                }).filter(item => item.score > 0);
-    
-                scoredMovies.sort((a, b) => b.score - a.score);
-                filteredMovies = scoredMovies.map(item => item.movie);
-    
-            } else {
-                filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
-            }
-    
+
+        if (query.length > 0) {
+            hideSuggestions();
+            const searchWords = query.split(/\s+/).filter(word => word.length > 0);
+
+            let scoredMovies = moviesData.map(movie => {
+                let score = 0;
+                const searchableText = `${movie.title.toLowerCase()} ${String(movie.director || '').toLowerCase()} ${Array.isArray(movie.cast) ? movie.cast.join(' ').toLowerCase() : String(movie.cast || '').toLowerCase()} ${Array.isArray(movie.genre) ? movie.genre.join(' ').toLowerCase() : String(movie.genre || '').toLowerCase()}`;
+
+                // Simple exact word match scoring
+                searchWords.forEach(word => {
+                    if (searchableText.includes(word)) {
+                        score += 5;
+                    }
+                });
+
+                // Fuzzy matching for partial words (e.g., "star w" matches "star wars")
+                if (searchWords.length > 0) {
+                    const combinedQuery = searchWords.join(' ');
+                    if (searchableText.includes(combinedQuery)) {
+                        score += 10;
+                    }
+                }
+                
+                // Title-specific bonus
+                if (movie.title.toLowerCase().includes(query)) {
+                    score += 20;
+                }
+
+                return { movie, score };
+            }).filter(item => item.score > 0);
+
+            scoredMovies.sort((a, b) => b.score - a.score);
+
+            filteredMovies = scoredMovies.map(item => item.movie);
+
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = `نتائج البحث عن "${query}"`;
             }
             console.log(`🔍 [بحث احترافي] تم إجراء بحث عن "${query}". تم العثور على ${filteredMovies.length} نتيجة.`);
-    
+
         } else {
-            // عند البحث الفارغ، اعرض الأفلام بترتيب عشوائي
-            filteredMovies = [...moviesData].sort(() => 0.5 - Math.random());
+            // If the search query is empty, show all movies
+            filteredMovies = moviesData;
             if (sectionTitleElement) {
                 sectionTitleElement.textContent = 'أحدث الأفلام';
             }
-            console.log('🔍 [بحث] استعلام البحث فارغ، يتم عرض جميع الأفلام (عشوائياً).');
+            console.log('🔍 [بحث] استعلام البحث فارغ، يتم عرض جميع الأفلام.');
         }
-    
+
         currentPage = 1;
         moviesDataForPagination = filteredMovies;
         paginateMovies(moviesDataForPagination, currentPage);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // ** تم حذف دوال الاقتراحات (Autosuggest) بالكامل **
+    // --- Suggestions (Autosuggest) functions ---
+    let debounceTimeout;
+    searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+            const query = searchInput.value.toLowerCase().trim();
+            if (query.length > 1) { // Trigger suggestions only for queries > 1 character
+                const filtered = moviesData.filter(movie =>
+                    movie.title.toLowerCase().includes(query) ||
+                    (Array.isArray(movie.cast) && movie.cast.some(actor => actor.toLowerCase().includes(query))) ||
+                    (Array.isArray(movie.genre) && movie.genre.some(g => g.toLowerCase().includes(query))) ||
+                    (movie.director && movie.director.toLowerCase().includes(query))
+                );
+                showSuggestions(filtered);
+            } else {
+                hideSuggestions();
+            }
+        }, 300); // 300ms debounce
+    });
+
+    function showSuggestions(filteredMovies) {
+        if (!searchInput || !searchContainer) return;
+
+        if (!suggestionsList) {
+            suggestionsList = document.createElement('ul');
+            suggestionsList.classList.add('suggestions-list');
+            searchContainer.appendChild(suggestionsList);
+
+            const style = document.createElement('style');
+            style.textContent = `
+                .suggestions-list {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    right: 0;
+                    background: var(--bg-color-dark);
+                    border: 1px solid var(--primary-color);
+                    border-top: none;
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                    max-height: 300px;
+                    overflow-y: auto;
+                    z-index: 100;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                    border-radius: 0 0 8px 8px;
+                    transform: translateY(-2px);
+                }
+                .suggestions-list li {
+                    padding: 10px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    border-bottom: 1px solid #333;
+                    transition: background-color 0.2s ease, color 0.2s ease;
+                }
+                .suggestions-list li:last-child {
+                    border-bottom: none;
+                }
+                .suggestions-list li:hover {
+                    background-color: var(--primary-color);
+                    color: white;
+                }
+                .suggestions-list img {
+                    width: 40px;
+                    height: 60px;
+                    margin-left: 10px;
+                    border-radius: 4px;
+                }
+                .suggestions-list .movie-title {
+                    font-weight: bold;
+                    color: var(--text-color);
+                }
+                .suggestions-list li:hover .movie-title {
+                    color: white;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        suggestionsList.innerHTML = '';
+        if (filteredMovies.length === 0) {
+            suggestionsList.style.display = 'none';
+            return;
+        }
+
+        suggestionsList.style.display = 'block';
+
+        filteredMovies.slice(0, 5).forEach(movie => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <img src="${movie.poster}" alt="${movie.title}" loading="lazy">
+                <span class="movie-title">${movie.title}</span>
+            `;
+            li.addEventListener('click', () => {
+                searchInput.value = movie.title;
+                showMovieDetails(movie.id);
+                hideSuggestions();
+            });
+            suggestionsList.appendChild(li);
+        });
+    }
+
+    function hideSuggestions() {
+        if (suggestionsList) {
+            suggestionsList.style.display = 'none';
+        }
+    }
 
     async function showMovieDetails(movieId) {
         console.log(`🔍 [توجيه] عرض تفاصيل الفيلم للمعّرف: ${movieId}`);
@@ -326,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (movie) {
             currentDetailedMovie = movie;
 
-            // ** تم حذف إخفاء heroSection **
+            if (heroSection) heroSection.style.display = 'none';
             if (movieGridSection) movieGridSection.style.display = 'none';
 
             if (videoJsPlayerInstance) {
@@ -335,7 +461,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoJsPlayerInstance = null;
             }
 
-            // ** تحميل Video.js فقط عند الحاجة **
             await loadVideoJsAndHls();
 
             if (videoContainer) {
@@ -566,228 +691,175 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let pageTitle, pageDescription, pageKeywords, ogUrl, ogTitle, ogDescription, ogImage, ogType, ogVideoUrl, ogVideoType;
         let twitterTitle, twitterDescription, twitterImage;
-        const siteName = 'اسم موقعك'; // استبدل بـ اسم موقعك
-        const defaultTitle = `شاهد أحدث الأفلام والمسلسلات مجانًا | ${siteName}`;
-        const defaultDescription = 'مكتبة ضخمة من الأفلام والمسلسلات المجانية. مشاهدة مباشرة بجودة عالية وبدون إعلانات مزعجة.';
-        const defaultImage = 'رابط-الصورة-الافتراضية.png'; // استبدل بـ رابط صورة افتراضية
 
         if (movie) {
-            pageTitle = `${movie.title} (${movie.release_date.slice(0, 4)}) - مشاهدة وتحميل مجانًا | ${siteName}`;
-            pageDescription = movie.description || defaultDescription;
-            pageKeywords = `${movie.title}, ${movie.title} مشاهدة, ${movie.title} تحميل, أفلام ${movie.genre}, ${movie.director}, ${movie.cast}`;
+            pageTitle = `شاهد فيلم ${movie.title} | ${movie.genre ? movie.genre.join(', ') : 'فيلم'} مترجم بجودة عالية`;
+            pageDescription = movie.description || `شاهد فيلم ${movie.title} مترجم بجودة عالية. ${movie.cast ? `بطولة: ${Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast}.` : ''}`;
+            pageKeywords = `مشاهدة فيلم ${movie.title}, فيلم ${movie.title} كامل, ${movie.title} مترجم, ${movie.genre ? movie.genre.join(', ') : 'فيلم'}, أفلام جديدة, ${movie.director ? movie.director : ''}, ${movie.cast ? (Array.isArray(movie.cast) ? movie.cast.join(', ') : movie.cast) : ''}`;
             ogUrl = window.location.href;
-            ogTitle = pageTitle;
+            ogTitle = `شاهد فيلم ${movie.title}`;
             ogDescription = pageDescription;
             ogImage = movie.poster;
             ogType = 'video.movie';
             ogVideoUrl = movie.embed_url;
-            ogVideoType = 'text/html';
-            twitterTitle = pageTitle;
-            twitterDescription = pageDescription;
-            twitterImage = movie.poster;
+            ogVideoType = 'video/mp4';
+
+            twitterTitle = ogTitle;
+            twitterDescription = ogDescription;
+            twitterImage = ogImage;
         } else {
-            pageTitle = defaultTitle;
-            pageDescription = defaultDescription;
-            pageKeywords = 'أفلام, مسلسلات, مشاهدة مباشرة, أفلام مجانية, مسلسلات مجانية, أفلام عربية, أفلام أجنبية, أفلام أكشن, أفلام رومانسية';
+            // Default home page metadata
+            pageTitle = 'أفلام عربية وأجنبية | مشاهدة أفلام ومسلسلات بجودة عالية';
+            pageDescription = 'أكبر مكتبة أفلام ومسلسلات مترجمة وعربية بجودة عالية وبشكل مجاني تمامًا.';
+            pageKeywords = 'أفلام, مسلسلات, أفلام مترجمة, مسلسلات عربية, مشاهدة مجانية, أفلام اون لاين, أفلام 2024';
             ogUrl = window.location.origin;
-            ogTitle = defaultTitle;
-            ogDescription = defaultDescription;
-            ogImage = defaultImage;
+            ogTitle = 'أفلام مجانية بجودة عالية';
+            ogDescription = 'أكبر مكتبة أفلام ومسلسلات مترجمة وعربية بجودة عالية وبشكل مجاني تمامًا.';
+            ogImage = 'https://example.com/default-hero-image.jpg'; // Replace with your actual hero image
             ogType = 'website';
             ogVideoUrl = '';
             ogVideoType = '';
-            twitterTitle = defaultTitle;
-            twitterDescription = defaultDescription;
-            twitterImage = defaultImage;
+
+            twitterTitle = ogTitle;
+            twitterDescription = ogDescription;
+            twitterImage = ogImage;
         }
 
         document.title = pageTitle;
+        document.querySelector('meta[name="description"]').setAttribute('content', pageDescription);
+        document.querySelector('meta[name="keywords"]').setAttribute('content', pageKeywords);
         canonicalLink.setAttribute('href', ogUrl);
 
-        // وظيفة مساعدة لتحديث أو إنشاء Meta Tag
-        const setMeta = (name, content) => {
-            let meta = document.querySelector(`meta[name="${name}"]`);
-            if (!meta) {
-                meta = document.createElement('meta');
-                meta.setAttribute('name', name);
-                document.head.appendChild(meta);
-            }
-            meta.setAttribute('content', content);
-        };
-
-        // وظيفة مساعدة لتحديث أو إنشاء OG Tag
-        const setOg = (property, content) => {
-            let meta = document.querySelector(`meta[property="${property}"]`);
-            if (!meta) {
-                meta = document.createElement('meta');
-                meta.setAttribute('property', property);
-                document.head.appendChild(meta);
-            }
-            meta.setAttribute('content', content);
-        };
-
-        setMeta('description', pageDescription);
-        setMeta('keywords', pageKeywords);
-
-        setOg('og:url', ogUrl);
-        setOg('og:title', ogTitle);
-        setOg('og:description', ogDescription);
-        setOg('og:image', ogImage);
-        setOg('og:type', ogType);
+        document.querySelector('meta[property="og:url"]').setAttribute('content', ogUrl);
+        document.querySelector('meta[property="og:title"]').setAttribute('content', ogTitle);
+        document.querySelector('meta[property="og:description"]').setAttribute('content', ogDescription);
+        document.querySelector('meta[property="og:image"]').setAttribute('content', ogImage);
+        document.querySelector('meta[property="og:type"]').setAttribute('content', ogType);
 
         if (ogVideoUrl) {
-            setOg('og:video:url', ogVideoUrl);
-            setOg('og:video:type', ogVideoType);
+            let ogVideoTag = document.querySelector('meta[property="og:video"]');
+            if (!ogVideoTag) {
+                ogVideoTag = document.createElement('meta');
+                ogVideoTag.setAttribute('property', 'og:video');
+                document.head.appendChild(ogVideoTag);
+            }
+            ogVideoTag.setAttribute('content', ogVideoUrl);
+
+            let ogVideoTypeTag = document.querySelector('meta[property="og:video:type"]');
+            if (!ogVideoTypeTag) {
+                ogVideoTypeTag = document.createElement('meta');
+                ogVideoTypeTag.setAttribute('property', 'og:video:type');
+                document.head.appendChild(ogVideoTypeTag);
+            }
+            ogVideoTypeTag.setAttribute('content', ogVideoType);
         } else {
-            let metaVideoUrl = document.querySelector('meta[property="og:video:url"]');
-            let metaVideoType = document.querySelector('meta[property="og:video:type"]');
-            if (metaVideoUrl) metaVideoUrl.remove();
-            if (metaVideoType) metaVideoType.remove();
+            const ogVideoTag = document.querySelector('meta[property="og:video"]');
+            if (ogVideoTag) ogVideoTag.remove();
+            const ogVideoTypeTag = document.querySelector('meta[property="og:video:type"]');
+            if (ogVideoTypeTag) ogVideoTypeTag.remove();
         }
 
-        // Twitter Meta Tags
-        setMeta('twitter:card', 'summary_large_image');
-        setMeta('twitter:title', twitterTitle);
-        setMeta('twitter:description', twitterDescription);
-        setMeta('twitter:image', twitterImage);
-
-        console.log('✅ [SEO] تم تحديث علامات Meta و Open Graph بنجاح.');
+        document.querySelector('meta[name="twitter:title"]').setAttribute('content', twitterTitle);
+        document.querySelector('meta[name="twitter:description"]').setAttribute('content', twitterDescription);
+        document.querySelector('meta[name="twitter:image"]').setAttribute('content', twitterImage);
     }
 
     function addJsonLdSchema(movie = null) {
-        let oldSchema = document.getElementById('movie-ld-schema');
-        if (oldSchema) {
-            oldSchema.remove();
+        let schemaScript = document.querySelector('script[type="application/ld+json"]');
+        if (schemaScript) {
+            schemaScript.remove();
         }
 
         if (movie) {
-            const schema = {
-                "@context": "https://schema.org",
+            const movieSchema = {
+                "@context": "http://schema.org",
                 "@type": "Movie",
                 "name": movie.title,
                 "url": window.location.href,
                 "image": movie.poster,
                 "description": movie.description,
-                "dateCreated": movie.release_date,
+                "datePublished": movie.release_date,
                 "director": {
                     "@type": "Person",
                     "name": movie.director
                 },
-                "actor": (Array.isArray(movie.cast) ? movie.cast : [movie.cast]).map(actorName => ({
+                "actor": Array.isArray(movie.cast) ? movie.cast.map(actor => ({
                     "@type": "Person",
-                    "name": actorName
-                })),
-                "genre": Array.isArray(movie.genre) ? movie.genre : [movie.genre],
-                "aggregateRating": movie.rating ? {
+                    "name": actor
+                })) : [],
+                "genre": Array.isArray(movie.genre) ? movie.genre : [],
+                "aggregateRating": {
                     "@type": "AggregateRating",
                     "ratingValue": movie.rating,
-                    "bestRating": "10",
-                    "worstRating": "1",
-                    "ratingCount": "1"
-                } : undefined,
-                "trailer": movie.trailer_url ? {
-                    "@type": "VideoObject",
-                    "name": `${movie.title} Trailer`,
-                    "description": `${movie.title} official trailer.`,
-                    "thumbnailUrl": movie.poster,
-                    "contentUrl": movie.trailer_url,
-                    "uploadDate": movie.release_date
-                } : undefined
+                    "bestRating": "10.0",
+                    "worstRating": "1.0",
+                    "ratingCount": "1" // Simplified, you can add real count if available
+                }
             };
-
-            const script = document.createElement('script');
-            script.type = 'application/ld+json';
-            script.id = 'movie-ld-schema';
-            script.textContent = JSON.stringify(schema, null, 2);
-            document.head.appendChild(script);
-            console.log('✅ [SEO] تم إضافة مخطط JSON-LD للفيلم.');
-        } else {
-            console.log('✅ [SEO] تم إزالة مخطط JSON-LD.');
+            schemaScript = document.createElement('script');
+            schemaScript.type = 'application/ld+json';
+            schemaScript.textContent = JSON.stringify(movieSchema);
+            document.head.appendChild(schemaScript);
         }
     }
 
-
     function showHomePage() {
         console.log('🏠 [توجيه] العودة إلى الصفحة الرئيسية.');
-        
-        // ** تم حذف إظهار heroSection **
+        if (heroSection) heroSection.style.display = 'block';
         if (movieGridSection) movieGridSection.style.display = 'block';
         if (movieDetailsSection) movieDetailsSection.style.display = 'none';
         if (suggestedMoviesSection) suggestedMoviesSection.style.display = 'none';
 
         if (videoJsPlayerInstance) {
-            console.log('[Video.js] التخلص من مثيل المشغل عند العودة للصفحة الرئيسية.');
-            videoJsPlayerInstance.pause();
+            console.log('[Video.js] التخلص من المشغل عند العودة للصفحة الرئيسية.');
             videoJsPlayerInstance.dispose();
             videoJsPlayerInstance = null;
         }
 
-        if (videoContainer) {
-            videoContainer.innerHTML = '';
+        if (searchInput) {
+            searchInput.value = '';
+            performSearch();
         }
-        
-        history.pushState({ view: 'home' }, 'الصفحة الرئيسية', window.location.origin);
+
         updateMetaTags();
         addJsonLdSchema();
-        performSearch(); // يعرض الأفلام بترتيب عشوائي
+        history.pushState({ view: 'home' }, 'أفلام مجانية', window.location.origin);
     }
 
     function displaySuggestedMovies(currentMovieId) {
         if (!suggestedMovieGrid) {
-            console.error('❌ [اقتراحات] العنصر suggested-movie-grid غير موجود.');
+            console.warn('⚠️ displaySuggestedMovies: suggested-movie-grid غير موجود.');
             return;
         }
-
-        const currentMovie = moviesData.find(m => m.id === currentMovieId);
-        if (!currentMovie || !currentMovie.genre) {
-            suggestedMovieGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد اقتراحات حاليًا.</p>';
-            console.log('✨ [اقتراحات] لا يمكن إيجاد فيلم حالي أو لا يوجد له نوع.');
-            return;
-        }
-
-        let genres = Array.isArray(currentMovie.genre) ? currentMovie.genre : [currentMovie.genre];
         
-        const suggested = moviesData.filter(movie =>
-            movie.id !== currentMovieId &&
-            genres.some(g => (Array.isArray(movie.genre) ? movie.genre.includes(g) : movie.genre === g))
-        ).sort(() => 0.5 - Math.random()).slice(0, 6);
-
-        if (suggested.length > 0) {
-            console.log(`✨ [اقتراحات] تم العثور على ${suggested.length} اقتراحًا بناءً على النوع.`);
-            displayMovies(suggested, suggestedMovieGrid);
-        } else {
-            suggestedMovieGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد اقتراحات حاليًا.</p>';
-            console.log('✨ [اقتراحات] لم يتم العثور على اقتراحات بناءً على النوع.');
+        console.log('✨ [اقتراحات] جاري إعداد قائمة الأفلام المقترحة.');
+        const currentMovie = moviesData.find(m => m.id === currentMovieId);
+        if (!currentMovie || !Array.isArray(currentMovie.genre) || currentMovie.genre.length === 0) {
+            suggestedMovieGrid.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد اقتراحات لهذا الفيلم.</p>';
+            return;
         }
+
+        // Generate a list of suggested movies based on shared genres, sorted by rating.
+        const suggested = moviesData
+            .filter(movie =>
+                movie.id !== currentMovieId &&
+                movie.genre &&
+                currentMovie.genre.some(g => movie.genre.includes(g))
+            )
+            .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+            .slice(0, 10); // Show top 10 suggestions
+
+        displayMovies(suggested, suggestedMovieGrid);
+        console.log(`✨ [اقتراحات] تم عرض ${suggested.length} فيلمًا مقترحًا.`);
     }
 
-    function handleNavigation(event) {
-        event.preventDefault();
-        const href = event.currentTarget.getAttribute('href');
-        const url = new URL(href, window.location.origin);
-        const view = url.searchParams.get('view');
-        const id = url.searchParams.get('id');
+    function handleNavigation() {
+        const params = new URLSearchParams(window.location.search);
+        const view = params.get('view');
+        const movieId = params.get('id');
 
-        if (view === 'details' && id) {
-            showMovieDetails(parseInt(id));
-        } else {
-            showHomePage();
-        }
-
-        // إخفاء قائمة التنقل للموبايل
-        if (mainNav && mainNav.classList.contains('show')) {
-            mainNav.classList.remove('show');
-            if (menuToggle) menuToggle.checked = false;
-        }
-    }
-
-    function handleInitialPageLoad() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const view = urlParams.get('view');
-        const id = urlParams.get('id');
-
-        if (view === 'details' && id) {
-            showMovieDetails(parseInt(id));
+        if (view === 'details' && movieId) {
+            showMovieDetails(movieId);
         } else {
             showHomePage();
         }
@@ -795,36 +867,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 4. Event Listeners ---
     if (menuToggle) {
-        menuToggle.addEventListener('change', () => {
-            if (mainNav) mainNav.classList.toggle('show', menuToggle.checked);
+        menuToggle.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
         });
     }
 
-    // ** تم حذف `watchNowBtn` بالكامل **
+    if (watchNowBtn) {
+        watchNowBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: movieGridSection.offsetTop,
+                behavior: 'smooth'
+            });
+        });
+    }
 
-    navLinks.forEach(link => {
-        link.addEventListener('click', handleNavigation);
-    });
+    if (homeNavLink) {
+        homeNavLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showHomePage();
+        });
+    }
 
-    if (homeNavLink) homeNavLink.addEventListener('click', handleNavigation);
-    if (homeLogoLink) homeLogoLink.addEventListener('click', handleNavigation);
-    if (backToHomeBtn) backToHomeBtn.addEventListener('click', showHomePage);
+    if (homeLogoLink) {
+        homeLogoLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showHomePage();
+        });
+    }
 
-    if (prevPageBtn) prevPageBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            paginateMovies(moviesDataForPagination, currentPage);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    });
+    if (backToHomeBtn) {
+        backToHomeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            showHomePage();
+        });
+    }
 
-    if (nextPageBtn) nextPageBtn.addEventListener('click', () => {
-        if (currentPage * moviesPerPage < moviesDataForPagination.length) {
-            currentPage++;
-            paginateMovies(moviesDataForPagination, currentPage);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    });
+    if (prevPageBtn) {
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                paginateMovies(moviesDataForPagination, currentPage);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
+
+    if (nextPageBtn) {
+        nextPageBtn.addEventListener('click', () => {
+            const totalMovies = moviesDataForPagination.length;
+            if (currentPage * moviesPerPage < totalMovies) {
+                currentPage++;
+                paginateMovies(moviesDataForPagination, currentPage);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
 
     if (searchButton) {
         searchButton.addEventListener('click', (e) => {
@@ -832,53 +929,40 @@ document.addEventListener('DOMContentLoaded', () => {
             performSearch();
         });
     }
-
+    
+    // Listen for Enter key on search input
     if (searchInput) {
-        searchInput.addEventListener('keydown', (e) => {
+        searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 performSearch();
             }
         });
     }
-    
-    if (videoOverlay) {
-        videoOverlay.addEventListener('click', () => {
-            console.log('[Video Overlay] تم النقر على الغطاء.');
-            if (videoJsPlayerInstance && videoJsPlayerInstance.paused()) {
-                console.log('[Video Overlay] محاولة تشغيل الفيديو.');
-                openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
-                videoJsPlayerInstance.play();
-            } else if (!videoJsPlayerInstance || videoJsPlayerInstance.ended()) {
-                console.log('[Video Overlay] المشغل غير جاهز أو انتهى، محاولة إعادة التحميل.');
-                openAdLink(DIRECT_LINK_COOLDOWN_VIDEO_INTERACTION, 'videoOverlay');
-                showMovieDetails(currentDetailedMovie.id);
-            }
-        });
-    }
 
-    if (movieDetailsPoster) {
-        movieDetailsPoster.addEventListener('click', () => {
-            openAdLink(DIRECT_LINK_COOLDOWN_MOVIE_CARD, 'movieDetailsPoster');
-            console.log('[Movie Details Poster] تم النقر على البوستر.');
-        });
-    }
-
-    // Handle browser back/forward buttons
-    window.addEventListener('popstate', (e) => {
-        if (e.state && e.state.view === 'details') {
-            showMovieDetails(e.state.id);
-        } else {
-            showHomePage();
-        }
+    window.addEventListener('popstate', (event) => {
+        handleNavigation();
     });
 
+    // --- 5. Initial Load Logic ---
     function initialPageLoadLogic() {
-        console.log('✅ [تحميل أولي] منطق التحميل الأولي قيد التنفيذ.');
-        handleInitialPageLoad();
+        // Remove the hero section on initial load to implement the new request
+        if (heroSection) {
+            heroSection.remove();
+            console.log('🗑️ تم إزالة قسم "Hero Section" بنجاح.');
+        }
+
+        // Set the initial grid section title to "أحدث الأفلام"
+        if (sectionTitleElement) {
+            sectionTitleElement.textContent = 'أحدث الأفلام';
+        }
+
+        // Shuffle the movies data before initial display for a fresh look each time
+        moviesDataForPagination = [...moviesData].sort(() => 0.5 - Math.random());
+        
+        handleNavigation();
     }
 
-    // Start fetching movies data
+    // Start fetching the data
     fetchMoviesData();
-
 });
