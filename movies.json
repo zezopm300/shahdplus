@@ -558,7 +558,53 @@
   "rating": "80% (Rotten Tomatoes)",
   "duration": "PT2H25M",
   "embed_url": "https://pixeldrain.com/api/file/pWUbUUeR"
+},
+  {
+  "id": 38,
+  "title": "Escape from Pretoria (2020)",
+  "description": "مستوحى من أحداث حقيقية، يتتبع الفيلم محاولة هروب اثنين من الناشطين السياسيين المناهضين لنظام الفصل العنصري في جنوب إفريقيا من سجن بريتوريا شديد الحراسة باستخدام مفاتيح خشبية صنعوها يدويًا. مغامرة مثيرة مليئة بالتوتر والإصرار على الحرية.",
+  "poster": "https://i.ibb.co/BkR7Tj1/38.jpg",
+  "thumbnailUrl": "https://i.ibb.co/BkR7Tj1/38.jpg",
+  "release_date": "2020-03-06",
+  "genre": "إثارة، دراما، سيرة ذاتية",
+  "director": "Francis Annan",
+  "cast": "Daniel Radcliffe، Daniel Webber، Ian Hart، Mark Leonard Winter",
+  "video_type": "mp4",
+  "rating": "72% (Rotten Tomatoes)",
+  "duration": "PT1H46M",
+  "embed_url": "https://pixeldrain.com/api/file/i23jX4qS"
+},
+{
+  "id": 39,
+  "title": "Hush (2016)",
+  "description": "تعيش كاتبة صماء في عزلة داخل منزلها بالغابة، لكن هدوء حياتها ينقلب إلى كابوس عندما يظهر قاتل مقنّع يحاصرها ويحاول اقتحام منزلها. تجد نفسها مجبرة على الاعتماد على ذكائها وقوتها للبقاء على قيد الحياة.",
+  "poster": "https://i.ibb.co/Pvfbmpp7/39.jpg",
+  "thumbnailUrl": "https://i.ibb.co/Pvfbmpp7/39.jpg",
+  "release_date": "2016-03-12",
+  "genre": "رعب، إثارة",
+  "director": "Mike Flanagan",
+  "cast": "Kate Siegel، John Gallagher Jr.، Samantha Sloyan، Michael Trucco",
+  "video_type": "mp4",
+  "rating": "93% (Rotten Tomatoes)",
+  "duration": "PT1H21M",
+  "embed_url": "https://pixeldrain.com/api/file/aArurhVG"
+},
+{
+  "id": 41,
+  "title": "هارلي (2023)",
+  "description": "فيلم أكشن مصري من بطولة محمد رمضان. تدور أحداثه حول مهندس ميكانيكا موهوب يُدعى هارلي، يعود من الخليج إلى مصر ليجد نفسه متورطًا في صراعات مع رجال العصابات والنفوذ، ليخوض مغامرات مليئة بالإثارة والمطاردات.",
+  "poster": "https://i.ibb.co/0jBL7cvp/40.jpg",
+  "thumbnailUrl": "https://i.ibb.co/0jBL7cvp/40.jpg",
+  "release_date": "2023-04-21",
+  "genre": "أكشن، جريمة، دراما",
+  "director": "محمد سمير",
+  "cast": "محمد رمضان، مي عمر، محمود حميدة، أحمد داش، بسام داغر",
+  "video_type": "mp4",
+  "rating": "7.1/10 (IMDb)",
+  "duration": "PT1H55M",
+  "embed_url": "https://pixeldrain.com/api/file/gdrd1rGW"
 }
+
 
 
 
@@ -584,6 +630,7 @@
 
   
 ]
+
 
 
 
