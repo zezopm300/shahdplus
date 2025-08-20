@@ -603,7 +603,54 @@
   "rating": "7.1/10 (IMDb)",
   "duration": "PT1H55M",
   "embed_url": "https://pixeldrain.com/api/file/gdrd1rGW"
+},
+  {
+  "id": 41,
+  "title": "Fighter (2024)",
+  "description": "فيلم أكشن هندي تدور أحداثه حول نخبة من الطيارين في سلاح الجو الهندي (Air Dragons) يتحدون لمواجهة تهديدات داخلية وخارجية، بقيادة قائد طيار مغامر وموهوب يُدعى “Patty”.",
+  "poster": "https://i.ibb.co/xtxxPXTw/41.jpg",
+  "thumbnailUrl": "https://i.ibb.co/xtxxPXTw/41.jpg",
+  "release_date": "2024-01-25",
+  "genre": "أكشن، مغامرة، إثارة",
+  "director": "Siddharth Anand",
+  "cast": "Hrithik Roshan، Deepika Padukone، Anil Kapoor، Karan Singh Grover، Akshay Oberoi",
+  "video_type": "mp4",
+  "rating": "38% Tomatometer / 88% Popcornmeter (Rotten Tomatoes)",
+  "duration": "PT2H46M",
+  "embed_url": "https://pixeldrain.com/api/file/5Puuq23U"
+},
+{
+  "id": 42,
+  "title": "البحث عن منفذ لخروج السيد رامبو (2025)",
+  "description": "فيلم دراما مصري يتناول قصة حسن الشاب البسيط الذي يعيش مع والدته في حي شعبي بالقاهرة، ويواجهان خطر الطرد من منزلهم بعد أن تسبب كلبه (رامبو) في مشكلة مع أحد السكان. ينطلق حسن في رحلة عبر المدينة باحثًا عن مأوى آمن لرامبو، لتتحول رحلته إلى مواجهة مع الذات والواقع.",
+  "poster": "https://i.ibb.co/Dg448QKT/42.jpg",
+  "thumbnailUrl": "https://i.ibb.co/Dg448QKT/42.jpg",
+  "release_date": "2025-01-01",
+  "genre": "دراما",
+  "director": "خالد منصور",
+  "cast": "عصام عمر، راكين سعد، أحمد بهاء، سما إبراهيم",
+  "video_type": "mp4",
+  "rating": "",
+  "duration": "PT1H42M",
+  "embed_url": "https://pixeldrain.com/api/file/vGowXoNU"
+},
+{
+  "id": 43,
+  "title": "Interstellar (2014)",
+  "description": "فيلم خيال علمي ملحمي تدور أحداثه في مستقبل تُصبح فيه الأرض على حافة الانهيار البيئي. تتبع القصة فريقًا من رواد الفضاء بقيادة الطيار السابق كوبر، ينطلقون في رحلة عبر ثقب دودي في محاولة للبحث عن كوكب صالح للحياة وإنقاذ البشرية.",
+  "poster": "https://i.ibb.co/zTYDrkNF/43.jpg",
+  "thumbnailUrl": "https://i.ibb.co/zTYDrkNF/43.jpg",
+  "release_date": "2014-11-07",
+  "genre": "خيال علمي، دراما، مغامرة",
+  "director": "Christopher Nolan",
+  "cast": "Matthew McConaughey، Anne Hathaway، Jessica Chastain، Michael Caine، Matt Damon",
+  "video_type": "mp4",
+  "rating": "8.7/10 (IMDb)",
+  "duration": "PT2H49M",
+  "embed_url": "https://pixeldrain.com/api/file/wy3gHfgc"
 }
+
+
 
 
 
@@ -630,6 +677,7 @@
 
   
 ]
+
 
 
 
