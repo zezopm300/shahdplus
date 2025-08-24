@@ -648,6 +648,51 @@
   "rating": "8.7/10 (IMDb)",
   "duration": "PT2H49M",
   "embed_url": "https://pixeldrain.com/api/file/wy3gHfgc"
+},
+  {
+  "id": 44,
+  "title": "The Last Kumite (2024)",
+  "description": "فيلم أكشن قتالي مستوحى من أفلام التسعينات مثل Bloodsport وKickboxer. يحكي قصة بطل الكاراتيه مايكل ريفرز الذي يُجبر على المشاركة في بطولة Kumite سرية في بلغاريا لإنقاذ ابنته المخطوفة، حيث يصطدم بأقوى الفنون القتالية.",
+  "poster": "https://i.ibb.co/r2Z9G0Lm/44.jpg",
+  "thumbnailUrl": "https://i.ibb.co/r2Z9G0Lm/44.jpg",
+  "release_date": "2024-05-14",
+  "genre": "أكشن، تشويق",
+  "director": "Ross W. Clarkson",
+  "cast": "Mathis Landwehr، Cynthia Rothrock، Billy Blanks، Matthias Hues، Kurt McKinney، Michel Qissi، David Yeung",
+  "video_type": "mp4",
+  "rating": "غير متوفر (IMDb: تقييم غير مسجل)",
+  "duration": "PT1H45M",
+  "embed_url": "https://pixeldrain.com/api/file/LifY8GAv"
+},
+{
+  "id": 45,
+  "title": "The Calendar Killer (2025)",
+  "description": "فيلم إثارة نفسي ألماني، تدور أحداثه حول امرأة تُدعى Klara تتلقى تهديداً من قاتل يُعرف بـ Calendar Killer: إما أن تقتل زوجها أو سُتقتل هي. تتصل بخط الطوارئ ليلاً، فيتولى مساعدتها موظف يُدعى Jules في سباق مع الزمن لإنقاذ حياتها وخلاصها من عنفين مختلفين.",
+  "poster": "",
+  "thumbnailUrl": "",
+  "release_date": "2025-01-16",
+  "genre": "إثارة، جريمة، غموض",
+  "director": "Adolfo J. Kolmerer",
+  "cast": "Luise Heyer، Sabin Tambrea، Friedrich Mücke، Rainer Bock، Kristin Suckow",
+  "video_type": "mp4",
+  "rating": "47% (Rotten Tomatoes)",
+  "duration": "PT1H37M",
+  "embed_url": "https://pixeldrain.com/api/file/yrxEnM9m"
+},
+{
+  "id": 46,
+  "title": "ولاد رزق 3: القاضية (2024)",
+  "description": "بعد مرور سنوات وانفصال الإخوة في طرقهم المختلفة، يعود شبح من الماضي ليُلقي بظلاله على ولاد رزق، مما يجبرهم على العودة إلى حياة الجريمة والسرقة في عملية مصيرية هي الأكبر والأخطر في تاريخهم.",
+  "poster": "https://i.ibb.co/RL3MVgM/45.jpg",
+  "thumbnailUrl": "https://i.ibb.co/RL3MVgM/45.jpg",
+  "release_date": "2024-06-12",
+  "genre": "أكشن، إثارة، جريمة، دراما",
+  "director": "طارق العريان",
+  "cast": "أحمد عز، عمرو يوسف، آسر ياسين، كريم قاسم، علي صبحي، محمد ممدوح، أحمد الرافعي، سيد رجب، نسرين أمين، أسماء جلال، تايسون فيوري (في نفسه)",
+  "video_type": "mp4",
+  "rating": "7.5/10",
+  "duration": "PT2H5M",
+  "embed_url": "https://pixeldrain.com/api/file/bu94DgBe"
 }
 
 
@@ -677,6 +722,7 @@
 
   
 ]
+
 
 
 
