@@ -800,7 +800,113 @@
   "rating": "8/10",
   "duration": "PT40M",
   "embed_url": "https://pixeldrain.com/api/file/SPmAn2VW"
+},
+  {
+  "id": 54,
+  "title": "Night Call (2024)",
+  "description": "تدور أحداث فيلم Night Call (2024) في أجواء غامضة مليئة بالإثارة والتشويق، حيث يجد البطل نفسه متورطًا في مكالمة ليلية تغير مجرى حياته بالكامل، وتكشف عن أسرار خطيرة لم يكن يتوقعها.",
+  "poster": "https://i.ibb.co/jvftc3Bd/54.jpg",
+  "thumbnailUrl": "https://i.ibb.co/jvftc3Bd/54.jpg",
+  "release_date": "2024-05-01",
+  "genre": "إثارة، تشويق، جريمة",
+  "director": "جون سميث",
+  "cast": "مايكل براون، أليكس جونز، إيفا كارتر",
+  "video_type": "mp4",
+  "rating": "7.9/10",
+  "duration": "PT1H50M",
+  "embed_url": "https://pixeldrain.com/api/file/5ZrwXyew"
+},
+{
+  "id": 55,
+  "title": "Thanksgiving (2024)",
+  "description": "في ليلة عيد الشكر، يتحول الاحتفال إلى كابوس دموي حينما يظهر قاتل غامض مرتديًا زي الحجاج، ليحوّل أجواء العيد إلى سلسلة من الجرائم المروعة.",
+  "poster": "https://i.ibb.co/zhh1TfkM/55.jpg",
+  "thumbnailUrl": "https://i.ibb.co/zhh1TfkM/55.jpg",
+  "release_date": "2024-11-17",
+  "genre": "رعب، إثارة، تشويق",
+  "director": "إيلي روث",
+  "cast": "باتريك ديمبسي، نيليزا جوب، ريكس لين، ريك هوفمان",
+  "video_type": "mp4",
+  "rating": "7.2/10",
+  "duration": "PT1H46M",
+  "embed_url": "https://pixeldrain.com/api/file/akhkTZPm"
+},
+{
+  "id": 56,
+  "title": "Life After Fighting (2024)",
+  "description": "تدور أحداث الفيلم حول مقاتل سابق يحاول أن يبدأ حياة جديدة بعيدًا عن العنف، لكنه يجد نفسه مضطرًا للعودة إلى القتال حين يتعرض أحباؤه للخطر، ليخوض صراعًا بين ماضيه ورغبته في حياة سلمية.",
+  "poster": "https://i.ibb.co/zVbbfgyk/56.jpg",
+  "thumbnailUrl": "https://i.ibb.co/zVbbfgyk/56.jpg",
+  "release_date": "2024-06-07",
+  "genre": "أكشن، دراما، إثارة",
+  "director": "بريندان بيري",
+  "cast": "بريندان بيري، كاساندرا ماغراث، أليك كوزينز",
+  "video_type": "mp4",
+  "rating": "7.5/10",
+  "duration": "PT2H15M",
+  "embed_url": "https://pixeldrain.com/api/file/C8mpUUFT"
+},
+{
+  "id": 57,
+  "title": "فهد البطل - الحلقة 5",
+  "description": "في الحلقة الخامسة من مسلسل فهد البطل، تتصاعد الأحداث بشكل أكبر حيث يجد فهد نفسه أمام مواجهات جديدة تكشف عن تحالفات وخيانات لم يكن يتوقعها، مما يزيد من حدة الصراع.",
+  "poster": "https://i.ibb.co/h14J1z0s/57-60.jpg",
+  "thumbnailUrl": "https://i.ibb.co/h14J1z0s/57-60.jpg",
+  "release_date": "2023-01-05",
+  "genre": "دراما، أكشن، تشويق",
+  "director": "محمد سلامة",
+  "cast": "أحمد فهمي، ريم مصطفى، عمرو عبد الجليل، نجلاء بدر، صلاح عبد الله، بيومي فؤاد",
+  "video_type": "mp4",
+  "rating": "8/10",
+  "duration": "PT40M",
+  "embed_url": "https://pixeldrain.com/api/file/UYeNxk2y"
+},
+{
+  "id": 58,
+  "title": "فهد البطل - الحلقة 7",
+  "description": "في الحلقة السابعة من مسلسل فهد البطل، يقترب فهد أكثر من كشف الحقيقة الكاملة وراء المؤامرات التي تحيط به، بينما تتشابك الأحداث وتتصاعد وتيرة المواجهات المصيرية.",
+  "poster": "https://i.ibb.co/h14J1z0s/57-60.jpg",
+  "thumbnailUrl": "https://i.ibb.co/h14J1z0s/57-60.jpg",
+  "release_date": "2023-01-07",
+  "genre": "دراما، أكشن، تشويق",
+  "director": "محمد سلامة",
+  "cast": "أحمد فهمي، ريم مصطفى، عمرو عبد الجليل، نجلاء بدر، صلاح عبد الله، بيومي فؤاد",
+  "video_type": "mp4",
+  "rating": "8/10",
+  "duration": "PT40M",
+  "embed_url": "https://pixeldrain.com/api/file/xRxc8di1"
+},
+{
+  "id": 59,
+  "title": "فهد البطل - الحلقة 8",
+  "description": "في الحلقة الثامنة من مسلسل فهد البطل، تتعمق الخلافات بين الشخصيات الرئيسية وتظهر مفاجآت غير متوقعة تقلب مسار الأحداث، مما يضع فهد أمام قرارات مصيرية جديدة.",
+  "poster": "https://i.ibb.co/h14J1z0s/57-60.jpg",
+  "thumbnailUrl": "https://i.ibb.co/h14J1z0s/57-60.jpg",
+  "release_date": "2023-01-08",
+  "genre": "دراما، أكشن، تشويق",
+  "director": "محمد سلامة",
+  "cast": "أحمد فهمي، ريم مصطفى، عمرو عبد الجليل، نجلاء بدر، صلاح عبد الله، بيومي فؤاد",
+  "video_type": "mp4",
+  "rating": "8/10",
+  "duration": "PT40M",
+  "embed_url": "https://pixeldrain.com/api/file/ohYA3ZWH"
+},
+{
+  "id": 60,
+  "title": "فهد البطل - الحلقة 9",
+  "description": "في الحلقة التاسعة من مسلسل فهد البطل، تتكشف خيوط جديدة في المؤامرة، ويجد فهد نفسه محاصرًا بين أعداء الأمس وحلفاء اليوم، في ظل تصاعد التوترات بشكل غير مسبوق.",
+  "poster": "https://i.ibb.co/h14J1z0s/57-60.jpg",
+  "thumbnailUrl": "https://i.ibb.co/h14J1z0s/57-60.jpg",
+  "release_date": "2023-01-09",
+  "genre": "دراما، أكشن، تشويق",
+  "director": "محمد سلامة",
+  "cast": "أحمد فهمي، ريم مصطفى، عمرو عبد الجليل، نجلاء بدر، صلاح عبد الله، بيومي فؤاد",
+  "video_type": "mp4",
+  "rating": "8/10",
+  "duration": "PT40M",
+  "embed_url": "https://pixeldrain.com/api/file/43uwrect"
 }
+
   
 
 
@@ -873,6 +979,7 @@
   
   
 ]
+
 
 
 
