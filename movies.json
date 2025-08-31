@@ -905,7 +905,23 @@
   "rating": "8/10",
   "duration": "PT40M",
   "embed_url": "https://pixeldrain.com/api/file/43uwrect"
+},
+  {
+  "id": 61,
+  "title": "أحمد و أحمد (2025)",
+  "description": "فيلم أكشن وإثارة بطولة أحمد السقا، تدور أحداثه حول صراع مزدوج بين شخصيتين متطابقتين في الشكل ومختلفتين في المبادئ، ليدخل البطل في مواجهة شرسة ضد نفسه في عالم مليء بالغموض والخيانة.",
+  "poster": "https://i.ibb.co/qL3JfgXM/61.jpg",
+  "thumbnailUrl": "https://i.ibb.co/qL3JfgXM/61.jpg",
+  "release_date": "2025-01-01",
+  "genre": "أكشن، دراما، تشويق",
+  "director": "محمد سامي",
+  "cast": "أحمد السقا، أمير كرارة، منى زكي، خالد الصاوي",
+  "video_type": "mp4",
+  "rating": "8.5/10",
+  "duration": "PT120M",
+  "embed_url": "https://pixeldrain.com/api/file/MDE4q1YR"
 }
+
 
   
 
@@ -979,6 +995,7 @@
   
   
 ]
+
 
 
 
