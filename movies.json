@@ -920,7 +920,69 @@
   "rating": "8.5/10",
   "duration": "PT120M",
   "embed_url": "https://pixeldrain.com/api/file/MDE4q1YR"
+},
+  {
+  "id": 62,
+  "title": "Split (2017)",
+  "description": "فيلم إثارة وغموض للمخرج إم. نايت شيامالان، يحكي قصة رجل مصاب باضطراب تعدد الشخصيات يحتجز ثلاث فتيات مراهقات في قبو مظلم، لتكتشف الضحايا الجانب الأخطر من شخصياته المتعددة.",
+  "poster": "https://i.ibb.co/CphMB0zn/62.jpg",
+  "thumbnailUrl": "https://i.ibb.co/CphMB0zn/62.jpg",
+  "release_date": "2017-01-20",
+  "genre": "إثارة، غموض، رعب",
+  "director": "إم. نايت شيامالان",
+  "cast": "جيمس ماكافوي، أنيا تايلور جوي، بيتي باكلي، هايلي لو ريتشاردسون",
+  "video_type": "mp4",
+  "rating": "7.3/10",
+  "duration": "PT117M",
+  "embed_url": "https://pixeldrain.com/api/file/E6KgWgQQ"
+},
+{
+  "id": 63,
+  "title": "Nobody (2021)",
+  "description": "فيلم أكشن وإثارة يحكي قصة رجل عادي يعيش حياة هادئة، لكن حادثة اقتحام منزله تكشف ماضيه الغامض وتدفعه لمواجهة عالم الجريمة بطريقة عنيفة وغير متوقعة.",
+  "poster": "https://i.ibb.co/35PZQfNS/63.jpg",
+  "thumbnailUrl": "https://i.ibb.co/35PZQfNS/63.jpg",
+  "release_date": "2021-03-26",
+  "genre": "أكشن، جريمة، إثارة",
+  "director": "إيليا نيشولر",
+  "cast": "بوب أودينكيرك، كوني نيلسن، كريستوفر لويد، أليكسي سيريبرياكوف",
+  "video_type": "mp4",
+  "rating": "7.4/10",
+  "duration": "PT92M",
+  "embed_url": "https://pixeldrain.com/api/file/y35UomTV"
+},
+{
+  "id": 64,
+  "title": "Boxer (2024)",
+  "description": "فيلم درامي رياضي يحكي رحلة ملاكم شاب يسعى لتحقيق حلمه في البطولات الكبرى، لكنه يواجه صراعات داخلية وخارجية بين الطموح والتحديات العائلية والمنافسات القوية.",
+  "poster": "https://i.ibb.co/h1YJnNXX/64.jpg",
+  "thumbnailUrl": "https://i.ibb.co/h1YJnNXX/64.jpg",
+  "release_date": "2024-05-10",
+  "genre": "دراما، رياضي",
+  "director": "غير محدد",
+  "cast": "غير متوفر",
+  "video_type": "mp4",
+  "rating": "7.0/10",
+  "duration": "PT110M",
+  "embed_url": "https://pixeldrain.com/api/file/cwB6PsRm"
+},
+{
+  "id": 65,
+  "title": "الدشاش (2025)",
+  "description": "فيلم درامي مصري جديد يُجسّد قصة مليئة بالغموض والصراعات، حيث تتشابك الخيوط بين الطموح والانتقام وسط أجواء مثيرة ومفاجآت غير متوقعة.",
+  "poster": "https://i.ibb.co/6RbtFGbV/65.jpg",
+  "thumbnailUrl": "https://i.ibb.co/6RbtFGbV/65.jpg",
+  "release_date": "2025-01-01",
+  "genre": "دراما، تشويق",
+  "director": "غير محدد",
+  "cast": "غير متوفر",
+  "video_type": "mp4",
+  "rating": "7.2/10",
+  "duration": "PT120M",
+  "embed_url": "https://pixeldrain.com/api/file/wChKRtAr"
 }
+
+
 
 
   
@@ -995,6 +1057,7 @@
   
   
 ]
+
 
 
 
