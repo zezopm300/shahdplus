@@ -980,13 +980,59 @@
   "rating": "7.2/10",
   "duration": "PT120M",
   "embed_url": "https://pixeldrain.com/api/file/wChKRtAr"
+},
+
+  {
+  "id": 66,
+  "title": "روكي الغلابة (2025)",
+  "description": "فيلم أكشن كوميدي مصري من بطولة دنيا سمير غانم، تدور أحداثه حول فتاة تعمل كحارسة شخصية وتكلف بحماية رجل أعمال كبير، ليواجهان معًا مواقف كوميدية مثيرة.",
+  "poster": "https://i.ibb.co/TqDtrMF3/66.jpg",
+  "thumbnailUrl": "https://i.ibb.co/TqDtrMF3/66.jpg",
+  "release_date": "2025-07-30",
+  "genre": "أكشن، كوميدي",
+  "director": "أحمد الجندي",
+  "cast": "دنيا سمير غانم، محمد ممدوح، محمد ثروت، محمد رضوان، سلوى عثمان، أحمد سعد، أوس أوس",
+  "video_type": "mp4",
+  "rating": "6.8/10",
+  "duration": "PT107M",
+  "embed_url": "https://pixeldrain.com/api/file/vhz4jJD9"
+},
+{
+  "id": 67,
+  "title": "Peter Pan's Neverland Nightmare (2025)",
+  "description": "فيلم رعب بريطاني يُقدّم إعادة سرد مرعبة لقصة بيتر بان، حيث تُجسّد ويندي دارلينغ شخصية البطلة التي تسعى لإنقاذ شقيقها مايكل من قبضة بيتر بان وتينكر بيل في نفيرلاند.",
+  "poster": "https://i.ibb.co/PGw8tdzT/67.jpg",
+  "thumbnailUrl": "https://i.ibb.co/PGw8tdzT/67.jpg",
+  "release_date": "2025-01-13",
+  "genre": "رعب، فانتازيا",
+  "director": "سكوت تشامبرز",
+  "cast": "ميغان بلاسيتو، مارتن بورتلوك، كيت غرين، بيتر دي سوزا-فيغوني، تيريزا بانهم، أولوميد أولوغونفيمي، كامبل والاس، نيكولاس وودسون",
+  "video_type": "mp4",
+  "rating": "غير متوفر",
+  "duration": "PT89M",
+  "embed_url": "https://pixeldrain.com/api/file/5kHdHG3k"
+},
+{
+  "id": 68,
+  "title": "Ne Zha 2 (2025)",
+  "description": "Sequel to Ne Zha (2019), where Ne Zha's body is reincarnated carrying Ao Bing's spirit, and he battles the villain Master Shen to restore balance. Inspired by Chinese mythology and the novel Fengshen Yanyi.",
+  "poster": "https://i.ibb.co/yFrn8gqZ/68.jpg",
+  "thumbnailUrl": "https://i.ibb.co/yFrn8gqZ/68.jpg",
+  "release_date": "2025-01-29",
+  "genre": "Fantasy, Action, Adventure",
+  "director": "Yang Yu (Jiaozi)",
+  "cast": "Not available",
+  "video_type": "mp4",
+  "rating": "Not available",
+  "duration": "PT144M",
+  "embed_url": "https://pixeldrain.com/api/file/1rceqJJg"
 }
 
 
 
 
-  
 
+  
 
 
 
@@ -1057,6 +1103,7 @@
   
   
 ]
+
 
 
 
