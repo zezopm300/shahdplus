@@ -1026,7 +1026,83 @@
   "rating": "Not available",
   "duration": "PT144M",
   "embed_url": "https://pixeldrain.com/api/file/1rceqJJg"
+},
+  {
+  "id": 69,
+  "title": "El Hawa Sultan (2024)",
+  "description": "A heartfelt Egyptian romantic drama that follows Sara and Ali, childhood friends whose bond is tested as changes occur in their relationship amid evolving family and social dynamics.",
+  "poster": "https://i.ibb.co/7x3RcY36/69.jpg",
+  "thumbnailUrl": "https://i.ibb.co/7x3RcY36/69.jpg",
+  "release_date": "2024-11-06",
+  "genre": "Romance, Drama",
+  "director": "Heba Yousry",
+  "cast": "Menna Shalaby, Ahmed Dawood, Ahmed Khaled Saleh, Sawsan Badr, Gihan El Shamashergy, Emad Rashad",
+  "video_type": "mp4",
+  "rating": "6.2/10",
+  "duration": "PT120M",
+  "embed_url": "https://pixeldrain.com/api/file/PeT9fygx"
+},
+{
+  "id": 70,
+  "title": "Al Shater (2025)",
+  "description": "The film follows a stunt double who specializes in performing dangerous scenes for famous stars and faces numerous troubles because of the nature of his job.",
+  "poster": "https://i.ibb.co/HTQtKLDQ/70.jpg",
+  "thumbnailUrl": "https://i.ibb.co/HTQtKLDQ/70.jpg",
+  "release_date": "2025-07-16",
+  "genre": "Comedy, Action",
+  "director": "Ahmed El Gendy",
+  "cast": "Amir Karara, Hana Al Zahed, Moustafa Gharieb, Adel Karam, Ahmed Essam El Sayed, Khaled El-Sawy, Sherine Reda",
+  "video_type": "mp4",
+  "rating": "6.9/10",
+  "duration": "PT110M",
+  "embed_url": "https://pixeldrain.com/api/file/3RFsKdpB"
+},
+{
+  "id": 71,
+  "title": "Strange Darling (2024)",
+  "description": "An intense psychological thriller where what seems like a chance one-night stand between a man and a woman spirals into a twisted cat-and-mouse game of murder, told through non-linear chapters and underpinned by dark sexual role-play.",
+  "poster": "https://i.ibb.co/ch2XVfd3/71.jpg",
+  "thumbnailUrl": "https://i.ibb.co/ch2XVfd3/71.jpg",
+  "release_date": "2024-08-23",
+  "genre": "Thriller, Horror, Mystery",
+  "director": "JT Mollner",
+  "cast": "Willa Fitzgerald, Kyle Gallner, Madisen Beaty, Barbara Hershey, Ed Begley Jr., Steven Michael Quezada, Bianca A. Santos, Denise Grayson",
+  "video_type": "mp4",
+  "rating": "R",
+  "duration": "PT96M",
+  "embed_url": "https://pixeldrain.com/api/file/YDaip46b"
+},
+{
+  "id": 72,
+  "title": "The Hunt (2020)",
+  "description": "A dark satirical action-horror thriller in which a group of elites kidnaps working-class individuals for a twisted hunt, but one of the hunted turns the tables and fights back.",
+  "poster": "https://i.ibb.co/6RvJQkQY/72.jpg",
+  "thumbnailUrl": "https://i.ibb.co/6RvJQkQY/72.jpg",
+  "release_date": "2020-03-13",
+  "genre": "Action, Thriller, Horror, Satire",
+  "director": "Craig Zobel",
+  "cast": "Betty Gilpin, Hilary Swank, Ike Barinholtz, Emma Roberts",
+  "video_type": "mp4",
+  "rating": "R",
+  "duration": "PT90M",
+  "embed_url": "https://pixeldrain.com/api/file/En5ZdKz1"
+},
+{
+  "id": 73,
+  "title": "The Instigators (2024)",
+  "description": "An American buddy-heist comedy thriller in which a desperate father (Rory) and an ex-con (Cobby) team up to rob a corrupt politician's cash stash and find themselves on the run, even involving Rory's therapist in their chaotic escape.",
+  "poster": "https://i.ibb.co/WWSvzrV8/73.jpg",
+  "thumbnailUrl": "https://i.ibb.co/WWSvzrV8/73.jpg",
+  "release_date": "2024-08-02",
+  "genre": "Crime, Comedy, Thriller, Action",
+  "director": "Doug Liman",
+  "cast": "Matt Damon, Casey Affleck, Hong Chau, Michael Stuhlbarg, Paul Walter Hauser, Ving Rhames, Alfred Molina, Jack Harlow, Ron Perlman, Toby Jones",
+  "video_type": "mp4",
+  "rating": "R",
+  "duration": "PT101M",
+  "embed_url": "https://pixeldrain.com/api/file/jjhSaDt3"
 }
+
 
 
 
@@ -1103,6 +1179,7 @@
   
   
 ]
+
 
 
 
